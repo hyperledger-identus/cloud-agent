@@ -41,6 +41,7 @@ import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementContro
 import org.hyperledger.identus.issue.controller.IssueControllerImpl
 import org.hyperledger.identus.mercury.*
 import org.hyperledger.identus.oid4vci.controller.CredentialIssuerControllerImpl
+import org.hyperledger.identus.oid4vci.controller.VerifiablePresentationControllerImpl
 import org.hyperledger.identus.oid4vci.service.OIDCCredentialIssuerServiceImpl
 import org.hyperledger.identus.oid4vci.storage.InMemoryIssuanceSessionService
 import org.hyperledger.identus.pollux.core.service.*
@@ -196,6 +197,7 @@ object MainApp extends ZIOAppDefault {
           EventControllerImpl.layer,
           DIDCommControllerImpl.layer,
           PresentationExchangeControllerImpl.layer,
+          VerifiablePresentationControllerImpl.layer,
           // domain
           AppModule.apolloLayer,
           AppModule.didJwtResolverLayer,

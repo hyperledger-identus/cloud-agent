@@ -1,13 +1,10 @@
 package org.hyperledger.identus.oid4vci.http
 
+import org.hyperledger.identus.pollux.prex.http.PresentationExchangeTapirSchemas.given
 import org.hyperledger.identus.pollux.prex.PresentationDefinition
-import org.hyperledger.identus.pollux.prex.PresentationDefinition.*
-import sttp.tapir.generic.auto.*
 import sttp.tapir.Schema
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 import zio.json.ast.Json
-
-import scala.annotation.targetName
 
 //https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#section-5
 case class AuthorizationRequest(
@@ -18,9 +15,11 @@ case class AuthorizationRequest(
 )
 
 object AuthorizationRequest {
-  given schema: Schema[AuthorizationRequest] = Schema.derived
-  given encoder: JsonEncoder[AuthorizationRequest] = DeriveJsonEncoder.gen
-  given decoder: JsonDecoder[AuthorizationRequest] = DeriveJsonDecoder.gen
+  given Schema[Json] = Schema.any[Json] // TODO: find somewhere to share this
+
+  given Schema[AuthorizationRequest] = Schema.derived
+  given JsonEncoder[AuthorizationRequest] = DeriveJsonEncoder.gen
+  given JsonDecoder[AuthorizationRequest] = DeriveJsonDecoder.gen
 }
 
 // https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#section-5.7

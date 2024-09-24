@@ -7,6 +7,7 @@ import org.hyperledger.identus.oid4vci.http.*
 import sttp.apispec.Tag
 import sttp.model.StatusCode
 import sttp.tapir.*
+import sttp.tapir.generic.auto.*
 import sttp.tapir.json.zio.jsonBody
 
 object VerifiablePresentationEndpoints {
@@ -47,10 +48,27 @@ object VerifiablePresentationEndpoints {
     )
     .out(jsonBody[VerifiablePresentationResponse])
     .errorOut(jsonBody[ErrorResponse])
-    .name("oid4vciVerifiablePresentationRequest")
+    .name("oid4vpVerifiablePresentationRequest")
     .summary("Verifiable Presentation endpoint")
     .description(
       """Initialize OIDC Verifiable Presentation Session""".stripMargin
     )
+
+  val responseSubmissionEndpoint: Endpoint[
+    Unit,
+    (RequestContext, VerifiablePresentationSubmissionForm),
+    Unit,
+    Unit,
+    Any
+  ] =
+    baseEndpoint.post
+      .in("submissions")
+      .in(formBody[VerifiablePresentationSubmissionForm])
+      .out(
+        statusCode(StatusCode.Ok).description("Presentation response submitted successfully"),
+      )
+      // TODO: define errorOut
+      .name("oid4vpResponseSubmission")
+      .summary("Submit an authorization response for oid4vp direct_post response mode")
 
 }
