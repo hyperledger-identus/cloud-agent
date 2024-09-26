@@ -14,7 +14,7 @@ class VerifiablePresentationServerEndpoints(
 
   val responseSubmissionsServerEndpoint: ZServerEndpoint[Any, Any] =
     VerifiablePresentationEndpoints.responseSubmissionEndpoint
-      .zServerLogic { _ => controller.responseSubmission }
+      .zServerLogic { case (rc, form) => controller.responseSubmission(form) }
 
   val all: List[ZServerEndpoint[Any, Any]] = List(
     verifyServerEndpoint,

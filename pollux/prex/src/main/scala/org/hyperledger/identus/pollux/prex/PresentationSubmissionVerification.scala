@@ -48,7 +48,7 @@ object PresentationSubmissionError {
       extends PresentationSubmissionError {
     override def statusCode: StatusCode = StatusCode.BadRequest
     override def userFacingMessage: String =
-      s"Expect json to be type $expectedType for claim format ${format.value} on path ${path.value}"
+      s"Expect json to be type $expectedType for claim format $format on path ${path.value}"
   }
 
   case class InvalidJsonPath(path: JsonPathValue, error: JsonPathError) extends PresentationSubmissionError {
@@ -65,14 +65,14 @@ object PresentationSubmissionError {
       extends PresentationSubmissionError {
     override def statusCode: StatusCode = StatusCode.BadRequest
     override def userFacingMessage: String =
-      s"Unable to decode claim according to format ${format.value} at path ${path.value}: $error"
+      s"Unable to decode claim according to format $format at path ${path.value}: $error"
   }
 
   case class ClaimFormatVerificationFailure(format: ClaimFormatValue, path: JsonPathValue, error: String)
       extends PresentationSubmissionError {
     override def statusCode: StatusCode = StatusCode.BadRequest
     override def userFacingMessage: String =
-      s"Claim format ${format.value} at path ${path.value} failed verification with errors: $error"
+      s"Claim format $format at path ${path.value} failed verification with errors: $error"
   }
 
   case class ClaimNotSatisfyInputConstraint(id: String) extends PresentationSubmissionError {

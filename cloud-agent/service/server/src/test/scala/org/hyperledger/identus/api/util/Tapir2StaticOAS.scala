@@ -13,6 +13,7 @@ import org.hyperledger.identus.iam.entity.http.controller.EntityController
 import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementController
 import org.hyperledger.identus.issue.controller.IssueController
 import org.hyperledger.identus.oid4vci.controller.CredentialIssuerController
+import org.hyperledger.identus.oid4vci.controller.VerifiablePresentationController
 import org.hyperledger.identus.pollux.credentialdefinition.controller.CredentialDefinitionController
 import org.hyperledger.identus.pollux.credentialschema.controller.{
   CredentialSchemaController,
@@ -69,7 +70,8 @@ object Tapir2StaticOAS extends ZIOAppDefault {
         ZLayer.succeed(mock[CredentialIssuerController]) ++
         ZLayer.succeed(mock[PresentationExchangeController]) ++
         ZLayer.succeed(mock[Oid4vciAuthenticatorFactory]) ++
-        configLayer
+        ZLayer.succeed(mock[VerifiablePresentationController]) ++
+        configLayer,
     )
   }
 

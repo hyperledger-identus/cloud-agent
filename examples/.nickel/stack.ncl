@@ -41,12 +41,11 @@ in
         services = {
           "external-keycloak-%{args.name}" =
             (
-              _keycloak.makeKeycloakService
-                {
-                  version = V.keycloak,
-                  hostnamePath = "",
-                  hostnamePort = args.port,
-                }
+              _keycloak.makeKeycloakService {
+                version = V.keycloak,
+                hostnamePath = "",
+                hostnamePort = args.port,
+              }
               |> std.record.remove "image"
             )
             & {
@@ -55,22 +54,21 @@ in
               environment = args.extraEnvs
             },
           "external-keycloak-init-%{args.name}" =
-            _bootstrap.makeHurlBootstrapService
-              {
-                version = V.hurl,
-                hurlDir = "./bootstrap",
-                variables = {
-                  HURL_keycloak_base_url = "http://external-keycloak-%{args.name}:8080",
-                  HURL_keycloak_admin_user = "admin",
-                  HURL_keycloak_admin_password = "admin",
-                  HURL_keycloak_realm = args.realm,
-                  HURL_alice_username = "alice",
-                  HURL_alice_password = "1234",
-                  HURL_alice_wallet_client_id = "alice-wallet",
-                  HURL_agent_client_id = "cloud-agent",
-                  HURL_agent_client_secret = "secret",
-                }
-              },
+            _bootstrap.makeHurlBootstrapService {
+              version = V.hurl,
+              hurlDir = "./bootstrap",
+              variables = {
+                HURL_keycloak_base_url = "http://external-keycloak-%{args.name}:8080",
+                HURL_keycloak_admin_user = "admin",
+                HURL_keycloak_admin_password = "admin",
+                HURL_keycloak_realm = args.realm,
+                HURL_alice_username = "alice",
+                HURL_alice_password = "1234",
+                HURL_alice_wallet_client_id = "alice-wallet",
+                HURL_agent_client_id = "cloud-agent",
+                HURL_agent_client_secret = "secret",
+              }
+            },
         }
       },
   makeAgentStack | AgentStackConfig -> _
@@ -125,89 +123,83 @@ in
           {
             "%{hosts.caddy}" = _caddy.makeCaddyService caddyArgs,
             "%{hosts.nodeDb}" =
-              _db.makeDbService
-                {
-                  version = V.postgres,
-                  databases = "node_db",
-                  volumeName = "pg_data_node"
-                },
+              _db.makeDbService {
+                version = V.postgres,
+                databases = "node_db",
+                volumeName = "pg_data_node"
+              },
             "%{hosts.db}" =
-              _db.makeDbService
-                {
-                  version = V.postgres,
-                  databases = "pollux,connect,agent",
-                  volumeName = pgDockerVolumeName
-                },
+              _db.makeDbService {
+                version = V.postgres,
+                databases = "pollux,connect,agent",
+                volumeName = pgDockerVolumeName
+              },
             "%{hosts.node}" =
-              _node.makeNodeService
-                {
-                  version = V.node,
-                  db = {
-                    host = hosts.nodeDb,
-                    dbName = "node_db",
-                    user = "postgres",
-                    password = "postgres",
-                  },
+              _node.makeNodeService {
+                version = V.node,
+                db = {
+                  host = hosts.nodeDb,
+                  dbName = "node_db",
+                  user = "postgres",
+                  password = "postgres",
                 },
+              },
             "%{hosts.agent}" =
-              _agent.makeAgentService
-                (
-                  {
-                    version = V.agent,
-                    polluxDb = makeSharedDbConfig "pollux",
-                    connectDb = makeSharedDbConfig "connect",
-                    agentDb = makeSharedDbConfig "agent",
-                    node = { host = "node" },
-                    didcommServiceUrl = "http://%{hosts.caddy}:%{std.to_string args.port}/didcomm",
-                    restServiceUrl = "http://%{hosts.caddy}:%{std.to_string args.port}/cloud-agent",
-                    apikeyEnabled = args.apikeyEnabled,
-                  }
-                  & (
-                    if args.keycloakEnabled then
-                      {
-                        keycloak = {
-                          url = "http://%{hosts.keycloak}:8080",
-                          realmName = "identus",
-                          clientId = "agent",
-                          clientSecret = "agent-secret"
-                        },
-                        bootstrapContainer = "%{hosts.keycloakInit}",
-                      }
-                    else
-                      {}
-                  )
-                  & (
-                    if args |> std.record.has_field "vault" then
-                      { vault = { url = "http://%{hosts.vault}:8200", token = "admin" } }
-                    else
-                      {}
-                  )
-                ),
+              _agent.makeAgentService (
+                {
+                  version = V.agent,
+                  polluxDb = makeSharedDbConfig "pollux",
+                  connectDb = makeSharedDbConfig "connect",
+                  agentDb = makeSharedDbConfig "agent",
+                  node = { host = "node" },
+                  didcommServiceUrl = "http://%{hosts.caddy}:%{std.to_string args.port}/didcomm",
+                  restServiceUrl = "http://%{hosts.caddy}:%{std.to_string args.port}/cloud-agent",
+                  apikeyEnabled = args.apikeyEnabled,
+                }
+                & (
+                  if args.keycloakEnabled then
+                    {
+                      keycloak = {
+                        url = "http://%{hosts.keycloak}:8080",
+                        realmName = "identus",
+                        clientId = "agent",
+                        clientSecret = "agent-secret"
+                      },
+                      bootstrapContainer = "%{hosts.keycloakInit}",
+                    }
+                  else
+                    {}
+                )
+                & (
+                  if args |> std.record.has_field "vault" then
+                    { vault = { url = "http://%{hosts.vault}:8200", token = "admin" } }
+                  else
+                    {}
+                )
+              ),
           }
           # optional services
           & (
             if args.keycloakEnabled then
               {
                 "%{hosts.keycloak}" =
-                  _keycloak.makeKeycloakService
-                    {
-                      version = V.keycloak,
-                      hostnamePort = args.port
-                    },
+                  _keycloak.makeKeycloakService {
+                    version = V.keycloak,
+                    hostnamePort = args.port
+                  },
                 "%{hosts.keycloakInit}" =
-                  _bootstrap.makeHurlBootstrapService
-                    {
-                      version = V.hurl,
-                      hurlDir = "../.shared/hurl/simple_realm",
-                      variables = {
-                        HURL_keycloak_base_url = "http://%{hosts.keycloak}:8080",
-                        HURL_keycloak_admin_user = "admin",
-                        HURL_keycloak_admin_password = "admin",
-                        HURL_keycloak_realm = "identus",
-                        HURL_keycloak_client_id = "agent",
-                        HURL_keycloak_client_secret = "agent-secret",
-                      }
-                    },
+                  _bootstrap.makeHurlBootstrapService {
+                    version = V.hurl,
+                    hurlDir = "../.shared/hurl/simple_realm",
+                    variables = {
+                      HURL_keycloak_base_url = "http://%{hosts.keycloak}:8080",
+                      HURL_keycloak_admin_user = "admin",
+                      HURL_keycloak_admin_password = "admin",
+                      HURL_keycloak_realm = "identus",
+                      HURL_keycloak_client_id = "agent",
+                      HURL_keycloak_client_secret = "agent-secret",
+                    }
+                  },
               }
             else
               {}
@@ -216,12 +208,11 @@ in
             if args |> std.record.has_field "vault" then
               {
                 "%{hosts.vault}" =
-                  _vault.makeVaultService
-                    {
-                      version = V.vault,
-                      hostPort = args.vault.hostPort,
-                      rootToken = "admin"
-                    }
+                  _vault.makeVaultService {
+                    version = V.vault,
+                    hostPort = args.vault.hostPort,
+                    rootToken = "admin"
+                  }
               }
             else
               {}
