@@ -153,7 +153,7 @@ object JWTVerification {
     } match {
       case Failure(exception) => Validation.fail(s"Jwt[$jwt] verification pre-process failed: ${exception.getMessage}")
       case Success(isValid) =>
-        if isValid then Validation.unit else Validation.fail(s"Jwt[$jwt] not singed by $publicKey")
+        if isValid then Validation.unit else Validation.fail(s"Jwt[$jwt] not signed by $publicKey")
     }
   }
 

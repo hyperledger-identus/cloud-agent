@@ -17,9 +17,12 @@ AUTHORIZATION_SERVER = "http://external-keycloak-issuer:8080/realms/students"
 
 ALICE_CLIENT_ID = "alice-wallet"
 
-HOLDER_LONG_FORM_DID = "did:prism:73196107e806b084d44339c847a3ae8dd279562f23895583f62cc91a2ee5b8fe:CnsKeRI8CghtYXN0ZXItMBABSi4KCXNlY3AyNTZrMRIhArrplJNfQYxthryRU87XdODy-YWUh5mqrvIfAdoZFeJBEjkKBWtleS0wEAJKLgoJc2VjcDI1NmsxEiEC8rsFplfYvRLazdWWi3LNR1gaAQXb-adVhZacJT4ntwE"
+HOLDER_LONG_FORM_DID = "did:prism:67c303e6129250ccaf8bc027d8d7ede1d6232bf3427b62d4a8b486a28e3444bd:CrcBCrQBEjkKBWlzcy0xEAJKLgoJc2VjcDI1NmsxEiEDbKCvbUqisyoIcbA6QXBJ6t49mC0d1m20rDWcTpzcC48SOgoGYXV0aC0xEARKLgoJc2VjcDI1NmsxEiEDofvTGCeRa6u409XYGzSOhO9iz1SxUhPFE6S45ghLeJMSOwoHbWFzdGVyMBABSi4KCXNlY3AyNTZrMRIhAh3UQ_vdi9Em1I_GqhXeI21fe5wpV_Pa2bhmuLH21i2w"
 HOLDER_ASSERTION_PRIVATE_KEY_HEX = (
-    "2902637d412190fb08f5d0e0b2efc1eefae8060ae151e7951b69afbecbdd452e"
+    "d68cc4364d1d7215085c9ae02696f361f2040b68432d68203cf5c1d3808aa0ea"
+)
+HOLDER_AUTH_PRIVATE_KEY_HEX = (
+    "e5918230337434fb3fd5b04eab749eba2c441114624100859ca8994096ffa1fd"
 )
 
 
@@ -233,7 +236,7 @@ def holder_get_credential(credential_endpoint: str, token_response):
     jwt_proof = jwt.encode(
         headers={
             "typ": "openid4vci-proof+jwt",
-            "kid": HOLDER_LONG_FORM_DID + "#key-0",
+            "kid": HOLDER_LONG_FORM_DID + "#iss-1",
         },
         payload={
             "iss": ALICE_CLIENT_ID,
