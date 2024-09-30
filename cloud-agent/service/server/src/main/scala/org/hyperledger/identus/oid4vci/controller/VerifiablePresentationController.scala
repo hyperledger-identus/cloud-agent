@@ -1,10 +1,10 @@
 package org.hyperledger.identus.oid4vci.controller
 
 import org.hyperledger.identus.oid4vci.http.VerifiablePresentationSubmissionForm
+import org.hyperledger.identus.pollux.core.service.OIDC4VPService
 import org.hyperledger.identus.pollux.prex.*
 import zio.*
 import zio.json.*
-import zio.json.ast.Json
 
 import scala.language.implicitConversions
 
@@ -12,61 +12,18 @@ trait VerifiablePresentationController {
   def responseSubmission(submissionForm: VerifiablePresentationSubmissionForm): UIO[Unit]
 }
 
-class VerifiablePresentationControllerImpl() extends VerifiablePresentationController {
-
-  // TODO: use actual verification
-  private val noopFormatVerification = ClaimFormatVerification(jwtVp = _ => ZIO.unit, jwtVc = _ => ZIO.unit)
-
-  // TODO: use presentation_definition from the session object
-  private val pd = PresentationDefinition(
-    id = "3e216a58-2118-45ea-8db0-8798d01bb252",
-    input_descriptors = Seq(
-      InputDescriptor(
-        id = "university_degree",
-        constraints = Constraints(
-          fields = Some(
-            Seq(
-              Field(
-                path = Seq("$.vc.issuer"),
-                filter = Some(
-                  Json.Obj(
-                    "type" -> Json.Str("string"),
-                    "const" -> Json.Str("did:prism:ffd7cf5a0b73c82e1f16b41e1afcd8c9b0b87ca4f22c11328eacf546b611b1fc"),
-                  )
-                )
-              ),
-              Field(
-                path = Seq("$.vc.credentialSubject.firstName"),
-                filter = Some(Json.Obj("type" -> Json.Str("string")))
-              ),
-              Field(
-                path = Seq("$.vc.credentialSubject.degree"),
-                filter = Some(Json.Obj("type" -> Json.Str("string")))
-              ),
-              Field(
-                path = Seq("$.vc.credentialSubject.grade"),
-                filter = Some(Json.Obj("type" -> Json.Str("number")))
-              ),
-            )
-          )
-        )
-      )
-    )
-  )
+class VerifiablePresentationControllerImpl(service: OIDC4VPService) extends VerifiablePresentationController {
 
   override def responseSubmission(submissionForm: VerifiablePresentationSubmissionForm): UIO[Unit] =
-    // TODO: move to service
     for {
-      _ <- ZIO.debug(s"submissionForm: $submissionForm")
       ps <- ZIO
         .fromEither(submissionForm.presentation_submission.fromJson[PresentationSubmission])
         .orDieWith(Exception(_))
-      _ <- PresentationSubmissionVerification
-        .verify(pd, ps, Json.Str(submissionForm.vp_token))(noopFormatVerification)
-        .orDieWith(e => Exception(e.toString()))
+      _ <- service.verifyJwt(ps, submissionForm.vp_token)
     } yield ()
 }
 
 object VerifiablePresentationControllerImpl {
-  def layer: ULayer[VerifiablePresentationController] = ZLayer.succeed(VerifiablePresentationControllerImpl())
+  def layer: URLayer[OIDC4VPService, VerifiablePresentationController] =
+    ZLayer.fromFunction(VerifiablePresentationControllerImpl(_))
 }

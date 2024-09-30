@@ -46,6 +46,7 @@ import org.hyperledger.identus.oid4vci.service.OIDCCredentialIssuerServiceImpl
 import org.hyperledger.identus.oid4vci.storage.InMemoryIssuanceSessionService
 import org.hyperledger.identus.pollux.core.service.*
 import org.hyperledger.identus.pollux.core.service.verification.VcVerificationServiceImpl
+import org.hyperledger.identus.pollux.core.service.OID4VPServiceImpl
 import org.hyperledger.identus.pollux.credentialdefinition.controller.CredentialDefinitionControllerImpl
 import org.hyperledger.identus.pollux.credentialschema.controller.{
   CredentialSchemaController,
@@ -248,6 +249,7 @@ object MainApp extends ZIOAppDefault {
           CredentialIssuerControllerImpl.layer,
           InMemoryIssuanceSessionService.layer,
           OID4VCIIssuerMetadataServiceImpl.layer,
+          OID4VPServiceImpl.layer,
           OIDCCredentialIssuerServiceImpl.layer,
           // event notification service
           ZLayer.succeed(500) >>> EventNotificationServiceImpl.layer,
