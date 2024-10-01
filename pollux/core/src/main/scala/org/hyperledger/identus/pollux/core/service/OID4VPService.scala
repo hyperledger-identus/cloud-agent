@@ -1,6 +1,7 @@
 package org.hyperledger.identus.pollux.core.service
 
 import org.hyperledger.identus.pollux.prex.*
+import org.hyperledger.identus.pollux.vc.jwt.JWT as PolluxJWT
 import zio.*
 import zio.json.ast.Json
 
@@ -10,10 +11,7 @@ trait OIDC4VPService {
   def verifyJwt(ps: PresentationSubmission, vp: String): UIO[Unit]
 }
 
-class OID4VPServiceImpl() extends OIDC4VPService {
-
-  // TODO: use actual verification
-  private val noopFormatVerification = ClaimFormatVerification(jwtVp = _ => ZIO.unit, jwtVc = _ => ZIO.unit)
+class OID4VPServiceImpl(formatVerification: ClaimFormatVerification) extends OIDC4VPService {
 
   // TODO: use presentation_definition from the session object
   private val pd = PresentationDefinition(
@@ -52,16 +50,25 @@ class OID4VPServiceImpl() extends OIDC4VPService {
     )
   )
 
-  // TODO: fix error handling
+  // TODO: improve error handling
   override def verifyJwt(ps: PresentationSubmission, vp: String): UIO[Unit] = {
     for {
       _ <- PresentationSubmissionVerification
-        .verify(pd, ps, Json.Str(vp))(noopFormatVerification)
+        .verify(pd, ps, Json.Str(vp))(formatVerification)
         .orDieWith(e => Exception(e.toString()))
     } yield ()
   }
 }
 
 object OID4VPServiceImpl {
-  val layer: ULayer[OIDC4VPService] = ZLayer.succeed(OID4VPServiceImpl())
+  val layer: ULayer[OIDC4VPService] = ZLayer.fromZIO {
+    val validateJwtVp = (jwt: PolluxJWT) => ZIO.dieMessage("not implemented")
+    val validateJwtVc = (jwt: PolluxJWT) => ZIO.dieMessage("not implemented")
+    for {
+      // TODO: use actual verification
+      cfv <- ZIO.succeed(
+        ClaimFormatVerification(jwtVp = validateJwtVp, jwtVc = validateJwtVc)
+      )
+    } yield OID4VPServiceImpl(cfv)
+  }
 }
