@@ -3,6 +3,7 @@ package steps.verification
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.jwk.Curve
 import common.*
+import common.errors.JwtCredentialError
 import interactions.Post
 import interactions.body
 import io.cucumber.datatable.DataTable
@@ -48,7 +49,7 @@ class VcVerificationSteps {
     }
 
     @Given("{actor} has a '{}' problem in the Verifiable Credential")
-    fun holderHasProblemInTheVerifiableCredential(holder: Actor, problem: JwtCredentialProblem) {
+    fun holderHasProblemInTheVerifiableCredential(holder: Actor, problem: JwtCredentialError) {
         val jwt = problem.jwt()
         holder.remember("jwt", jwt)
         holder.remember("issuerDid", "did:prism:issuer")
@@ -65,7 +66,7 @@ class VcVerificationSteps {
     }
 
     @Then("{actor} should see that verification has failed with '{}' problem")
-    fun holderShouldSeeThatVerificationHasFailedWithProblem(holder: Actor, problem: JwtCredentialProblem) {
+    fun holderShouldSeeThatVerificationHasFailedWithProblem(holder: Actor, problem: JwtCredentialError) {
     }
 
     @Then("{actor} should see that all checks have passed")

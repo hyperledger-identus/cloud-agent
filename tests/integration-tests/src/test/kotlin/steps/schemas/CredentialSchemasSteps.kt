@@ -2,6 +2,7 @@ package steps.schemas
 
 import common.*
 import common.CredentialSchema.STUDENT_SCHEMA
+import common.errors.SchemaTemplateError
 import interactions.*
 import io.cucumber.java.en.*
 import io.iohk.atala.automation.extensions.get
@@ -35,7 +36,7 @@ class CredentialSchemasSteps {
     }
 
     @When("{actor} creates a schema containing '{}' issue")
-    fun agentCreatesASchemaContainingIssue(actor: Actor, schema: SchemaErrorTemplate) {
+    fun agentCreatesASchemaContainingIssue(actor: Actor, schema: SchemaTemplateError) {
         actor.attemptsTo(Post.to("/schema-registry/schemas").body(schema.schema(actor)))
     }
 

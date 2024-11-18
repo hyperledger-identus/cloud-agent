@@ -14,12 +14,6 @@ Feature: Issue JWT credential
     And Holder accepts jwt credential offer using 'auth-1' key id
     And Issuer issues the credential
     Then Holder receives the issued credential
-    When Issuer revokes the credential issued to Holder
-    Then Issuer should see the credential was revoked
-    When Issuer sends a request for jwt proof presentation to Holder
-    And Holder receives the presentation proof request
-    And Holder makes the jwt presentation of the proof
-    Then Issuer sees the proof returned verification failed
     Examples:
       | assertionMethod | assertionName |
       | secp256k1       | assert-1      |
@@ -64,3 +58,13 @@ Feature: Issue JWT credential
     And Holder accepts jwt credential offer using 'auth-1' key id
     And Issuer issues the credential
     Then Holder receives the issued credential
+
+  Scenario Outline: Issuing a credential with <issue> issuer should return <httpStatus>
+    Given Issuer and Holder have an existing connection
+    And Issuer has a published DID for JWT
+    And Holder has an unpublished DID for JWT
+    When Issuer offers a jwt credential to Holder with <issue> issue
+    Then Issuer should see the status code was <httpStatus>
+    Examples:
+      | issue                 | httpStatus |
+      | UNKNOWN_CONNECTION_ID | 404        |

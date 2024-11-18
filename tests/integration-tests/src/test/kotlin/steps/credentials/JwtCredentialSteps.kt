@@ -1,6 +1,7 @@
 package steps.credentials
 
 import common.CredentialSchema
+import common.errors.CredentialOfferError
 import interactions.Post
 import interactions.body
 import io.cucumber.java.en.When
@@ -10,7 +11,10 @@ import net.serenitybdd.rest.SerenityRest
 import net.serenitybdd.screenplay.Actor
 import org.apache.http.HttpStatus.SC_CREATED
 import org.apache.http.HttpStatus.SC_OK
-import org.hyperledger.identus.client.models.*
+import org.hyperledger.identus.client.models.AcceptCredentialOfferRequest
+import org.hyperledger.identus.client.models.Connection
+import org.hyperledger.identus.client.models.CreateIssueCredentialRecordRequest
+import org.hyperledger.identus.client.models.IssueCredentialRecord
 
 class JwtCredentialSteps {
 
@@ -123,6 +127,32 @@ class JwtCredentialSteps {
         holder.attemptsTo(
             Post.to("/issue-credentials/records/$recordId/accept-offer").body(acceptRequest),
             Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_OK),
+        )
+    }
+
+    @When("{actor} offers a jwt credential to {actor} with {} issue")
+    fun issuerIssuesTheJwtCredentialWithIssue(
+        issuer: Actor,
+        holder: Actor,
+        credentialOfferError: CredentialOfferError
+    ) {
+        val credentialOfferRequest = CreateIssueCredentialRecordRequest(
+            claims = linkedMapOf(
+                "name" to "Name",
+                "surname" to "Surname",
+            ),
+            issuingDID = issuer.recall("shortFormDid"),
+            issuingKid = "assertion-1",
+            connectionId = issuer.recall<Connection>("connection-with-${holder.name}").connectionId,
+            validityPeriod = 3600.0,
+            credentialFormat = "JWT",
+            automaticIssuance = false,
+        )
+
+        val credentialOfferRequestError = credentialOfferError.updateCredentialWithError(credentialOfferRequest)
+
+        issuer.attemptsTo(
+            Post.to("/issue-credentials/credential-offers").body(credentialOfferRequestError),
         )
     }
 }
