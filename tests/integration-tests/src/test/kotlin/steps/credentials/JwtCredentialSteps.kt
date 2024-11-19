@@ -134,7 +134,7 @@ class JwtCredentialSteps {
     fun issuerIssuesTheJwtCredentialWithIssue(
         issuer: Actor,
         holder: Actor,
-        credentialOfferError: CredentialOfferError
+        credentialOfferError: CredentialOfferError,
     ) {
         val credentialOfferRequest = CreateIssueCredentialRecordRequest(
             claims = linkedMapOf(
