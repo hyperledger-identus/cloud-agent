@@ -61,8 +61,8 @@ Feature: Issue JWT credential
 
   Scenario Outline: Issuing a credential with <issue> issuer should return <httpStatus>
     Given Issuer and Holder have an existing connection
-    And Issuer has a published DID for JWT
-    And Holder has an unpublished DID for JWT
+    And Issuer has a published DID for 'JWT'
+    And Holder has an unpublished DID for 'JWT'
     When Issuer offers a jwt credential to Holder with <issue> issue
     Then Issuer should see the status code was <httpStatus>
     Examples:
