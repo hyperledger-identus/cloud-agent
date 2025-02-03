@@ -27,6 +27,10 @@ shared:
   - changed-files:
       - any-glob-to-any-file:
           - shared/**/*
+event-notification:
+  - changed-files:
+      - any-glob-to-any-file:
+          - event-notification/**/*
 infra:
   - changed-files:
       - any-glob-to-any-file:
