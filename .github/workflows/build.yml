@@ -112,6 +112,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
 
+      - name: Trigger component integration
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.ATALA_GITHUB_TOKEN }}
+          repository: input-output-hk/integration
+          event-type: integration
+          client-payload: '{"component": "cloud-agent", "version": "${{ env.RELEASE_VERSION }}"}'
+
       - name: Build Cloud-Agent Open API Specification
         id: build-oas
         run: |
