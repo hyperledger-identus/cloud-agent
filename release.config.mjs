@@ -1,7 +1,11 @@
+/**
+ * @type {import('semantic-release').GlobalConfig}
+ */
 export default {
     branches: [
         'main',
         '+([0-9])?(.{+([0-9]),x}).x',
+        'ci/release-workflow'
     ],
     plugins: [
         ['@semantic-release/commit-analyzer', {
