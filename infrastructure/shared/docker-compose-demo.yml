@@ -29,7 +29,7 @@ services:
         condition: service_healthy
 
   cloud-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${PORT}/didcomm
       REST_SERVICE_URL: http://${DOCKERHOST}:${PORT}/cloud-agent
@@ -46,7 +46,7 @@ services:
       DEFAULT_WALLET_SEED:
       DEFAULT_WALLET_WEBHOOK_URL:
       DEFAULT_WALLET_AUTH_API_KEY:
-      API_KEY_ENABLED: true
+      API_KEY_ENABLED: ${API_KEY_ENABLED:-true}
       API_KEY_AUTHENTICATE_AS_DEFAULT_USER: false
       API_KEY_AUTO_PROVISIONING:
     depends_on:

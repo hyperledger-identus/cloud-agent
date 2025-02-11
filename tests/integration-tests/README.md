@@ -9,7 +9,7 @@ The integration tests are written in Kotlin, and use the following tools and lib
 1. [Serenity BDD](https://serenity-bdd.github.io/) for test execution engine
 2. [Hoplite](https://github.com/sksamuel/hoplite) for configuration management
 3. [Ktor](https://ktor.io/) for HTTP listener (async receiver for webhook messages)
-4. [Identus Cloud Agent Client Kotlin](https://github.com/hyperledger/identus-cloud-agent/packages/2135556) for ICA API models.
+4. [Identus Cloud Agent Client Kotlin](https://github.com/hyperledger-identus/cloud-agent/packages/2135556) for ICA API models. //FIXME: after publishing
 5. [Atala Automation](https://github.com/input-output-hk/atala-automation/) for general testing helpers.
 6. [Awaitility](http://www.awaitility.org/) for asynchronous operations waiting.
 7. [TestContainers](https://www.testcontainers.org/) for Docker containers management.
