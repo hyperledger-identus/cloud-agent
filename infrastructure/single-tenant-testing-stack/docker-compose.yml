@@ -85,7 +85,7 @@ services:
         condition: service_healthy
 
   issuer-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       POLLUX_DB_HOST: issuer-db
       POLLUX_DB_PORT: 5432
@@ -155,7 +155,7 @@ services:
       - 9095:9095
 
   verifier-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       POLLUX_DB_HOST: verifier-db
       POLLUX_DB_PORT: 5432
@@ -227,7 +227,7 @@ services:
       - DATA_SOURCE_NAME=postgresql://postgres:postgres@issuer-db:5432/postgres?sslmode=disable
 
   holder-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       POLLUX_DB_HOST: holder-db
       POLLUX_DB_PORT: 5432

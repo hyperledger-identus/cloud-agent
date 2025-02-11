@@ -125,7 +125,7 @@ services:
       retries: 5
 
   cloud-agent-issuer:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       POLLUX_DB_HOST: issuer-db
       POLLUX_DB_PORT: 5432
@@ -199,7 +199,7 @@ services:
       - swagger-ui-issuer
 
   cloud-agent-holder:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       POLLUX_DB_HOST: holder-db
       POLLUX_DB_PORT: 5432
@@ -273,7 +273,7 @@ services:
       - swagger-ui-holder
 
   cloud-agent-verifier:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       POLLUX_DB_HOST: verifier-db
       POLLUX_DB_PORT: 5432
