@@ -55,11 +55,6 @@ jobs:
           registry-url: https://npm.pkg.github.com/
           scope: "@hyperledger"
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.0
 

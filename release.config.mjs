@@ -25,7 +25,7 @@ export default {
             "prepareCmd": 'sbt "set ThisBuild / version:=\\\"${nextRelease.version}\\\"" "dumpLicenseReportAggregate" && cp ./target/license-reports/root-licenses.md ./DEPENDENCIES.md'
         }],
         ["@semantic-release/exec", {
-            "prepareCmd": "docker buildx build --platform=linux/arm64,linux/amd64 --push -t ghcr.io/hyperledger/identus-cloud-agent:${nextRelease.version} ./cloud-agent/service/server/target/docker/stage"
+            "prepareCmd": "docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${DOCKERHUB_ORG}/identus-cloud-agent:${nextRelease.version} ./cloud-agent/service/server/target/docker/stage"
         }],
         ["@semantic-release/exec", {
             "prepareCmd": "sed -i.bak \"s/AGENT_VERSION=.*/AGENT_VERSION=${nextRelease.version}/\" ./infrastructure/local/.env && rm -f ./infrastructure/local/.env.bak"
@@ -54,5 +54,5 @@ export default {
             }
         }],
     ],
-    tagFormat: "cloud-agent-v${version}"
+    tagFormat: "v${version}"
 }

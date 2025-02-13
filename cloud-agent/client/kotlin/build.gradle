@@ -1,4 +1,4 @@
-group 'org.hyperledger.identus'
+group 'org.hyperledger-identus'
 
 wrapper {
     gradleVersion = '7.5'
@@ -32,9 +32,9 @@ test {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation "com.google.code.gson:gson:2.9.0"
-    implementation "com.squareup.okhttp3:okhttp:4.10.0"
-    testImplementation "io.kotlintest:kotlintest-runner-junit5:3.4.2"
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+    testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.4.2'
 }
 
 java {
@@ -50,11 +50,11 @@ publishing {
     }
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = "https://maven.pkg.github.com/hyperledger/identus-cloud-agent/"
+            name = 'GitHubPackages'
+            url = 'https://maven.pkg.github.com/hyperledger-identus/cloud-agent/'
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = System.getenv('GITHUB_ACTOR')
+                password = System.getenv('GITHUB_TOKEN')
             }
         }
     }

@@ -7,21 +7,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "main"
-      - "beta"
-    paths:
-      - "cloud-agent/**"
-      - "castor/**"
-      - "connect/**"
-      - "mercury/**"
-      - "pollux/**"
-      - "shared/**"
-      - "shared-test/**"
-      - "*.sbt"
-      - "project/**"
-      - "prism-node/**"
 
 permissions:
   contents: write
@@ -68,11 +53,10 @@ jobs:
           node-version: "lts/*"
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: ${{ env.GITHUB_ACTOR }}
-          password: ${{ env.GITHUB_TOKEN }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -97,18 +81,36 @@ jobs:
           echo "REVISION_VERSION=${REVISION_VERSION}" >> $GITHUB_ENV
           echo "BUILD_VERSION=${BUILD_VERSION}" >> $GITHUB_ENV
 
-      - name: Build and push Docker image
+      - name: Build Docker Image
         run: |
           sbt "set version := \"${{ env.BUILD_VERSION }}\"" "docker:stage"
-          docker buildx build --platform=linux/arm64,linux/amd64 --push -t ghcr.io/hyperledger/identus-cloud-agent:${{ env.BUILD_VERSION}} ./cloud-agent/service/server/target/docker/stage
+          docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent:${{ env.BUILD_VERSION }} ./cloud-agent/service/server/target/docker/stage
 
-      - name: Trigger helm chart update
-        uses: peter-evans/repository-dispatch@v3
+      - name: Docker Metadata Action
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          token: ${{ secrets.ATALA_GITHUB_TOKEN }}
-          repository: input-output-hk/atala-prism-helm-charts
-          event-type: build-chart-package
-          client-payload: '{"version": "${{ env.BUILD_VERSION }}", "chart": "cloud-agent"}'
+          images: ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent
+          tags: |
+            type=semver,pattern={{version}}
+          labels: |
+            org.opencontainers.image.title=identus-cloud-agent
+            org.opencontainers.image.description=Hyperledger Identus Cloud Agent
+            org.opencontainers.image.url=https://github.com/hyperledger-identus/identus-cloud-agent
+            org.opencontainers.license=Apache-2.0
+            latest=${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+            snapshot=${{ github.ref != 'refs/heads/main' && 'true' || 'false' }}
+
+      - name: Push Docker Image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./cloud-agent/service/server/target/docker/stage
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          push: ${{ steps.meta.outputs.tags != '' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
 
       - name: Build Cloud-Agent Open API Specification
         id: build-oas

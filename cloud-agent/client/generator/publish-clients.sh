@@ -12,6 +12,6 @@ gradle -p ../kotlin -Pversion=${AGENT_VERSION} publish
 
 # typescript
 yarn --cwd ../typescript
-yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version
+yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version --access public
 
 # python
