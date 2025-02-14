@@ -7,12 +7,6 @@ concurrency:
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "main"
-  pull_request:
-    branches:
-      - main
 
 permissions:
   contents: write
@@ -21,22 +15,19 @@ permissions:
 jobs:
   build:
     name: "Build and Publish Cloud-Agent Revision"
-    if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_ACTOR_EMAIL: "hyperledger-bot@hyperledger.org"
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
       JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
       SBT_OPTS: -Xmx2G
 
     runs-on: ubuntu-latest
 
     outputs:
-      COMMIT_HASH: ${{ env.COMMIT_HASH }}
-      BUILD_VERSION: ${{ env.BUILD_VERSION }}
-      REVISION_VERSION: ${{ env.REVISION_VERSION }}
-      OAS_CHECKSUM: ${{ env.OAS_CHECKSUM }}
+      BUILD_VERSION: ${{ steps.revision.outputs.BUILD_VERSION }}
+      REVISION_VERSION: ${{ steps.revision.outputs.REVISION_VERSION }}
+      OAS_CHECKSUM: ${{ steps.revision.outputs.OAS_CHECKSUM }}
       OAS_PUBLISHED: ${{ steps.upload-oas.conclusion == 'success' }}
 
     steps:
@@ -70,27 +61,22 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Get short commit hash
+      - name: Extract revision version
+        id: revision
         run: |
-          echo "COMMIT_HASH=${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-      - name: Set build number
-        run: echo "BUILD_NUMBER=${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
-
-      - name: Extract version from version.sbt
-        id: get_version
-        run: |
+          COMMIT_HASH="${GITHUB_SHA::7}"
+          BUILD_NUMBER="${GITHUB_RUN_NUMBER}"
           VERSION=$(grep -Eo 'version := "[^"]+"' version.sbt | sed 's/version := "//; s/"//; s/-SNAPSHOT//')
-          REVISION_VERSION=${VERSION}-${{ env.COMMIT_HASH }} # Revision version is used for the OAS file name and client libraries
-          BUILD_VERSION=${VERSION}-${{ env.BUILD_NUMBER }}-${{ env.COMMIT_HASH }} # Build version is used for the Docker image tag
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "REVISION_VERSION=${REVISION_VERSION}" >> $GITHUB_ENV
-          echo "BUILD_VERSION=${BUILD_VERSION}" >> $GITHUB_ENV
+          REVISION_VERSION=${VERSION}-$COMMIT_HASH # Revision version is used for the OAS file name and client libraries
+          BUILD_VERSION=${VERSION}-$BUILD_NUMBER-$COMMIT_HASH # Build version is used for the Docker image tag
+
+          echo "REVISION_VERSION=$REVISION_VERSION" >> "$GITHUB_OUTPUT"
+          echo "BUILD_VERSION=$BUILD_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build Docker Image
         run: |
-          sbt "set version := \"${{ env.BUILD_VERSION }}\"" "docker:stage"
-          docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent:${{ env.BUILD_VERSION }} ./cloud-agent/service/server/target/docker/stage
+          sbt "set version := \"${{ steps.revision.outputs.BUILD_VERSION }}\"" "docker:stage"
+          docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent:${{ steps.revision.outputs.BUILD_VERSION }} ./cloud-agent/service/server/target/docker/stage
 
       - name: Docker Metadata Action
         id: meta
@@ -118,19 +104,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
 
-      - name: Trigger component integration
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.ATALA_GITHUB_TOKEN }}
-          repository: input-output-hk/integration
-          event-type: integration
-          client-payload: '{"component": "cloud-agent", "version": "${{ env.RELEASE_VERSION }}"}'
-
       - name: Build Cloud-Agent Open API Specification
         id: build-oas
         run: |
-          sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec-${{ env.REVISION_VERSION}}.yaml revision"
-          checksum=$(sha256sum ./cloud-agent-openapi-spec-${{ env.REVISION_VERSION }}.yaml | awk '{ print $1 }')
+          sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml revision"
+          checksum=$(sha256sum ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION }}.yaml | awk '{ print $1 }')
           OAS_CHECKSUM=${checksum:0:8}
           echo "OAS_CHECKSUM=$OAS_CHECKSUM" >> $GITHUB_ENV
 
@@ -138,19 +116,10 @@ jobs:
         id: upload-oas
         uses: actions/upload-artifact@v4
         with:
-          name: cloud-agent-openapi-spec-${{ env.OAS_CHECKSUM}}
-          path: ./cloud-agent-openapi-spec-${{ env.REVISION_VERSION}}.yaml
+          name: cloud-agent-openapi-spec-${{ steps.revision.outputs.OAS_CHECKSUM}}
+          path: ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml
           overwrite: true
           compression-level: 0
-
-      - name: Set outputs
-        id: set_outputs
-        run: |
-          echo "COMMIT_HASH=${{ env.COMMIT_HASH }}" >> $GITHUB_ENV
-          echo "BUILD_VERSION=${{ env.BUILD_VERSION }}" >> $GITHUB_ENV
-          echo "REVISION_VERSION=${{ env.REVISION_VERSION }}" >> $GITHUB_ENV
-          echo "OAS_CHECKSUM=${{ env.OAS_CHECKSUM }}" >> $GITHUB_ENV
-          echo "OAS_PUBLISHED=${{ env.OAS_PUBLISHED }}" >> $GITHUB_ENV
 
   build-and-publish-clients:
     needs: build

@@ -172,3 +172,17 @@ jobs:
           npm i
           npm test
           ./docker/stop.sh
+
+  end-to-end:
+    if: github.ref == 'refs/heads/main'
+    name: "Dispatch end-to-end"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger component integration
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.ATALA_GITHUB_TOKEN }}
+          repository: input-output-hk/integration
+          event-type: integration
+          client-payload: '{"component": "cloud-agent", "version": "${{ github.sha }}"}'
