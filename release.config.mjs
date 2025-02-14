@@ -49,7 +49,6 @@ export default {
             ],
             message: "chore(release): cut the Identus Cloud agent ${nextRelease.version} release\n\n${nextRelease.notes} [skip ci]\n\nSigned-off-by: Hyperledger Bot <hyperledger-bot@hyperledger.org>"
         }],
-        ["@semantic-release/github"],
         ["semantic-release-slack-bot", {
             notifyOnSuccess: true,
             notifyOnFail: true,
