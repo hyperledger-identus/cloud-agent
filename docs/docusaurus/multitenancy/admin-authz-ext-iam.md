@@ -42,11 +42,13 @@ Despite UMA permissions configured for the user, the agent strictly maintains a 
 ## Endpoints
 
 ### Agent endpoints
+
 | Endpoint       | Description                         | Role          |
 |----------------|-------------------------------------|---------------|
 | `GET /wallets` | List the wallets on the Cloud Agent | Administrator |
 
 ### Keycloak endpoints
+
 | Endpoint                                             | Description           | Role          |
 |------------------------------------------------------|-----------------------|---------------|
 | `POST /realms/{realm}/protocol/openid-connect/token` | Issue a new JWT token | Administrator |

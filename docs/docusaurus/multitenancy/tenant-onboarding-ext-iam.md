@@ -53,6 +53,7 @@ The tenant can access the multi-tenant agent by providing the RPT in the `Author
 ## Endpoints
 
 ### Agent endpoints
+
 | Endpoint                                   | Description                            | Role          |
 |--------------------------------------------|----------------------------------------|---------------|
 | `GET /wallets`                             | List the wallets on the Cloud Agent    | Administrator |
@@ -61,6 +62,7 @@ The tenant can access the multi-tenant agent by providing the RPT in the `Author
 | `GET /did-registrar/dids`                  | List the DIDs inside the wallet        | Tenant        |
 
 ### Keycloak endpoints
+
 | Endpoint                                             | Description                   | Role                  |
 |------------------------------------------------------|-------------------------------|-----------------------|
 | `POST /admin/realms/{realm}/users`                   | Create a new user on Keycloak | Administrator         |
