@@ -45,6 +45,7 @@ When the agent uses this token for the wallet creation, the agent recognizes it 
 ## Endpoints
 
 ### Agent endpoints
+
 | Endpoint                  | Description                            | Role   |
 |---------------------------|----------------------------------------|--------|
 | `GET /wallets`            | List the wallets on the Cloud Agent    | Tenant |
@@ -52,6 +53,7 @@ When the agent uses this token for the wallet creation, the agent recognizes it 
 | `GET /did-registrar/dids` | List the DIDs inside the wallet        | Tenant |
 
 ### Keycloak endpoints
+
 | Endpoint                                             | Description           | Role   |
 |------------------------------------------------------|-----------------------|--------|
 | `POST /realms/{realm}/protocol/openid-connect/token` | Issue a new JWT token | Tenant |

@@ -28,6 +28,7 @@ To migrate to `JWT` authentication, users can create a new UMA permission for th
 ## Endpoints
 
 ### Agent endpoints
+
 | Endpoint                                   | Description                            | Role   |
 |--------------------------------------------|----------------------------------------|--------|
 | `GET /wallets`                             | List the wallets on the Cloud Agent    | Tenant |
@@ -36,6 +37,7 @@ To migrate to `JWT` authentication, users can create a new UMA permission for th
 | `GET /did-registrar/dids`                  | List the DIDs inside the wallet        | Tenant |
 
 ### Keycloak endpoints
+
 | Endpoint                                             | Description           | Role   |
 |------------------------------------------------------|-----------------------|--------|
 | `POST /realms/{realm}/protocol/openid-connect/token` | Issue a new JWT token | Tenant |
