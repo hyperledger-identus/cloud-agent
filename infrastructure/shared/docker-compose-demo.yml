@@ -29,7 +29,7 @@ services:
         condition: service_healthy
 
   cloud-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: ghcr.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${PORT}/didcomm
       REST_SERVICE_URL: http://${DOCKERHOST}:${PORT}/cloud-agent
