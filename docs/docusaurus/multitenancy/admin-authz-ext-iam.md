@@ -8,7 +8,7 @@ allowing users to be authorized under different roles and granting access to par
 
 For the Agent admin authorization, we need to distinguish the administrator of each component:
 
-1. [Agent Administrator](/docs/concepts/glossary#administrator)
+1. [Agent Administrator](/home/concepts/glossary#administrator)
 2. Keycloak Administrator
 
 The same person may also represent these roles.

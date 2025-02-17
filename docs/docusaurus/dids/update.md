@@ -1,11 +1,11 @@
 # Update DID
 
-PRISM DID method allows [DID Controller](/docs/concepts/glossary#did-controller) to update the content of the [DID document](/docs/concepts/glossary#did-document) by constructing a DID update-operation.
+PRISM DID method allows [DID Controller](/home/concepts/glossary#did-controller) to update the content of the [DID document](/home/concepts/glossary#did-document) by constructing a DID update-operation.
 The update-operation describes the update action on the DID document.
 For example, DID Controller can add a new key to the DID document by constructing an update-operation containing the `AddKeyAction`.
 It is also possible for DID Controller to compose multiple actions in the same update-operation.
 The [PRISM DID method - Update DID section](https://github.com/input-output-hk/prism-did-method-spec/blob/main/w3c-spec/PRISM-method.md#update-did) includes a complete list of supported update actions.
-The PRISM DID method only allows published [DID](/docs/concepts/glossary#decentralized-identifier) to be updated.
+The PRISM DID method only allows published [DID](/home/concepts/glossary#decentralized-identifier) to be updated.
 
 When updating a DID, each operation is connected through cryptography,
 forming a sequence of operations known as the lineage.

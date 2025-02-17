@@ -1,14 +1,14 @@
 # Migration from `apikey` to `JWT` authentication
 
 The Cloud Agent authentication supports multiple authentication methods simultaneously, which means the user can seamlessly use any available credentials including `apikey` or `JWT` to access the wallet.
-The agent's [UMA](/docs/concepts/glossary#uma) permission resource also exposes the self-service permission endpoint, allowing users to manage the permissions for their wallets.
+The agent's [UMA](/home/concepts/glossary#uma) permission resource also exposes the self-service permission endpoint, allowing users to manage the permissions for their wallets.
 It allows users to transition from `apikey` to `JWT` authentication without admin intervention.
 
 ## Roles
 
 In the migration process from `apikey` to `JWT`, there is only one role:
 
-1. [Tenant](/docs/concepts/glossary#tenant)
+1. [Tenant](/home/concepts/glossary#tenant)
 
 ## Prerequisites
 

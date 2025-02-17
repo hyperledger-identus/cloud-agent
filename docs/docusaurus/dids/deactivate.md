@@ -1,7 +1,7 @@
 # Deactivate DID
 
 DID deactivation is an important feature that provides greater control for managing digital identity.
-DID deactivation can be helpful if the [DID](/docs/concepts/glossary#decentralized-identifier) is compromised or unused.
+DID deactivation can be helpful if the [DID](/home/concepts/glossary#decentralized-identifier) is compromised or unused.
 This feature is crucial for the security and risk management of identity owners.
 
 Similar to [DID update](./update.md), deactivating a PRISM DID is a process of putting deactivate-operation on the blockchain so that other participants know that the DID is no longer active.
@@ -20,7 +20,7 @@ The PRISM DID method only allows published DID to be deactivated.
 ## Overview
 
 DID deactivation operates similarly to the DID update, where deactivate-operation publishes to the blockchain, and confirmation blocks must be created before participants consider it deactivated.
-Once the DID is deactivated, all content in the [DID document](/docs/concepts/glossary#did-document) gets deleted, and no operation will affect the DID afterward.
+Once the DID is deactivated, all content in the [DID document](/home/concepts/glossary#did-document) gets deleted, and no operation will affect the DID afterward.
 The same concept also holds for PRISM DID deactivation in that the fork can occur if any subsequent operation occurs before the operation is confirmed.
 Please refer to the `SECURE_DEPTH` parameter in [PRISM method - protocol parameters](https://github.com/input-output-hk/prism-did-method-spec/blob/main/w3c-spec/PRISM-method.md#versioning-and-protocol-parameters) for the number of confirmation blocks.
 At the time of writing, this number is 112 blocks.

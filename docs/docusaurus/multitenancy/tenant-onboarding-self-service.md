@@ -1,21 +1,21 @@
 # Tenant Onboarding Self-Service
 
 In the [Tenant Onboarding with External IAM](./tenant-onboarding-ext-iam.md) tutorial,
-we learned how [Keycloak](/docs/concepts/glossary#keycloak-service) helps with user access and how it works together with the agent.
+we learned how [Keycloak](/home/concepts/glossary#keycloak-service) helps with user access and how it works together with the agent.
 To set things up, the admin has to provision the required resources.
 However, relying on the admin for onboarding operations can be restrictive for some use cases.
 For example, some tenants might want to onboard on a self-service agent instance without admin intervention.
 
 By leveraging Keycloak for a self-service agent instance,
-users can self-register or link to other [Identity Providers (IDPs)](/docs/concepts/glossary#idp) to register an account.
+users can self-register or link to other [Identity Providers (IDPs)](/home/concepts/glossary#idp) to register an account.
 Once the account is registered, users can use it to set up their wallets.
-This tutorial will investigate the steps to facilitate this scenario where [administrator](/docs/concepts/glossary#administrator) intervention is unnecessary.
+This tutorial will investigate the steps to facilitate this scenario where [administrator](/home/concepts/glossary#administrator) intervention is unnecessary.
 
 ## Roles
 
 In self-service tenant management with external IAM, there is only one role:
 
-1. [Tenant](/docs/concepts/glossary#tenant)
+1. [Tenant](/home/concepts/glossary#tenant)
 
 ## Prerequisites
 
