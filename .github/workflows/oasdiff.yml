@@ -75,6 +75,6 @@ jobs:
       - name: Running OpenAPI Spec diff action
         uses: oasdiff/oasdiff-action/breaking@1c611ffb1253a72924624aa4fb662e302b3565d3
         with:
-          fail-on: false
+          fail-on: "ERR"
           base: ${{ env.BASE_URL }}
           revision: ${{ env.REV_URL }}
