@@ -35,8 +35,5 @@
   "devDependencies": {
     "@types/url-parse": "1.4.4",
     "typescript": "^4.0"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
   }
 }
