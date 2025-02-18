@@ -81,36 +81,36 @@ jobs:
           echo "REVISION_VERSION=${REVISION_VERSION}" >> $GITHUB_ENV
           echo "BUILD_VERSION=${BUILD_VERSION}" >> $GITHUB_ENV
 
-#      - name: Build Docker Image
-#        run: |
-#          sbt "set version := \"${{ env.BUILD_VERSION }}\"" "docker:stage"
-#          docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent:${{ env.BUILD_VERSION }} ./cloud-agent/service/server/target/docker/stage
-#
-#      - name: Docker Metadata Action
-#        id: meta
-#        uses: docker/metadata-action@v5
-#        with:
-#          images: ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent
-#          tags: |
-#            type=semver,pattern={{version}}
-#          labels: |
-#            org.opencontainers.image.title=cloud-agent
-#            org.opencontainers.image.description=Hyperledger Identus Cloud Agent
-#            org.opencontainers.image.url=https://github.com/hyperledger-identus/cloud-agent
-#            org.opencontainers.license=Apache-2.0
-#            latest=${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
-#            snapshot=${{ github.ref != 'refs/heads/main' && 'true' || 'false' }}
-#
-#      - name: Push Docker Image
-#        id: push
-#        uses: docker/build-push-action@v6
-#        with:
-#          context: ./cloud-agent/service/server/target/docker/stage
-#          platforms: linux/amd64,linux/arm64
-#          tags: ${{ steps.meta.outputs.tags }}
-#          push: ${{ steps.meta.outputs.tags != '' }}
-#          labels: ${{ steps.meta.outputs.labels }}
-#          annotations: ${{ steps.meta.outputs.annotations }}
+      - name: Build Docker Image
+        run: |
+          sbt "set version := \"${{ env.BUILD_VERSION }}\"" "docker:stage"
+          docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent:${{ env.BUILD_VERSION }} ./cloud-agent/service/server/target/docker/stage
+
+      - name: Docker Metadata Action
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent
+          tags: |
+            type=semver,pattern={{version}}
+          labels: |
+            org.opencontainers.image.title=cloud-agent
+            org.opencontainers.image.description=Hyperledger Identus Cloud Agent
+            org.opencontainers.image.url=https://github.com/hyperledger-identus/cloud-agent
+            org.opencontainers.license=Apache-2.0
+            latest=${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+            snapshot=${{ github.ref != 'refs/heads/main' && 'true' || 'false' }}
+
+      - name: Push Docker Image
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./cloud-agent/service/server/target/docker/stage
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          push: ${{ steps.meta.outputs.tags != '' }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
 
       - name: Build Cloud-Agent Open API Specification
         id: build-oas
