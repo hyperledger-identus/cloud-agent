@@ -16,7 +16,7 @@ if [[ "$AGENT_VERSION" == *-* ]]; then
 
   # typescript
   yarn --cwd ../typescript -s
-  yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version --non-interactive --tag snapshot
+  yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version --non-interactive --tag snapshot --verbose
 else
   echo "Publishing release version"
 
