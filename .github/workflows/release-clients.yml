@@ -46,12 +46,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@hyperledger"
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.0
@@ -105,11 +107,4 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
           GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
-        run: |
-          if [ -z "${{ github.event.inputs.releaseTag }}" ]; then
-            echo "Using revision version for publishing: ${VERSION_TAG}"
-            yarn publish:clients
-          else
-            echo "Using release tag for publishing: ${VERSION_TAG}"
-            yarn publish:clients
-          fi
+        run: yarn publish:clients
