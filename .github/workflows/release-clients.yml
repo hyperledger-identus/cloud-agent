@@ -52,7 +52,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-          always-auth: true
+          registry-url: 'https://registry.npmjs.org/'
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.0
@@ -101,7 +101,6 @@ jobs:
         working-directory: cloud-agent/client/generator
         env:
           VERSION_TAG: ${{ env.VERSION_TAG }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
