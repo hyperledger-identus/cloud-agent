@@ -22,7 +22,7 @@ services:
 
   # Open Enterprise Agent
   identus-cloud-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       PRISM_NODE_HOST: host.docker.internal
       PRISM_NODE_PORT:
