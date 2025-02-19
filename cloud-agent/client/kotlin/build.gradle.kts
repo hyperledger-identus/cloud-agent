@@ -60,7 +60,7 @@ publishing {
             }
             issueManagement {
                 system.set("Github")
-                url.set("https://github.com/hyperledger-identus/apollo")
+                url.set("https://github.com/hyperledger-identus/cloud-agent")
             }
             licenses {
                 license {
