@@ -81,7 +81,7 @@ jobs:
 
       - name: Download OpenAPI specification
         if: ${{ !inputs.releaseTag }}
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: cloud-agent-openapi-spec-${{ inputs.check_sum }}
           path: ./cloud-agent/service/api/http
