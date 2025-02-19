@@ -111,7 +111,7 @@ services:
         ]
       interval: 5s
       timeout: 10s
-      retries: 5
+      retries: 10
 
   init-kafka:
     image: confluentinc/cp-kafka:latest
@@ -165,4 +165,4 @@ services:
         ]
       interval: 5s
       timeout: 10s
-      retries: 5
+      retries: 10
