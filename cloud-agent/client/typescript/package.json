@@ -1,11 +1,11 @@
 {
-  "name": "@hyperledger/identus-cloud-agent-client-ts",
+  "name": "@hyperledger-identus/cloud-agent-client",
   "version": "0.0.1",
   "description": "TypeScript OpenAPI client for Identus Cloud Agent",
   "author": "allain.magyar@iohk.io",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hyperledger/identus-cloud-agent/"
+    "url": "https://github.com/hyperledger-identus/cloud-agent/"
   },
   "keywords": [
     "fetch",
