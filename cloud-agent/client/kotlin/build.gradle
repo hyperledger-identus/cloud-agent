@@ -1,4 +1,4 @@
-group 'org.hyperledger.identus'
+group 'org.hyperledger-identus'
 
 wrapper {
     gradleVersion = '7.5'

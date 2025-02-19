@@ -20,7 +20,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        url = uri("https://maven.pkg.github.com/hyperledger/identus-cloud-agent/")
+        url = uri("https://maven.pkg.github.com/hyperledger-identus/cloud-agent/")
         credentials {
             username = System.getenv("GITHUB_ACTOR")
             password = System.getenv("GITHUB_TOKEN")
@@ -33,7 +33,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-netty:2.3.0")
     testImplementation("io.ktor:ktor-client-apache:2.3.0")
     // RestAPI client
-    testImplementation("org.hyperledger.identus:cloud-agent-client-kotlin:1.39.1-19ab426")
+    testImplementation("org.hyperledger-identus:cloud-agent-client:1.40.0")
     // Test helpers library
     testImplementation("io.iohk.atala:atala-automation:0.4.0")
     // Hoplite for configuration
