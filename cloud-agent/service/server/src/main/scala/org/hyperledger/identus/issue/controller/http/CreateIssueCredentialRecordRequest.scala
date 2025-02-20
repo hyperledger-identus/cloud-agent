@@ -333,6 +333,7 @@ object CreateIssueCredentialRecordRequest {
           validator = Validator.enumeration(
             List(
               Some("JWT"),
+              Some("SDJWT"),
               Some("AnonCreds")
             )
           )
