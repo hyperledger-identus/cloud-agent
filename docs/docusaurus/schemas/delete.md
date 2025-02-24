@@ -1,6 +1,6 @@
 # Delete the credential schema
 
-Unfortunately, after publishing (especially in the [Verifiable Data Registry (VDR)](/docs/concepts/glossary#verifiable-data-registry), deleting the credential schema is impossible.
+Unfortunately, after publishing (especially in the [Verifiable Data Registry (VDR)](/home/concepts/glossary#verifiable-data-registry), deleting the credential schema is impossible.
 
 The Identus Platform doesn't publish the credential schema in the VDR. This capability will get implemented in the later version of the platform. That's why the platform does not expose the REST API for deletion.
 

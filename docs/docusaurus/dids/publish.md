@@ -1,7 +1,7 @@
 # Publish DID
 
 PRISM DID creation involves generating key pairs and additional data (e.g., services) to construct a create-operation.
-The create-operation allows [DID Controller](/docs/concepts/glossary#did-controller) to derive two types of [DIDs](/docs/concepts/glossary#decentralized-identifiers):
+The create-operation allows [DID Controller](/home/concepts/glossary#did-controller) to derive two types of [DIDs](/home/concepts/glossary#decentralized-identifiers):
 
 1. [Long-form DID](https://github.com/input-output-hk/prism-did-method-spec/blob/main/w3c-spec/PRISM-method.md#long-form-dids-unpublished-dids). It has the following format `did:prism:<initial-hash>:<encoded-state>`
 2. Short-form DID. It has the following format `did:prism:<initial-hash>`
@@ -117,7 +117,7 @@ Example response with status `PUBLISHED`
 }
 ```
 
-> **Note:** The `status` here is the internal status of the DID on the Cloud Agent (`PUBLISHED`, `CREATED`, `PUBLICAION_PENDING`). It does not indicate the lifecycle of the DID observed on the blockchain (e.g., deactivated, etc.). The [DID resolution](/docs/concepts/glossary#did-resolution) metadata is for that purpose.
+> **Note:** The `status` here is the internal status of the DID on the Cloud Agent (`PUBLISHED`, `CREATED`, `PUBLICAION_PENDING`). It does not indicate the lifecycle of the DID observed on the blockchain (e.g., deactivated, etc.). The [DID resolution](/home/concepts/glossary#did-resolution) metadata is for that purpose.
 
 ### 4. Resolve a short-form DID
 

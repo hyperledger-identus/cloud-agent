@@ -1,16 +1,16 @@
 # Create DID
 
-PRISM DIDs are a type of [decentralized identifier (DID)](/docs/concepts/glossary#decentralized-identifier) used across the Atala PRISM product suite.
+PRISM DIDs are a type of [decentralized identifier (DID)](/home/concepts/glossary#decentralized-identifier) used across the Atala PRISM product suite.
 
-It is a variation of a [sidetree protocol](https://identity.foundation/sidetree/spec/) and uses the Cardano blockchain as the underlying ledger for [DID resolution](/docs/concepts/glossary#did-resolution) and operation publication.
+It is a variation of a [sidetree protocol](https://identity.foundation/sidetree/spec/) and uses the Cardano blockchain as the underlying ledger for [DID resolution](/home/concepts/glossary#did-resolution) and operation publication.
 Please refer to the [PRISM method specification](https://github.com/input-output-hk/prism-did-method-spec/blob/main/w3c-spec/PRISM-method.md) for a more detailed explanation of how it works.
 
-PRISM DIDs can be created entirely offline without interacting with the blockchain by constructing a DID create-operation, a [protocol buffer (protobuf)](/docs/concepts/glossary#protocol-buffer) message with a set of public keys and services.
+PRISM DIDs can be created entirely offline without interacting with the blockchain by constructing a DID create-operation, a [protocol buffer (protobuf)](/home/concepts/glossary#protocol-buffer) message with a set of public keys and services.
 Once the create-operation gets constructed, deriving a DID from this operation is possible, which is well-defined by the [PRISM DID method](https://github.com/input-output-hk/prism-did-method-spec/blob/main/w3c-spec/PRISM-method.md).
 
 ## Roles
 
-1. [DID Controller](/docs/concepts/glossary#did-controller) is the organization or individual who has control of the DID.
+1. [DID Controller](/home/concepts/glossary#did-controller) is the organization or individual who has control of the DID.
 
 ## Prerequisites
 
@@ -53,7 +53,7 @@ The result should show an empty list, as no DIDs exist on this Cloud Agent insta
 
 ### 2. Create the Cloud Agent managed DID using DID registrar endpoint
 
-The DID controller can create a new DID by sending a [DID document](/docs/concepts/glossary#did-document) template to the Agent.
+The DID controller can create a new DID by sending a [DID document](/home/concepts/glossary#did-document) template to the Agent.
 Since key pairs are generated and managed by the Cloud Agent, DID controller only has to specify the key `id`,
 `purpose` (`authentication`, `assertionMethod`, etc.), and optional `curve` (`secp256k1`, `Ed25519`, `X25519`).
 If the `curve` is omitted, the agent uses the `secp256k1` curve by default.

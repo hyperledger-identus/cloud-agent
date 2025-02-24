@@ -9,8 +9,8 @@ while tenants are users who engage in standard SSI interactions with the Cloud A
 
 In tenant management, there are 2 roles:
 
-1. [Administrator](/docs/concepts/glossary#administrator)
-2. [Tenant](/docs/concepts/glossary#tenant)
+1. [Administrator](/home/concepts/glossary#administrator)
+2. [Tenant](/home/concepts/glossary#tenant)
 
 ## Prerequisites
 

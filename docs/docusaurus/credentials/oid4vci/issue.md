@@ -1,6 +1,6 @@
 # Issue credentials (OID4VCI)
 
-[OID4VCI](/docs/concepts/glossary#oid4vci) (OpenID for Verifiable Credential Issuance) is a protocol that extends OAuth2 to issue credentials.
+[OID4VCI](/home/concepts/glossary#oid4vci) (OpenID for Verifiable Credential Issuance) is a protocol that extends OAuth2 to issue credentials.
 It involves a Credential Issuer server and an Authorization server working together,
 using the authorization and token endpoints on the Authorization Server to grant holders access to credentials on the Credential Issuer server.
 These servers may or may not be the same, depending on the implementation.
