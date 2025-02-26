@@ -93,12 +93,11 @@ if (System.getenv().containsKey("GPG_PRIVATE") && System.getenv().containsKey("G
     signing {
         useInMemoryPgpKeys(
             project.findProperty("signing.signingSecretKey") as String? ?: System.getenv("GPG_PRIVATE"),
-            project.findProperty("signing.signingSecretKeyPassword") as String? ?: System.getenv("GPG_PASSWORD")
+            project.findProperty("signing.signingSecretKeyPassword") as String? ?: System.getenv("GPG_PASSWORD"),
         )
         sign(publishing.publications)
     }
 }
-
 
 nexusPublishing {
     repositories {

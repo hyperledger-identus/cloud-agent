@@ -57,7 +57,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 
 3. Make sure all your commits have DCO sign-off line with an email address that matches the commit author and the name on your GitHub account.
 
-4. [Fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the https://github.com/hyperledger-identus/cloud-agent repo.
+4. [Fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the <https://github.com/hyperledger-identus/cloud-agent> repo.
 
 5. In your forked repository, make your changes in a new git branch:
 
