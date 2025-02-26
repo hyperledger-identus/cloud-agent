@@ -186,6 +186,7 @@ object IssueCredentialRecord {
           validator = Validator.enumeration(
             List(
               "JWT",
+              "SDJWT",
               "AnonCreds"
             )
           )
