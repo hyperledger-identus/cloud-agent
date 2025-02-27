@@ -54,16 +54,17 @@ jobs:
           REV_TAG: ${{ github.event.inputs.revision_tag }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          PR_REPO_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
         run: |
           echo Revision tag: "$REV_TAG"
           if [[ "$REV_TAG" =~ cloud-agent-v* ]]; then
-            echo "REV_URL=https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/${REV_TAG}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
+            echo "REV_URL=https://raw.githubusercontent.com/${PR_REPO_OWNER}/cloud-agent/${REV_TAG}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
           elif [[ "$REV_TAG" =~ prism-agent-v* ]]; then
-            echo "REV_URL=https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/${REV_TAG}/prism-agent/service/api/http/prism-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
+            echo "REV_URL=https://raw.githubusercontent.com/${PR_REPO_OWNER}/cloud-agent/${REV_TAG}/prism-agent/service/api/http/prism-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
           elif [[ "$REV_TAG" == 'main' ]]; then
-            echo "REV_URL=https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/${REV_TAG}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
+            echo "REV_URL=https://raw.githubusercontent.com/${PR_REPO_OWNER}/cloud-agent/${REV_TAG}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
           elif [[ "$GITHUB_EVENT_NAME" == 'pull_request' ]]; then
-            echo "REV_URL=https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/${BRANCH_NAME}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
+            echo "REV_URL=https://raw.githubusercontent.com/${PR_REPO_OWNER}/cloud-agent/${BRANCH_NAME}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" >> "$GITHUB_ENV"
           fi
 
       - name: Check URLS
