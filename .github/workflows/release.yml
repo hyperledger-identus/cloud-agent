@@ -73,5 +73,13 @@ jobs:
           npx semantic-release
 
       - name: Get release version
-        id: get_version
-        run: echo "RELEASE_VERSION=$(cat .release-version)" >> $GITHUB_ENV
+        id: version
+        run: echo "RELEASE_VERSION=$(cat .release-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger component integration
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.ATALA_GITHUB_TOKEN }}
+          repository: input-output-hk/integration
+          event-type: integration
+          client-payload: '{"component": "cloud-agent", "version": "${{ steps.version.outputs.RELEASE_VERSION }}"}'
