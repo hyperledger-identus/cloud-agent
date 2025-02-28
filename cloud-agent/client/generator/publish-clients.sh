@@ -5,13 +5,25 @@ AGENT_VERSION=${VERSION_TAG:13}
 echo version=${AGENT_VERSION}
 
 # install dependencies
-yarn
+yarn -s
 
-# kotlin
-gradle -p ../kotlin -Pversion=${AGENT_VERSION} publish
+# Determine if the version is a snapshot or a release
+if [[ "$AGENT_VERSION" == *-* ]]; then
+	echo "Publishing snapshot version"
 
-# typescript
-yarn --cwd ../typescript
-yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version --access public
+	# kotlin
+	gradle -p ../kotlin -Pversion=${AGENT_VERSION}-SNAPSHOT publish --info
 
-# python
+	# typescript
+	yarn --cwd ../typescript -s
+	yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version --non-interactive --tag snapshot --verbose
+else
+	echo "Publishing release version"
+
+	# kotlin
+	gradle -p ../kotlin -Pversion=${AGENT_VERSION} publish closeAndReleaseSonatypeStagingRepository --info
+
+	# typescript
+	yarn --cwd ../typescript -s
+	yarn --cwd ../typescript publish --new-version ${AGENT_VERSION} --no-git-tag-version --non-interactive --tag latest --verbose
+fi
