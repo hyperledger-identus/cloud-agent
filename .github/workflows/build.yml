@@ -94,9 +94,9 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
           labels: |
-            org.opencontainers.image.title=identus-cloud-agent
+            org.opencontainers.image.title=cloud-agent
             org.opencontainers.image.description=Hyperledger Identus Cloud Agent
-            org.opencontainers.image.url=https://github.com/hyperledger-identus/identus-cloud-agent
+            org.opencontainers.image.url=https://github.com/hyperledger-identus/cloud-agent
             org.opencontainers.license=Apache-2.0
             latest=${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
             snapshot=${{ github.ref != 'refs/heads/main' && 'true' || 'false' }}
