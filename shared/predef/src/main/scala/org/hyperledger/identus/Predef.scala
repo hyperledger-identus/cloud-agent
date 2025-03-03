@@ -5,7 +5,7 @@ final class FeatureNotImplemented(msg: String) extends Error(msg) {
   def this() = this(
     "This feature was not implemented." +
       " This path of execution was never expected to pass here." +
-      " Please open a open the issue on https://github.com/hyperledger/identus-cloud-agent/issues"
+      " Please open a open the issue on https://github.com/hyperledger-identus/cloud-agent/issues"
   )
 }
 

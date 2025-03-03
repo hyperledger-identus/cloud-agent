@@ -42,36 +42,21 @@ jobs:
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          registry-url: https://npm.pkg.github.com/
+          registry-url: "https://registry.npmjs.org"
           scope: "@hyperledger"
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.0
-
-      - name: Login to Github Hub
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ env.GITHUB_ACTOR }}
-          password: ${{ env.GITHUB_TOKEN }}
-
-      - name: Setup yq - portable yaml processor
-        uses: mikefarah/yq@v4.34.2
 
       - name: Delete existing Open API specification
         if: ${{ !inputs.releaseTag }}
@@ -117,11 +102,8 @@ jobs:
         working-directory: cloud-agent/client/generator
         env:
           VERSION_TAG: ${{ env.VERSION_TAG }}
-        run: |
-          if [ -z "${{ github.event.inputs.releaseTag }}" ]; then
-            echo "Using revision version for publishing: ${VERSION_TAG}"
-            yarn publish:clients
-          else
-            echo "Using release tag for publishing: ${VERSION_TAG}"
-            yarn publish:clients
-          fi
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
+          GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
+        run: yarn publish:clients

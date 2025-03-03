@@ -1,15 +1,15 @@
 # Issue credentials (OID4VCI)
 
-[OID4VCI](/docs/concepts/glossary#oid4vci) (OpenID for Verifiable Credential Issuance) is a protocol that extends OAuth2 to issue credentials.
+[OID4VCI](/home/concepts/glossary#oid4vci) (OpenID for Verifiable Credential Issuance) is a protocol that extends OAuth2 to issue credentials.
 It involves a Credential Issuer server and an Authorization server working together,
 using the authorization and token endpoints on the Authorization Server to grant holders access to credentials on the Credential Issuer server.
 These servers may or may not be the same, depending on the implementation.
 
-The Identus Cloud Agent can act as a Credential Issuer server and integrate with any Authorization Server that follows the integration contract. The contract for the Authorization Server in the OID4VCI flow can be found [here](https://github.com/hyperledger/identus-cloud-agent/blob/main/docs/general/authserver-oid4vci-contract.md).
+The Identus Cloud Agent can act as a Credential Issuer server and integrate with any Authorization Server that follows the integration contract. The contract for the Authorization Server in the OID4VCI flow can be found [here](https://github.com/hyperledger-identus/cloud-agent/blob/main/docs/general/authserver-oid4vci-contract.md).
 
 ## Example: OID4VCI Authorization Code Issuance
 
-Example is available [here](https://github.com/hyperledger/identus-cloud-agent/tree/main/examples/st-oid4vci).
+Example is available [here](https://github.com/hyperledger-identus/cloud-agent/tree/main/examples/st-oid4vci).
 
 Following the instructions, the example demonstrates a single-tenant agent setup using an external Keycloak as the Issuer Authorization Server. The demo application walks through the authorization code issuance flow step-by-step.
 
