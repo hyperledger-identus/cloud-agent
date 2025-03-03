@@ -30,7 +30,7 @@ As a result, you can concentrate on crafting self-sovereign identity solutions u
 
 ## User documentation
 
-All documentation, tutorials and API references for the Identus ecosystem can be found at [https://hyperledger.github.io/identus-docs/](https://hyperledger.github.io/identus-docs/)
+All documentation, tutorials and API references for the Identus ecosystem can be found at [https://hyperledger-identus.github.io/docs/](https://hyperledger-identus.github.io/docs/)
 
 ## Features
 
