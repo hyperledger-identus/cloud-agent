@@ -72,8 +72,7 @@ object ConnectionRepositorySpecSuite {
       } yield {
         assertTrue(res match
           case Exit.Failure(cause: Cause.Die) => true
-          case _                              => false
-        )
+          case _                              => false)
       }
     },
     test("getConnectionRecord correctly returns an existing record") {
@@ -213,8 +212,7 @@ object ConnectionRepositorySpecSuite {
       } yield {
         assertTrue(deleteResult match
           case Exit.Failure(cause: Cause.Die) => true
-          case _                              => false
-        ) &&
+          case _                              => false) &&
         assertTrue(records.size == 2) &&
         assertTrue(records.contains(aRecord.withWalletId(walletId))) &&
         assertTrue(records.contains(bRecord.withWalletId(walletId)))
@@ -296,8 +294,7 @@ object ConnectionRepositorySpecSuite {
       } yield {
         assertTrue(updateResult match
           case Exit.Failure(cause: Cause.Die) => true
-          case _                              => false
-        ) &&
+          case _                              => false) &&
         assertTrue(record.get.protocolState == ProtocolState.InvitationGenerated) &&
         assertTrue(updatedRecord.get.protocolState == ProtocolState.InvitationGenerated)
       }

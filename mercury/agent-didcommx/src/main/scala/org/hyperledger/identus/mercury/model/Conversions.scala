@@ -97,8 +97,7 @@ given Conversion[AttachmentDescriptor, XAttachment] with {
     new XAttachment.Builder(id, data)
       .format(attachment.format match
         case Some(format) => format
-        case None         => null
-      )
+        case None         => null)
       .build()
   }
 }
