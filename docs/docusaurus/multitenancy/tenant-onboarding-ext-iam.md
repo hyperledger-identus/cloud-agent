@@ -1,25 +1,25 @@
 # Tenant Onboarding with External IAM
 
-In the [Tenant Onboarding](./tenant-onboarding.md) tutorial, we explored the basic [IAM](/docs/concepts/glossary#iam) functionality out of the box.
+In the [Tenant Onboarding](./tenant-onboarding.md) tutorial, we explored the basic [IAM](/home/concepts/glossary#iam) functionality out of the box.
 Although it is usable and straightforward, more featureful tools are available for handling identity and access management.
-The agent can seamlessly connect with [Keycloak](/docs/concepts/glossary#keycloak-service) as an external IAM system, allowing the application built on top to utilize the capabilities that come with Keycloak.
+The agent can seamlessly connect with [Keycloak](/home/concepts/glossary#keycloak-service) as an external IAM system, allowing the application built on top to utilize the capabilities that come with Keycloak.
 
-The Cloud Agent leverages standard protocols like [OIDC](/docs/concepts/glossary#oidc) and [UMA](/docs/concepts/glossary#uma) for authentication and access management.
-The user's identity gets established through the ID token, and wallet permissions are searchable using the [RPT (requesting party token)](/docs/concepts/glossary#rpt).
+The Cloud Agent leverages standard protocols like [OIDC](/home/concepts/glossary#oidc) and [UMA](/home/concepts/glossary#uma) for authentication and access management.
+The user's identity gets established through the ID token, and wallet permissions are searchable using the [RPT (requesting party token)](/home/concepts/glossary#rpt).
 
 ## Roles
 
 In tenant management with external IAM, there are 2 roles:
 
-1. [Administrator](/docs/concepts/glossary#administrator)
-2. [Tenant](/docs/concepts/glossary#tenant)
+1. [Administrator](/home/concepts/glossary#administrator)
+2. [Tenant](/home/concepts/glossary#tenant)
 
 ## Prerequisites
 
 1. Keycloak up and running
 2. Keycloak is configured as follows
    1. A realm called `my-realm` is created
-   2. A client called `cloud-agent` under `my-realm` with __authorization__ feature is created. (See [create client instruction](https://www.keycloak.org/docs/latest/authorization_services/index.html#_resource_server_create_client))
+   2. A client called `cloud-agent` under `my-realm` with __authorization__ feature is created. (See [create client instruction](https://www.keycloak.org/home/latest/authorization_services/index.html#_resource_server_create_client))
    3. Make sure the `cloud-agent` client has __direct access grants__ enabled to simplify the login process for this tutorial
 3. the Cloud Agent is up and running
 4. the Cloud Agent is configured with the following environment variables:
@@ -41,7 +41,7 @@ When setting up UMA permissions on the agent, the wallet resource, along with th
 are created on Keycloak according to a predefined convention.
 For flexibility in defining custom policy and permission models,
 administrators can manually create these UMA resources (resource, policy, permission) directly on Keycloak
-using a set of UMA endpoints called [Protection API](/docs/concepts/glossary#protection-api)  (see [Keycloak Protection API](https://www.keycloak.org/docs/latest/authorization_services/index.html#_service_protection_api)).
+using a set of UMA endpoints called [Protection API](/home/concepts/glossary#protection-api)  (see [Keycloak Protection API](https://www.keycloak.org/docs/latest/authorization_services/index.html#_service_protection_api)).
 However, using Protection API to manage permissions is out of the scope of this tutorial.
 
 Once the registration is successful, the tenant can obtain an ID token from Keycloak using any available OIDC flow,
@@ -53,6 +53,7 @@ The tenant can access the multi-tenant agent by providing the RPT in the `Author
 ## Endpoints
 
 ### Agent endpoints
+
 | Endpoint                                   | Description                            | Role          |
 |--------------------------------------------|----------------------------------------|---------------|
 | `GET /wallets`                             | List the wallets on the Cloud Agent    | Administrator |
@@ -61,6 +62,7 @@ The tenant can access the multi-tenant agent by providing the RPT in the `Author
 | `GET /did-registrar/dids`                  | List the DIDs inside the wallet        | Tenant        |
 
 ### Keycloak endpoints
+
 | Endpoint                                             | Description                   | Role                  |
 |------------------------------------------------------|-------------------------------|-----------------------|
 | `POST /admin/realms/{realm}/users`                   | Create a new user on Keycloak | Administrator         |
@@ -248,7 +250,7 @@ Example token response (some fields omitted for readability)
 }
 ```
 
-### 2. Request [RPT (requesting party token)](/docs/concepts/glossary#rpt) from access token
+### 2. Request [RPT (requesting party token)](/home/concepts/glossary#rpt) from access token
 
 After the access token is acquired, the next step is to get the RPT token, which holds information about the permissions.
 It is possible to request the RPT by running this command:
