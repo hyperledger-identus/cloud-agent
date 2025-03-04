@@ -256,15 +256,6 @@ object ManagedDIDServiceSpec
       } yield assert(didsBefore)(isEmpty) &&
         assert(didsAfter.map(_._1))(hasSameElements(Seq(did)))
     },
-    test("will not create a DID if one of the provided servies includes default service") {
-      val template = generateDIDTemplate(
-        services = Seq(
-          defaultDidDocumentServiceFixture
-        )
-      )
-      val result = ZIO.serviceWithZIO[ManagedDIDService](_.createAndStoreDID(template))
-      assertZIO(result.exit)(fails(isSubtype[CreateManagedDIDError.InvalidArgument](anything)))
-    },
     test("create and store DID secret in DIDSecretStorage") {
       val template = generateDIDTemplate(
         publicKeys = Seq(
@@ -518,6 +509,39 @@ object ManagedDIDServiceSpec
           assert(lineage)(hasSize(equalTo(10)))
           && assert(lineage.map(_.operationHash).toSet)(hasSize(equalTo(10)))
         }
+      },
+      test("store did lineage for AddService and RemoveService updates") {
+        for {
+          svc <- ZIO.service[ManagedDIDService]
+          testDIDSvc <- ZIO.service[TestDIDService]
+          did <- initPublishedDID
+          _ <- testDIDSvc.setResolutionResult(Some(resolutionResult()))
+
+          _ <- ZIO.foreach(1 to 5) { i =>
+            val serviceEndpoint = DidDocumentServiceEndpoint.Single(
+              DidDocumentServiceEndpoint.UriOrJsonEndpoint.Uri(
+                DidDocumentServiceEndpoint.UriValue.fromString(s"https://example.com/service$i").toOption.get
+              )
+            )
+            val service = DidDocumentService(
+              id = s"service-$i",
+              serviceEndpoint = serviceEndpoint,
+              `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("ServiceType"))
+            )
+            val actions = Seq(UpdateManagedDIDAction.AddService(service))
+            svc.updateManagedDID(did, actions)
+          }
+
+          _ <- ZIO.foreach(1 to 5) { i =>
+            val actions = Seq(UpdateManagedDIDAction.RemoveService(s"service-$i"))
+            svc.updateManagedDID(did, actions)
+          }
+
+          lineage <- svc.nonSecretStorage.listUpdateLineage(None, None)
+        } yield {
+          assert(lineage)(hasSize(equalTo(10)))
+          && assert(lineage.map(_.operationHash).toSet)(hasSize(equalTo(10)))
+        }
       }
     )
 
@@ -636,7 +660,119 @@ object ManagedDIDServiceSpec
         assert(wallet1Counter4)(isSome(equalTo(1))) &&
         assert(wallet2Counter4)(isSome(equalTo(0)))
       }
-    }
+    },
+    // test("update DID with AddService and RemoveService actions") {
+    //   for {
+    //     svc <- ZIO.service[ManagedDIDService]
+    //     testDIDSvc <- ZIO.service[TestDIDService]
+    //     did <- initPublishedDID
+    //     _ <- testDIDSvc.setResolutionResult(Some(resolutionResult()))
+
+    //     // First add services
+    //     _ <- ZIO.foreach(1 to 3) { i =>
+    //       val serviceEndpoint = DidDocumentServiceEndpoint.Single(
+    //         DidDocumentServiceEndpoint.UriOrJsonEndpoint.Uri(
+    //           DidDocumentServiceEndpoint.UriValue.fromString(s"https://example.com/service$i").toOption.get
+    //         )
+    //       )
+    //       val service = DidDocumentService(
+    //         id = s"service-$i",
+    //         serviceEndpoint = serviceEndpoint,
+    //         `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe(s"ServiceType$i"))
+    //       )
+    //       val actions = Seq(UpdateManagedDIDAction.AddService(service))
+    //       svc.updateManagedDID(did, actions)
+    //     }
+
+    //     // Then verify operations were published
+    //     operations1 <- testDIDSvc.getPublishedOperations
+    //     updateOps1 = operations1.collect {
+    //       case op if op.operation.isInstanceOf[PrismDIDOperation.Update] =>
+    //         op.operation.asInstanceOf[PrismDIDOperation.Update]
+    //     }
+
+    //     // Now remove services
+    //     _ <- ZIO.foreach(1 to 3) { i =>
+    //       val actions = Seq(UpdateManagedDIDAction.RemoveService(s"service-$i"))
+    //       svc.updateManagedDID(did, actions)
+    //     }
+
+    //     // Verify all operations
+    //     operations2 <- testDIDSvc.getPublishedOperations
+    //     updateOps2 = operations2.collect {
+    //       case op if op.operation.isInstanceOf[PrismDIDOperation.Update] =>
+    //         op.operation.asInstanceOf[PrismDIDOperation.Update]
+    //     }
+
+    //     // Check lineage
+    //     lineage <- svc.nonSecretStorage.listUpdateLineage(None, None)
+    //   } yield {
+    //     // Verify add service operations
+    //     val addServiceOps = updateOps1.filter(_.actions.exists(_.isInstanceOf[UpdateManagedDIDAction.AddService]))
+    //     val addedServiceIds = addServiceOps.flatMap(_.actions.collect {
+    //       case UpdateManagedDIDAction.AddService(service) => service.id
+    //     })
+
+    //     // Verify remove service operations
+    //     val removeServiceOps = updateOps2.filter(_.actions.exists(_.isInstanceOf[UpdateManagedDIDAction.RemoveService]))
+    //     val removedServiceIds = removeServiceOps.flatMap(_.actions.collect {
+    //       case UpdateManagedDIDAction.RemoveService(serviceId) => serviceId
+    //     })
+
+    //     assert(addedServiceIds)(hasSameElements(Seq("service-1", "service-2", "service-3"))) &&
+    //     assert(removedServiceIds)(hasSameElements(Seq("service-1", "service-2", "service-3")))
+    //     // There should be 6 update operations in total (3 adds + 3 removes)
+    //   }
+    // },
+    // test("update DID with multiple actions in single operation") {
+    //   for {
+    //     svc <- ZIO.service[ManagedDIDService]
+    //     testDIDSvc <- ZIO.service[TestDIDService]
+    //     did <- initPublishedDID
+    //     _ <- testDIDSvc.setResolutionResult(Some(resolutionResult()))
+
+    //     // Create a service
+    //     serviceEndpoint = DidDocumentServiceEndpoint.Single(
+    //       DidDocumentServiceEndpoint.UriOrJsonEndpoint.Uri(
+    //         DidDocumentServiceEndpoint.UriValue.fromString("https://example.com/combined").toOption.get
+    //       )
+    //     )
+    //     service = DidDocumentService(
+    //       id = "combined-service",
+    //       serviceEndpoint = serviceEndpoint,
+    //       `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("CombinedService"))
+    //     )
+
+    //     // Combine multiple actions in a single update
+    //     actions = Seq(
+    //       UpdateManagedDIDAction.AddKey(
+    //         DIDPublicKeyTemplate("combined-key", VerificationRelationship.Authentication, EllipticCurve.SECP256K1)
+    //       ),
+    //       UpdateManagedDIDAction.AddService(service)
+    //     )
+
+    //     // Execute the combined update
+    //     _ <- svc.updateManagedDID(did, actions)
+
+    //     // Verify operations
+    //     operations <- testDIDSvc.getPublishedOperations
+    //     updateOps = operations.collect {
+    //       case op if op.operation.isInstanceOf[PrismDIDOperation.Update] =>
+    //         op.operation.asInstanceOf[PrismDIDOperation.Update]
+    //     }
+
+    //     // Check the key was stored
+    //     keyPair <- svc.findDIDKeyPair(did, KeyId("combined-key")).some
+    //   } yield {
+    //     val combinedOp = updateOps.find(op =>
+    //       op.addServices.exists(_.id == "combined-service") &&
+    //         op.addKeys.exists(_.id == "combined-key")
+    //     )
+
+    //     assert(combinedOp)(isSome) &&
+    //     assert(keyPair)(isSubtype[Secp256k1KeyPair](anything))
+    //   }
+    // }
   )
 
 }

@@ -16,11 +16,6 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcWalletNonSecretStorage
 }
 import org.hyperledger.identus.castor.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
-import org.hyperledger.identus.castor.core.model.did.{
-  Service as DidDocumentService,
-  ServiceEndpoint as DidDocumentServiceEndpoint,
-  ServiceType as DidDocumentServiceType
-}
 import org.hyperledger.identus.castor.core.service.DIDServiceImpl
 import org.hyperledger.identus.castor.core.util.DIDOperationValidator
 import org.hyperledger.identus.connect.controller.ConnectionControllerImpl
@@ -156,22 +151,22 @@ object MainApp extends ZIOAppDefault {
          | - Support for the credential type  Anoncred is ${if (flags.enableAnoncred) "ENABLED" else "DISABLED"}
          |""")
       // these services are added to any DID document by default when they are created.
-      defaultDidDocumentServices = Set(
-        DidDocumentService(
-          id = appConfig.agent.httpEndpoint.serviceName,
-          serviceEndpoint = DidDocumentServiceEndpoint
-            .Single(
-              DidDocumentServiceEndpoint.UriOrJsonEndpoint
-                .Uri(
-                  DidDocumentServiceEndpoint.UriValue
-                    .fromString(appConfig.agent.httpEndpoint.publicEndpointUrl.toString)
-                    .toOption
-                    .get // This will fail if URL is invalid, which will prevent app from starting since public endpoint in config is invalid
-                )
-            ),
-          `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("LinkedResourceV1"))
-        )
-      )
+//      defaultDidDocumentServices = Set(
+//        DidDocumentService(
+//          id = appConfig.agent.httpEndpoint.serviceName,
+//          serviceEndpoint = DidDocumentServiceEndpoint
+//            .Single(
+//              DidDocumentServiceEndpoint.UriOrJsonEndpoint
+//                .Uri(
+//                  DidDocumentServiceEndpoint.UriValue
+//                    .fromString(appConfig.agent.httpEndpoint.publicEndpointUrl.toString)
+//                    .toOption
+//                    .get // This will fail if URL is invalid, which will prevent app from starting since public endpoint in config is invalid
+//                )
+//            ),
+//          `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("LinkedResourceV1"))
+//        )
+//      )
       _ <- preMigrations
       _ <- migrations
       app <- CloudAgentApp.run
@@ -217,7 +212,7 @@ object MainApp extends ZIOAppDefault {
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
           DIDServiceImpl.layer,
           EntityServiceImpl.layer,
-          ZLayer.succeed(defaultDidDocumentServices) >>> ManagedDIDServiceWithEventNotificationImpl.layer,
+          ManagedDIDServiceWithEventNotificationImpl.layer,
           LinkSecretServiceImpl.layer >>> PresentationServiceImpl.layer >>> PresentationServiceNotifier.layer,
           VerificationPolicyServiceImpl.layer,
           WalletManagementServiceImpl.layer,
