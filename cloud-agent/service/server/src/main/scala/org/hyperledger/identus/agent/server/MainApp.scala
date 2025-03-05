@@ -150,23 +150,6 @@ object MainApp extends ZIOAppDefault {
          | - Support for the credential type SD JWT VC is ${if (flags.enableSDJWT) "ENABLED" else "DISABLED"}
          | - Support for the credential type  Anoncred is ${if (flags.enableAnoncred) "ENABLED" else "DISABLED"}
          |""")
-      // these services are added to any DID document by default when they are created.
-//      defaultDidDocumentServices = Set(
-//        DidDocumentService(
-//          id = appConfig.agent.httpEndpoint.serviceName,
-//          serviceEndpoint = DidDocumentServiceEndpoint
-//            .Single(
-//              DidDocumentServiceEndpoint.UriOrJsonEndpoint
-//                .Uri(
-//                  DidDocumentServiceEndpoint.UriValue
-//                    .fromString(appConfig.agent.httpEndpoint.publicEndpointUrl.toString)
-//                    .toOption
-//                    .get // This will fail if URL is invalid, which will prevent app from starting since public endpoint in config is invalid
-//                )
-//            ),
-//          `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("LinkedResourceV1"))
-//        )
-//      )
       _ <- preMigrations
       _ <- migrations
       app <- CloudAgentApp.run
