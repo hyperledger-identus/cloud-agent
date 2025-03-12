@@ -119,7 +119,7 @@ After your pull request is merged, you can safely delete your branch and pull th
 
 ## <a name="commit"></a> Commit Message Format
 
-Please, follow our [Commit Message guidelines](https://handbook.atalaprism.io/engineering/sdlc/commit-guidelines) for all commits you made, and make sure your PR title is following this format.
+Please, follow our [Commit Message guidelines](https://github.com/hyperledger-identus/identus/blob/main/CONTRIBUTING.md#commits) for all commits you made, and make sure your PR title is following this format.
 
 ## <a name="rules"></a> Coding Rules
 
