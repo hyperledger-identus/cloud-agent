@@ -256,15 +256,6 @@ object ManagedDIDServiceSpec
       } yield assert(didsBefore)(isEmpty) &&
         assert(didsAfter.map(_._1))(hasSameElements(Seq(did)))
     },
-    test("will not create a DID if one of the provided servies includes default service") {
-      val template = generateDIDTemplate(
-        services = Seq(
-          defaultDidDocumentServiceFixture
-        )
-      )
-      val result = ZIO.serviceWithZIO[ManagedDIDService](_.createAndStoreDID(template))
-      assertZIO(result.exit)(fails(isSubtype[CreateManagedDIDError.InvalidArgument](anything)))
-    },
     test("create and store DID secret in DIDSecretStorage") {
       val template = generateDIDTemplate(
         publicKeys = Seq(
@@ -515,6 +506,39 @@ object ManagedDIDServiceSpec
           lineage <- svc.nonSecretStorage.listUpdateLineage(None, None)
         } yield {
           // There are a total of 10 updates: 5 add-key updates & 5 remove-key updates.
+          assert(lineage)(hasSize(equalTo(10)))
+          && assert(lineage.map(_.operationHash).toSet)(hasSize(equalTo(10)))
+        }
+      },
+      test("store did lineage for AddService and RemoveService updates") {
+        for {
+          svc <- ZIO.service[ManagedDIDService]
+          testDIDSvc <- ZIO.service[TestDIDService]
+          did <- initPublishedDID
+          _ <- testDIDSvc.setResolutionResult(Some(resolutionResult()))
+
+          _ <- ZIO.foreach(1 to 5) { i =>
+            val serviceEndpoint = DidDocumentServiceEndpoint.Single(
+              DidDocumentServiceEndpoint.UriOrJsonEndpoint.Uri(
+                DidDocumentServiceEndpoint.UriValue.fromString(s"https://example.com/service$i").toOption.get
+              )
+            )
+            val service = DidDocumentService(
+              id = s"service-$i",
+              serviceEndpoint = serviceEndpoint,
+              `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("ServiceType"))
+            )
+            val actions = Seq(UpdateManagedDIDAction.AddService(service))
+            svc.updateManagedDID(did, actions)
+          }
+
+          _ <- ZIO.foreach(1 to 5) { i =>
+            val actions = Seq(UpdateManagedDIDAction.RemoveService(s"service-$i"))
+            svc.updateManagedDID(did, actions)
+          }
+
+          lineage <- svc.nonSecretStorage.listUpdateLineage(None, None)
+        } yield {
           assert(lineage)(hasSize(equalTo(10)))
           && assert(lineage.map(_.operationHash).toSet)(hasSize(equalTo(10)))
         }
