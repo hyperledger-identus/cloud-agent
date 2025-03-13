@@ -23,7 +23,6 @@ If you find a bug in the source code, you can help us by [submitting an issue](#
 
 Even better, you can [submit a Pull Request](#submit-pr) with a fix.
 
-
 ## <a name="feature"></a> Missing a Feature?
 
 You can *request* a new feature by [submitting an issue](#submit-issue) to our GitHub Repository.
