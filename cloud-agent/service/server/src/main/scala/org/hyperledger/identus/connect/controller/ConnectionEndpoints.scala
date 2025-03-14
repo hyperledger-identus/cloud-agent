@@ -68,6 +68,7 @@ object ConnectionEndpoints {
         oneOf(
           FailureVariant.forbidden,
           FailureVariant.badRequest,
+          FailureVariant.unauthorized,
           FailureVariant.internalServerError
         )
       )
@@ -100,6 +101,7 @@ object ConnectionEndpoints {
           FailureVariant.notFound,
           FailureVariant.badRequest,
           FailureVariant.forbidden,
+          FailureVariant.unauthorized,
           FailureVariant.internalServerError
         )
       )
@@ -138,7 +140,8 @@ object ConnectionEndpoints {
         oneOf(
           FailureVariant.forbidden,
           FailureVariant.badRequest,
-          FailureVariant.internalServerError
+          FailureVariant.unauthorized,
+          FailureVariant.internalServerError,
         )
       )
       .name("getConnections")
@@ -180,6 +183,7 @@ object ConnectionEndpoints {
         oneOf(
           FailureVariant.forbidden,
           FailureVariant.badRequest,
+          FailureVariant.unauthorized,
           FailureVariant.internalServerError
         )
       )
