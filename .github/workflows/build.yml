@@ -110,13 +110,13 @@ jobs:
           sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml revision"
           checksum=$(sha256sum ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION }}.yaml | awk '{ print $1 }')
           OAS_CHECKSUM=${checksum:0:8}
-          echo "OAS_CHECKSUM=$OAS_CHECKSUM" >> $GITHUB_ENV
+          echo "OAS_CHECKSUM=OAS_CHECKSUM" >> "$GITHUB_OUTPUT"
 
       - name: Publish Cloud-Agent Open API Specification
         id: upload-oas
         uses: actions/upload-artifact@v4
         with:
-          name: cloud-agent-openapi-spec-${{ steps.revision.outputs.OAS_CHECKSUM}}
+          name: cloud-agent-openapi-spec-${{ steps.build-oas.outputs.OAS_CHECKSUM}}
           path: ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml
           overwrite: true
           compression-level: 0
