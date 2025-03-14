@@ -27,7 +27,7 @@ jobs:
     outputs:
       BUILD_VERSION: ${{ steps.revision.outputs.BUILD_VERSION }}
       REVISION_VERSION: ${{ steps.revision.outputs.REVISION_VERSION }}
-      OAS_CHECKSUM: ${{ steps.revision.outputs.OAS_CHECKSUM }}
+      OAS_CHECKSUM: ${{ steps.build-oas.outputs.OAS_CHECKSUM }}
       OAS_PUBLISHED: ${{ steps.upload-oas.conclusion == 'success' }}
 
     steps:
