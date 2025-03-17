@@ -98,7 +98,7 @@ services:
   ##########################
 
   prism-node:
-    image: ghcr.io/input-output-hk/prism-node:${PRISM_NODE_VERSION}
+    image: docker.io/inputoutput/prism-node:${PRISM_NODE_VERSION}
     environment:
       NODE_PSQL_HOST: node-db:5432
       NODE_REFRESH_AND_SUBMIT_PERIOD:
