@@ -42,7 +42,7 @@ If you would like to *implement* a new feature, please consider the size of the 
 
 Before you submit an issue, please search the issue tracker. An issue for your problem might already exist and the discussion might inform you of workarounds readily available.
 
-You can file new issues by selecting a `Bug Report` template on our [Issues submission page](https://github.com/hyperledger/identus-cloud-agent/issues/new/choose).
+You can file new issues by selecting a `Bug Report` template on our [Issues submission page](https://github.com/hyperledger-identus/cloud-agent/issues/new/choose).
 
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 
