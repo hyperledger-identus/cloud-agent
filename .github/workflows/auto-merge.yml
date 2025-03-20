@@ -17,7 +17,7 @@ jobs:
       - name: Update PRs
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.IDENTUS_CI_INTERNAL }}
+          github-token: ${{ secrets.IDENTUS_CI }}
           script: |
             let pr = {
               number: ${{ github.event.pull_request.number }},
@@ -58,7 +58,7 @@ jobs:
       - name: Update PRs
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.IDENTUS_CI_INTERNAL }}
+          github-token: ${{ secrets.IDENTUS_CI }}
           script: |
             const { data: pullRequests } = await github.rest.pulls.list({
                 base: 'main',
