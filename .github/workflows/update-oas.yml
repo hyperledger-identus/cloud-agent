@@ -62,7 +62,3 @@ jobs:
           commit_message: "chore(oas) update Open API Specification"
           file_pattern: "cloud-agent/service/api/cloud-agent-openapi-spec.yaml"
           branch: ${{ github.ref }}
-
-          
-      
-
