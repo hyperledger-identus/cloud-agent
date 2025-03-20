@@ -1,0 +1,68 @@
+name: Build and Publish Revision
+
+run-name: Update the Open API Specification from ${{ github.head_ref || github.ref_name }}
+
+concurrency:
+  group: update-oas-${{ github.sha }}
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: "Build and Publish Cloud-Agent Revision"
+    env:
+      GITHUB_ACTOR: "hyperledger-bot"
+      GITHUB_ACTOR_EMAIL: "hyperledger-bot@hyperledger.org"
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
+      SBT_OPTS: -Xmx2G
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      BUILD_VERSION: ${{ steps.revision.outputs.BUILD_VERSION }}
+      REVISION_VERSION: ${{ steps.revision.outputs.REVISION_VERSION }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: crazy-max/ghaction-import-gpg@v6
+        id: import_gpg
+        with:
+          gpg_private_key: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
+          passphrase: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_push_gpgsign: true
+
+      - name: Setup Java and Scala
+        uses: olafurpg/setup-scala@v14
+        with:
+          java-version: openjdk@1.17
+
+      - uses: coursier/cache-action@v6
+        id: coursier-cache
+
+      - name: Build Cloud-Agent Open API Specification
+        id: build-oas
+        run: |
+          VERSION=$(grep -Eo 'version := "[^"]+"' version.sbt | sed 's/version := "//; s/"//')
+          sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS $GITHUB_WORKSPACE/cloud-agent/service/api/cloud-agent-openapi-spec.yaml $VERSION"
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(oas) update Open API Specification"
+          file_pattern: "cloud-agent/service/api/cloud-agent-openapi-spec.yaml"
+          branch: ${{ github.ref }}
+
+          
+      
+
