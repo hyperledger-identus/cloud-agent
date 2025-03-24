@@ -1,6 +1,6 @@
 # Delete the Credential Definition
 
-Unfortunately, once published (especially in the [Verifiable Data Registry (VDR)](/docs/concepts/glossary#verifiable-data-registry), deleting the credential definition becomes unfeasible.
+Unfortunately, once published (especially in the [Verifiable Data Registry (VDR)](/home/concepts/glossary#verifiable-data-registry), deleting the credential definition becomes unfeasible.
 
 In the Identus Platform, credential definitions aren't published to the VDR. This functionality will be incorporated in subsequent versions of the platform. Hence, the platform currently doesn't provide a REST API for deletion.
 

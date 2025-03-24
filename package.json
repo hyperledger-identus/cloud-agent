@@ -6,16 +6,15 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
-    "@commitlint/config-conventional": "^19.2.2",
-    "@semantic-release/changelog": "^6.0.1",
-    "@semantic-release/exec": "^6.0.3",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^7.0.3",
     "@semantic-release/git": "^10.0.1",
     "conventional-changelog-conventionalcommits": "^8.0.0",
-    "gradle-semantic-release-plugin": "1.9.1",
+    "gradle-semantic-release-plugin": "^1.10.1",
     "husky": "^9.0.11",
     "pinst": "^3.0.0",
     "prettier": "^3.2.5",
-    "semantic-release": "^23.0.8",
-    "semantic-release-slack-bot": "^4.0.2"
+    "semantic-release": "^24.2.1"
   }
 }

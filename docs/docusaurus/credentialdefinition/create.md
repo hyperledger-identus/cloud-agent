@@ -1,6 +1,6 @@
 # Create the Credential Definition
 
-The Cloud Agent exposes REST API for creation, fetching, and searching the [credential definition](/docs/concepts/glossary#credential-definition) records.
+The Cloud Agent exposes REST API for creation, fetching, and searching the [credential definition](/home/concepts/glossary#credential-definition) records.
 
 The OpenAPI specification and ReDoc documentation describe the endpoint.
 
@@ -39,7 +39,7 @@ Here's a sample content of the credential definition:
 
 2. In your API client, initiate a new POST request to either `/credential-definition-registry/definitions` or `/credential-definition-registry/definitions/did-url`  endpoints. They both take the same payload
     1. `/credential-definition-registry/definitions` creates a credential definition that can later be resolved via HTTP URL
-    2. `/credential-definition-registry/definitions/did-url` creates a credential definition that can later be resolved via [DID URL](/docs/concepts/glossary#did-url), the DID includes a service endpoint with the location of the credential definition registry.
+    2. `/credential-definition-registry/definitions/did-url` creates a credential definition that can later be resolved via [DID URL](/home/concepts/glossary#did-url), the DID includes a service endpoint with the location of the credential definition registry.
 
 Please note: The `author` field value should align with the short form of a PRISM DID previously created by the same agent. It's okay if this DID is unpublished. You can refer to the [Create DID](../dids/create.md) documentation for more comprehensive details on crafting a PRISM DID.
 
@@ -148,7 +148,7 @@ You should receive a response containing the JSON object representing the creden
 }
 ```
 
-Or in case of DID URL, the respoinse is [Prism Envelope](/docs/concepts/glossary#prism-envelope)
+Or in case of DID URL, the respoinse is [Prism Envelope](/home/concepts/glossary#prism-envelope)
 
 ```json
 {

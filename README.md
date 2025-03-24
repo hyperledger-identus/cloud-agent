@@ -30,7 +30,7 @@ As a result, you can concentrate on crafting self-sovereign identity solutions u
 
 ## User documentation
 
-All documentation, tutorials and API references for the Identus ecosystem can be found at [https://hyperledger.github.io/identus-docs/](https://hyperledger.github.io/identus-docs/)
+All documentation, tutorials and API references for the Identus ecosystem can be found at [https://hyperledger-identus.github.io/docs/](https://hyperledger-identus.github.io/docs/)
 
 ## Features
 
@@ -58,7 +58,7 @@ All documentation, tutorials and API references for the Identus ecosystem can be
 
 Before starting to use the Cloud Agent, it is important to understand the basic concepts of self-sovereign identity (SSI). The following resources provide a good introduction to SSI:
 
-* [Identus SSI introduction](https://hyperledger.github.io/identus-docs/docs/category/concepts)
+* [Identus SSI introduction](https://hyperledger-identus.github.io/docs/home/category/concepts)
 * [Linux Foundation Course: Getting Started with SSI](https://www.edx.org/learn/computer-programming/the-linux-foundation-getting-started-with-self-sovereign-identity)
 
 ### Architecture

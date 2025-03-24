@@ -1,5 +1,5 @@
 {
-  "name": "@hyperledger-identus/cloud-agent-client",
+  "name": "@hyperledger/identus-cloud-agent-client",
   "version": "0.0.1",
   "description": "TypeScript OpenAPI client for Identus Cloud Agent",
   "author": "allain.magyar@iohk.io",
@@ -28,15 +28,16 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "whatwg-fetch": "^3.0.0",
     "es6-promise": "^4.2.4",
-    "url-parse": "^1.4.3"
+    "url-parse": "^1.4.3",
+    "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
     "@types/url-parse": "1.4.4",
     "typescript": "^4.0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

@@ -7,8 +7,8 @@ the Identus Platform.
 
 ## 1. Introduction
 
-[Credential Schema](/docs/concepts/glossary#credential-schema) is a data template for [Verifiable Credentials](/docs/concepts/glossary#verifiable-credential).
-It contains [claims](/docs/concepts/glossary#claims) (attributes) of the Verifiable Credentials, credential schema author, type, name, version, and proof
+[Credential Schema](/home/concepts/glossary#credential-schema) is a data template for [Verifiable Credentials](/home/concepts/glossary#verifiable-credential).
+It contains [claims](/home/concepts/glossary#claims) (attributes) of the Verifiable Credentials, credential schema author, type, name, version, and proof
 of authorship.
 By putting schema definitions on a public blockchain, they are available for all verifiers to examine to determine the
 semantic interoperability of the Credential.
@@ -39,7 +39,7 @@ Limitations and constraints of the Identus Platform:
 
 ### Credential Schema
 
-The Credential Schema is a template that defines a set of attributes the [Issuer](/docs/concepts/glossary#issuer) uses to issue the Verifiable Credential.
+The Credential Schema is a template that defines a set of attributes the [Issuer](/home/concepts/glossary#issuer) uses to issue the Verifiable Credential.
 
 ### Schema Registry
 
@@ -47,7 +47,7 @@ The registry is where the Credential Schema is published and available for parti
 
 ### Issuer, Holder, Verifier
 
-These are well-known roles in the [SSI](/docs/concepts/glossary#self-sovereign-identity) domain.
+These are well-known roles in the [SSI](/home/concepts/glossary#self-sovereign-identity) domain.
 
 ## 2. Credential Schema Attributes
 

@@ -16,7 +16,7 @@ The following guide demonstrates how to update a driving license credential sche
 ### 1. Define the updated JSON Schema for the Verifiable Credential
 
 Assume that you need to update the credential schema from the previous tutorial.
-So, there is an existing driving license, and the [verifiable credential](/docs/concepts/glossary#verifiable-credential) must additionally include two fields:
+So, there is an existing driving license, and the [verifiable credential](/home/concepts/glossary#verifiable-credential) must additionally include two fields:
 
 - bloodType - the blood type of the driver
 - organDonor - indicates whether or not the person is an organ donor
@@ -325,7 +325,7 @@ curl -X 'PUT' \
 }
 ```
 
-If you are updating schema that is DID URL resolvable, the response will be in a forom of [Prism Envelope](/docs/concepts/glossary#prism-envelope), like this:
+If you are updating schema that is DID URL resolvable, the response will be in a forom of [Prism Envelope](/home/concepts/glossary#prism-envelope), like this:
 
 ```json
 {

@@ -22,7 +22,7 @@ services:
 
   # Open Enterprise Agent
   identus-cloud-agent:
-    image: ghcr.io/hyperledger/identus-cloud-agent:${AGENT_VERSION}
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       API_KEY_ENABLED: true
       API_KEY_AUTHENTICATE_AS_DEFAULT_USER: false

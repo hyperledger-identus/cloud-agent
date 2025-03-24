@@ -33,7 +33,7 @@ services:
 
   mediator:
     network_mode: "container:didcomm-stack"
-    image: ghcr.io/hyperledger/identus-mediator:1.0.0
+    image: docker.io/hyperledgeridentus/identus-mediator:1.0.0
     environment:
       # Creates the identity:
       - KEY_AGREEMENT_D=Z6D8LduZgZ6LnrOHPrMTS6uU2u5Btsrk1SGs4fn8M7c
@@ -55,7 +55,7 @@ services:
   # Building-blocks
   ##########################
   prism-node:
-    image: ghcr.io/input-output-hk/prism-node:2.5.0
+    image: docker.io/inputoutput/prism-node:2.5.0
     environment:
       NODE_PSQL_HOST: db:5432
     depends_on:
@@ -64,7 +64,7 @@ services:
 
   agent:
     container_name: didcomm-stack
-    image: ghcr.io/hyperledger/identus-cloud-agent:${CLOUD_AGENT_VERSION}
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${CLOUD_AGENT_VERSION}
     ports:
       - "8080:8080"
       - "8090:8090"

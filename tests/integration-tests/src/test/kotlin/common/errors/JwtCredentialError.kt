@@ -1,12 +1,13 @@
-package common
+package common.errors
 
 import com.nimbusds.jose.JWSAlgorithm
 import com.nimbusds.jose.jwk.Curve
+import common.VerifiableJwt
 import models.JwtCredential
 import org.hyperledger.identus.client.models.VcVerification
 import java.time.OffsetDateTime
 
-enum class JwtCredentialProblem {
+enum class JwtCredentialError {
     ALGORITHM_VERIFICATION {
         override fun jwt(): String {
             val jwt = VerifiableJwt.jwtVCv1()
@@ -104,7 +105,7 @@ enum class JwtCredentialProblem {
             // cases since it's not possible to inherit final class
             VcVerification.entries.forEach {
                 try {
-                    JwtCredentialProblem.valueOf(it.name)
+                    JwtCredentialError.valueOf(it.name)
                 } catch (e: IllegalArgumentException) {
                     throw IllegalArgumentException("JwtCredentialProblem does not contain the new ${it.name} VcVerification case")
                 }
