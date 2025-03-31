@@ -24,7 +24,6 @@ import scala.language.implicitConversions
   * indy-wallet-sdk.
   */
 class ManagedDIDServiceImpl private[walletapi] (
-    defaultDidDocumentServices: Set[DidDocumentService],
     didService: DIDService,
     didOpValidator: DIDOperationValidator,
     private[walletapi] val secretStorage: DIDSecretStorage,
@@ -53,8 +52,6 @@ class ManagedDIDServiceImpl private[walletapi] (
 
   def syncUnconfirmedUpdateOperations: ZIO[WalletAccessContext, GetManagedDIDError, Unit] =
     syncUnconfirmedUpdateOperationsByDID(did = None)
-
-  override protected def getDefaultDidDocumentServices: Set[DidDocumentService] = defaultDidDocumentServices
 
   override def findDIDKeyPair(
       did: CanonicalPrismDID,
@@ -127,14 +124,14 @@ class ManagedDIDServiceImpl private[walletapi] (
   ): ZIO[WalletAccessContext, CreateManagedDIDError, LongFormPrismDID] = {
     for {
       _ <- ZIO
-        .fromEither(ManagedDIDTemplateValidator.validate(didTemplate, defaultDidDocumentServices))
+        .fromEither(ManagedDIDTemplateValidator.validate(didTemplate))
         .mapError { x =>
           println("x: " + x)
 
           CreateManagedDIDError.InvalidArgument(x)
         }
       _ <- ZIO.logInfo(s"Old did template after validation: $didTemplate")
-      newDidTemplate = didTemplate.copy(services = didTemplate.services ++ defaultDidDocumentServices)
+      newDidTemplate = didTemplate.copy(services = didTemplate.services)
       _ <- ZIO.logInfo(s"Creating managed DID with template2: $newDidTemplate")
       material <- didCreateHandler.materialize(newDidTemplate)
       _ <- ZIO
@@ -367,7 +364,6 @@ object ManagedDIDServiceImpl {
   ] = {
     ZLayer.fromZIO {
       for {
-        defaultDidDocumentServices <- ZIO.service[Set[DidDocumentService]]
         didService <- ZIO.service[DIDService]
         didOpValidator <- ZIO.service[DIDOperationValidator]
         secretStorage <- ZIO.service[DIDSecretStorage]
@@ -375,7 +371,6 @@ object ManagedDIDServiceImpl {
         walletSecretStorage <- ZIO.service[WalletSecretStorage]
         apollo <- ZIO.service[Apollo]
       } yield ManagedDIDServiceImpl(
-        defaultDidDocumentServices,
         didService,
         didOpValidator,
         secretStorage,

@@ -3,14 +3,14 @@ import TabItem from '@theme/TabItem';
 
 # Issue credentials (Connectionless)
 
-In the Identus Platform, the [Issue Credentials Protocol](/docs/concepts/glossary#issue-credential-protocol) allows you to create, retrieve, and manage issued [verifiable credentials (VCs)](/docs/concepts/glossary#verifiable-credentials) between a VC issuer and a VC holder.
+In the Identus Platform, the [Issue Credentials Protocol](/home/concepts/glossary#issue-credential-protocol) allows you to create, retrieve, and manage issued [verifiable credentials (VCs)](/home/concepts/glossary#verifiable-credentials) between a VC issuer and a VC holder.
 
 ## Roles
 
 In the Issue Credentials Protocol, there are two roles:
 
-1. The [Issuer](/docs/concepts/glossary#issuer) is responsible for creating a new credential offer, sending it to a Holder, and issuing the VC once the offer is accepted.
-2. The [Holder](/docs/concepts/glossary#holder) is responsible for accepting a credential offer from an issuer and receiving the VC.
+1. The [Issuer](/home/concepts/glossary#issuer) is responsible for creating a new credential offer, sending it to a Holder, and issuing the VC once the offer is accepted.
+2. The [Holder](/home/concepts/glossary#holder) is responsible for accepting a credential offer from an issuer and receiving the VC.
 
 The Issuer and Holder interact with the Identus Cloud Agent API to perform the operations defined in the protocol.
 
@@ -23,14 +23,14 @@ Before using the "Connectionless" Issuing Credentials protocol, the following co
 <TabItem value="jwt" label="JWT">
 
 1. Issuer Cloud Agents is up and running
-2. The Issuer has a published PRISM DID, and the [DID document](/docs/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
+2. The Issuer has a published PRISM DID, and the [DID document](/home/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
 3. The Holder is either another Cloud Agent or Edge Agent SDK
 
 </TabItem>
 <TabItem value="anoncreds" label="AnonCreds">
 
 1. Issuer Cloud Agents is up and running
-2. The Issuer has a published PRISM DID, and the [DID document](/docs/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
+2. The Issuer has a published PRISM DID, and the [DID document](/home/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
 3. The Issuer must have created an AnonCreds Credential Definition as described [here](../../credentialdefinition/create.md).
 4. The Holder is either another Cloud Agent or Edge Agent SDK
 
@@ -39,7 +39,7 @@ Before using the "Connectionless" Issuing Credentials protocol, the following co
 
 - 📌 **Note:** Currently we only support `Ed25519` curve
 1. Issuer Cloud Agents is up and running
-2. The Issuer has a published PRISM DID, and the [DID document](/docs/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
+2. The Issuer has a published PRISM DID, and the [DID document](/home/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
 3. The Holder is either another Cloud Agent or Edge Agent SDK
 4. The Holder must have a PRISM DID, and the DID document must have at least one `authentication` key for presenting the proof and the curve must be `Ed25519`.
 
@@ -52,7 +52,7 @@ The protocol described is a VC issuance process between an Issuer (Identus Cloud
 
 The protocol consists of the following main parts:
 
-1. The Issuer creates a new credential offer using the [`/issue-credentials/credential-offers/invitation`](/identus-docs/agent-api/#tag/Issue-Credentials-Protocol/operation/createCredentialOffer) endpoint, which includes information such as the schema identifier and claims. This returns a unique OOB (out-of-band) invitate code for the prospective Holder.
+1. The Issuer creates a new credential offer using the [`/issue-credentials/credential-offers/invitation`](/docs/agent-api/#tag/Issue-Credentials-Protocol/operation/createCredentialOffer) endpoint, which includes information such as the schema identifier and claims. This returns a unique OOB (out-of-band) invitate code for the prospective Holder.
 2. The Holder accepts the OOB invite (see SDK `acceptInvitation`)
 3. The Issuer responds by sending the actual Credential Offer
 4. The Holder accepts the Credential Offer
@@ -285,7 +285,7 @@ To accept the offer, the Holder can make a `POST` request to the [`/issue-creden
 <TabItem value="jwt" label="JWT">
 
 1. `holder_record_id`: The unique identifier of the issue credential record known by the holder's Cloud Agent.
-2. `subjectId`: This field represents the unique identifier for the subject of the verifiable credential. It is a short-form PRISM [DID](/docs/concepts/glossary#decentralized-identifier) string, such as `did:prism:subjectIdentifier`.
+2. `subjectId`: This field represents the unique identifier for the subject of the verifiable credential. It is a short-form PRISM [DID](/home/concepts/glossary#decentralized-identifier) string, such as `did:prism:subjectIdentifier`.
 
 ```shell
 # Holder POST request to accept the credential offer
@@ -317,7 +317,7 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
 <TabItem value="sdjwt" label="SDJWT">
 
 1. `holder_record_id`: The unique identifier of the issue credential record known by the holder's Cloud Agent.
-2. `subjectId`: This field represents the unique identifier for the subject of the verifiable credential. It is a short-form PRISM [DID](/docs/concepts/glossary#decentralized-identifier) string, such as `did:prism:subjectIdentifier`.
+2. `subjectId`: This field represents the unique identifier for the subject of the verifiable credential. It is a short-form PRISM [DID](/home/concepts/glossary#decentralized-identifier) string, such as `did:prism:subjectIdentifier`.
 3. `keyId` Option parameter
    1. when keyId is not provided the SDJWT VC is not binded to Holder/Prover key
    ```shell
