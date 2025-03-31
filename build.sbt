@@ -37,7 +37,7 @@ inThisBuild(
     // scalacOptions += "-Ysafe-init",
     // scalacOptions +=  "-Werror", // <=> "-Xfatal-warnings"
     scalacOptions += "-Dquill.macro.log=false", // disable quill macro logs // TODO https://github.com/zio/zio-protoquill/issues/470,
-    scalacOptions ++= Seq("-Xmax-inlines", "50") // manually increase max-inlines above 32 (https://github.com/circe/circe/issues/2162)
+    scalacOptions ++= Seq("-Xmax-inlines", "50") // increase above 32 (https://github.com/circe/circe/issues/2162)
   )
 )
 
@@ -107,7 +107,8 @@ lazy val D = new {
   val zioConcurrent: ModuleID = "dev.zio" %% "zio-concurrent" % V.zio
   val zioHttp: ModuleID = "dev.zio" %% "zio-http" % V.zioHttp
   val zioKafka: ModuleID = "dev.zio" %% "zio-kafka" % V.zioKafka excludeAll (
-    ExclusionRule("dev.zio", "zio_3"), ExclusionRule("dev.zio", "zio-streams_3")
+    ExclusionRule("dev.zio", "zio_3"),
+    ExclusionRule("dev.zio", "zio-streams_3")
   )
   val zioCatsInterop: ModuleID = "dev.zio" %% "zio-interop-cats" % V.zioCatsInterop
   val zioMetricsConnectorMicrometer: ModuleID = "dev.zio" %% "zio-metrics-connectors-micrometer" % V.zioMetricsConnector
@@ -115,7 +116,10 @@ lazy val D = new {
   val micrometer: ModuleID = "io.micrometer" % "micrometer-registry-prometheus" % V.micrometer
   val micrometerPrometheusRegistry = "io.micrometer" % "micrometer-core" % V.micrometer
   val scalaUri = Seq(
-    "io.lemonlabs" %% "scala-uri" % V.scalaUri exclude ("org.typelevel", "cats-parse_3"), // Exclude cats-parse to avoid deps conflict
+    "io.lemonlabs" %% "scala-uri" % V.scalaUri exclude (
+      "org.typelevel",
+      "cats-parse_3"
+    ), // Exclude cats-parse to avoid deps conflict
     "org.typelevel" % "cats-parse_3" % "1.0.0", // Replace with version 1.0.0
   )
 
@@ -131,7 +135,7 @@ lazy val D = new {
   val jwtCirce = "com.github.jwt-scala" %% "jwt-circe" % V.jwtCirceVersion
   val jsonCanonicalization: ModuleID = "io.github.erdtman" % "java-json-canonicalization" % "1.1"
   val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.4.0"
-  val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1"
+  val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
   val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.1.38"
   val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.9.0"
@@ -933,11 +937,10 @@ lazy val cloudAgentServer = project
       ExclusionRule("com.google.protobuf", "protobuf-javalite")
     ),
     Compile / mainClass := Some("org.hyperledger.identus.agent.server.MainApp"),
-    Docker / maintainer := "atala-coredid@iohk.io",
-    Docker / dockerUsername := Some("hyperledger"), // https://github.com/hyperledger
-    Docker / dockerRepository := Some("ghcr.io"),
-    dockerExposedPorts := Seq(8080, 8085, 8090),
-    // Official docker image for openjdk 21 with curl and bash
+    Docker / maintainer := "atala-coredid@iohk.io", // TODO: clarify the contact emale of the project
+    Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
+    Docker / dockerRepository := Some("docker.io"),
+    dockerExposedPorts := Seq(8085, 8090),
     dockerBaseImage := "openjdk:21-jdk",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.hyperledger.identus.agent.server.buildinfo",
