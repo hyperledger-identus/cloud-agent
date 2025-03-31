@@ -128,7 +128,7 @@ lazy val D = new {
   val jwtZio = "com.github.jwt-scala" %% "jwt-zio-json" % V.jwtZioVersion
   val jsonCanonicalization: ModuleID = "io.github.erdtman" % "java-json-canonicalization" % "1.1"
   val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.4.0"
-  val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1"
+  val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
   val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.1.38"
   val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.9.0"
@@ -906,7 +906,7 @@ lazy val cloudAgentServer = project
       ExclusionRule("com.google.protobuf", "protobuf-javalite")
     ),
     Compile / mainClass := Some("org.hyperledger.identus.agent.server.MainApp"),
-    Docker / maintainer := "atala-coredid@iohk.io", //TODO: clarify the contact emale of the project
+    Docker / maintainer := "atala-coredid@iohk.io", // TODO: clarify the contact emale of the project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
