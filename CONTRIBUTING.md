@@ -3,13 +3,13 @@
 We would love for you to contribute to Identus and help make it even better than it is today!
 As a contributor, here are the guidelines we would like you to follow:
 
- - [DCO](#dco)
- - [Issues and Bugs](#issue)
- - [Feature Requests](#feature)
- - [Submission Guidelines](#submit)
- - [Coding Rules](#rules)
- - [Commit Message Guidelines](#commit)
- 
+- [DCO](#dco)
+- [Issues and Bugs](#issue)
+- [Feature Requests](#feature)
+- [Submission Guidelines](#submit)
+- [Coding Rules](#rules)
+- [Commit Message Guidelines](#commit)
+
 
 ## <a name="dco"></a> Developer Certificate of Origin (DCO)
 
@@ -22,7 +22,6 @@ Please read and follow set up [DCO](./DCO.md).
 If you find a bug in the source code, you can help us by [submitting an issue](#submit-issue).
 
 Even better, you can [submit a Pull Request](#submit-pr) with a fix.
-
 
 ## <a name="feature"></a> Missing a Feature?
 
@@ -43,13 +42,13 @@ If you would like to *implement* a new feature, please consider the size of the 
 
 Before you submit an issue, please search the issue tracker. An issue for your problem might already exist and the discussion might inform you of workarounds readily available.
 
-You can file new issues by selecting a `Bug Report` template on our [Issues submission page](https://github.com/hyperledger/identus-cloud-agent/issues/new/choose).
+You can file new issues by selecting a `Bug Report` template on our [Issues submission page](https://github.com/hyperledger-identus/cloud-agent/issues/new/choose).
 
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-1. Search [GitHub](https://github.com/hyperledger/identus-cloud-agent/pulls) for an open or closed PR that relates to your submission.
+1. Search [GitHub](https://github.com/hyperledger-identus/cloud-agent/pulls) for an open or closed PR that relates to your submission.
    You don't want to duplicate existing efforts.
 
 2. Be sure that an issue describes the problem you're fixing, or documents the design for the feature you'd like to add.
@@ -57,7 +56,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
 
 3. Make sure all your commits have DCO sign-off line with an email address that matches the commit author and the name on your GitHub account.
 
-4. [Fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the https://github.com/hyperledger/identus-cloud-agent repo.
+4. [Fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the <https://github.com/hyperledger-identus/cloud-agent> repo.
 
 5. In your forked repository, make your changes in a new git branch:
 
@@ -119,7 +118,7 @@ After your pull request is merged, you can safely delete your branch and pull th
 
 ## <a name="commit"></a> Commit Message Format
 
-Please, follow our [Commit Message guidelines](https://handbook.atalaprism.io/engineering/sdlc/commit-guidelines) for all commits you made, and make sure your PR title is following this format.
+Please, follow our [Commit Message guidelines](https://github.com/hyperledger-identus/identus/blob/main/CONTRIBUTING.md#commits) for all commits you made, and make sure your PR title is following this format.
 
 ## <a name="rules"></a> Coding Rules
 

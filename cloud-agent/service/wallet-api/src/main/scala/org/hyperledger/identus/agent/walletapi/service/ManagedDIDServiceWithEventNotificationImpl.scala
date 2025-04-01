@@ -3,7 +3,7 @@ package org.hyperledger.identus.agent.walletapi.service
 import org.hyperledger.identus.agent.walletapi.model.error.CommonWalletStorageError
 import org.hyperledger.identus.agent.walletapi.model.ManagedDIDDetail
 import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, DIDSecretStorage, WalletSecretStorage}
-import org.hyperledger.identus.castor.core.model.did.{CanonicalPrismDID, Service as DidDocumentService}
+import org.hyperledger.identus.castor.core.model.did.CanonicalPrismDID
 import org.hyperledger.identus.castor.core.model.error.DIDOperationError
 import org.hyperledger.identus.castor.core.service.DIDService
 import org.hyperledger.identus.castor.core.util.DIDOperationValidator
@@ -13,7 +13,6 @@ import org.hyperledger.identus.shared.models.WalletAccessContext
 import zio.*
 
 class ManagedDIDServiceWithEventNotificationImpl(
-    defaultDidDocumentServices: Set[DidDocumentService],
     didService: DIDService,
     didOpValidator: DIDOperationValidator,
     override private[walletapi] val secretStorage: DIDSecretStorage,
@@ -22,7 +21,6 @@ class ManagedDIDServiceWithEventNotificationImpl(
     apollo: Apollo,
     eventNotificationService: EventNotificationService
 ) extends ManagedDIDServiceImpl(
-      defaultDidDocumentServices,
       didService,
       didOpValidator,
       secretStorage,
@@ -57,12 +55,11 @@ class ManagedDIDServiceWithEventNotificationImpl(
 
 object ManagedDIDServiceWithEventNotificationImpl {
   val layer: RLayer[
-    Set[DidDocumentService] & DIDOperationValidator & DIDService & DIDSecretStorage & DIDNonSecretStorage &
-      WalletSecretStorage & Apollo & EventNotificationService,
+    DIDOperationValidator & DIDService & DIDSecretStorage & DIDNonSecretStorage & WalletSecretStorage & Apollo &
+      EventNotificationService,
     ManagedDIDService
   ] = ZLayer.fromZIO {
     for {
-      defaultDidDocumentServices <- ZIO.service[Set[DidDocumentService]]
       didService <- ZIO.service[DIDService]
       didOpValidator <- ZIO.service[DIDOperationValidator]
       secretStorage <- ZIO.service[DIDSecretStorage]
@@ -72,7 +69,6 @@ object ManagedDIDServiceWithEventNotificationImpl {
       createDIDSem <- Semaphore.make(1)
       eventNotificationService <- ZIO.service[EventNotificationService]
     } yield ManagedDIDServiceWithEventNotificationImpl(
-      defaultDidDocumentServices,
       didService,
       didOpValidator,
       secretStorage,

@@ -4,6 +4,7 @@ import common.CredentialSchema
 import common.DidType
 import interactions.Get
 import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
 import io.iohk.atala.automation.extensions.get
 import io.iohk.atala.automation.serenity.ensure.Ensure
 import net.serenitybdd.rest.SerenityRest
@@ -125,5 +126,12 @@ class CommonSteps {
             connectionSteps.inviteeReceivesTheConnectionResponse(invitee)
             connectionSteps.inviterAndInviteeHaveAConnection(inviter, invitee)
         }
+    }
+
+    @Then("{actor} should see the status code was {int}")
+    fun actorShouldSeeHttpStatusWasExpected(actor: Actor, statusCode: Int) {
+        actor.attemptsTo(
+            Ensure.thatTheLastResponse().statusCode().isEqualTo(statusCode),
+        )
     }
 }

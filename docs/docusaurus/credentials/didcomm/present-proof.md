@@ -3,9 +3,9 @@ import TabItem from '@theme/TabItem';
 
 # Present proof (DIDComm)
 
-The [Present Proof Protocol](/docs/concepts/glossary#present-proof-protocol) allows:
-- a [Verifier](/docs/concepts/glossary#verifier) to request a verifiable credential presentation from a Holder/Prover
-- a [Holder/Prover](/docs/concepts/glossary#holder) responds by presenting a cryptographic proof to the Verifier
+The [Present Proof Protocol](/home/concepts/glossary#present-proof-protocol) allows:
+- a [Verifier](/home/concepts/glossary#verifier) to request a verifiable credential presentation from a Holder/Prover
+- a [Holder/Prover](/home/concepts/glossary#holder) responds by presenting a cryptographic proof to the Verifier
 
 The protocol provides endpoints for a Verifier to request new proof presentations from Holder/Provers and for a Holder/Prover to respond to the presentation request using a specific verifiable credential they own.
 
@@ -14,7 +14,7 @@ The protocol provides endpoints for a Verifier to request new proof presentation
 The present proof protocol has two roles:
 
 1. Verifier: A subject requesting a proof presentation by sending a request presentation message, then verifying the presentation.
-2. Holder/Prover: A [subject](/docs/concepts/glossary#subject) that receives a [proof presentation](/docs/concepts/glossary#proof-presentation) request, prepares a proof, and sends it to the verifier by sending a proof presentation message.
+2. Holder/Prover: A [subject](/home/concepts/glossary#subject) that receives a [proof presentation](/home/concepts/glossary#proof-presentation) request, prepares a proof, and sends it to the verifier by sending a proof presentation message.
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ Before using the Proof Presentation protocol, the following conditions must be p
 
 1. Holder/Prover and Verifier Cloud Agents must be up and running
 2. A connection must be established between the Holder/Prover and Verifier Cloud Agents (see [Connections](../../connections/connection.md))
-3. The Holder/Prover should hold a [verifiable credential (VC)](/docs/concepts/glossary#verifiable-credential) received from an [Issuer](/docs/concepts/glossary#issuer) see [Issue](./issue.md).
+3. The Holder/Prover should hold a [verifiable credential (VC)](/home/concepts/glossary#verifiable-credential) received from an [Issuer](/home/concepts/glossary#issuer) see [Issue](./issue.md).
 
 ## Overview
 

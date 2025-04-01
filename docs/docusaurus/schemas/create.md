@@ -1,6 +1,6 @@
 # Create the credential schema
 
-The Identus Platform exposes REST API for creation, fetching, and searching the [credential schema](/docs/concepts/glossary#credential-schema) records.
+The Identus Platform exposes REST API for creation, fetching, and searching the [credential schema](/home/concepts/glossary#credential-schema) records.
 
 The OpenAPI specification and ReDoc documentation describe the endpoint.
 
@@ -12,7 +12,7 @@ The following guide demonstrates how to create a driving license credential sche
 
 ### 1. Define the JSON Schema for the Verifiable Credential
 
-Assume that you need a credential schema for the driving license, and the [verifiable credential](/docs/concepts/glossary#verifiable-credential) must have the following
+Assume that you need a credential schema for the driving license, and the [verifiable credential](/home/concepts/glossary#verifiable-credential) must have the following
 fields:
 
 - emailAddress - the email address of the driver
@@ -81,7 +81,7 @@ Specification.
 
 2. In the client, create a new POST request to either `/cloud-agent/schema-registry/schemas` or `/cloud-agent/schema-registry/schemas/did-url` endpoints. They both take the same payload.
     1. `/cloud-agent/schema-registry/schemas` creates a schema that can later be resolved via HTTP URL
-    2. `/cloud-agent/schema-registry/schemas/did-url` creates a schema that can later be resolved via [DID URL](/docs/concepts/glossary#did-url), the DID includes a service endpoint with the location of the schema registry.
+    2. `/cloud-agent/schema-registry/schemas/did-url` creates a schema that can later be resolved via [DID URL](/home/concepts/glossary#did-url), the DID includes a service endpoint with the location of the schema registry.
 
 Note that the value of the `author` field must match the short form of a PRISM DID that has been created using the same agent. An unpublished DID is sufficient. Please refer to the [Create DID](../dids/create.md) documentation page for more details on how to create a PRISM DID.  
 
@@ -254,7 +254,7 @@ curl -X 'POST' \
 }
 ```
 
-or in case of DID url, the response will be created schema wrapped in [Prism Envelope](/docs/concepts/glossary#prism-envelope)
+or in case of DID url, the response will be created schema wrapped in [Prism Envelope](/home/concepts/glossary#prism-envelope)
 
 ```json
 {
@@ -344,7 +344,7 @@ The response for HTTP URL request should contain the JSON object representing th
 }
 ```
 
-and for DID URL request, response will include the same schema wrapped in [Prism envelope](/docs/concepts/glossary#prism-envelope) response
+and for DID URL request, response will include the same schema wrapped in [Prism envelope](/home/concepts/glossary#prism-envelope) response
 
 ```json
 {
@@ -357,7 +357,7 @@ Schemas created for HTTP URL (`/cloud-agent/schema-registry/schemas`) will not b
 
 
 The Cloud Agent instance's triple `author`, `id`, and `version` are unique.
-So, having a single [DID](/docs/concepts/glossary#decentralized-identifier) reference that the author uses, creating the credential schema with the same `id` and `version`
+So, having a single [DID](/home/concepts/glossary#decentralized-identifier) reference that the author uses, creating the credential schema with the same `id` and `version`
 is impossible.
 
 ### 4. Update the credential schema

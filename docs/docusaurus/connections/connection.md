@@ -2,15 +2,15 @@
 
 A connection is a stateful relationship between two parties that enables secure communication.
 
-The [Connection protocol](/docs/concepts/glossary#connection-protocol) is required to establish secure connections between agents,
+The [Connection protocol](/home/concepts/glossary#connection-protocol) is required to establish secure connections between agents,
 allowing them to exchange information and interact.
 
 ## Roles
 
 The connection protocol has two roles:
 
-1. [Inviter](/docs/concepts/glossary#inviter): A subject that initiates a connection request by sending a [connection invitation](/docs/concepts/glossary#connection-invitation).
-2. [Invitee](/docs/concepts/glossary#invitee): A subject that receives a connection invitation and accepts it by sending a [connection request](/docs/concepts/glossary#connection-request).
+1. [Inviter](/home/concepts/glossary#inviter): A subject that initiates a connection request by sending a [connection invitation](/home/concepts/glossary#connection-invitation).
+2. [Invitee](/home/concepts/glossary#invitee): A subject that receives a connection invitation and accepts it by sending a [connection request](/home/concepts/glossary#connection-request).
 
 ## Prerequisites
 
@@ -55,7 +55,7 @@ ConnectionResponseSent --> [*]
 
 1. Receive the OOB invitation (`InvitationReceived` state)
 2. Accept the invitation (connection is created in `ConnectionRequestPending` state)
-3. Send the connection request via [DIDComm](/docs/concepts/glossary#didcomm) (connection achieves `ConnectionRequestSent` state)
+3. Send the connection request via [DIDComm](/home/concepts/glossary#didcomm) (connection achieves `ConnectionRequestSent` state)
 4. Receive the connection response (connection achieves `ConnectionResponseReceived` state)
 
 The following diagram represents the Invitee's Connection state transitions:
