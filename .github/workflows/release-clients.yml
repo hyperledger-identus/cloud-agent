@@ -29,7 +29,7 @@ on:
         type: string
   push:
     tags:
-      - "cloud-agent-v*"
+      - "v*"
 
 permissions:
   contents: write
