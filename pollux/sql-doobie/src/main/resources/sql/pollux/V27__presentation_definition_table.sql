@@ -3,7 +3,7 @@ CREATE TABLE public.presentation_definition (
     input_descriptors json NOT NULL,
     name VARCHAR(300),
     purpose VARCHAR(100),
-    format json,
+    "format" json,
     wallet_id UUID NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
