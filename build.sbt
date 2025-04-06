@@ -367,7 +367,7 @@ lazy val D_CloudAgent = new {
 
   val tapirSttpStubServer =
     "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server" % V.tapir % Test
-  val sttpClient3ZioJson = "com.softwaremill.sttp.client3" %% "zio-json" % "3.8.16" % Test
+  val sttpClient3ZioJson = "com.softwaremill.sttp.client3" %% "zio-json" % "3.10.3" % Test
 
   val quillDoobie =
     "io.getquill" %% "quill-doobie" % V.quill exclude ("org.scala-lang.modules", "scala-java8-compat_3")
