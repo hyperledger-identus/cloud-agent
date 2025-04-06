@@ -56,7 +56,7 @@ lazy val V = new {
   val zioMock = "1.0.0-RC12"
   val zioKafka = "2.8.2"
   val mockito = "3.2.18.0"
-  val monocle = "3.2.0"
+  val monocle = "3.3.0"
 
   val tapir = "1.11.7" // scala-steward:off // TODO "1.10.5"
   val http4sBlaze = "0.23.15" // scala-steward:off  // TODO "0.23.16"
