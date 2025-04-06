@@ -5,7 +5,7 @@ addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.10.4")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.2.1")
 addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.14")
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.6")
+addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.7")
 
 // In order to import proper version of com.google.protobuf.ByteString we need to add this dependency
 libraryDependencies ++= Seq("com.thesamet.scalapb" %% "compilerplugin" % "0.11.17")
