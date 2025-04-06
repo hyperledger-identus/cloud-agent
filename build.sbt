@@ -169,7 +169,7 @@ lazy val D = new {
   val mockito: ModuleID = "org.scalatestplus" %% "mockito-4-11" % V.mockito % Test
   val monocle: ModuleID = "dev.optics" %% "monocle-core" % V.monocle % Test
   val monocleMacro: ModuleID = "dev.optics" %% "monocle-macro" % V.monocle % Test
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.16" % Test
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
   val apollo = Seq( // TODO remove exclude after fix https://github.com/hyperledger/identus-apollo/issues/192
     "io.iohk.atala.prism.apollo" % "apollo-jvm" % V.apollo exclude (
