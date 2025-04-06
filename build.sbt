@@ -75,7 +75,7 @@ lazy val V = new {
   val logback = "1.5.18"
   val slf4j = "2.0.13"
 
-  val scalaUri = "4.0.3"
+  val scalaUri = "4.2.0"
 
   val jwtZioVersion = "10.0.4"
   val zioPreludeVersion = "1.0.0-RC31"
@@ -113,7 +113,7 @@ lazy val D = new {
   val micrometer: ModuleID = "io.micrometer" % "micrometer-registry-prometheus" % V.micrometer
   val micrometerPrometheusRegistry = "io.micrometer" % "micrometer-core" % V.micrometer
   val scalaUri = Seq(
-    "io.lemonlabs" %% "scala-uri" % V.scalaUri exclude (
+    "com.indoorvivants" %% "scala-uri" % V.scalaUri exclude (
       "org.typelevel",
       "cats-parse_3"
     ), // Exclude cats-parse to avoid deps conflict
