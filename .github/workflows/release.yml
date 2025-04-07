@@ -71,7 +71,3 @@ jobs:
         run: |
           npm install
           npx semantic-release
-
-      - name: Get release version
-        id: get_version
-        run: echo "RELEASE_VERSION=$(cat .release-version)" >> $GITHUB_ENV
