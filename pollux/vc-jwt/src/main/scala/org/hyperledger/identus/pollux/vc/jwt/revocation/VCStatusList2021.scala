@@ -57,7 +57,7 @@ object VCStatusList2021 {
       val w3Credential = W3cCredentialPayload(
         `@context` = Set(
           "https://www.w3.org/2018/credentials/v1",
-          "https://w3id.org/vc/status-list/2021/v1"
+          "https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld"
         ),
         maybeId = Some(vcId),
         `type` = Set("VerifiableCredential", "StatusList2021Credential"),

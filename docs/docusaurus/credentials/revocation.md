@@ -30,7 +30,7 @@ Every credential will contain the property `credentialStatus`, which will look l
   "proof" : {...},
   "@context" : [
     "https://www.w3.org/2018/credentials/v1",
-    "https://w3id.org/vc/status-list/2021/v1"
+    "https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld"
   ],
   "type" : [
     "VerifiableCredential",
@@ -94,7 +94,7 @@ We currently support 2 types of proofs:
   },
   "@context" : [
     "https://www.w3.org/2018/credentials/v1",
-    "https://w3id.org/vc/status-list/2021/v1"
+    "https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld"
   ],
   "type" : [
     "VerifiableCredential",
@@ -124,7 +124,7 @@ We currently support 2 types of proofs:
   },
   "@context" : [
     "https://www.w3.org/2018/credentials/v1",
-    "https://w3id.org/vc/status-list/2021/v1"
+    "https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld"
   ],
   "type" : [
     "VerifiableCredential",

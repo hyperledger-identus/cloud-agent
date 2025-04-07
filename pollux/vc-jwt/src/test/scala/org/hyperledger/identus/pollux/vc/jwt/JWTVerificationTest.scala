@@ -46,7 +46,7 @@ object JWTVerificationTest extends ZIOSpecDefault {
                                               |  },
                                               |  "@context" : [
                                               |    "https://www.w3.org/2018/credentials/v1",
-                                              |    "https://w3id.org/vc/status-list/2021/v1"
+                                              |    "https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld"
                                               |  ],
                                               |  "type" : [
                                               |    "VerifiableCredential",
