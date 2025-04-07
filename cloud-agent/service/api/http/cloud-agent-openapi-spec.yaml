@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Identus Cloud Agent API Reference
-  version: 1.40.0
+  version: 1.40.2-beta.1
   description: |2
 
     The Identus Cloud Agent API facilitates the integration and management of self-sovereign identity capabilities within applications.
@@ -5408,7 +5408,7 @@ components:
           $ref: '#/components/schemas/ErrorResponse'
           description: The last failure if any.
           example: ErrorResponse(404,error:Error:FailureInfo,Failure Info,Some(Not
-            Found),error:instance:27727dd0-cd86-4d24-a23a-b9cc4eb4e848)
+            Found),error:instance:c9ceed9d-8776-4dba-ab66-0c36010d8d4f)
         self:
           description: The reference to the connection resource.
           example: https://atala-prism-products.io/connections/ABCD-1234
@@ -6963,7 +6963,7 @@ components:
           type: boolean
         createdAt:
           description: The date and time when the issue credential record was created.
-          example: '2024-11-05T11:32:21.497676581Z'
+          example: '2025-04-07T16:25:25.334486981Z'
           type: string
           format: date-time
         updatedAt:
@@ -7039,7 +7039,7 @@ components:
           $ref: '#/components/schemas/ErrorResponse'
           description: The last failure if any.
           example: ErrorResponse(404,error:Error:FailureInfo,Failure Info,Some(Not
-            Found),error:instance:087a52c7-4c06-48ba-870a-8f5b3b4e003f)
+            Found),error:instance:7149011e-a910-41fc-8259-bb4ff8afa13e)
     IssueCredentialRecordPage:
       title: IssueCredentialRecordPage
       type: object
@@ -7521,7 +7521,7 @@ components:
           $ref: '#/components/schemas/ErrorResponse'
           description: The last failure if any.
           example: ErrorResponse(404,error:Error:FailureInfo,Failure Info,Some(Not
-            Found),error:instance:68e60a0f-8e08-4264-96c8-9e6f2dd59202)
+            Found),error:instance:e501c944-af7b-4905-b06c-357d3906e684)
     PresentationStatusPage:
       title: PresentationStatusPage
       type: object
@@ -7956,7 +7956,7 @@ components:
           description: List of JSON-LD contexts
           example:
           - https://www.w3.org/2018/credentials/v1
-          - https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld
+          - https://w3id.org/vc/status-list/2021/v1
           type: array
           uniqueItems: true
           items:
@@ -7982,7 +7982,7 @@ components:
           type: string
         issuanceDate:
           description: Issuance timestamp of status list credential
-          example: '2024-11-05T11:32:21.556400758Z'
+          example: '2025-04-07T16:25:25.392622192Z'
           type: string
           format: date-time
         credentialSubject:

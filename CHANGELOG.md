@@ -1,3 +1,13 @@
+## [1.40.2-beta.1](https://github.com/hyperledger-identus/cloud-agent/compare/cloud-agent-v1.40.1...cloud-agent-v1.40.2-beta.1) (2025-04-07)
+
+
+### Bug Fixes
+
+* change prism-node docker image ([8748a5d](https://github.com/hyperledger-identus/cloud-agent/commit/8748a5d43e222faf6964dabfc5c6974561a9dc96))
+* docker image and package version ([bd81591](https://github.com/hyperledger-identus/cloud-agent/commit/bd8159174c4d235fc69d597befefb9b815bdf5e3))
+* increase Kafka container healthcheck retries to 10 ([5b71317](https://github.com/hyperledger-identus/cloud-agent/commit/5b71317684d1c4959f9856ccacb2ebb0f63ae49f))
+* JsonLD context resolution, SQL migration formatting, revocation list URL ([#1558](https://github.com/hyperledger-identus/cloud-agent/issues/1558)) ([879fa41](https://github.com/hyperledger-identus/cloud-agent/commit/879fa41b967cdc5b2c7ece3a76dba5f58c01074e))
+
 # [1.40.0](https://github.com/hyperledger-identus/cloud-agent/compare/cloud-agent-v1.39.0...cloud-agent-v1.40.0) (2024-11-05)
 
 
