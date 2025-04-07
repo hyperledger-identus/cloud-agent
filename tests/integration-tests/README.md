@@ -397,7 +397,7 @@ The following variables must be set before running the tests:
 * `AGENT_VERSION`: version of the ICA docker image to use.
 
 ```shell
-TESTS_CONFIG=/configs/basic.conf PRISM_NODE_VERSION=2.3.0 AGENT_VERSION=1.36.1 ./gradlew test
+TESTS_CONFIG=/configs/basic.conf PRISM_NODE_VERSION=2.5.0 AGENT_VERSION=1.40.0 ./gradlew test
 ```
 
 > Please note: there is no need to pass environment variables if you're using already running agents.
