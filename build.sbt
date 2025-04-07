@@ -937,7 +937,7 @@ lazy val cloudAgentServer = project
       ExclusionRule("com.google.protobuf", "protobuf-javalite")
     ),
     Compile / mainClass := Some("org.hyperledger.identus.agent.server.MainApp"),
-    Docker / maintainer := "atala-coredid@iohk.io", // TODO: clarify the contact emale of the project
+    Docker / maintainer := "atala-coredid@iohk.io", //TODO: clarify the contact emale of the project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),

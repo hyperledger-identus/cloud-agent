@@ -2,7 +2,7 @@
 name: MegaLinter
 
 on:
-  pull_request:
+  workflow_dispatch:
 
 env: # Comment env block if you don't want to apply fixes
   # Apply linter fixes configuration

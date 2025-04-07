@@ -22,7 +22,7 @@ services:
 
   # Open Enterprise Agent
   identus-cloud-agent:
-    image: hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       PRISM_NODE_HOST: host.docker.internal
       PRISM_NODE_PORT:
@@ -126,34 +126,30 @@ services:
       echo -e 'Creating kafka topics'
 
       # Connect
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-retry-1 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-retry-2 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-retry-3 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-retry-4 --replication-factor 1 --partitions 5
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-retry-1 --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-retry-2 --replication-factor 1 --partitions 4
       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic connect-DLQ --replication-factor 1 --partitions 1
 
       # Issue
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-retry-1 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-retry-2 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-retry-3 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-retry-4 --replication-factor 1 --partitions 5
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-retry-1 --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-retry-2 --replication-factor 1 --partitions 4
       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic issue-DLQ --replication-factor 1 --partitions 1
 
       # Present
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-retry-1 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-retry-2 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-retry-3 --replication-factor 1 --partitions 5
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-retry-4 --replication-factor 1 --partitions 5
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-retry-1 --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-retry-2 --replication-factor 1 --partitions 4
       kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic present-DLQ --replication-factor 1 --partitions 1
 
       # DID Publication State Sync
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic sync-did-state --replication-factor 1 --partitions 5
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic sync-did-state --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic sync-did-state-DLQ --replication-factor 1 --partitions 4
 
       # Status List Sync
-      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic sync-status-list --replication-factor 1 --partitions 5
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic sync-status-list --replication-factor 1 --partitions 4
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic sync-status-list-DLQ --replication-factor 1 --partitions 4
 
       tail -f /dev/null
       "
@@ -165,4 +161,4 @@ services:
         ]
       interval: 5s
       timeout: 10s
-      retries: 10
+      retries: 5
