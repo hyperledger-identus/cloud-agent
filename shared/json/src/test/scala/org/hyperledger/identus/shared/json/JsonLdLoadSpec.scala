@@ -1,16 +1,16 @@
 package org.hyperledger.identus.shared.json
 
+import com.apicatalog.jsonld.document.JsonDocument
+import com.apicatalog.jsonld.JsonLd
+import org.hyperledger.identus.shared.json.Json.*
 import zio.test.*
 import zio.test.Assertion.*
 import zio.ZIO
-import com.apicatalog.jsonld.JsonLd
-import com.apicatalog.jsonld.document.JsonDocument
-import org.hyperledger.identus.shared.json.Json.*
 
 import java.io.ByteArrayInputStream
 
 object JsonLdLoadSpec extends ZIOSpecDefault {
-  
+
   private val jsonLdString = """{
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
@@ -34,12 +34,13 @@ object JsonLdLoadSpec extends ZIOSpecDefault {
       }
     }
   }"""
-  
+
   val jsonLDDocument = JsonDocument.of(new ByteArrayInputStream(jsonLdString.getBytes))
 
   def loadJsonLd: ZIO[Any, Throwable, Unit] = {
     ZIO.attempt {
-      JsonLd.toRdf(jsonLDDocument)
+      JsonLd
+        .toRdf(jsonLDDocument)
         .loader(Json.lruDocumentLoader) // It fails with an error without the lru loader
         .get
     }.unit
