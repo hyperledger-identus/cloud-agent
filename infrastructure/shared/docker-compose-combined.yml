@@ -1,0 +1,359 @@
+---
+version: "3.8"
+
+services:
+  ##########################
+  # Database
+  ##########################
+  node-db:
+    image: postgres:13
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: "node_db"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data_node_db:/var/lib/postgresql/data
+      - ./postgres/init-script.sh:/docker-entrypoint-initdb.d/init-script.sh
+      - ./postgres/max_conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
+    ports:
+      - "127.0.0.1:5431:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "node_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  issuer-db:
+    image: postgres:13
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data_issuer_db:/var/lib/postgresql/data
+      - ./postgres/init-script.sh:/docker-entrypoint-initdb.d/init-script.sh
+      - ./postgres/max_conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  holder-db:
+    image: postgres:13
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data_holder_db:/var/lib/postgresql/data
+      - ./postgres/init-script.sh:/docker-entrypoint-initdb.d/init-script.sh
+      - ./postgres/max_conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
+    ports:
+      - "127.0.0.1:5433:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  verifier-db:
+    image: postgres:13
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data_verifier_db:/var/lib/postgresql/data
+      - ./postgres/init-script.sh:/docker-entrypoint-initdb.d/init-script.sh
+      - ./postgres/max_conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
+    ports:
+      - "127.0.0.1:5434:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  #  pgadmin:
+  #    image: dpage/pgadmin4
+  #    environment:
+  #      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+  #      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+  #      PGADMIN_CONFIG_SERVER_MODE: "False"
+  #    volumes:
+  #      - pgadmin:/var/lib/pgadmin
+  #    ports:
+  #      - "127.0.0.1:${PGADMIN_PORT:-5050}:80"
+  #    depends_on:
+  #      db:
+  #        condition: service_healthy
+  #    profiles:
+  #      - debug
+
+  ##########################
+  # Services
+  ##########################
+
+  prism-node:
+    image: docker.io/inputoutput/prism-node:${PRISM_NODE_VERSION}
+    environment:
+      NODE_PSQL_HOST: node-db:5432
+      NODE_REFRESH_AND_SUBMIT_PERIOD:
+      NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD:
+      NODE_WALLET_MAX_TPS:
+    depends_on:
+      node-db:
+        condition: service_healthy
+
+  vault-server:
+    image: hashicorp/vault:latest
+    #    ports:
+    #      - "8200:8200"
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_DEV_ROOT_TOKEN_ID: ${VAULT_DEV_ROOT_TOKEN_ID}
+    command: server -dev -dev-root-token-id=${VAULT_DEV_ROOT_TOKEN_ID}
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cloud-agent-issuer:
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
+    environment:
+      POLLUX_DB_HOST: issuer-db
+      POLLUX_DB_PORT: 5432
+      POLLUX_DB_NAME: pollux
+      POLLUX_DB_USER: postgres
+      POLLUX_DB_PASSWORD: postgres
+      CONNECT_DB_HOST: issuer-db
+      CONNECT_DB_PORT: 5432
+      CONNECT_DB_NAME: connect
+      CONNECT_DB_USER: postgres
+      CONNECT_DB_PASSWORD: postgres
+      AGENT_DB_HOST: issuer-db
+      AGENT_DB_PORT: 5432
+      AGENT_DB_NAME: agent
+      AGENT_DB_USER: postgres
+      AGENT_DB_PASSWORD: postgres
+      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${ISSUER_PORT}/cloud-agent
+      DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${ISSUER_PORT}/didcomm
+      REST_SERVICE_URL: http://${DOCKERHOST}:${ISSUER_PORT}/cloud-agent
+      PRISM_NODE_HOST: prism-node
+      PRISM_NODE_PORT: 50053
+      VAULT_ADDR: ${VAULT_ADDR:-http://vault-server:8200}
+      VAULT_TOKEN: ${VAULT_DEV_ROOT_TOKEN_ID:-root}
+      SECRET_STORAGE_BACKEND: postgres
+      DEV_MODE: true
+      DEFAULT_WALLET_ENABLED:
+      DEFAULT_WALLET_SEED:
+      DEFAULT_WALLET_WEBHOOK_URL:
+      DEFAULT_WALLET_WEBHOOK_API_KEY:
+      DEFAULT_WALLET_AUTH_API_KEY:
+      GLOBAL_WEBHOOK_URL:
+      GLOBAL_WEBHOOK_API_KEY:
+      WEBHOOK_PARALLELISM:
+      ADMIN_TOKEN:
+      API_KEY_SALT:
+      API_KEY_ENABLED: ${ISSUER_API_KEY_ENABLED:-true}
+      API_KEY_AUTHENTICATE_AS_DEFAULT_USER: false
+      API_KEY_AUTO_PROVISIONING:
+    depends_on:
+      issuer-db:
+        condition: service_healthy
+      prism-node:
+        condition: service_started
+      vault-server:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://cloud-agent-issuer:8085/_system/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  swagger-ui-issuer:
+    image: swaggerapi/swagger-ui:v5.1.0
+    environment:
+      - 'URLS=[
+        { name: "Cloud Agent", url: "/docs/cloud-agent/api/docs.yaml" }
+        ]'
+
+  apisix-issuer:
+    image: apache/apisix:2.15.0-alpine
+    volumes:
+      - ./apisix/conf/apisix-issuer.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+      - ./apisix/conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+    ports:
+      - "${ISSUER_PORT}:9080/tcp"
+    depends_on:
+      - cloud-agent-issuer
+      - swagger-ui-issuer
+
+  cloud-agent-holder:
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
+    environment:
+      POLLUX_DB_HOST: holder-db
+      POLLUX_DB_PORT: 5432
+      POLLUX_DB_NAME: pollux
+      POLLUX_DB_USER: postgres
+      POLLUX_DB_PASSWORD: postgres
+      CONNECT_DB_HOST: holder-db
+      CONNECT_DB_PORT: 5432
+      CONNECT_DB_NAME: connect
+      CONNECT_DB_USER: postgres
+      CONNECT_DB_PASSWORD: postgres
+      AGENT_DB_HOST: holder-db
+      AGENT_DB_PORT: 5432
+      AGENT_DB_NAME: agent
+      AGENT_DB_USER: postgres
+      AGENT_DB_PASSWORD: postgres
+      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${HOLDER_PORT}/cloud-agent
+      DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${HOLDER_PORT}/didcomm
+      REST_SERVICE_URL: http://${DOCKERHOST}:${HOLDER_PORT}/cloud-agent
+      PRISM_NODE_HOST: prism-node
+      PRISM_NODE_PORT: 50053
+      VAULT_ADDR: ${VAULT_ADDR:-http://vault-server:8200}
+      VAULT_TOKEN: ${VAULT_DEV_ROOT_TOKEN_ID:-root}
+      SECRET_STORAGE_BACKEND: postgres
+      DEV_MODE: true
+      DEFAULT_WALLET_ENABLED:
+      DEFAULT_WALLET_SEED:
+      DEFAULT_WALLET_WEBHOOK_URL:
+      DEFAULT_WALLET_WEBHOOK_API_KEY:
+      DEFAULT_WALLET_AUTH_API_KEY:
+      GLOBAL_WEBHOOK_URL:
+      GLOBAL_WEBHOOK_API_KEY:
+      WEBHOOK_PARALLELISM:
+      ADMIN_TOKEN:
+      API_KEY_SALT:
+      API_KEY_ENABLED: ${HOLDER_API_KEY_ENABLED:-true}
+      API_KEY_AUTHENTICATE_AS_DEFAULT_USER:
+      API_KEY_AUTO_PROVISIONING:
+    depends_on:
+      holder-db:
+        condition: service_healthy
+      prism-node:
+        condition: service_started
+      vault-server:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://cloud-agent-holder:8085/_system/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  swagger-ui-holder:
+    image: swaggerapi/swagger-ui:v5.1.0
+    environment:
+      - 'URLS=[
+        { name: "Cloud Agent", url: "/docs/cloud-agent/api/docs.yaml" }
+        ]'
+
+  apisix-holder:
+    image: apache/apisix:2.15.0-alpine
+    volumes:
+      - ./apisix/conf/apisix-holder.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+      - ./apisix/conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+    ports:
+      - "${HOLDER_PORT}:9080/tcp"
+    depends_on:
+      - cloud-agent-holder
+      - swagger-ui-holder
+
+  cloud-agent-verifier:
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
+    environment:
+      POLLUX_DB_HOST: verifier-db
+      POLLUX_DB_PORT: 5432
+      POLLUX_DB_NAME: pollux
+      POLLUX_DB_USER: postgres
+      POLLUX_DB_PASSWORD: postgres
+      CONNECT_DB_HOST: verifier-db
+      CONNECT_DB_PORT: 5432
+      CONNECT_DB_NAME: connect
+      CONNECT_DB_USER: postgres
+      CONNECT_DB_PASSWORD: postgres
+      AGENT_DB_HOST: verifier-db
+      AGENT_DB_PORT: 5432
+      AGENT_DB_NAME: agent
+      AGENT_DB_USER: postgres
+      AGENT_DB_PASSWORD: postgres
+      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/cloud-agent
+      DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/didcomm
+      REST_SERVICE_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/cloud-agent
+      PRISM_NODE_HOST: prism-node
+      PRISM_NODE_PORT: 50053
+      VAULT_ADDR: ${VAULT_ADDR:-http://vault-server:8200}
+      VAULT_TOKEN: ${VAULT_DEV_ROOT_TOKEN_ID:-root}
+      SECRET_STORAGE_BACKEND: postgres
+      DEV_MODE: true
+      DEFAULT_WALLET_ENABLED:
+      DEFAULT_WALLET_SEED:
+      DEFAULT_WALLET_WEBHOOK_URL:
+      DEFAULT_WALLET_WEBHOOK_API_KEY:
+      DEFAULT_WALLET_AUTH_API_KEY:
+      GLOBAL_WEBHOOK_URL:
+      GLOBAL_WEBHOOK_API_KEY:
+      WEBHOOK_PARALLELISM:
+      ADMIN_TOKEN:
+      API_KEY_SALT:
+      API_KEY_ENABLED: ${VERIFIER_API_KEY_ENABLED:-true}
+      API_KEY_AUTHENTICATE_AS_DEFAULT_USER:
+      API_KEY_AUTO_PROVISIONING:
+    depends_on:
+      verifier-db:
+        condition: service_healthy
+      prism-node:
+        condition: service_started
+      vault-server:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "curl", "-f", "http://cloud-agent-verifier:8085/_system/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  swagger-ui-verifier:
+    image: swaggerapi/swagger-ui:v5.1.0
+    environment:
+      - 'URLS=[
+        { name: "Cloud Agent", url: "/docs/cloud-agent/api/docs.yaml" }
+        ]'
+
+  apisix-verifier:
+    image: apache/apisix:2.15.0-alpine
+    volumes:
+      - ./apisix/conf/apisix-verifier.yaml:/usr/local/apisix/conf/apisix.yaml:ro
+      - ./apisix/conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+    ports:
+      - "${VERIFIER_PORT}:9080/tcp"
+    depends_on:
+      - cloud-agent-verifier
+      - swagger-ui-verifier
+
+volumes:
+  pg_data_node_db:
+  pg_data_issuer_db:
+  pg_data_holder_db:
+  pg_data_verifier_db:
+  #  pgadmin:
+  # Temporary commit network setting due to e2e CI bug
+  # to be enabled later after debugging
+  #networks:
+  #  default:
+  #    name: ${NETWORK}

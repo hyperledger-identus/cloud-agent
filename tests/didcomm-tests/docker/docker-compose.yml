@@ -1,0 +1,128 @@
+---
+services:
+  ##########################
+  # Database
+  ##########################
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: "castor,pollux,connect,agent,node_db"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./postgres/init-script.sh:/docker-entrypoint-initdb.d/init-script.sh
+      - ./postgres/max_conns.sql:/docker-entrypoint-initdb.d/max_conns.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "agent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ##########################
+  # Mediator
+  ##########################
+  mongo:
+    image: mongo:6.0
+    command: ["--auth"]
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=mediator
+    volumes:
+      - ./initdb.js:/docker-entrypoint-initdb.d/initdb.js
+
+  mediator:
+    network_mode: "container:didcomm-stack"
+    image: docker.io/hyperledgeridentus/identus-mediator:1.0.0
+    environment:
+      # Creates the identity:
+      - KEY_AGREEMENT_D=Z6D8LduZgZ6LnrOHPrMTS6uU2u5Btsrk1SGs4fn8M7c
+      - KEY_AGREEMENT_X=Sr4SkIskjN_VdKTn0zkjYbhGTWArdUNE4j_DmUpnQGw
+      - KEY_AUTHENTICATION_D=INXCnxFEl0atLIIQYruHzGd5sUivMRyQOzu87qVerug
+      - KEY_AUTHENTICATION_X=MBjnXZxkMcoQVVL21hahWAw43RuAG-i64ipbeKKqwoA
+      - SERVICE_ENDPOINTS=http://localhost:8080;ws://localhost:8080/ws
+      - MONGODB_USER=admin
+      - MONGODB_PASSWORD=admin
+      - MONGODB_PROTOCOL=mongodb
+      - MONGODB_HOST=mongo
+      - MONGODB_PORT=27017
+      - MONGODB_DB_NAME=mediator
+    depends_on:
+      - "mongo"
+      - "agent"
+
+  ##########################
+  # Building-blocks
+  ##########################
+  prism-node:
+    image: docker.io/inputoutput/prism-node:2.5.0
+    environment:
+      NODE_PSQL_HOST: db:5432
+    depends_on:
+      db:
+        condition: service_healthy
+
+  agent:
+    container_name: didcomm-stack
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:${CLOUD_AGENT_VERSION}
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+      - "8091:8091"
+    environment:
+      CASTOR_DB_HOST: db
+      CASTOR_DB_PORT: 5432
+      CASTOR_DB_NAME: castor
+      CASTOR_DB_USER: postgres
+      CASTOR_DB_PASSWORD: postgres
+      POLLUX_DB_HOST: db
+      POLLUX_DB_PORT: 5432
+      POLLUX_DB_NAME: pollux
+      POLLUX_DB_USER: postgres
+      POLLUX_DB_PASSWORD: postgres
+      CONNECT_DB_HOST: db
+      CONNECT_DB_PORT: 5432
+      CONNECT_DB_NAME: connect
+      CONNECT_DB_USER: postgres
+      CONNECT_DB_PASSWORD: postgres
+      AGENT_DB_HOST: db
+      AGENT_DB_PORT: 5432
+      AGENT_DB_NAME: agent
+      AGENT_DB_USER: postgres
+      AGENT_DB_PASSWORD: postgres
+      AGENT_HTTP_PORT: 8090
+      REST_SERVICE_URL: http://localhost:8090
+      AGENT_DIDCOMM_PORT: 8091
+      DIDCOMM_SERVICE_URL: http://localhost:8091
+      PRISM_NODE_HOST: prism-node
+      PRISM_NODE_PORT: 50053
+      SECRET_STORAGE_BACKEND: postgres
+      DEV_MODE: true
+      DEFAULT_WALLET_ENABLED:
+      DEFAULT_WALLET_SEED:
+      DEFAULT_WALLET_WEBHOOK_URL:
+      DEFAULT_WALLET_WEBHOOK_API_KEY:
+      DEFAULT_WALLET_AUTH_API_KEY:
+      GLOBAL_WEBHOOK_URL:
+      GLOBAL_WEBHOOK_API_KEY:
+      WEBHOOK_PARALLELISM:
+      ADMIN_TOKEN:
+      API_KEY_SALT:
+      API_KEY_ENABLED: false
+      API_KEY_AUTHENTICATE_AS_DEFAULT_USER:
+      API_KEY_AUTO_PROVISIONING:
+      NODE_REFRESH_AND_SUBMIT_PERIOD:
+      NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD:
+      NODE_WALLET_MAX_TPS:
+    depends_on:
+      db:
+        condition: service_healthy
+      prism-node:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/_system/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

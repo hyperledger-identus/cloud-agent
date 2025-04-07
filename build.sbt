@@ -46,7 +46,7 @@ lazy val V = new {
   val munitZio = "0.2.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.9"
+  val zio = "2.1.11"
   val zioConfig = "4.0.2"
   val zioLogging = "2.3.1"
   val zioJson = "0.7.3"
@@ -54,7 +54,7 @@ lazy val V = new {
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "2.7.5"
+  val zioKafka = "2.8.2"
   val mockito = "3.2.18.0"
   val monocle = "3.2.0"
 
@@ -937,7 +937,7 @@ lazy val cloudAgentServer = project
       ExclusionRule("com.google.protobuf", "protobuf-javalite")
     ),
     Compile / mainClass := Some("org.hyperledger.identus.agent.server.MainApp"),
-    Docker / maintainer := "atala-coredid@iohk.io", // TODO: clarify the contact emale of the project
+    Docker / maintainer := "atala-coredid@iohk.io", //TODO: clarify the contact emale of the project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
