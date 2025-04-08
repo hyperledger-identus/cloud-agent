@@ -1,3 +1,16 @@
+## [1.40.2](https://github.com/hyperledger-identus/cloud-agent/compare/cloud-agent-v1.40.1...cloud-agent-v1.40.2) (2025-04-08)
+
+
+### Bug Fixes
+
+* add LRUDocumentLoader to optimize the JsonLD.toRdf method call [#1553](https://github.com/hyperledger-identus/cloud-agent/issues/1553) ([87b9be7](https://github.com/hyperledger-identus/cloud-agent/commit/87b9be727460b9725bd23201784a3881f86a84b0))
+* change prism-node docker image ([8748a5d](https://github.com/hyperledger-identus/cloud-agent/commit/8748a5d43e222faf6964dabfc5c6974561a9dc96))
+* docker image and package version ([bd81591](https://github.com/hyperledger-identus/cloud-agent/commit/bd8159174c4d235fc69d597befefb9b815bdf5e3))
+* increase Kafka container healthcheck retries to 10 ([5b71317](https://github.com/hyperledger-identus/cloud-agent/commit/5b71317684d1c4959f9856ccacb2ebb0f63ae49f))
+* JsonLD context resolution, SQL migration formatting, revocation list URL ([#1558](https://github.com/hyperledger-identus/cloud-agent/issues/1558)) ([879fa41](https://github.com/hyperledger-identus/cloud-agent/commit/879fa41b967cdc5b2c7ece3a76dba5f58c01074e))
+* **migration:** quote reserved "format" column for PostgreSQL compatibility ([#1554](https://github.com/hyperledger-identus/cloud-agent/issues/1554)) ([3cda5a4](https://github.com/hyperledger-identus/cloud-agent/commit/3cda5a44c1e250f115f4ade60c63222d813f6783))
+* mitigation to [#1495](https://github.com/hyperledger-identus/cloud-agent/issues/1495) (update the outdated url) ([#1549](https://github.com/hyperledger-identus/cloud-agent/issues/1549)) ([cd3ac29](https://github.com/hyperledger-identus/cloud-agent/commit/cd3ac295fd95fb82ed21ceecbde8dfdd2862aa03))
+
 # [1.40.0](https://github.com/hyperledger-identus/cloud-agent/compare/cloud-agent-v1.39.0...cloud-agent-v1.40.0) (2024-11-05)
 
 
