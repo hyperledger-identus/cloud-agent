@@ -2,6 +2,7 @@ export default {
     branches: [
         'main',
         '+([0-9])?(.{+([0-9]),x}).x',
+        'release/+([0-9])?(.{+([0-9]),x}).x',
         { name: 'beta', prerelease: true }
     ],
     plugins: [
