@@ -7,6 +7,20 @@ concurrency:
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "cloud-agent/**"
+      - "castor/**"
+      - "connect/**"
+      - "mercury/**"
+      - "pollux/**"
+      - "shared/**"
+      - "shared-test/**"
+      - "*.sbt"
+      - "project/**"
+      - "prism-node/**"
 
 permissions:
   contents: write
