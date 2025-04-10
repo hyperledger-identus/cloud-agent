@@ -55,8 +55,6 @@ object SystemModule {
       ret: AppConfig <- TypesafeConfigProvider
         .fromTypesafeConfig(ConfigFactory.load())
         .load(AppConfig.config)
-      _ <- ZIO.log(s"HTTP server endpoint is setup as '${ret.agent.httpEndpoint.publicEndpointUrl}'")
-      _ <- ZIO.log(s"DIDComm server endpoint is setup as '${ret.agent.didCommEndpoint.publicEndpointUrl}'")
     } yield ret
   )
 

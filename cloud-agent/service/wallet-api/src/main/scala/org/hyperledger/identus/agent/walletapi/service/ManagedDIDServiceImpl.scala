@@ -125,11 +125,7 @@ class ManagedDIDServiceImpl private[walletapi] (
     for {
       _ <- ZIO
         .fromEither(ManagedDIDTemplateValidator.validate(didTemplate))
-        .mapError { x =>
-          println("x: " + x)
-
-          CreateManagedDIDError.InvalidArgument(x)
-        }
+        .mapError(CreateManagedDIDError.InvalidArgument.apply)
       _ <- ZIO.logInfo(s"Old did template after validation: $didTemplate")
       newDidTemplate = didTemplate.copy(services = didTemplate.services)
       _ <- ZIO.logInfo(s"Creating managed DID with template2: $newDidTemplate")

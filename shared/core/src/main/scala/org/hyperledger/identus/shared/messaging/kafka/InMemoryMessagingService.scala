@@ -40,7 +40,7 @@ class InMemoryConsumer[K, V](
       ZStream.repeatZIO {
         topicQueues.get(topic).flatMap {
           case Some((queue, _)) =>
-            ZIO.debug(s"Connected to queue for topic $topic in group $groupId") *>
+            ZIO.logDebug(s"Connected to queue for topic $topic in group $groupId") *>
               ZIO.succeed(ZStream.fromQueue(queue).collect { case msg: Message[K, V] @unchecked => (topic, msg) })
           case None =>
             ZIO.sleep(1.second) *> ZIO.succeed(ZStream.empty)
@@ -50,7 +50,7 @@ class InMemoryConsumer[K, V](
     val streams = allTopics.map(getQueueStream)
     ZStream
       .mergeAllUnbounded()(streams: _*)
-      .tap { case (topic, msg) => ZIO.log(s"Processing message in group $groupId, topic:$topic : $msg") }
+      .tap { case (topic, msg) => ZIO.logDebug(s"Processing message in group $groupId, topic:$topic : $msg") }
       .filterZIO { case (topic, msg) =>
         for {
           currentTime <- Clock.currentTime(TimeUnit.MILLISECONDS)
@@ -69,7 +69,7 @@ class InMemoryConsumer[K, V](
         } yield isNew
       }
       .mapZIO { case (_, msg) => handler(msg) }
-      .tap(_ => ZIO.log(s"Message processed in group $groupId, topic:$topic"))
+      .tap(_ => ZIO.logDebug(s"Message processed in group $groupId, topic:$topic"))
       .runDrain
   }
 }
