@@ -58,9 +58,9 @@ class WebhookPublisher(
 
   private def pollAndNotify[A](consumer: EventConsumer[A])(implicit encoder: JsonEncoder[A]) = {
     for {
-      _ <- ZIO.log(s"Polling $parallelism event(s)")
+      _ <- ZIO.logDebug(s"Polling $parallelism event(s)")
       events <- consumer.poll(parallelism).mapError(e => UnexpectedError(e.toString))
-      _ <- ZIO.log(s"Got ${events.size} event(s)")
+      _ <- ZIO.logDebug(s"Got ${events.size} event(s)")
       webhookConfig <- ZIO
         .foreach(events.map(_.walletId).toSet.toList) { walletId =>
           walletService.listWalletNotifications

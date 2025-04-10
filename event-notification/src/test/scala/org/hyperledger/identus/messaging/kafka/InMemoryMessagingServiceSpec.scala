@@ -46,18 +46,18 @@ object InMemoryMessagingServiceSpec extends ZIOSpecDefault {
         ref <- Ref.make(List.empty[Message[String, String]])
 
         _ <- ZIO.foreach(messages) { case (key, value) =>
-          producer.produce(topic, key, value) *> ZIO.debug(s"Produced message: $key -> $value")
+          producer.produce(topic, key, value) *> ZIO.logDebug(s"Produced message: $key -> $value")
         }
         _ <- consumer
           .consume(topic) { msg =>
-            ZIO.debug(s"Consumed message: ${msg.key} -> ${msg.value}") *>
+            ZIO.logDebug(s"Consumed message: ${msg.key} -> ${msg.value}") *>
               ref.update(_ :+ msg) *> ref.get.flatMap { msgs =>
                 if (msgs.size == messages.size) promise.succeed(msgs).unit else ZIO.unit
               }
           }
           .fork
         receivedMessages <- promise.await
-        _ <- ZIO.debug(s"Received messages: ${receivedMessages.map(m => (m.key, m.value))}")
+        _ <- ZIO.logDebug(s"Received messages: ${receivedMessages.map(m => (m.key, m.value))}")
       } yield assert(receivedMessages.map(m => (m.key, m.value)).sorted)(
         equalTo(messages.sorted)
       )
