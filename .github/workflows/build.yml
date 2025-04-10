@@ -121,6 +121,20 @@ jobs:
           overwrite: true
           compression-level: 0
 
+  end-to-end:
+    needs: build
+    name: "Dispatch end-to-end"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger component integration
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.IDENTUS_CI }}
+          repository: hyperledger-identus/integration
+          event-type: integration
+          client-payload: '{"component": "cloud-agent", "version": "${{ github.sha }}"}'
+
   build-and-publish-clients:
     needs: build
     if: needs.build.outputs.OAS_PUBLISHED
