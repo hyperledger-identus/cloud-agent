@@ -79,7 +79,7 @@ jobs:
       - name: Trigger component integration
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.ATALA_GITHUB_TOKEN }}
-          repository: input-output-hk/integration
+          token: ${{ secrets.IDENTUS_CI }}
+          repository: hyperledger-identus/integration
           event-type: integration
           client-payload: '{"component": "cloud-agent", "version": "${{ steps.version.outputs.RELEASE_VERSION }}"}'
