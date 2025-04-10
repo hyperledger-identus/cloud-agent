@@ -133,7 +133,7 @@ jobs:
           token: ${{ secrets.IDENTUS_CI }}
           repository: hyperledger-identus/integration
           event-type: integration
-          client-payload: '{"component": "cloud-agent", "version": "${{ github.sha }}"}'
+          client-payload: '{"component": "cloud-agent", "version": "${{ needs.build.outputs.REVISION_VERSION }}"}'
 
   build-and-publish-clients:
     needs: build
