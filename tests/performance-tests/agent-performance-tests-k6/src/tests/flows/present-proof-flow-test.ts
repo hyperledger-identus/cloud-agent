@@ -45,9 +45,9 @@ export function setup () {
 }
 
 export default (data: {
-  issuerDid: string;
-  holderDid: string;
-  issuerSchema: CredentialSchemaResponse;
+  issuerDid: string
+  holderDid: string
+  issuerSchema: CredentialSchemaResponse
 }) => {
   issuer.did = data.issuerDid
   issuer.schema = data.issuerSchema

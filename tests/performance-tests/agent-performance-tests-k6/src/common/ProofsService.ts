@@ -1,21 +1,20 @@
-import { HttpService, statusChangeTimeouts } from "./HttpService";
-import {fail, sleep} from "k6";
-import {Connection, PresentationStatus} from "@hyperledger/identus-cloud-agent-client";
-import { WAITING_LOOP_MAX_ITERATIONS, WAITING_LOOP_PAUSE_INTERVAL } from "./Config";
-import vu from "k6/execution";
+import { HttpService, statusChangeTimeouts } from './HttpService'
+import { fail, sleep } from 'k6'
+import { Connection, PresentationStatus } from '@hyperledger/identus-cloud-agent-client'
+import { WAITING_LOOP_MAX_ITERATIONS, WAITING_LOOP_PAUSE_INTERVAL } from './Config'
+import vu from 'k6/execution'
 
 /**
  * A service class for managing proofs in the application.
  * Extends the HttpService class.
  */
 export class ProofsService extends HttpService {
-
   /**
    * Requests a proof from a specific connection.
    * @param {Connection} connection - The connection object.
    * @returns {string} The ID of the requested presentation.
    */
-  requestProof(connection: Connection): string {
+  requestProof (connection: Connection): string {
     const payload = `
       {
           "description": "Proof request",
@@ -26,11 +25,11 @@ export class ProofsService extends HttpService {
           },
           "proofs":[]
       }`
-    const res = this.post("present-proof/presentations", payload);
+    const res = this.post('present-proof/presentations', payload)
     try {
-      return this.toJson(res).presentationId as string;
+      return this.toJson(res).presentationId as string
     } catch {
-      fail("Failed to parse JSON as presentationId string")
+      fail('Failed to parse JSON as presentationId string')
     }
   }
 
@@ -39,7 +38,7 @@ export class ProofsService extends HttpService {
    * @param {PresentationStatus} presentation - The presentation status object.
    * @param {string} credentialProofId - The credential proof ID.
    */
-  acceptProofRequest(presentation: PresentationStatus, credentialProofId: string) {
+  acceptProofRequest (presentation: PresentationStatus, credentialProofId: string) {
     const payload = `
       {
         "action": "request-accept",
@@ -47,11 +46,11 @@ export class ProofsService extends HttpService {
           "${credentialProofId}"
         ]
       }`
-    const res = this.patch(`present-proof/presentations/${presentation.presentationId}`, payload);
+    const res = this.patch(`present-proof/presentations/${presentation.presentationId}`, payload)
     try {
-      return this.toJson(res).presentationId as string;
+      return this.toJson(res).presentationId as string
     } catch {
-      fail("Failed to parse JSON as presentationId string")
+      fail('Failed to parse JSON as presentationId string')
     }
   }
 
@@ -60,12 +59,12 @@ export class ProofsService extends HttpService {
    * @param {string} presentationId - The ID of the presentation.
    * @returns {PresentationStatus} The presentation status object.
    */
-  getPresentation(presentationId: string): PresentationStatus {
-    const res = this.get(`present-proof/presentations/${presentationId}`);
+  getPresentation (presentationId: string): PresentationStatus {
+    const res = this.get(`present-proof/presentations/${presentationId}`)
     try {
-      return this.toJson(res) as unknown as PresentationStatus;
+      return this.toJson(res) as unknown as PresentationStatus
     } catch {
-      fail("Failed to parse JSON as PresentationStatus")
+      fail('Failed to parse JSON as PresentationStatus')
     }
   }
 
@@ -73,12 +72,12 @@ export class ProofsService extends HttpService {
    * Retrieves all presentations.
    * @returns {PresentationStatus[]} An array of presentation status objects.
    */
-  getPresentations(thid: string): PresentationStatus[] {
-    const res = this.get(`present-proof/presentations?thid=${thid}`);
+  getPresentations (thid: string): PresentationStatus[] {
+    const res = this.get(`present-proof/presentations?thid=${thid}`)
     try {
-      return this.toJson(res).contents as unknown as PresentationStatus[];
+      return this.toJson(res).contents as unknown as PresentationStatus[]
     } catch {
-      fail("Failed to parse JSON as PresentationStatus[]")
+      fail('Failed to parse JSON as PresentationStatus[]')
     }
   }
 
@@ -87,21 +86,21 @@ export class ProofsService extends HttpService {
    * @returns {PresentationStatus} The received presentation status object.
    * @throws {Error} If the proof request is not received within the maximum iterations.
    */
-  waitForProof(thid: string): PresentationStatus {
-    let iterations = 0;
-    let presentation: PresentationStatus | undefined;
+  waitForProof (thid: string): PresentationStatus {
+    let iterations = 0
+    let presentation: PresentationStatus | undefined
     do {
       presentation = this.getPresentations(thid).find(
-        r => r.thid === thid && r.status === "RequestReceived"
-      );
-      if (presentation) {
-        return presentation;
+        r => r.thid === thid && r.status === 'RequestReceived'
+      )
+      if (presentation != null) {
+        return presentation
       }
-      sleep(WAITING_LOOP_PAUSE_INTERVAL);
-      iterations++;
-    } while (iterations < WAITING_LOOP_MAX_ITERATIONS);
+      sleep(WAITING_LOOP_PAUSE_INTERVAL)
+      iterations++
+    } while (iterations < WAITING_LOOP_MAX_ITERATIONS)
     statusChangeTimeouts.add(1)
-    fail(`Presentation with offerId not achieved during the waiting loop`);
+    fail('Presentation with offerId not achieved during the waiting loop')
   }
 
   /**
@@ -110,18 +109,17 @@ export class ProofsService extends HttpService {
    * @param {string} requiredState - The required state.
    * @throws {Error} If the presentation state does not reach the required state within the maximum iterations.
    */
-  waitForPresentationState(presentationId: string, requiredState: string) {
-    let iterations = 0;
-    let state: string;
+  waitForPresentationState (presentationId: string, requiredState: string) {
+    let iterations = 0
+    let state: string
     do {
-      state = this.getPresentation(presentationId).status;
-      sleep(WAITING_LOOP_PAUSE_INTERVAL);
-      iterations++;
-    } while (state !== requiredState && iterations < WAITING_LOOP_MAX_ITERATIONS);
+      state = this.getPresentation(presentationId).status
+      sleep(WAITING_LOOP_PAUSE_INTERVAL)
+      iterations++
+    } while (state !== requiredState && iterations < WAITING_LOOP_MAX_ITERATIONS)
     if (state !== requiredState) {
       statusChangeTimeouts.add(1)
-      fail(`Presentation state is ${state}, required ${requiredState}`);
+      fail(`Presentation state is ${state}, required ${requiredState}`)
     }
   }
-
 }
