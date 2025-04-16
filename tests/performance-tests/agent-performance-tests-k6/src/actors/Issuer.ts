@@ -1,4 +1,4 @@
-import { Connection, CredentialSchemaResponse, IssueCredentialRecord } from "@hyperledger/identus-cloud-agent-client-ts";
+import { Connection, CredentialSchemaResponse, IssueCredentialRecord } from "@hyperledger/identus-cloud-agent-client";
 import { Actor } from "./Actor";
 import { ISSUER_AGENT_API_KEY, ISSUER_AGENT_URL } from "../common/Config";
 

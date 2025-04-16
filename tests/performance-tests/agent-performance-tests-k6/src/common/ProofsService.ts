@@ -1,6 +1,6 @@
 import { HttpService, statusChangeTimeouts } from "./HttpService";
 import {fail, sleep} from "k6";
-import {Connection, PresentationStatus} from "@hyperledger/identus-cloud-agent-client-ts";
+import {Connection, PresentationStatus} from "@hyperledger/identus-cloud-agent-client";
 import { WAITING_LOOP_MAX_ITERATIONS, WAITING_LOOP_PAUSE_INTERVAL } from "./Config";
 import vu from "k6/execution";
 

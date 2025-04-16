@@ -1,4 +1,4 @@
-import { Connection, ConnectionInvitation, IssueCredentialRecord } from "@hyperledger/identus-cloud-agent-client-ts";
+import { Connection, ConnectionInvitation, IssueCredentialRecord } from "@hyperledger/identus-cloud-agent-client";
 import { Actor } from "./Actor";
 import { HOLDER_AGENT_API_KEY, HOLDER_AGENT_URL } from "../common/Config";
 

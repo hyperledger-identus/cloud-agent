@@ -7,7 +7,7 @@ import {
   DIDDocument,
   DidOperationSubmission,
   ManagedDID
-} from "@hyperledger/identus-cloud-agent-client-ts";
+} from "@hyperledger/identus-cloud-agent-client";
 import {fail, sleep} from "k6";
 
 

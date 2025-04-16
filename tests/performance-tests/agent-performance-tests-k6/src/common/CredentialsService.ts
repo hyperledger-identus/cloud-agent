@@ -1,7 +1,7 @@
 import { fail, sleep } from "k6";
 import { HttpService, statusChangeTimeouts } from "./HttpService";
 import { ISSUER_AGENT_URL, WAITING_LOOP_MAX_ITERATIONS, WAITING_LOOP_PAUSE_INTERVAL } from "./Config";
-import { IssueCredentialRecord, Connection, CredentialSchemaResponse } from "@hyperledger/identus-cloud-agent-client-ts";
+import { IssueCredentialRecord, Connection, CredentialSchemaResponse } from "@hyperledger/identus-cloud-agent-client";
 import { crypto } from "k6/experimental/webcrypto";
 
 /**

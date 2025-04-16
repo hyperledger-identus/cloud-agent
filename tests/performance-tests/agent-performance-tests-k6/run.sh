@@ -7,7 +7,7 @@ ENV_FILE=".env"
 PERF_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 AGENT_DIR="$PERF_DIR/../../.."
 DOCKERFILE="$AGENT_DIR/infrastructure/shared/docker-compose-combined.yml"
-K6_URL="https://github.com/grafana/k6/releases/download/v0.45.0/k6-v0.45.0-macos-arm64.zip"
+K6_URL="https://github.com/grafana/k6/releases/download/v0.58.0/k6-v0.58.0-macos-arm64.zip"
 K6_ZIP_FILE="$(basename ${K6_URL})"
 
 # Functions
