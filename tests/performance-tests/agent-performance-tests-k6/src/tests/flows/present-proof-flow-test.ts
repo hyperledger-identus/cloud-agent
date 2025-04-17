@@ -1,6 +1,6 @@
 import { Options } from 'k6/options'
 import { Issuer, Holder, Verifier } from '../../actors'
-import { CredentialSchemaResponse } from '@hyperledger/identus-cloud-agent-client-ts'
+import { CredentialSchemaResponse } from '@hyperledger/identus-cloud-agent-client'
 import { defaultOptions } from '../../scenarios/default'
 import merge from 'ts-deepmerge'
 import { describe } from '../../k6chaijs.js'
@@ -45,9 +45,9 @@ export function setup () {
 }
 
 export default (data: {
-  issuerDid: string;
-  holderDid: string;
-  issuerSchema: CredentialSchemaResponse;
+  issuerDid: string
+  holderDid: string
+  issuerSchema: CredentialSchemaResponse
 }) => {
   issuer.did = data.issuerDid
   issuer.schema = data.issuerSchema

@@ -1,4 +1,4 @@
-name: Build and Publish Revision
+name: Update Open API Specification
 
 run-name: Update the Open API Specification from ${{ github.head_ref || github.ref_name }}
 

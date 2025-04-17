@@ -10,7 +10,7 @@
 
 Clone the generated repository on your local machine, move to the project root folder and install the dependencies defined in [`package.json`](./package.json)
 
-*NOTE*: The Project has a dependency on `hyperledger/identus-cloud-agent-client-ts` which is the GitHub packages repository.
+*NOTE*: The Project has a dependency on `hyperledger/identus-cloud-agent-client` which is the GitHub packages repository.
 To install this dependency, you need to have an environment variable `GITHUB_TOKEN` with the scope `read:packages` set, you can install the dependency by running the following command:
 
 ```bash
