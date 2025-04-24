@@ -4,12 +4,8 @@ import org.hyperledger.identus.agent.server.config.AppConfig
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
-import org.hyperledger.identus.connect.controller.http.{
-  AcceptConnectionInvitationRequest,
-  Connection,
-  ConnectionsPage,
-  CreateConnectionRequest
-}
+import org.hyperledger.identus.connect.controller.http.{AcceptConnectionInvitationRequest, Connection, ConnectionsPage, CreateConnectionRequest}
+import org.hyperledger.identus.connect.core.model.ConnectionRecord.ProtocolState
 import org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
 import org.hyperledger.identus.connect.core.service.ConnectionService
 import org.hyperledger.identus.shared.models.WalletAccessContext
@@ -44,6 +40,23 @@ class ConnectionControllerImpl(
     } yield Connection.fromDomain(connection)
   }
 
+  override def deleteConnection(
+    connectionId: UUID
+  )(implicit rc: RequestContext): ZIO[WalletAccessContext, ErrorResponse, Unit] = {
+    for {
+      mayBeConnection <- service.findRecordById(connectionId)
+      connection <- ZIO.fromOption(mayBeConnection).mapError(_ => ConnectionServiceError.RecordIdNotFound(connectionId))
+      res <- connection.protocolState match
+        case ProtocolState.InvitationGenerated | ProtocolState.InvitationExpired => 
+          service.deleteRecordById(connection.id) *> ZIO.succeed(s"deleted connection with ${connection.id} successful").unit
+        case _ => ZIO.fail(ErrorResponse(
+          403,
+          "Not Allowed",
+          "Operation Forbidden",
+          Some(s" ${ConnectionServiceError.InvalidStateForOperation}")))
+    } yield res
+  }
+  
   override def getConnections(
       paginationInput: PaginationInput,
       thid: Option[String]
