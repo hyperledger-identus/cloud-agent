@@ -48,7 +48,7 @@ class ConnectionControllerImpl(
       connection <- ZIO.fromOption(mayBeConnection).mapError(_ => ConnectionServiceError.RecordIdNotFound(connectionId))
       res <- connection.protocolState match
         case ProtocolState.InvitationGenerated | ProtocolState.InvitationExpired => 
-          service.deleteRecordById(connection.id) *> ZIO.succeed(s"deleted connection with ${connection.id} successful").unit
+          service.deleteRecordById(connection.id) *> ZIO.succeed(s"deleted connection ${connection.id} successful").unit
         case _ => ZIO.fail(ErrorResponse(
           403,
           "Not Allowed",
