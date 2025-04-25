@@ -7,12 +7,12 @@ ENV_FILE=".env"
 PERF_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 AGENT_DIR="$PERF_DIR/../../.."
 DOCKERFILE="$AGENT_DIR/infrastructure/shared/docker-compose-combined.yml"
+
 K6_BASE_URL="https://github.com/grafana/k6/releases/download/v0.45.0/k6-v0.45.0-"
 K6_LINUX_ZIP_FILE="linux-amd64.tar.gz"
 K6_MACOS_INTEL_ZIP_FILE="macos-amd64.zip"
 K6_MACOS_ARM_ZIP_FILE="macos-arm64.zip"
 K6_WINDOWS_ZIP_FILE="windows-amd64.zip"
-
 
 # Functions
 function startAllAgents() {

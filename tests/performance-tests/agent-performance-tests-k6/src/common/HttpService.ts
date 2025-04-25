@@ -1,10 +1,9 @@
 
-import http from 'k6/http';
-import { check } from 'k6';
-import { RefinedResponse, ResponseType, RequestBody } from 'k6/http';
-import { Counter } from 'k6/metrics';
+import http, { RefinedResponse, ResponseType, RequestBody } from 'k6/http'
+import { check } from 'k6'
+import { Counter } from 'k6/metrics'
 
-export let statusChangeTimeouts = new Counter('status_change_timeouts');
+export const statusChangeTimeouts = new Counter('status_change_timeouts')
 /**
  * HttpService provides convenience methods for making HTTP requests using the k6 library.
  *
@@ -15,28 +14,28 @@ export let statusChangeTimeouts = new Counter('status_change_timeouts');
  * - adds base URL to all requests
  */
 export class HttpService {
-  private baseUrl: string;
-  private apiKey: string;
-  private params: { headers: { [key: string]: string } };
+  private readonly baseUrl: string
+  private readonly apiKey: string
+  private readonly params: { headers: { [key: string]: string } }
 
   /**
    * Constructs a new HttpService instance with the specified base URL and API key.
    * @param baseUrl The base URL for the API.
    * @param apiKey The API key to use for authentication.
    */
-  constructor(baseUrl: string, apiKey: string) {
-    this.baseUrl = baseUrl;
-    this.apiKey = apiKey;
+  constructor (baseUrl: string, apiKey: string) {
+    this.baseUrl = baseUrl
+    this.apiKey = apiKey
     this.params = {
       headers: {
-        "content-type": "application/json",
-        "Accept": "application/json",
-        apikey: this.apiKey,
-      },
-    };
+        'content-type': 'application/json',
+        Accept: 'application/json',
+        apikey: this.apiKey
+      }
+    }
   }
 
-  public toJson(response: RefinedResponse<ResponseType>): any {
+  public toJson (response: RefinedResponse<ResponseType>): any {
     return JSON.parse(response.body as string)
   }
 
@@ -47,23 +46,23 @@ export class HttpService {
    * @param expectedStatus The expected HTTP status code for the response.
    * @returns An object containing the response status code and body
    */
-  public post(
+  public post (
     endpoint: string,
     payload: string | RequestBody | null | undefined = null,
     expectedStatus: number = 201
   ): RefinedResponse<ResponseType> {
-    if (typeof payload !== "string") {
+    if (typeof payload !== 'string') {
       payload = JSON.stringify(payload)
     }
     const res = http.post(
       `${this.baseUrl}/${endpoint}`,
       payload,
       this.params
-    );
+    )
     check(res, {
-      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus,
-    });
-    return res;
+      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus
+    })
+    return res
   }
 
   /**
@@ -72,12 +71,12 @@ export class HttpService {
    * @param expectedStatus The expected HTTP status code for the response.
    * @returns An object containing the response status code and body
    */
-  public get(endpoint: string, expectedStatus: number = 200): RefinedResponse<ResponseType> {
-    const res = http.get(`${this.baseUrl}/${endpoint}`, this.params);
+  public get (endpoint: string, expectedStatus: number = 200): RefinedResponse<ResponseType> {
+    const res = http.get(`${this.baseUrl}/${endpoint}`, this.params)
     check(res, {
-      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus,
-    });
-    return res;
+      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus
+    })
+    return res
   }
 
   /**
@@ -87,23 +86,23 @@ export class HttpService {
    * @param expectedStatus The expected HTTP status code for the response.
    * @returns An object containing the response status code and body
    */
-  public patch(
+  public patch (
     endpoint: string,
     payload: string | RequestBody | null | undefined = null,
     expectedStatus: number = 200
   ): RefinedResponse<ResponseType> {
-    if (typeof payload !== "string") {
+    if (typeof payload !== 'string') {
       payload = JSON.stringify(payload)
     }
     const res = http.patch(
       `${this.baseUrl}/${endpoint}`,
       payload,
       this.params
-    );
+    )
     check(res, {
-      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus,
-    });
-    return res;
+      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus
+    })
+    return res
   }
 
   /**
@@ -112,14 +111,11 @@ export class HttpService {
    * @param expectedStatus The expected HTTP status code for the response.
    * @returns An object containing the response status code and an empty object.
    */
-  public del(endpoint: string, expectedStatus: number = 200): RefinedResponse<ResponseType> {
-    const res = http.del(`${this.baseUrl} / ${endpoint}`, null, this.params);
+  public del (endpoint: string, expectedStatus: number = 200): RefinedResponse<ResponseType> {
+    const res = http.del(`${this.baseUrl} / ${endpoint}`, null, this.params)
     check(res, {
-      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus,
-    });
-    return res;
+      [`status is ${expectedStatus}`]: (r) => r.status === expectedStatus
+    })
+    return res
   }
-
-
-
 }
