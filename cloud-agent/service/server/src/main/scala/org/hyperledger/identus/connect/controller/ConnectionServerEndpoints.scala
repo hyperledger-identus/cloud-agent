@@ -42,6 +42,18 @@ class ConnectionServerEndpoints(
         }
       }
 
+  private val deleteConnectionServerEndpoint: ZServerEndpoint[Any, Any] =
+    deleteConnection
+      .zServerSecurityLogic(SecurityLogic.authorizeWalletAccessWith(_)(authenticator, authorizer))
+      .serverLogic { wac =>
+        { case (ctx: RequestContext, connectionId: UUID) =>
+          connectionController
+            .deleteConnection(connectionId)(ctx)
+            .provideSomeLayer(ZLayer.succeed(wac))
+            .logTrace(ctx)
+        }
+      }
+
   private val getConnectionsServerEndpoint: ZServerEndpoint[Any, Any] =
     getConnections
       .zServerSecurityLogic(SecurityLogic.authorizeWalletAccessWith(_)(authenticator, authorizer))
@@ -69,6 +81,7 @@ class ConnectionServerEndpoints(
   val all: List[ZServerEndpoint[Any, Any]] = List(
     createConnectionServerEndpoint,
     getConnectionServerEndpoint,
+    deleteConnectionServerEndpoint,
     getConnectionsServerEndpoint,
     acceptConnectionInvitationServerEndpoint
   )

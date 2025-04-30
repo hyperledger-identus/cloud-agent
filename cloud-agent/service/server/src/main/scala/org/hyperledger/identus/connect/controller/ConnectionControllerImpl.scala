@@ -11,6 +11,7 @@ import org.hyperledger.identus.connect.controller.http.{
   CreateConnectionRequest
 }
 import org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
+import org.hyperledger.identus.connect.core.model.ConnectionRecord.ProtocolState
 import org.hyperledger.identus.connect.core.service.ConnectionService
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import zio.*
@@ -42,6 +43,27 @@ class ConnectionControllerImpl(
         .fromOption(maybeConnection)
         .mapError(_ => ConnectionServiceError.RecordIdNotFound(connectionId))
     } yield Connection.fromDomain(connection)
+  }
+
+  override def deleteConnection(
+      connectionId: UUID
+  )(implicit rc: RequestContext): ZIO[WalletAccessContext, ErrorResponse, Unit] = {
+    for {
+      mayBeConnection <- service.findRecordById(connectionId)
+      connection <- ZIO.fromOption(mayBeConnection).mapError(_ => ConnectionServiceError.RecordIdNotFound(connectionId))
+      res <- connection.protocolState match
+        case ProtocolState.InvitationGenerated | ProtocolState.InvitationExpired =>
+          service.deleteRecordById(connection.id) *> ZIO.succeed(s"deleted connection ${connection.id} successful").unit
+        case _ =>
+          ZIO.fail(
+            ErrorResponse(
+              403,
+              "Not Allowed",
+              "Operation Forbidden",
+              Some(s" ${ConnectionServiceError.InvalidStateForOperation}")
+            )
+          )
+    } yield res
   }
 
   override def getConnections(
