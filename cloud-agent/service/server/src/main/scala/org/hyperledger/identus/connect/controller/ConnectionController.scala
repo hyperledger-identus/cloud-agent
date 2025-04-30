@@ -23,7 +23,7 @@ trait ConnectionController {
   ): ZIO[WalletAccessContext, ErrorResponse, Connection]
 
   def deleteConnection(connectionId: UUID)(implicit
-     rc: RequestContext
+      rc: RequestContext
   ): ZIO[WalletAccessContext, ErrorResponse, Unit]
 
   def getConnections(paginationInput: PaginationInput, thid: Option[String])(implicit

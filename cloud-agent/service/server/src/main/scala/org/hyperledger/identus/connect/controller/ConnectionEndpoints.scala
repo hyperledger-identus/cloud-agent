@@ -154,7 +154,8 @@ object ConnectionEndpoints {
           |""".stripMargin)
       .tag(tagName)
 
-  val deleteConnection: Endpoint[(ApiKeyCredentials, JwtCredentials), (RequestContext, UUID), ErrorResponse, Unit, Any] =
+  val deleteConnection
+      : Endpoint[(ApiKeyCredentials, JwtCredentials), (RequestContext, UUID), ErrorResponse, Unit, Any] =
     endpoint.delete
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
@@ -178,12 +179,11 @@ object ConnectionEndpoints {
       .summary(
         "Deletes a specific connection flow record from the Agent's database based on its unique `connectionId`."
       )
-      .description(
-        """
+      .description("""
           |Delete a specific connection flow record from the Agent's database based in its unique `connectionId`.
           |""".stripMargin)
       .tag(tagName)
-  
+
   val acceptConnectionInvitation: Endpoint[
     (ApiKeyCredentials, JwtCredentials),
     (RequestContext, AcceptConnectionInvitationRequest),
