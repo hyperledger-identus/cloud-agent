@@ -1,10 +1,8 @@
-/**
- * @type {import('semantic-release').GlobalConfig}
- */
 export default {
     branches: [
         'main',
         '+([0-9])?(.{+([0-9]),x}).x',
+        { name: 'beta', prerelease: true }
     ],
     plugins: [
         ['@semantic-release/commit-analyzer', {
@@ -48,14 +46,6 @@ export default {
                 "infrastructure/local/.env"
             ],
             message: "chore(release): cut the Identus Cloud agent ${nextRelease.version} release\n\n${nextRelease.notes} [skip ci]\n\nSigned-off-by: Hyperledger Bot <hyperledger-bot@hyperledger.org>"
-        }],
-        ["semantic-release-slack-bot", {
-            notifyOnSuccess: true,
-            notifyOnFail: true,
-            markdownReleaseNotes: true,
-            onSuccessTemplate: {
-                text: "A new version of Identus Cloud Agent successfully released!\nVersion: `$npm_package_version`\nTag: $repo_url/releases/tag/cloud-agent-v$npm_package_version\n\nRelease notes:\n$release_notes"
-            }
         }],
     ],
     tagFormat: "v${version}"
