@@ -46,7 +46,6 @@ export default {
                 "infrastructure/local/.env"
             ],
             message: "chore(release): cut the Identus Cloud agent ${nextRelease.version} release\n\n${nextRelease.notes} [skip ci]\n\nSigned-off-by: Hyperledger Bot <hyperledger-bot@hyperledger.org>"
-        }],
+        }]
     ],
-    tagFormat: "v${version}"
 }
