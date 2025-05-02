@@ -1,3 +1,50 @@
+## [2.0.0-beta.1](https://github.com/hyperledger-identus/cloud-agent/compare/v1.40.0...v2.0.0-beta.1) (2025-05-02)
+
+### ⚠ BREAKING CHANGES
+
+* trigger major version release
+
+### Features
+
+* add e2e tests for different createCredentialOffer API variations ([#1476](https://github.com/hyperledger-identus/cloud-agent/issues/1476)) ([2ce192e](https://github.com/hyperledger-identus/cloud-agent/commit/2ce192e1fc874f5756e35e86f868c25f524792be))
+* add feature flag to enable/disable support for Anoncred (backend job and API) ([#1492](https://github.com/hyperledger-identus/cloud-agent/issues/1492)) ([54b7b5b](https://github.com/hyperledger-identus/cloud-agent/commit/54b7b5b77950f00d30f9bdade88c2ce8e9525bde)), closes [#1491](https://github.com/hyperledger-identus/cloud-agent/issues/1491)
+* add LOG_LEVEL environment variable to the cloud-agent logback.x… ([#1504](https://github.com/hyperledger-identus/cloud-agent/issues/1504)) ([fa1c04f](https://github.com/hyperledger-identus/cloud-agent/commit/fa1c04f501948401d62c4e37dd14b320fc224dd9))
+* align the credential schema property name according to the VCDM 1.1 ([#1467](https://github.com/hyperledger-identus/cloud-agent/issues/1467)) ([c6a3e0c](https://github.com/hyperledger-identus/cloud-agent/commit/c6a3e0ced12927f5a819af9f4f56e8e381293d15))
+* delete endpoint for user to delete cloud-agent connection ([#1568](https://github.com/hyperledger-identus/cloud-agent/issues/1568)) ([8796be1](https://github.com/hyperledger-identus/cloud-agent/commit/8796be1ac6ee301ea55030cf3d4814918aa728d8))
+* disable the APIKEY authentication in the cloud-agent ([#1479](https://github.com/hyperledger-identus/cloud-agent/issues/1479)) ([2fb833a](https://github.com/hyperledger-identus/cloud-agent/commit/2fb833abbafcad5ca7511fd59e52d6d009e2d5ab))
+* migrate mercury protocols and repositories from Circe to ZIO Json ([#1471](https://github.com/hyperledger-identus/cloud-agent/issues/1471)) ([d0c3506](https://github.com/hyperledger-identus/cloud-agent/commit/d0c3506ed04b8aeab5c007c33ede61ca48800234))
+* migrate pollux VC JWT from Circe to zio-json ([#1475](https://github.com/hyperledger-identus/cloud-agent/issues/1475)) ([248ba5f](https://github.com/hyperledger-identus/cloud-agent/commit/248ba5fe14fe2736b00fa42f72aeffe523362406))
+* share Kafka producers among threads ([#1460](https://github.com/hyperledger-identus/cloud-agent/issues/1460)) ([5ece0dd](https://github.com/hyperledger-identus/cloud-agent/commit/5ece0dd573611c2f8f72f12c76a00aebc7841faf))
+* support 'pollux.domain' config param ([#1483](https://github.com/hyperledger-identus/cloud-agent/issues/1483)) ([81350ea](https://github.com/hyperledger-identus/cloud-agent/commit/81350ea247f9d2b29a9ad246e882a60f9dc51fd8))
+
+### Bug Fixes
+
+*  Add disclose claims to presentation record credential type SDJWT  ([#1487](https://github.com/hyperledger-identus/cloud-agent/issues/1487)) ([5e00556](https://github.com/hyperledger-identus/cloud-agent/commit/5e005560c62d4f50fdad4b0b7cede355cced9753))
+* add LRUDocumentLoader to optimize the JsonLD.toRdf call, fix [#1553](https://github.com/hyperledger-identus/cloud-agent/issues/1553) ([#1560](https://github.com/hyperledger-identus/cloud-agent/issues/1560)) ([c710196](https://github.com/hyperledger-identus/cloud-agent/commit/c7101966c51dfbda4c4d831c24739c566637aa52))
+* add SDJWT value to the OAS enum validation in IssueCredentialRec… ([#1533](https://github.com/hyperledger-identus/cloud-agent/issues/1533)) ([0b6fbc8](https://github.com/hyperledger-identus/cloud-agent/commit/0b6fbc8d83c2f57a899d69c2f2574ee27d8644a9))
+* broken links in the docusaurus documentation files ([#1489](https://github.com/hyperledger-identus/cloud-agent/issues/1489)) ([38b251b](https://github.com/hyperledger-identus/cloud-agent/commit/38b251b2083e6224d8c81d3f183af9e55af57d94))
+* code cleanup ([#1539](https://github.com/hyperledger-identus/cloud-agent/issues/1539)) ([75bc1ce](https://github.com/hyperledger-identus/cloud-agent/commit/75bc1cef8aca36be2188a49be75f2bbcbccdf28e))
+* Commit message guideline broken link fixed ([#1542](https://github.com/hyperledger-identus/cloud-agent/issues/1542)) ([fa21e86](https://github.com/hyperledger-identus/cloud-agent/commit/fa21e8688debaaf6d403031473895048343ce8dd))
+* createCredentialIssueRecordRequest schemaId field to be Option[String] ([#1481](https://github.com/hyperledger-identus/cloud-agent/issues/1481)) ([7524ec7](https://github.com/hyperledger-identus/cloud-agent/commit/7524ec7e12bcbcd1cf9bf0c44fe6c8d11abd8204))
+* docker compose to pass  enable API_KEY_ENABLED flag ([#1531](https://github.com/hyperledger-identus/cloud-agent/issues/1531)) ([a1a545a](https://github.com/hyperledger-identus/cloud-agent/commit/a1a545a37ab3ceb4ea59d812cb9e0563820466bd))
+* documentation build ([#1488](https://github.com/hyperledger-identus/cloud-agent/issues/1488)) ([b947a8b](https://github.com/hyperledger-identus/cloud-agent/commit/b947a8b020dd83aa6f4e88278ed2afe9c4c687f2))
+* Kafka consumer not picking messages ([#1441](https://github.com/hyperledger-identus/cloud-agent/issues/1441)) ([b0effec](https://github.com/hyperledger-identus/cloud-agent/commit/b0effec9bdc48f7daad94a159c78766c6ed1c903))
+* LOG_LEVEL environment variable and cleanup logging entries ([#1562](https://github.com/hyperledger-identus/cloud-agent/issues/1562)) ([7c57df0](https://github.com/hyperledger-identus/cloud-agent/commit/7c57df0fd0ccf0460169ddd7f894c2e86580db6c))
+* mapping the claims attributes to json ([#1480](https://github.com/hyperledger-identus/cloud-agent/issues/1480)) ([a96e544](https://github.com/hyperledger-identus/cloud-agent/commit/a96e544ea8acee8a2fa2f6a5a6e818c4bc1d8bb0))
+* **migration:** quote reserved "format" column for PostgreSQL compatibility ([#1554](https://github.com/hyperledger-identus/cloud-agent/issues/1554)) ([06c7c52](https://github.com/hyperledger-identus/cloud-agent/commit/06c7c5244eb3768db648369cd75956c90d9b5b31))
+* mitigation to [#1495](https://github.com/hyperledger-identus/cloud-agent/issues/1495) (update the outdated url) ([#1549](https://github.com/hyperledger-identus/cloud-agent/issues/1549)) ([27c7f97](https://github.com/hyperledger-identus/cloud-agent/commit/27c7f9773f4ee5732b69f54869af988a88e7e211))
+* openAPI mutability [#1115](https://github.com/hyperledger-identus/cloud-agent/issues/1115) ([#1494](https://github.com/hyperledger-identus/cloud-agent/issues/1494)) ([1e19b04](https://github.com/hyperledger-identus/cloud-agent/commit/1e19b048a49132cb2402c27304660c7806f85170))
+* proof presentation request ([#1453](https://github.com/hyperledger-identus/cloud-agent/issues/1453)) ([7839b95](https://github.com/hyperledger-identus/cloud-agent/commit/7839b95ad423556129a4d7c1bf90b75dfa799db6))
+* remove adding default service ([#1538](https://github.com/hyperledger-identus/cloud-agent/issues/1538)) ([254ee94](https://github.com/hyperledger-identus/cloud-agent/commit/254ee944f169e8fea0d87289238f7f6c0bf5f625))
+* return proper error response for unauthorized access ([#1540](https://github.com/hyperledger-identus/cloud-agent/issues/1540)) ([a507da7](https://github.com/hyperledger-identus/cloud-agent/commit/a507da77a9198ccdfd01dab5a57efdf2f81a4b30))
+* update the jwt to have shortform of prism did ([#1461](https://github.com/hyperledger-identus/cloud-agent/issues/1461)) ([7365497](https://github.com/hyperledger-identus/cloud-agent/commit/73654975bf9f2ad19f47d7220d61a38fed55dd42))
+* VPJWT JSON decoder in the issue-credential protocol ([#1505](https://github.com/hyperledger-identus/cloud-agent/issues/1505)) ([d16da04](https://github.com/hyperledger-identus/cloud-agent/commit/d16da0461b6aaac209d5334c25eaf22b8641beed))
+* Warning on Invitation generated  on Issuance ([#1433](https://github.com/hyperledger-identus/cloud-agent/issues/1433)) ([05fdf26](https://github.com/hyperledger-identus/cloud-agent/commit/05fdf2624463227ad7b9452e52bc9d9308d3a3ad))
+
+### Miscellaneous Chores
+
+* trigger major version release ([2654ac7](https://github.com/hyperledger-identus/cloud-agent/commit/2654ac744d4e41cf27dbc33c6e2706923218d89e))
+
 ## [1.40.0](https://github.com/hyperledger-identus/cloud-agent/compare/cloud-agent-v1.39.0...cloud-agent-v1.40.0) (2024-11-05)
 
 ### Features

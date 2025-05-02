@@ -1,14 +1,14 @@
 openapi: 3.1.0
 info:
   title: Identus Cloud Agent API Reference
-  version: 1.40.0
+  version: 2.0.0-beta.1
   description: |2
 
     The Identus Cloud Agent API facilitates the integration and management of self-sovereign identity capabilities within applications.
     It supports DID (Decentralized Identifiers) management, verifiable credential exchange, and secure messaging based on DIDComm standards.
     The API is designed to be interoperable with various blockchain and DLT (Distributed Ledger Technology) platforms, ensuring wide compatibility and flexibility.
     Key features include connection management, credential issuance and verification, and secure, privacy-preserving communication between entities.
-    Additional information and the full list of capabilities can be found in the [Open Enterprise Agent documentation](https://docs.atalaprism.io/docs/category/prism-cloud-agent)
+    Additional information and the full list of capabilities can be found in the [Open Enterprise Agent documentation](https://hyperledger.github.io/identus-docs/docs/category/prism-cloud-agent)
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
@@ -69,7 +69,7 @@ tags:
 
     Endpoints are secured by __apiKeyAuth__ or __jwtAuth__ authentication.
   externalDocs:
-    url: https://docs.atalaprism.io/tutorials/schemas/credential-schema
+    url: https://hyperledger.github.io/identus-docs/tutorials/schemas/credential-schema
     description: Credential Schema documentation
 - name: Credential Definition Registry
   description: |2
@@ -82,7 +82,7 @@ tags:
 
     Endpoints are secured by __apiKeyAuth__ or __jwtAuth__ authentication.
   externalDocs:
-    url: https://docs.atalaprism.io/tutorials/category/credential-definition
+    url: https://hyperledger.github.io/identus-docs/tutorials/category/credential-definition
     description: Credential Definition documentation
 - name: DID
   description: |2
@@ -97,24 +97,24 @@ tags:
 
     The __DID Registrar__ endpoints facilitate the management of [PRISM DIDs](https://github.com/input-output-hk/prism-did-method-spec) hosted in the cloud agent.
 
-    Implentation of [DID management](https://docs.atalaprism.io/docs/atala-prism/prism-cloud-agent/did-management/) in the cloud agent.
+    Implentation of [DID management](https://hyperledger.github.io/identus-docs/docs/atala-prism/prism-cloud-agent/did-management/) in the cloud agent.
     The agent securely manages and stores DIDs along with their keys in its secret storage.
     These endpoints allow users to create, read, update, deactivate, and publish without direct exposure to the key material.
     These DIDs can be utilized for various operations during issuance and verification processes.
 
-    More examples and tutorials can be found in this [documentation](https://docs.atalaprism.io/tutorials/category/dids/).
+    More examples and tutorials can be found in this [documentation](https://hyperledger.github.io/identus-docs/tutorials/category/dids/).
 - name: Wallet Management
   description: |2
 
-    The __Wallet Management__ endpoints enable both users and administrators to manage [wallets](https://docs.atalaprism.io/docs/concepts/multi-tenancy#wallet).
+    The __Wallet Management__ endpoints enable both users and administrators to manage [wallets](https://hyperledger.github.io/identus-docs/docs/concepts/multi-tenancy#wallet).
 
     In a multitenant agent, wallet is a container for various resources (e.g. Connections, DIDs) and it isolates the access based on the authorization settings.
-    [Admnistrator](https://docs.atalaprism.io/docs/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://docs.atalaprism.io/docs/concepts/glossary#tenant).
-    See [this example](https://docs.atalaprism.io/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
+    [Admnistrator](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#tenant).
+    See [this example](https://hyperledger.github.io/identus-docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
     Tenants can also manage and onboard their own wallets using these endpoints depending on the configuration.
-    See [this document](https://docs.atalaprism.io/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
+    See [this document](https://hyperledger.github.io/identus-docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
 
-    Wallet permissions are controlled by [UMA](https://docs.atalaprism.io/docs/concepts/glossary#uma) configuration which the agent
+    Wallet permissions are controlled by [UMA](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#uma) configuration which the agent
     exposes endpoints to easily configure wallet access using `uma-permissions` resource.
     The permissions can also be configured out-of-band directly on the external IAM provider that supports the UMA standard.
 - name: System
@@ -137,11 +137,11 @@ tags:
     - Issuance protocol notifications
     - Presentation protocol notifications
 
-    For more detailed information regarding event notifications, please refer to this [documentation](https://docs.atalaprism.io/tutorials/webhooks/webhook).
+    For more detailed information regarding event notifications, please refer to this [documentation](https://hyperledger.github.io/identus-docs/tutorials/webhooks/webhook).
 - name: Identity and Access Management
   description: |2
 
-    The __Identity and Access Management__ endpoints allow [agent administrators](https://docs.atalaprism.io/docs/concepts/glossary#administrator)
+    The __Identity and Access Management__ endpoints allow [agent administrators](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#administrator)
     to manage identity and access management for the agent's tenants.
     It provides basic built-in IAM capabilities as an alternative to more feature rich external IAM solutions.
 
@@ -151,7 +151,7 @@ tags:
     Additionally, the administrator can create API keys for entities and provide them to the tenants out-of-band.
     These API keys can then be used for authorization to access specific wallets.
 
-    For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://docs.atalaprism.io/docs/atala-prism/prism-cloud-agent/authentication).
+    For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger.github.io/identus-docs/docs/atala-prism/prism-cloud-agent/authentication).
 - name: Presentation Exchange
   description: |2
 
@@ -1647,6 +1647,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden
           content:
@@ -1697,6 +1703,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden
           content:
@@ -1740,6 +1752,65 @@ paths:
                 $ref: '#/components/schemas/Connection'
         '400':
           description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource could not be found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - apiKeyAuth: []
+      - jwtAuth: []
+    delete:
+      tags:
+      - Connections Management
+      summary: Deletes a specific connection flow record from the Agent's database
+        based on its unique `connectionId`.
+      description: |2
+
+        Delete a specific connection flow record from the Agent's database based in its unique `connectionId`.
+      operationId: deleteConnection
+      parameters:
+      - name: connectionId
+        in: path
+        description: The `connectionId` uniquely identifying the connection flow record.
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '204':
+          description: ''
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -1796,6 +1867,12 @@ paths:
                 $ref: '#/components/schemas/Connection'
         '400':
           description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -5140,6 +5217,45 @@ components:
       - REMOVE_KEY
       - REMOVE_SERVICE
       - UPDATE_SERVICE
+    AnonCredsVCPropertiesV1:
+      title: AnonCredsVCPropertiesV1
+      description: |2
+
+        The properties of the AnonCreds verifiable credential that will be issued complied with AnonCreds 1.0.
+      type: object
+      required:
+      - issuingDID
+      - credentialDefinitionId
+      - claims
+      properties:
+        issuingDID:
+          description: |2
+
+            The issuer Prism DID by which the verifiable credential will be issued. DID can be short for or long form.
+          example: did:prism:3bb0505d13fcb04d28a48234edb27b0d4e6d7e18a81e2c1abab58f3bbc21ce6f
+          type: string
+        credentialDefinitionId:
+          description: |2
+
+            The unique identifier (UUID) of the credential definition that will be used for this offer.
+            It should be the identifier of a credential definition that exists in the issuer agent's database.
+          example: d9569cec-c81e-4779-aa86-0d5994d82676
+          type: string
+          format: uuid
+        claims:
+          description: |2
+
+            The set of claims that will be included in the issued credential.
+            The object should comply with the schema applicable for this offer (i.e. 'schemaId' or 'credentialDefinitionId').
+          example:
+            firstname: Alice
+            lastname: Wonderland
+        validityPeriod:
+          description: The validity period in seconds of the verifiable credential
+            that will be issued.
+          example: 3600.0
+          type: number
+          format: double
     AnoncredCredentialProofV1:
       title: AnoncredCredentialProofV1
       type: object
@@ -5407,8 +5523,8 @@ components:
         metaLastFailure:
           $ref: '#/components/schemas/ErrorResponse'
           description: The last failure if any.
-          example: ErrorResponse(404,error:Error:FailureInfo,Failure Info,Some(Not
-            Found),error:instance:27727dd0-cd86-4d24-a23a-b9cc4eb4e848)
+          example: ErrorResponse(404,NotFound,Not Found,Some(The requested resource
+            was not found),error:instance:f47ac10b-58cc-4372-a567-0e02b2c3d479)
         self:
           description: The reference to the connection resource.
           example: https://atala-prism-products.io/connections/ABCD-1234
@@ -5572,9 +5688,6 @@ components:
     CreateIssueCredentialRecordRequest:
       title: CreateIssueCredentialRecordRequest
       type: object
-      required:
-      - claims
-      - issuingDID
       properties:
         validityPeriod:
           description: The validity period in seconds of the verifiable credential
@@ -5589,11 +5702,7 @@ components:
             When dereferenced, the returned content should be a JSON schema compliant with the '[Draft 2020-12](https://json-schema.org/draft/2020-12/release-notes)' version of the specification.
             Note that this parameter only applies when the offer is of type 'JWT'.
           example: https://agent-host.com/cloud-agent/schema-registry/schemas/d9569cec-c81e-4779-aa86-0d5994d82676/schema
-          oneOf:
-          - type: array
-            items:
-              type: string
-          - type: string
+          type: string
         credentialDefinitionId:
           description: |2
 
@@ -5661,6 +5770,19 @@ components:
              goal is optional and can be provided when the offer is from invitation for connectionless issuance.
           example: To issue a Faber College Graduate credential
           type: string
+        domain:
+          description: |2
+
+             A string that specifies the intended scope or audience for the offer request. The 'domain' field binds the proof or presentation to a particular context (e.g., application, service, or verifier) to prevent misuse.
+             It is often used alongside a 'challenge' field to ensure the freshness and uniqueness of the proof. The 'domain' field adds context to validate the origin or purpose of the proof.
+          example: faber-college-jwt-vc
+          type: string
+        jwtVcPropertiesV1:
+          $ref: '#/components/schemas/JwtVCPropertiesV1'
+        anoncredsVcPropertiesV1:
+          $ref: '#/components/schemas/AnonCredsVCPropertiesV1'
+        sdJwtVcPropertiesV1:
+          $ref: '#/components/schemas/SDJWTVCPropertiesV1'
     CreateManagedDIDResponse:
       title: CreateManagedDIDResponse
       type: object
@@ -6289,6 +6411,26 @@ components:
           example: did:prism:4a5b5cf0a513e83b598bbea25cd6196746747f361a73ef77068268bc9bd732ff
           type: string
           pattern: ^did:(?<method>[a-z0-9]+(:[a-z0-9]+)*)\:(?<idstring>[^#?]*)$
+    CredentialSchemaRef:
+      title: CredentialSchemaRef
+      example: CredentialSchemaRef(https://agent-host.com/cloud-agent/schema-registry/schemas/d9569cec-c81e-4779-aa86-0d5994d82676,JsonSchemaValidator2018)
+      type: object
+      required:
+      - id
+      - type
+      properties:
+        id:
+          description: |2
+
+            The URL or DIDURL pointing to the credential schema that will be used for this offer.
+          example: https://agent-host.com/cloud-agent/schema-registry/schemas/d9569cec-c81e-4779-aa86-0d5994d82676
+          type: string
+        type:
+          description: |2
+
+            The type of the credential schema that will be used for this offer.
+          example: JsonSchema
+          type: string
     CredentialSchemaResponse:
       title: CredentialSchemaResponse
       type: object
@@ -6459,7 +6601,7 @@ components:
       - encodedList
       properties:
         type:
-          description: Always equals to constnat value - StatusList2021
+          description: Always equals to constant value - StatusList2021
           example: StatusList2021
           type: string
         statusPurpose:
@@ -6930,6 +7072,7 @@ components:
           type: string
           enum:
           - JWT
+          - SDJWT
           - AnonCreds
         subjectId:
           description: |2
@@ -6963,7 +7106,7 @@ components:
           type: boolean
         createdAt:
           description: The date and time when the issue credential record was created.
-          example: '2024-11-05T11:32:21.497676581Z'
+          example: 2023-01-01T00:00Z
           type: string
           format: date-time
         updatedAt:
@@ -7012,14 +7155,17 @@ components:
           example: did:prism:3bb0505d13fcb04d28a48234edb27b0d4e6d7e18a81e2c1abab58f3bbc21ce6f
           type: string
         goalCode:
-          description: A self-attested code the receiver may want to display to the
-            user or use in automatically deciding what to do with the out-of-band
-            message.
+          description: |2
+
+            A self-attested code the receiver may want to display to the user or use in automatically deciding what to do with the out-of-band message.
+            The goalCode is optional and can be included when the credential offer originates from an invitation for connectionless issuance
           example: issue-vc
           type: string
         goal:
-          description: A self-attested string that the receiver may want to display
-            to the user about the context-specific goal of the out-of-band message.
+          description: |2
+
+            A self-attested string that the receiver may want to display to the user about the context-specific goal of the out-of-band message.
+            The goal is optional and can be included when the credential offer originates from an invitation for connectionless issuance
           example: To issue a Faber College Graduate credential
           type: string
         myDid:
@@ -7038,8 +7184,8 @@ components:
         metaLastFailure:
           $ref: '#/components/schemas/ErrorResponse'
           description: The last failure if any.
-          example: ErrorResponse(404,error:Error:FailureInfo,Failure Info,Some(Not
-            Found),error:instance:087a52c7-4c06-48ba-870a-8f5b3b4e003f)
+          example: ErrorResponse(404,NotFound,Not Found,Some(The requested resource
+            was not found),error:instance:f47ac10b-58cc-4372-a567-0e02b2c3d479)
     IssueCredentialRecordPage:
       title: IssueCredentialRecordPage
       type: object
@@ -7136,6 +7282,50 @@ components:
           $ref: '#/components/schemas/ProofType'
         jwt:
           type: string
+    JwtVCPropertiesV1:
+      title: JwtVCPropertiesV1
+      description: |2
+
+        The properties of the JWT verifiable credential that will be issued complied with VCDM 1.1.
+      type: object
+      required:
+      - issuingDID
+      - claims
+      - credentialSchema
+      properties:
+        issuingDID:
+          description: |2
+
+            The issuer Prism DID by which the verifiable credential will be issued. DID can be short for or long form.
+          example: did:prism:3bb0505d13fcb04d28a48234edb27b0d4e6d7e18a81e2c1abab58f3bbc21ce6f
+          type: string
+        issuingKid:
+          description: |2
+
+            Specified the key ID (kid) of the DID, it will be used to sign credential.
+            User should specify just the partial identifier of the key. The full id of the kid MUST be "<issuingDID>#<kid>"
+            Note the cryto algorithm used with depend type of the key.
+          example: kid1
+          type: string
+        validityPeriod:
+          description: The validity period in seconds of the verifiable credential
+            that will be issued.
+          example: 3600.0
+          type: number
+          format: double
+        claims:
+          description: |2
+
+            The set of claims that will be included in the issued credential.
+            The JSON object should comply with the schema applicable for this offer (i.e. 'schemaId' or 'credentialDefinitionId').
+          example:
+            firstname: Alice
+            lastname: Wonderland
+        credentialSchema:
+          $ref: '#/components/schemas/CredentialSchemaRef'
+          description: |2
+
+            The properties of the JWT verifiable credential that will be issued complied with VCDM 1.1.
     Ldp:
       title: Ldp
       type: object
@@ -7488,20 +7678,28 @@ components:
           type: array
           items:
             type: string
+        disclosedClaims:
+          description: |2
+
+            The set of claims disclosed from the issued credential, this field is applicable to credential type SDJWT only.
+          example:
+            firstname: Alice
+            lastname: Wonderland
         connectionId:
           description: The unique identifier of an established connection between
             the verifier and the prover.
           example: bc528dc8-69f1-4c5a-a508-5f8019047900
           type: string
         goalCode:
-          description: A self-attested code the receiver may want to display to the
-            user or use in automatically deciding what to do with the out-of-band
-            message.
+          description: |
+            A self-attested code the receiver may want to display to the user or use in automatically deciding what to do with the out-of-band message.
+            The goalcode is optional and can be included when the presentation request originates from an invitation for connectionless proof request
           example: present-vp
           type: string
         goal:
-          description: A self-attested string that the receiver may want to display
-            to the user about the context-specific goal of the out-of-band message.
+          description: |
+            A self-attested string that the receiver may want to display to the user about the context-specific goal of the out-of-band message.
+            The goal is optional and can be included when the presentation request originates from an invitation for connectionless proof request
           example: To verify a Peter College Graduate credential
           type: string
         myDid:
@@ -7520,8 +7718,8 @@ components:
         metaLastFailure:
           $ref: '#/components/schemas/ErrorResponse'
           description: The last failure if any.
-          example: ErrorResponse(404,error:Error:FailureInfo,Failure Info,Some(Not
-            Found),error:instance:68e60a0f-8e08-4264-96c8-9e6f2dd59202)
+          example: ErrorResponse(404,NotFound,Not Found,Some(The requested resource
+            was not found),error:instance:f47ac10b-58cc-4372-a567-0e02b2c3d479)
     PresentationStatusPage:
       title: PresentationStatusPage
       type: object
@@ -7863,14 +8061,14 @@ components:
           description: |2
 
              A self-attested code the receiver may want to display to the user or use in automatically deciding what to do with the out-of-band message.
-             goalcode is optional and can be provided when the presentation request is from invitation for connectionless verification.
+             goalcode is optional and can be included when the presentation request is from invitation for connectionless verification.
           example: present-vp
           type: string
         goal:
           description: |2
 
              A self-attested string that the receiver may want to display to the user about the context-specific goal of the out-of-band message.
-             goal is optional and can be provided when the presentation request is from invitation for connectionless verification.
+             goal is optional and can be included when the presentation request is from invitation for connectionless verification.
           example: Request proof of vaccine
           type: string
         connectionId:
@@ -7912,6 +8110,51 @@ components:
       enum:
       - did
       - http
+    SDJWTVCPropertiesV1:
+      title: SDJWTVCPropertiesV1
+      description: |2
+
+        The properties of the SDJWT verifiable credential that will be issued complied with SD-JWT specification and VCDM 1.1.
+      type: object
+      required:
+      - issuingDID
+      - credentialSchema
+      - claims
+      properties:
+        issuingDID:
+          description: |2
+
+            The issuer Prism DID by which the verifiable credential will be issued. DID can be short for or long form.
+          example: did:prism:3bb0505d13fcb04d28a48234edb27b0d4e6d7e18a81e2c1abab58f3bbc21ce6f
+          type: string
+        issuingKid:
+          description: |2
+
+            Specified the key ID (kid) of the DID, it will be used to sign credential.
+            User should specify just the partial identifier of the key. The full id of the kid MUST be "<issuingDID>#<kid>"
+            Note the cryto algorithm used with depend type of the key.
+          example: kid1
+          type: string
+        validityPeriod:
+          description: The validity period in seconds of the verifiable credential
+            that will be issued.
+          example: 3600.0
+          type: number
+          format: double
+        credentialSchema:
+          $ref: '#/components/schemas/CredentialSchemaRef'
+          description: |2
+
+            The properties of the SD-JWT verifiable credential that will be issued complied with VCDM 1.1.
+            The current implementation of SD-JWT doesn't includ this property in the JWT payload, but the it is used to validate the credential.
+        claims:
+          description: |2
+
+            The set of claims that will be included in the issued credential.
+            The JSON object should comply with the schema applicable for this offer (i.e. 'schemaId' or 'credentialDefinitionId').
+          example:
+            firstname: Alice
+            lastname: Wonderland
     Service:
       title: Service
       description: A service that should appear in the DID document. https://www.w3.org/TR/did-core/#services
@@ -7956,7 +8199,7 @@ components:
           description: List of JSON-LD contexts
           example:
           - https://www.w3.org/2018/credentials/v1
-          - https://w3c.github.io/vc-bitstring-status-list/contexts/2021/v1.jsonld
+          - https://w3id.org/vc/status-list/2021/v1
           type: array
           uniqueItems: true
           items:
@@ -7982,7 +8225,7 @@ components:
           type: string
         issuanceDate:
           description: Issuance timestamp of status list credential
-          example: '2024-11-05T11:32:21.556400758Z'
+          example: '2025-01-01T22:40:34.560891Z'
           type: string
           format: date-time
         credentialSubject:
