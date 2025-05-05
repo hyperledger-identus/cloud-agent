@@ -147,8 +147,8 @@ object DIDRegistrarEndpoints {
       """Update DID in the agent's wallet and post the update operation to the VDR.
         |Only the DID with status `PUBLISHED` can be updated.
         |This endpoint updates the DID document from the last confirmed operation.
-        |The update operation is asynchornous operation and the agent will reject
-        |a new update request if the previous operation is not yet comfirmed.""".stripMargin
+        |The update operation is asynchronous operation and the agent will reject
+        |a new update request if the previous operation is not yet confirmed.""".stripMargin
     )
 
   val deactivateManagedDid: Endpoint[
