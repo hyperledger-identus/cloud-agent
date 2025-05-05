@@ -1,6 +1,6 @@
 {
   "name": "identus-cloud-agent",
-  "version": "1.40.0",
+  "version": "2.0.0",
   "engines": {
     "node": ">=16.13.0"
   },
