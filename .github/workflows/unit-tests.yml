@@ -49,7 +49,13 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Download dependencies
-        run: sbt +update
+        run: |
+          sbt +update || true
+          curl -I https://jitpack.io/com/github/multiformats/java-multibase/v1.1.0/java-multibase-v1.1.0.pom
+          echo "-----"
+          curl -I https://jitpack.io/com/github/multiformats/java-multibase/v1.1.0/java-multibase-v1.1.0.pom.sha1
+          curl https://jitpack.io/com/github/multiformats/java-multibase/v1.1.0/java-multibase-v1.1.0.pom.sha1
+          false
 
       - name: Check formatting
         run: sbt scalafmtCheckAll
