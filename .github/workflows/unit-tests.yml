@@ -19,7 +19,10 @@ permissions:
 jobs:
   build-and-unit-tests:
     name: "Build and unit tests"
-    runs-on: self-hosted
+    # self-hosted runner has issue with jitpack checksum for https://github.com/multiformats/java-multibase.
+    # Probably some invalidated cache or worse. Need to investigate further.
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     permissions:
       checks: write
