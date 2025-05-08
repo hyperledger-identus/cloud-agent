@@ -69,7 +69,7 @@ tags:
 
     Endpoints are secured by __apiKeyAuth__ or __jwtAuth__ authentication.
   externalDocs:
-    url: https://hyperledger.github.io/identus-docs/tutorials/schemas/credential-schema
+    url: https://hyperledger-identus.github.io/docs/tutorials/schemas/credential-schema
     description: Credential Schema documentation
 - name: Credential Definition Registry
   description: |2
@@ -82,7 +82,7 @@ tags:
 
     Endpoints are secured by __apiKeyAuth__ or __jwtAuth__ authentication.
   externalDocs:
-    url: https://hyperledger.github.io/identus-docs/tutorials/category/credential-definition
+    url: https://hyperledger-identus.github.io/docs/tutorials/category/credential-definition
     description: Credential Definition documentation
 - name: DID
   description: |2
@@ -97,24 +97,24 @@ tags:
 
     The __DID Registrar__ endpoints facilitate the management of [PRISM DIDs](https://github.com/input-output-hk/prism-did-method-spec) hosted in the cloud agent.
 
-    Implentation of [DID management](https://hyperledger.github.io/identus-docs/docs/atala-prism/prism-cloud-agent/did-management/) in the cloud agent.
+    Implentation of [DID management](https://hyperledger-identus.github.io/docs/home/identus/cloud-agent/did-management) in the cloud agent.
     The agent securely manages and stores DIDs along with their keys in its secret storage.
     These endpoints allow users to create, read, update, deactivate, and publish without direct exposure to the key material.
     These DIDs can be utilized for various operations during issuance and verification processes.
 
-    More examples and tutorials can be found in this [documentation](https://hyperledger.github.io/identus-docs/tutorials/category/dids/).
+    More examples and tutorials can be found in this [documentation](https://hyperledger-identus.github.io/docs/tutorials/category/dids).
 - name: Wallet Management
   description: |2
 
-    The __Wallet Management__ endpoints enable both users and administrators to manage [wallets](https://hyperledger.github.io/identus-docs/docs/concepts/multi-tenancy#wallet).
+    The __Wallet Management__ endpoints enable both users and administrators to manage [wallets](https://hyperledger-identus.github.io/docs/home/concepts/multi-tenancy#wallet).
 
     In a multitenant agent, wallet is a container for various resources (e.g. Connections, DIDs) and it isolates the access based on the authorization settings.
-    [Admnistrator](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#tenant).
-    See [this example](https://hyperledger.github.io/identus-docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
+    [Admnistrator](https://hyperledger-identus.github.io/docs/home/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger-identus.github.io/docs/home/concepts/glossary#tenant).
+    See [this example](https://hyperledger-identus.github.io/docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
     Tenants can also manage and onboard their own wallets using these endpoints depending on the configuration.
-    See [this document](https://hyperledger.github.io/identus-docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
+    See [this document](https://hyperledger-identus.github.io/docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
 
-    Wallet permissions are controlled by [UMA](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#uma) configuration which the agent
+    Wallet permissions are controlled by [UMA](https://hyperledger-identus.github.io/docs/home/concepts/glossary#uma) configuration which the agent
     exposes endpoints to easily configure wallet access using `uma-permissions` resource.
     The permissions can also be configured out-of-band directly on the external IAM provider that supports the UMA standard.
 - name: System
@@ -137,11 +137,11 @@ tags:
     - Issuance protocol notifications
     - Presentation protocol notifications
 
-    For more detailed information regarding event notifications, please refer to this [documentation](https://hyperledger.github.io/identus-docs/tutorials/webhooks/webhook).
+    For more detailed information regarding event notifications, please refer to this [documentation](https://hyperledger-identus.github.io/docs/tutorials/webhooks/webhook).
 - name: Identity and Access Management
   description: |2
 
-    The __Identity and Access Management__ endpoints allow [agent administrators](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#administrator)
+    The __Identity and Access Management__ endpoints allow [agent administrators](https://hyperledger-identus.github.io/docs/home/concepts/glossary#administrator)
     to manage identity and access management for the agent's tenants.
     It provides basic built-in IAM capabilities as an alternative to more feature rich external IAM solutions.
 
@@ -151,7 +151,7 @@ tags:
     Additionally, the administrator can create API keys for entities and provide them to the tenants out-of-band.
     These API keys can then be used for authorization to access specific wallets.
 
-    For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger.github.io/identus-docs/docs/atala-prism/prism-cloud-agent/authentication).
+    For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger-identus.github.io/docs/home/identus/cloud-agent/authentication).
 - name: Presentation Exchange
   description: |2
 
