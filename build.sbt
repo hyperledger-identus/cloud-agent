@@ -12,8 +12,6 @@ inThisBuild(
     run / connectInput := true,
     releaseUseGlobalVersion := false,
     versionScheme := Some("semver-spec"),
-    resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
-    resolvers += "jitpack" at "https://jitpack.io",
   )
 )
 
@@ -432,9 +430,11 @@ publish / skip := true
 val commonSetttings = Seq(
   testFrameworks ++= Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
   libraryDependencies ++= Seq(D.zioTest, D.zioTestSbt, D.zioTestMagnolia),
+  resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
   // Needed for Kotlin coroutines that support new memory management mode
   resolvers += "JetBrains Space Maven Repository" at "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven",
-  resolvers += "jitpack" at "https://jitpack.io",
+  // Needed for com.github.multiformats:java-multibase
+  resolvers += "scijava" at "	https://maven.scijava.org/content/repositories/public/",
   // Override 'updateLicenses' for all project to inject custom DependencyResolution.
   // https://github.com/sbt/sbt-license-report/blob/9675cedb19c794de1119cbcf46a255fc8dcd5d4e/src/main/scala/sbtlicensereport/SbtLicenseReport.scala#L84
   updateLicenses := {

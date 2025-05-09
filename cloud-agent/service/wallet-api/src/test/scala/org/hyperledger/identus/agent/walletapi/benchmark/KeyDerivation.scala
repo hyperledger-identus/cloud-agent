@@ -93,7 +93,7 @@ object KeyDerivation extends ZIOSpecDefault, VaultTestContainerSupport {
 
   private def deriveKeyWarmUp(n: Int = 10000) = {
     for {
-      _ <- ZIO.debug("running key derivation warm-up")
+      _ <- ZIO.logDebug("running key derivation warm-up")
       apollo <- ZIO.service[Apollo]
       _ <- ZIO
         .foreach(1 to n) { i =>
@@ -105,7 +105,7 @@ object KeyDerivation extends ZIOSpecDefault, VaultTestContainerSupport {
   private def vaultWarmUp(n: Int = 100) = {
     for {
       vaultClient <- ZIO.service[VaultKVClient]
-      _ <- ZIO.debug("running vault warm-up")
+      _ <- ZIO.logDebug("running vault warm-up")
       _ <- ZIO.foreach(1 to n) { i =>
         vaultClient.set(s"secret/warm-up/key-$i", Map("hello" -> "world"))
       }
@@ -133,6 +133,6 @@ object KeyDerivation extends ZIOSpecDefault, VaultTestContainerSupport {
     val p90 = sortedDurationInMicro.apply((0.90 * n).toInt)
     val p99 = sortedDurationInMicro.apply((0.99 * n).toInt)
     val max = sortedDurationInMicro.last
-    ZIO.debug(s"execution time in us. avg: $avg | p50: $p50 | p75: $p75 | p90: $p90 | p99: $p99 | max: $max")
+    ZIO.logDebug(s"execution time in us. avg: $avg | p50: $p50 | p75: $p75 | p90: $p90 | p99: $p99 | max: $max")
   }
 }
