@@ -158,7 +158,7 @@ There could be some incompatibilities between the most latest versions of Cloud 
 
 The following tutorials will help you get started with the Cloud Agent and issue your first credentials:
 
-* [Creating, updating and deactivating Decentralized Identifiers (DIDs)](https://hyperledger.github.io/identus-docs/tutorials/category/dids/)
+* [Creating, updating and deactivating Decentralized Identifiers (DIDs)](https://hyperledger-identus.github.io/docs/tutorials/category/dids)
 * [Setting up connections between agents using out-of-band (OOB) protocol](https://hyperledger.github.io/identus-docs/tutorials/connections/connection)
 * [Issuing verifiable credentials (VCs)](https://hyperledger.github.io/identus-docs/tutorials/credentials/didcomm/issue)
 * [Presenting VC proofs](https://hyperledger.github.io/identus-docs/tutorials/credentials/didcomm/present-proof)

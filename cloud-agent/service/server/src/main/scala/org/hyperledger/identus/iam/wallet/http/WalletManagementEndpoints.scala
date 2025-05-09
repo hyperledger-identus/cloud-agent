@@ -26,15 +26,15 @@ object WalletManagementEndpoints {
   private val tagName = "Wallet Management"
   private val tagDescription =
     s"""
-       |The __${tagName}__ endpoints enable both users and administrators to manage [wallets](https://hyperledger.github.io/identus-docs/docs/concepts/multi-tenancy#wallet).
+       |The __${tagName}__ endpoints enable both users and administrators to manage [wallets](https://hyperledger-identus.github.io/docs/home/concepts/multi-tenancy#wallet).
        |
        |In a multitenant agent, wallet is a container for various resources (e.g. Connections, DIDs) and it isolates the access based on the authorization settings.
-       |[Admnistrator](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#tenant).
-       |See [this example](https://hyperledger.github.io/identus-docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
+       |[Admnistrator](https://hyperledger-identus.github.io/docs/home/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger-identus.github.io/docs/home/concepts/glossary#tenant).
+       |See [this example](https://hyperledger-identus.github.io/docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
        |Tenants can also manage and onboard their own wallets using these endpoints depending on the configuration.
-       |See [this document](https://hyperledger.github.io/identus-docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
+       |See [this document](https://hyperledger-identus.github.io/docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
        |
-       |Wallet permissions are controlled by [UMA](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#uma) configuration which the agent
+       |Wallet permissions are controlled by [UMA](https://hyperledger-identus.github.io/docs/home/concepts/glossary#uma) configuration which the agent
        |exposes endpoints to easily configure wallet access using `uma-permissions` resource.
        |The permissions can also be configured out-of-band directly on the external IAM provider that supports the UMA standard.
        |""".stripMargin
