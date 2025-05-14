@@ -25,8 +25,13 @@ import org.hyperledger.identus.pollux.core.model.presentation.Options
 import org.hyperledger.identus.pollux.core.service.{CredentialService, PresentationService}
 import org.hyperledger.identus.pollux.core.service.serdes.AnoncredCredentialProofsV1
 import org.hyperledger.identus.pollux.sdjwt.{HolderPrivateKey, IssuerPublicKey, PresentationCompact, SDJWT}
-import org.hyperledger.identus.pollux.vc.jwt.{DidResolver as JwtDidResolver, Issuer as JwtIssuer, JWT, JwtPresentation}
-import org.hyperledger.identus.pollux.vc.jwt.CredentialSchemaAndTrustedIssuersConstraint
+import org.hyperledger.identus.pollux.vc.jwt.{
+  CredentialSchemaAndTrustedIssuersConstraint,
+  DidResolver as JwtDidResolver,
+  Issuer as JwtIssuer,
+  JWT,
+  JwtPresentation
+}
 import org.hyperledger.identus.resolvers.DIDResolver
 import org.hyperledger.identus.shared.http.*
 import org.hyperledger.identus.shared.messaging

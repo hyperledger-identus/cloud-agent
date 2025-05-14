@@ -434,7 +434,7 @@ val commonSetttings = Seq(
   // Needed for Kotlin coroutines that support new memory management mode
   resolvers += "JetBrains Space Maven Repository" at "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven",
   // Needed for com.github.multiformats:java-multibase
-  resolvers += "scijava" at "	https://maven.scijava.org/content/repositories/public/",
+  resolvers += "scijava" at "https://maven.scijava.org/content/repositories/public/",
   // Override 'updateLicenses' for all project to inject custom DependencyResolution.
   // https://github.com/sbt/sbt-license-report/blob/9675cedb19c794de1119cbcf46a255fc8dcd5d4e/src/main/scala/sbtlicensereport/SbtLicenseReport.scala#L84
   updateLicenses := {
