@@ -18,29 +18,29 @@ object LogUtils {
           ZIO.logDebug(s"Trace $methodName")
         case _ => ZIO.unit // In principle this will not happen
       ctx.request.headers.find(_.name.equalsIgnoreCase(headerName)) match
-        case None         => (extraLog &>
-          job
-            .timed
-            .tap {
-              case (duration, res) => {
-                val seconds = duration.toMillis.toDouble / 1000
-                ZIO.logDebug(s"execution time took $seconds seconds ")
+        case None => (
+          extraLog &>
+            job.timed
+              .tap {
+                case (duration, res) => {
+                  val seconds = duration.toMillis.toDouble / 1000
+                  ZIO.logDebug(s"execution time took $seconds seconds ")
+                }
               }
-            }
-            .map(_._2)
-          )
-        case Some(header) => (extraLog &>
-          job
-            .timed
-            .tap {
-              case (duration, res) => {
-                val seconds = duration.toMillis.toDouble / 1000
-
-                ZIO.logDebug(s"execution time took $seconds seconds ")
+              .map(_._2)
+        )
+        case Some(header) => (
+          extraLog &>
+            job.timed
+              .tap {
+                case (duration, res) => {
+                  val seconds = duration.toMillis.toDouble / 1000
+                  ZIO.logDebug(s"execution time took $seconds seconds ")
+                }
               }
-            }
-            .map(_._2) @@ ZIOAspect.annotated("traceId", header.value)
-            @@ Metric.histogram("operation_duration", boundaries).trackDurationWith(_.toMillis.toDouble))
+              .map(_._2) @@ ZIOAspect.annotated("traceId", header.value)
+            @@ Metric.histogram("operation_duration", boundaries).trackDurationWith(_.toMillis.toDouble)
+        )
 
     }
 }
