@@ -9,8 +9,6 @@ import sttp.tapir.{Schema, Validator}
 import sttp.tapir.json.zio.schemaForZioJsonValue
 import sttp.tapir.Schema.annotations.{description, encodedExample, validate}
 import zio.json.*
-import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
-import zio.json.EncoderOps
 
 final case class PresentationStatus(
     @description(annotations.presentationId.description)
