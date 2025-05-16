@@ -15,7 +15,6 @@ import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.json.*
 import zio.json.ast.Json
-import zio.URIO
 
 import java.time.Instant
 import java.util.UUID
