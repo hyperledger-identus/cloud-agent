@@ -282,7 +282,8 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
       case ManagedDIDKeyMeta.HD(k)   => (k.keyUsage, Some(k.keyIndex), k.keyMode, k.curve)
       case ManagedDIDKeyMeta.Rand(k) => (k.keyUsage, None, k.keyMode, k.curve)
     }
-    val cxnIO = (now: Instant) => sql"""
+    val cxnIO = (now: Instant) =>
+      sql"""
           | INSERT INTO public.prism_did_key(did, key_id, key_usage, key_index, created_at, operation_hash, key_mode, curve_name)
           | VALUES
           | (
