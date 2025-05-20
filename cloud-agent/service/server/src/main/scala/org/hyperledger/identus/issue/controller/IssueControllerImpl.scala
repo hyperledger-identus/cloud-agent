@@ -1,7 +1,6 @@
 package org.hyperledger.identus.issue.controller
 
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.server.config.FeatureFlagConfig
+import org.hyperledger.identus.agent.server.config.{AppConfig, FeatureFlagConfig}
 import org.hyperledger.identus.agent.server.ControllerHelper
 import org.hyperledger.identus.agent.walletapi.model.PublicationState
 import org.hyperledger.identus.agent.walletapi.model.PublicationState.{Created, PublicationPending, Published}

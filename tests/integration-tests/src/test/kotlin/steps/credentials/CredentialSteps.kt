@@ -136,7 +136,15 @@ class CredentialSteps {
                 equalTo(CREDENTIAL_RECEIVED),
             ),
         )
-        holder.remember("issuedCredential", ListenToEvents.with(holder).credentialEvents.last().data)
+
+        val issueCredentialRecord = ListenToEvents.with(holder).credentialEvents.last().data
+
+        issueCredentialRecord.credential?.let {
+            println("Issued Credentials:")
+            println(it)
+        }
+
+        holder.remember("issuedCredential", issueCredentialRecord)
     }
 
     @Then("{actor} should see that credential issuance has failed")

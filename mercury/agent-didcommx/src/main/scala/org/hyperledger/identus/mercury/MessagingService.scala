@@ -131,6 +131,7 @@ object MessagingService {
           else didCommService.packEncrypted(msg = finalMessage, to = to)
 
         _ <- ZIO.log(s"Sending a Message to '$serviceEndpoint'")
+        _ <- ZIO.logDebug(s"Plain message: $msg")
         resp <- org.hyperledger.identus.mercury.HttpClient
           .postDIDComm(url = serviceEndpoint, data = encryptedMessage.string)
           .catchAll { case ex => ZIO.fail(SendMessageError(ex, Some(encryptedMessage.string))) }

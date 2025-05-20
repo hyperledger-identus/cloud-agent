@@ -14,7 +14,7 @@ object LogUtils {
       def extraLog = zio.internal.stacktracer.Tracer.instance.unapply(trace) match
         case Some((location: String, file: String, line: Int)) =>
           val methodName: String = location.split('.').toSeq.takeRight(2).mkString(".")
-          ZIO.log(s"Trace $methodName")
+          ZIO.logDebug(s"Trace $methodName")
         case _ => ZIO.unit // In principle this will not happen
       ctx.request.headers.find(_.name.equalsIgnoreCase(headerName)) match
         case None         => (extraLog &> job)

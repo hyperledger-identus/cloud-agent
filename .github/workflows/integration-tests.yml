@@ -5,13 +5,10 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  schedule:
-    - cron: "0 3 * * *"
   pull_request:
   push:
     branches:
       - "main"
-  workflow_dispatch:
 
 defaults:
   run:

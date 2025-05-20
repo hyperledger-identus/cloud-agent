@@ -20,7 +20,7 @@ class GenericUriResolver(resolvers: Map[String, UriResolver]) extends UriResolve
   override def resolve(uri: String): IO[GenericUriResolverError, String] = {
     val parsedUri = Uri.parseTry(uri)
 
-    ZIO.debug(s"Resolving resource from uri: $uri") *>
+    ZIO.logDebug(s"Resolving resource from uri: $uri") *>
       ZIO.fromTry(parsedUri).mapError(_ => InvalidUri(uri)).flatMap {
         case url: Url =>
           url.schemeOption.fold(ZIO.fail(InvalidUri(uri)))(schema =>
@@ -34,8 +34,8 @@ class GenericUriResolver(resolvers: Map[String, UriResolver]) extends UriResolve
                           .fromTry(Try(Base64Utils.decodeUrlToString(env.resource)))
                           .mapError(_ => DidUriResponseNotEnvelope(uri))
                       case Left(err) =>
-                        ZIO.debug(s"Failed to parse response as PrismEnvelope: $err") *>
-                          ZIO.debug("Falling back to returning the response as is") *>
+                        ZIO.logDebug(s"Failed to parse response as PrismEnvelope: $err") *>
+                          ZIO.logDebug("Falling back to returning the response as is") *>
                           ZIO.succeed(res)
                   case _ => ZIO.succeed(res)
               }

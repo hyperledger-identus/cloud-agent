@@ -2,6 +2,7 @@ package org.hyperledger.identus.shared.json
 
 import com.apicatalog.jsonld.document.JsonDocument
 import com.apicatalog.jsonld.http.media.MediaType
+import com.apicatalog.jsonld.loader.{DocumentLoader, HttpLoader, LRUDocumentCache}
 import com.apicatalog.jsonld.JsonLd
 import com.apicatalog.rdf.Rdf
 import io.setl.rdf.normalization.RdfNormalize
@@ -36,7 +37,7 @@ object Json {
     Try {
       val inputStream = new ByteArrayInputStream(jsonLdStr.getBytes)
       val document = JsonDocument.of(inputStream)
-      val rdfDataset = JsonLd.toRdf(document).get
+      val rdfDataset = JsonLd.toRdf(document).loader(lruDocumentLoader).get
       val normalized = RdfNormalize.normalize(rdfDataset)
       val writer = new StringWriter
       val rdfWriter = Rdf.createWriter(MediaType.N_QUADS, writer)
@@ -45,4 +46,6 @@ object Json {
       bytes
     }.toEither
   }
+
+  lazy val lruDocumentLoader: DocumentLoader = new LRUDocumentCache(HttpLoader.defaultInstance(), 1024)
 }

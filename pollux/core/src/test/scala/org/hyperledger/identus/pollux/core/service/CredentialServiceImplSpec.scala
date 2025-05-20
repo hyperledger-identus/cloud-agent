@@ -11,8 +11,11 @@ import org.hyperledger.identus.pollux.core.model.*
 import org.hyperledger.identus.pollux.core.model.error.CredentialServiceError.*
 import org.hyperledger.identus.pollux.core.model.primitives.UriString
 import org.hyperledger.identus.pollux.core.model.primitives.UriString.toUriString
-import org.hyperledger.identus.pollux.core.model.schema.{CredentialDefinition, CredentialSchemaRef}
-import org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaRefType
+import org.hyperledger.identus.pollux.core.model.schema.{
+  CredentialDefinition,
+  CredentialSchemaRef,
+  CredentialSchemaRefType
+}
 import org.hyperledger.identus.pollux.core.model.IssueCredentialRecord.{ProtocolState, Role}
 import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResolver
 import org.hyperledger.identus.pollux.vc.jwt.{CredentialIssuer, JWT, JwtCredential}
@@ -227,8 +230,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
           } yield {
             assertTrue(record match
               case Exit.Failure(Cause.Die(_: UnmanagedFailureException, _)) => true
-              case _                                                        => false
-            )
+              case _                                                        => false)
           }
         }
       },
@@ -359,8 +361,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(exit match
             case Exit.Failure(Cause.Fail(_: RecordNotFound, _)) => true
-            case _                                              => false
-          )
+            case _                                              => false)
         }
       },
       test("acceptCredentialOffer should reject unsupported `subjectId` format") {
@@ -375,8 +376,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(record match
             case Exit.Failure(Cause.Fail(_: UnsupportedDidFormat, _)) => true
-            case _                                                    => false
-          )
+            case _                                                    => false)
         }
       },
       test("receiveCredentialRequest successfully updates the record") {
@@ -402,8 +402,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(exit match
             case Exit.Failure(Cause.Fail(_: RecordNotFoundForThreadIdAndStates, _)) => true
-            case _                                                                  => false
-          )
+            case _                                                                  => false)
         }
       },
       test("receiveCredentialRequest is rejected for an unknown 'thid'") {
@@ -416,8 +415,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(exit match
             case Exit.Failure(Cause.Fail(_: RecordNotFoundForThreadIdAndStates, _)) => true
-            case _                                                                  => false
-          )
+            case _                                                                  => false)
         }
       },
       test("acceptCredentialRequest successfully updates the record") {
@@ -445,8 +443,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(exit match
             case Exit.Failure(Cause.Fail(_: RecordNotFound, _)) => true
-            case _                                              => false
-          )
+            case _                                              => false)
         }
       },
       test("receiveCredentialIssue successfully updates the record") {
@@ -480,8 +477,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(exit match
             case Exit.Failure(Cause.Fail(_: RecordNotFoundForThreadIdAndStates, _)) => true
-            case _                                                                  => false
-          )
+            case _                                                                  => false)
         }
       }.provideSomeLayer(holderDidServiceExpectations.toLayer ++ holderManagedDIDServiceExpectations.toLayer),
       test("receiveCredentialIssue is rejected for an unknown 'thid'") {
@@ -498,8 +494,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
         } yield {
           assertTrue(exit match
             case Exit.Failure(Cause.Fail(_: RecordNotFoundForThreadIdAndStates, _)) => true
-            case _                                                                  => false
-          )
+            case _                                                                  => false)
         }
       }.provideSomeLayer(holderDidServiceExpectations.toLayer ++ holderManagedDIDServiceExpectations.toLayer),
       test("Happy flow is successfully executed") {
@@ -688,8 +683,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
             case MyBase64(value) =>
               val ba = new String(Base64.getUrlDecoder.decode(value))
               AnoncredCredential(ba).credDefId == credDefId
-            case _ => false
-          )
+            case _ => false)
         }
       }
     )

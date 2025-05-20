@@ -68,6 +68,7 @@ object ConnectionEndpoints {
         oneOf(
           FailureVariant.forbidden,
           FailureVariant.badRequest,
+          FailureVariant.unauthorized,
           FailureVariant.internalServerError
         )
       )
@@ -100,6 +101,7 @@ object ConnectionEndpoints {
           FailureVariant.notFound,
           FailureVariant.badRequest,
           FailureVariant.forbidden,
+          FailureVariant.unauthorized,
           FailureVariant.internalServerError
         )
       )
@@ -138,7 +140,8 @@ object ConnectionEndpoints {
         oneOf(
           FailureVariant.forbidden,
           FailureVariant.badRequest,
-          FailureVariant.internalServerError
+          FailureVariant.unauthorized,
+          FailureVariant.internalServerError,
         )
       )
       .name("getConnections")
@@ -148,6 +151,36 @@ object ConnectionEndpoints {
           |The API returns a comprehensive collection of connection flow records within the system, regardless of their state.
           |Each connection item includes essential metadata such as connection ID, thread ID, state, role, participant information, and other relevant details.
           |Pagination support is available, allowing for efficient handling of large datasets.
+          |""".stripMargin)
+      .tag(tagName)
+
+  val deleteConnection
+      : Endpoint[(ApiKeyCredentials, JwtCredentials), (RequestContext, UUID), ErrorResponse, Unit, Any] =
+    endpoint.delete
+      .securityIn(apiKeyHeader)
+      .securityIn(jwtAuthHeader)
+      .in(extractFromRequest[RequestContext](RequestContext.apply))
+      .in(
+        "connections" / path[UUID]("connectionId").description(
+          "The `connectionId` uniquely identifying the connection flow record."
+        )
+      )
+      .out(statusCode(StatusCode.NoContent))
+      .errorOut(
+        oneOf(
+          FailureVariant.notFound,
+          FailureVariant.badRequest,
+          FailureVariant.forbidden,
+          FailureVariant.unauthorized,
+          FailureVariant.internalServerError
+        )
+      )
+      .name("deleteConnection")
+      .summary(
+        "Deletes a specific connection flow record from the Agent's database based on its unique `connectionId`."
+      )
+      .description("""
+          |Delete a specific connection flow record from the Agent's database based in its unique `connectionId`.
           |""".stripMargin)
       .tag(tagName)
 
@@ -180,6 +213,7 @@ object ConnectionEndpoints {
         oneOf(
           FailureVariant.forbidden,
           FailureVariant.badRequest,
+          FailureVariant.unauthorized,
           FailureVariant.internalServerError
         )
       )

@@ -16,11 +16,6 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcWalletNonSecretStorage
 }
 import org.hyperledger.identus.castor.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
-import org.hyperledger.identus.castor.core.model.did.{
-  Service as DidDocumentService,
-  ServiceEndpoint as DidDocumentServiceEndpoint,
-  ServiceType as DidDocumentServiceType
-}
 import org.hyperledger.identus.castor.core.service.DIDServiceImpl
 import org.hyperledger.identus.castor.core.util.DIDOperationValidator
 import org.hyperledger.identus.connect.controller.ConnectionControllerImpl
@@ -94,8 +89,8 @@ object MainApp extends ZIOAppDefault {
 
   // FIXME: remove this when db app user have correct privileges provisioned by k8s operator.
   // This should be executed before migration to have correct privilege for new objects.
-  private val preMigrations = for {
-    _ <- ZIO.logInfo("running pre-migration steps.")
+  lazy private val preMigrations = for {
+    _ <- ZIO.logDebug("Running SQL pre-migration steps.")
     appConfig <- ZIO.service[AppConfig].provide(SystemModule.configLayer)
     _ <- PolluxMigrations
       .initDbPrivileges(appConfig.pollux.database.appUsername)
@@ -108,11 +103,11 @@ object MainApp extends ZIOAppDefault {
       .provide(RepoModule.agentTransactorLayer)
   } yield ()
 
-  private val migrations = for {
+  lazy private val migrations = for {
     _ <- ZIO.serviceWithZIO[PolluxMigrations](_.migrateAndRepair)
     _ <- ZIO.serviceWithZIO[ConnectMigrations](_.migrateAndRepair)
     _ <- ZIO.serviceWithZIO[AgentMigrations](_.migrateAndRepair)
-    _ <- ZIO.logInfo("Running post-migration RLS checks for DB application users")
+    _ <- ZIO.logDebug("Running SQL post-migration RLS checks for DB application users")
     _ <- PolluxMigrations.validateRLS.provide(RepoModule.polluxContextAwareTransactorLayer)
     _ <- ConnectMigrations.validateRLS.provide(RepoModule.connectContextAwareTransactorLayer)
     _ <- AgentMigrations.validateRLS.provide(RepoModule.agentContextAwareTransactorLayer)
@@ -120,58 +115,21 @@ object MainApp extends ZIOAppDefault {
   override def run: ZIO[Any, Throwable, Unit] = {
 
     val app = for {
-      _ <- Console
-        .printLine(s"""
-      |██╗██████╗ ███████╗███╗   ██╗████████╗██╗   ██╗███████╗
-      |██║██╔══██╗██╔════╝████╗  ██║╚══██╔══╝██║   ██║██╔════╝
-      |██║██║  ██║█████╗  ██╔██╗ ██║   ██║   ██║   ██║███████╗
-      |██║██║  ██║██╔══╝  ██║╚██╗██║   ██║   ██║   ██║╚════██║
-      |██║██████╔╝███████╗██║ ╚████║   ██║   ╚██████╔╝███████║
-      |╚═╝╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝    ╚═════╝ ╚══════╝
-      |
-      | ██████╗██╗      ██████╗ ██╗   ██╗██████╗
-      |██╔════╝██║     ██╔═══██╗██║   ██║██╔══██╗
-      |██║     ██║     ██║   ██║██║   ██║██║  ██║
-      |██║     ██║     ██║   ██║██║   ██║██║  ██║
-      |╚██████╗███████╗╚██████╔╝╚██████╔╝██████╔╝
-      | ╚═════╝╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝
-      |
-      | █████╗  ██████╗ ███████╗███╗   ██╗████████╗
-      |██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝
-      |███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║
-      |██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║
-      |██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║
-      |╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝
-      |
-      |version: ${buildinfo.BuildInfo.version}
-      |
-      |""".stripMargin)
-        .ignore
-
       appConfig <- ZIO.service[AppConfig].provide(SystemModule.configLayer)
       flags = appConfig.featureFlag
-      _ <- Console.printLine(s"""### Feature Flags: ####
-         | - Support for the credential type JWT VC is ${if (flags.enableJWT) "ENABLED" else "DISABLED"}
-         | - Support for the credential type SD JWT VC is ${if (flags.enableSDJWT) "ENABLED" else "DISABLED"}
-         | - Support for the credential type  Anoncred is ${if (flags.enableAnoncred) "ENABLED" else "DISABLED"}
-         |""")
-      // these services are added to any DID document by default when they are created.
-      defaultDidDocumentServices = Set(
-        DidDocumentService(
-          id = appConfig.agent.httpEndpoint.serviceName,
-          serviceEndpoint = DidDocumentServiceEndpoint
-            .Single(
-              DidDocumentServiceEndpoint.UriOrJsonEndpoint
-                .Uri(
-                  DidDocumentServiceEndpoint.UriValue
-                    .fromString(appConfig.agent.httpEndpoint.publicEndpointUrl.toString)
-                    .toOption
-                    .get // This will fail if URL is invalid, which will prevent app from starting since public endpoint in config is invalid
-                )
-            ),
-          `type` = DidDocumentServiceType.Single(DidDocumentServiceType.Name.fromStringUnsafe("LinkedResourceV1"))
-        )
-      )
+      _ <- Console.printLine(s"""
+           |██████████████████████████████████████████████████████████████████
+           |Starting Identus Cloud-Agent version: ${buildinfo.BuildInfo.version}
+           |
+           |HTTP server endpoint is setup as '${appConfig.agent.httpEndpoint.publicEndpointUrl}'
+           |DIDComm server endpoint is setup as '${appConfig.agent.didCommEndpoint.publicEndpointUrl}'
+           |
+           |Feature Flags:
+           | - Support for the credential type JWT VC is ${if (flags.enableJWT) "ENABLED" else "DISABLED"}
+           | - Support for the credential type SD JWT VC is ${if (flags.enableSDJWT) "ENABLED" else "DISABLED"}
+           | - Support for the credential type AnonCreds is ${if (flags.enableAnoncred) "ENABLED" else "DISABLED"}
+           |██████████████████████████████████████████████████████████████████
+           |""".stripMargin)
       _ <- preMigrations
       _ <- migrations
       app <- CloudAgentApp.run
@@ -217,7 +175,7 @@ object MainApp extends ZIOAppDefault {
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
           DIDServiceImpl.layer,
           EntityServiceImpl.layer,
-          ZLayer.succeed(defaultDidDocumentServices) >>> ManagedDIDServiceWithEventNotificationImpl.layer,
+          ManagedDIDServiceWithEventNotificationImpl.layer,
           LinkSecretServiceImpl.layer >>> PresentationServiceImpl.layer >>> PresentationServiceNotifier.layer,
           VerificationPolicyServiceImpl.layer,
           WalletManagementServiceImpl.layer,

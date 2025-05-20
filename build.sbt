@@ -12,8 +12,6 @@ inThisBuild(
     run / connectInput := true,
     releaseUseGlobalVersion := false,
     versionScheme := Some("semver-spec"),
-    resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
-    resolvers += "jitpack" at "https://jitpack.io",
   )
 )
 
@@ -46,7 +44,7 @@ lazy val V = new {
   val munitZio = "0.2.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.9"
+  val zio = "2.1.11"
   val zioConfig = "4.0.2"
   val zioLogging = "2.3.1"
   val zioJson = "0.7.3"
@@ -54,7 +52,7 @@ lazy val V = new {
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "2.7.5"
+  val zioKafka = "2.8.2"
   val mockito = "3.2.18.0"
   val monocle = "3.2.0"
 
@@ -128,7 +126,7 @@ lazy val D = new {
   val jwtZio = "com.github.jwt-scala" %% "jwt-zio-json" % V.jwtZioVersion
   val jsonCanonicalization: ModuleID = "io.github.erdtman" % "java-json-canonicalization" % "1.1"
   val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.4.0"
-  val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1"
+  val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
   val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.1.38"
   val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.9.0"
@@ -432,9 +430,11 @@ publish / skip := true
 val commonSetttings = Seq(
   testFrameworks ++= Seq(new TestFramework("zio.test.sbt.ZTestFramework")),
   libraryDependencies ++= Seq(D.zioTest, D.zioTestSbt, D.zioTestMagnolia),
+  resolvers += "Local Maven Repository" at "file://" + Path.userHome.absolutePath + "/.m2/repository",
   // Needed for Kotlin coroutines that support new memory management mode
   resolvers += "JetBrains Space Maven Repository" at "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven",
-  resolvers += "jitpack" at "https://jitpack.io",
+  // Needed for com.github.multiformats:java-multibase
+  resolvers += "scijava" at "https://maven.scijava.org/content/repositories/public/",
   // Override 'updateLicenses' for all project to inject custom DependencyResolution.
   // https://github.com/sbt/sbt-license-report/blob/9675cedb19c794de1119cbcf46a255fc8dcd5d4e/src/main/scala/sbtlicensereport/SbtLicenseReport.scala#L84
   updateLicenses := {
@@ -906,11 +906,10 @@ lazy val cloudAgentServer = project
       ExclusionRule("com.google.protobuf", "protobuf-javalite")
     ),
     Compile / mainClass := Some("org.hyperledger.identus.agent.server.MainApp"),
-    Docker / maintainer := "atala-coredid@iohk.io",
-    Docker / dockerUsername := Some("hyperledger"), // https://github.com/hyperledger
-    Docker / dockerRepository := Some("ghcr.io"),
+    Docker / maintainer := "atala-coredid@iohk.io", // TODO: clarify the contact emale of the project
+    Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
+    Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
-    // Official docker image for openjdk 21 with curl and bash
     dockerBaseImage := "openjdk:21-jdk",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.hyperledger.identus.agent.server.buildinfo",

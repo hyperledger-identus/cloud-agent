@@ -1,7 +1,6 @@
 package org.hyperledger.identus.presentproof.controller
 
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.server.config.FeatureFlagConfig
+import org.hyperledger.identus.agent.server.config.{AppConfig, FeatureFlagConfig}
 import org.hyperledger.identus.agent.server.ControllerHelper
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}

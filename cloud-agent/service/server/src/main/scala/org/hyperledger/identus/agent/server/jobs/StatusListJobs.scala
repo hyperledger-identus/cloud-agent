@@ -32,7 +32,7 @@ object StatusListJobs extends BackgroundJobsHelper {
       trigger = for {
         credentialStatusListService <- ZIO.service[CredentialStatusListService]
         walletAndStatusListIds <- credentialStatusListService.getCredentialStatusListIds
-        _ <- ZIO.logInfo(s"Triggering status list revocation sync for '${walletAndStatusListIds.size}' status lists")
+        _ <- ZIO.logDebug(s"Triggering status list revocation sync for '${walletAndStatusListIds.size}' status lists")
         _ <- ZIO.foreach(walletAndStatusListIds) { (walletId, statusListId) =>
           producer.produce(TOPIC_NAME, walletId.toUUID, WalletIdAndRecordId(walletId.toUUID, statusListId))
         }
@@ -56,7 +56,7 @@ object StatusListJobs extends BackgroundJobsHelper {
     Unit
   ] = {
     (for {
-      _ <- ZIO.logDebug(s"!!! Handling recordId: ${message.value} via Kafka queue")
+      _ <- ZIO.logDebug(s"Handling recordId: ${message.value} via Kafka queue")
       credentialStatusListService <- ZIO.service[CredentialStatusListService]
       walletAccessContext = WalletAccessContext(WalletId.fromUUID(message.value.walletId))
       statusListWithCreds <- credentialStatusListService

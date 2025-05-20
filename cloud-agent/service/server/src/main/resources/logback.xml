@@ -5,6 +5,8 @@
   <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
   <import class="ch.qos.logback.core.ConsoleAppender"/>
 
+  <property name="LOG_LEVEL" value="${LOG_LEVEL:-info}"/>
+
   <appender name="STDOUT" class="ConsoleAppender">
     <encoder class="PatternLayoutEncoder">
       <pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{5}@L%line:[%-4.30thread]) {%mdc} - %msg%n%xException</pattern>
@@ -16,7 +18,20 @@
   <logger name="org.apache.kafka.clients" level="WARN">
     <appender-ref ref="STDOUT" />
   </logger>
-  <root level="info">
+  <logger name="com.zaxxer.hikari" level="WARN">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  <logger name="io.netty" level="WARN">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  <logger name="org.flywaydb.core.internal" level="WARN">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  <logger name="org.http4s.blaze" level="WARN">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <root level="${LOG_LEVEL}">
     <appender-ref ref="STDOUT"/>
   </root>
 </configuration>

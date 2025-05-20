@@ -39,6 +39,7 @@ object Tapir2StaticOAS extends ZIOAppDefault {
     for {
       args <- getArgs
       _ <- ZIO.when(args.length != 2)(ZIO.fail("Usage: Tapir2StaticOAS <output file> <server url>"))
+      _ <- ZIO.log("Working directory: " + System.getProperty("user.dir"))
       model <- OpenAPISpecificationGenerator.generate
     } yield {
       val yaml = model.info(model.info.copy(version = args(1))).toYaml3_0_3

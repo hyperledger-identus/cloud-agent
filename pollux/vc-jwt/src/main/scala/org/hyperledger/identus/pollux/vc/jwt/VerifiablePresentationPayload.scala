@@ -192,6 +192,7 @@ object JwtVp {
             .map(IndexedSeq(_))
             .orElse(ctx.as[IndexedSeq[VerifiableCredentialPayload]])
         )
+        .orElse(Right(IndexedSeq.empty[VerifiableCredentialPayload]))
     } yield Json_JwtVp(context, typ, vcp)
   }
 
@@ -484,7 +485,7 @@ object JwtPresentation {
       domain: Option[String]
   ): Validation[String, Unit] = {
     if (!domain.forall(domain => decodedJwtPresentation.aud.contains(domain))) {
-      Validation.fail(s"domain/Audience dont match doamin=$domain, exp=${decodedJwtPresentation.aud}")
+      Validation.fail(s"domain/Audience dont match domain=$domain, exp=${decodedJwtPresentation.aud}")
     } else Validation.unit
   }
 

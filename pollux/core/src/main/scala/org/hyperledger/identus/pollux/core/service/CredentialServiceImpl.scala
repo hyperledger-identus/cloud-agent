@@ -1492,7 +1492,9 @@ class CredentialServiceImpl(
           JwtPresentation.validatePresentation(jwt, options.domain, options.challenge) match
             case ZValidation.Success(log, value) => ZIO.unit
             case ZValidation.Failure(log, error) =>
-              ZIO.fail(CredentialRequestValidationFailed("domain/challenge proof validation failed"))
+              ZIO.fail(
+                CredentialRequestValidationFailed(s"JWTPresentation validation failed: ${error.toList.mkString(";")}")
+              )
 
       clock = java.time.Clock.system(ZoneId.systemDefault)
       verificationResult <- JwtPresentation

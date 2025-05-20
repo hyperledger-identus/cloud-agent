@@ -186,7 +186,7 @@ object IssueBackgroundJobs extends BackgroundJobsHelper {
               _,
               _,
             ) =>
-          ZIO.debug(s" Connectionless InvitationGenerated record received no processing required") *> ZIO.unit
+          ZIO.logDebug(s" Connectionless InvitationGenerated record received no processing required") *> ZIO.unit
         // Offer should be sent from Issuer to Holder
         case IssueCredentialRecord(
               id,
