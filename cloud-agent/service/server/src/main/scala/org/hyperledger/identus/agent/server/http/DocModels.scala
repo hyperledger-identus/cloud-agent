@@ -65,7 +65,7 @@ object DocModels {
               |It supports DID (Decentralized Identifiers) management, verifiable credential exchange, and secure messaging based on DIDComm standards.
               |The API is designed to be interoperable with various blockchain and DLT (Distributed Ledger Technology) platforms, ensuring wide compatibility and flexibility.
               |Key features include connection management, credential issuance and verification, and secure, privacy-preserving communication between entities.
-              |Additional information and the full list of capabilities can be found in the [Open Enterprise Agent documentation](https://hyperledger.github.io/identus-docs/docs/category/prism-cloud-agent)
+              |Additional information and the full list of capabilities can be found in the [Identus Cloud Agent documentation](https://github.com/hyperledger-identus/cloud-agent)
               |""".stripMargin),
           termsOfService = None,
           contact = None,

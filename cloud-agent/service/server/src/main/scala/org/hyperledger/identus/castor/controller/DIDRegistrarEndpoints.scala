@@ -28,12 +28,12 @@ object DIDRegistrarEndpoints {
     s"""
        |The __${tagName}__ endpoints facilitate the management of [PRISM DIDs](https://github.com/input-output-hk/prism-did-method-spec) hosted in the cloud agent.
        |
-       |Implentation of [DID management](https://hyperledger.github.io/identus-docs/docs/atala-prism/prism-cloud-agent/did-management/) in the cloud agent.
+       |Implentation of [DID management](https://hyperledger-identus.github.io/docs/home/identus/cloud-agent/did-management) in the cloud agent.
        |The agent securely manages and stores DIDs along with their keys in its secret storage.
        |These endpoints allow users to create, read, update, deactivate, and publish without direct exposure to the key material.
        |These DIDs can be utilized for various operations during issuance and verification processes.
        |
-       |More examples and tutorials can be found in this [documentation](https://hyperledger.github.io/identus-docs/tutorials/category/dids/).
+       |More examples and tutorials can be found in this [documentation](https://hyperledger-identus.github.io/docs/tutorials/category/dids).
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))

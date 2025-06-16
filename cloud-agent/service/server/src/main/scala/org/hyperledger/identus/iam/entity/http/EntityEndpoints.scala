@@ -20,7 +20,7 @@ object EntityEndpoints {
   private val tagName = "Identity and Access Management"
   private val tagDescription =
     s"""
-       |The __${tagName}__ endpoints allow [agent administrators](https://hyperledger.github.io/identus-docs/docs/concepts/glossary#administrator)
+       |The __${tagName}__ endpoints allow [agent administrators](https://hyperledger-identus.github.io/docs/home/concepts/glossary#administrator)
        |to manage identity and access management for the agent's tenants.
        |It provides basic built-in IAM capabilities as an alternative to more feature rich external IAM solutions.
        |
@@ -30,7 +30,7 @@ object EntityEndpoints {
        |Additionally, the administrator can create API keys for entities and provide them to the tenants out-of-band.
        |These API keys can then be used for authorization to access specific wallets.
        |
-       |For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger.github.io/identus-docs/docs/atala-prism/prism-cloud-agent/authentication).
+       |For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger-identus.github.io/docs/home/identus/cloud-agent/authentication).
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))

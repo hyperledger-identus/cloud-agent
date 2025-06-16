@@ -122,7 +122,7 @@ System requirements can vary depending on the use case. The following are the mi
 
 #### Running locally in demo mode
 
-To run Identus locally you should follow the instructions in the [Quickstart guide](https://hyperledger.github.io/identus-docs/docs/quick-start/)
+To run Identus locally you should follow the instructions in the [Quickstart guide](https://hyperledger-identus.github.io/docs/home/quick-start)
 
 If the Cloud Agent is started successfully, all the running containers should achieve `Healthy` state, and Cloud Agent Rest API should be available at the specified port, for example:
 * `http://localhost:8080/cloud-agent` for the `issuer` instance
@@ -158,7 +158,7 @@ There could be some incompatibilities between the most latest versions of Cloud 
 
 The following tutorials will help you get started with the Cloud Agent and issue your first credentials:
 
-* [Creating, updating and deactivating Decentralized Identifiers (DIDs)](https://hyperledger.github.io/identus-docs/tutorials/category/dids/)
+* [Creating, updating and deactivating Decentralized Identifiers (DIDs)](https://hyperledger-identus.github.io/docs/tutorials/category/dids)
 * [Setting up connections between agents using out-of-band (OOB) protocol](https://hyperledger.github.io/identus-docs/tutorials/connections/connection)
 * [Issuing verifiable credentials (VCs)](https://hyperledger.github.io/identus-docs/tutorials/credentials/didcomm/issue)
 * [Presenting VC proofs](https://hyperledger.github.io/identus-docs/tutorials/credentials/didcomm/present-proof)

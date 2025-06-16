@@ -1,7 +1,6 @@
 package org.hyperledger.identus.pollux.vc.jwt
 
 import zio.test.*
-import zio.test.ZIOSpecDefault
 
 object JwtPresentationTest extends ZIOSpecDefault {
   val jwt = JWT(
