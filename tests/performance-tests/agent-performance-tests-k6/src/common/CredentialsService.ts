@@ -1,22 +1,21 @@
-import { fail, sleep } from "k6";
-import { HttpService, statusChangeTimeouts } from "./HttpService";
-import { ISSUER_AGENT_URL, WAITING_LOOP_MAX_ITERATIONS, WAITING_LOOP_PAUSE_INTERVAL } from "./Config";
-import { IssueCredentialRecord, Connection, CredentialSchemaResponse } from "@hyperledger/identus-cloud-agent-client-ts";
-import { crypto } from "k6/experimental/webcrypto";
+import { fail, sleep } from 'k6'
+import { HttpService, statusChangeTimeouts } from './HttpService'
+import { ISSUER_AGENT_URL, WAITING_LOOP_MAX_ITERATIONS, WAITING_LOOP_PAUSE_INTERVAL } from './Config'
+import { IssueCredentialRecord, Connection, CredentialSchemaResponse } from '@hyperledger/identus-cloud-agent-client'
+import { crypto } from 'k6/experimental/webcrypto'
 
 /**
  * A service class for managing credentials in the application.
  * Extends the HttpService class.
  */
 export class CredentialsService extends HttpService {
-
   /**
    * Creates a credential offer for a specific issuing DID and connection.
    * @param {string} issuingDid - The issuing DID.
    * @param {Connection} connection - The connection object.
    * @returns {IssueCredentialRecord} The created credential offer record.
    */
-  createCredentialOffer(issuingDid: string, connection: Connection, schema: CredentialSchemaResponse): IssueCredentialRecord {
+  createCredentialOffer (issuingDid: string, connection: Connection, schema: CredentialSchemaResponse): IssueCredentialRecord {
     const payload = `{
         "claims": {
           "emailAddress": "${crypto.randomUUID()}-@atala.io",
@@ -26,19 +25,19 @@ export class CredentialsService extends HttpService {
           "drivingClass": 1
         },
         "issuingDID": "${issuingDid}",
-        "schemaId": "${ISSUER_AGENT_URL.replace("localhost", "host.docker.internal")}/schema-registry/schemas/${schema.guid}",
+        "schemaId": "${ISSUER_AGENT_URL.replace('localhost', 'host.docker.internal')}/schema-registry/schemas/${schema.guid}",
         "connectionId": "${connection.connectionId}",
         "automaticIssuance": false
-      }`;
-    const res = this.post("issue-credentials/credential-offers", payload);
+      }`
+    const res = this.post('issue-credentials/credential-offers', payload)
     try {
-      return this.toJson(res) as unknown as IssueCredentialRecord;
+      return this.toJson(res) as unknown as IssueCredentialRecord
     } catch {
-      fail("Failed to parse JSON as IssueCredentialRecord")
+      fail('Failed to parse JSON as IssueCredentialRecord')
     }
   }
 
-  createCredentialDefinition(issuingDid: string, schema: CredentialSchemaResponse) {
+  createCredentialDefinition (issuingDid: string, schema: CredentialSchemaResponse) {
     const payload = `
     {
       "name": "${crypto.randomUUID()}}",
@@ -46,18 +45,18 @@ export class CredentialsService extends HttpService {
       "version": "1.0.0",
       "tag": "Licence",
       "author": "${issuingDid}",
-      "schemaId": "${ISSUER_AGENT_URL.replace("localhost", "host.docker.internal")}/schema-registry/schemas/${schema.guid}/schema",
+      "schemaId": "${ISSUER_AGENT_URL.replace('localhost', 'host.docker.internal')}/schema-registry/schemas/${schema.guid}/schema",
       "signatureType": "CL",
       "supportRevocation": false
     }
-    `;
-    this.post("credential-definition-registry/definitions", payload);
+    `
+    this.post('credential-definition-registry/definitions', payload)
   }
 
-  createCredentialSchema(issuingDid: string, schemaType: string = "json") {
+  createCredentialSchema (issuingDid: string, schemaType: string = 'json') {
     const payload = (function () {
       switch (schemaType) {
-        case "json":
+        case 'json':
           return `{
                       "name": "${crypto.randomUUID()}}",
                       "version": "1.0.0",
@@ -104,8 +103,8 @@ export class CredentialsService extends HttpService {
                         "id"
                       ],
                       "author": "${issuingDid}"
-                  }`;
-        case "anoncred":
+                  }`
+        case 'anoncred':
           return `{
                       "name": "${crypto.randomUUID()}",
                       "version": "1.0.0",
@@ -124,16 +123,16 @@ export class CredentialsService extends HttpService {
                       "tags": [
                           "Licence"
                       ]
-                  }`;
+                  }`
         default:
-          throw new Error(`Schema type ${schemaType} is not supported`);
+          throw new Error(`Schema type ${schemaType} is not supported`)
       }
-    })();
-    const res = this.post("schema-registry/schemas", payload);
+    })()
+    const res = this.post('schema-registry/schemas', payload)
     try {
-      return this.toJson(res) as unknown as CredentialSchemaResponse;
+      return this.toJson(res) as unknown as CredentialSchemaResponse
     } catch {
-      fail("Failed to parse JSON as CredentialSchemaResponse")
+      fail('Failed to parse JSON as CredentialSchemaResponse')
     }
   }
 
@@ -142,12 +141,12 @@ export class CredentialsService extends HttpService {
    * @param {IssueCredentialRecord} record - The credential record.
    * @returns {IssueCredentialRecord} The credential record.
    */
-  getCredentialRecord(record: IssueCredentialRecord): IssueCredentialRecord {
-    const res = this.get(`issue-credentials/records/${record.recordId}`);
+  getCredentialRecord (record: IssueCredentialRecord): IssueCredentialRecord {
+    const res = this.get(`issue-credentials/records/${record.recordId}`)
     try {
-      return this.toJson(res) as unknown as IssueCredentialRecord;
+      return this.toJson(res) as unknown as IssueCredentialRecord
     } catch {
-      fail("Failed to parse JSON as IssueCredentialRecord")
+      fail('Failed to parse JSON as IssueCredentialRecord')
     }
   }
 
@@ -155,9 +154,9 @@ export class CredentialsService extends HttpService {
    * Retrieves all credential records.
    * @returns {IssueCredentialRecord[]} An array of credential records.
    */
-  getCredentialRecords(thid: string): IssueCredentialRecord[] {
-    const res = this.get(`issue-credentials/records?thid=${thid}`);
-    return this.toJson(res).contents as unknown as IssueCredentialRecord[];
+  getCredentialRecords (thid: string): IssueCredentialRecord[] {
+    const res = this.get(`issue-credentials/records?thid=${thid}`)
+    return this.toJson(res).contents as unknown as IssueCredentialRecord[]
   }
 
   /**
@@ -166,13 +165,13 @@ export class CredentialsService extends HttpService {
    * @param {string} subjectDid - The subject DID.
    * @returns {IssueCredentialRecord} The updated credential record.
    */
-  acceptCredentialOffer(record: IssueCredentialRecord, subjectDid: string): IssueCredentialRecord {
-    const payload = { subjectId: subjectDid };
-    const res = this.post(`issue-credentials/records/${record.recordId}/accept-offer`, payload, 200);
+  acceptCredentialOffer (record: IssueCredentialRecord, subjectDid: string): IssueCredentialRecord {
+    const payload = { subjectId: subjectDid }
+    const res = this.post(`issue-credentials/records/${record.recordId}/accept-offer`, payload, 200)
     try {
-      return this.toJson(res) as unknown as IssueCredentialRecord;
+      return this.toJson(res) as unknown as IssueCredentialRecord
     } catch {
-      fail("Failed to parse JSON as IssueCredentialRecord")
+      fail('Failed to parse JSON as IssueCredentialRecord')
     }
   }
 
@@ -181,12 +180,12 @@ export class CredentialsService extends HttpService {
    * @param {IssueCredentialRecord} record - The credential record.
    * @returns {IssueCredentialRecord} The updated credential record.
    */
-  issueCredential(record: IssueCredentialRecord): IssueCredentialRecord {
-    const res = this.post(`issue-credentials/records/${record.recordId}/issue-credential`, null, 200);
+  issueCredential (record: IssueCredentialRecord): IssueCredentialRecord {
+    const res = this.post(`issue-credentials/records/${record.recordId}/issue-credential`, null, 200)
     try {
-      return this.toJson(res) as unknown as IssueCredentialRecord;
+      return this.toJson(res) as unknown as IssueCredentialRecord
     } catch {
-      fail("Failed to parse JSON as IssueCredentialRecord")
+      fail('Failed to parse JSON as IssueCredentialRecord')
     }
   }
 
@@ -195,22 +194,22 @@ export class CredentialsService extends HttpService {
    * @returns {IssueCredentialRecord} The received credential offer record.
    * @throws {Error} If the credential offer is not received within the maximum iterations.
    */
-  waitForCredentialOffer(thid: string): IssueCredentialRecord {
-    let iterations = 0;
-    let record: IssueCredentialRecord | undefined;
+  waitForCredentialOffer (thid: string): IssueCredentialRecord {
+    let iterations = 0
+    let record: IssueCredentialRecord | undefined
     do {
       // console.log(`Waiting for credential offer with thid=${thid}`)
       record = this.getCredentialRecords(thid).find(
-          r => r.thid === thid && r.protocolState === "OfferReceived"
-      );
-      if (record) {
-        return record;
+        r => r.thid === thid && r.protocolState === 'OfferReceived'
+      )
+      if (record != null) {
+        return record
       }
-      sleep(WAITING_LOOP_PAUSE_INTERVAL);
-      iterations++;
-    } while (iterations < WAITING_LOOP_MAX_ITERATIONS);
+      sleep(WAITING_LOOP_PAUSE_INTERVAL)
+      iterations++
+    } while (iterations < WAITING_LOOP_MAX_ITERATIONS)
     statusChangeTimeouts.add(1)
-    fail(`Record not found in Offer Received for thid during the waiting loop`);
+    fail('Record not found in Offer Received for thid during the waiting loop')
   }
 
   /**
@@ -219,19 +218,18 @@ export class CredentialsService extends HttpService {
    * @param {string} state - The required state.
    * @throws {Error} If the credential state does not reach the required state within the maximum iterations.
    */
-  waitForCredentialState(credentialRecord: IssueCredentialRecord, state: string) {
-    let iterations = 0;
-    let currentState;
+  waitForCredentialState (credentialRecord: IssueCredentialRecord, state: string) {
+    let iterations = 0
+    let currentState
     do {
-      const response = this.getCredentialRecord(credentialRecord);
-      currentState = response.protocolState;
-      sleep(WAITING_LOOP_PAUSE_INTERVAL);
-      iterations++;
-    } while (currentState !== state && iterations < WAITING_LOOP_MAX_ITERATIONS);
+      const response = this.getCredentialRecord(credentialRecord)
+      currentState = response.protocolState
+      sleep(WAITING_LOOP_PAUSE_INTERVAL)
+      iterations++
+    } while (currentState !== state && iterations < WAITING_LOOP_MAX_ITERATIONS)
     if (currentState !== state) {
       statusChangeTimeouts.add(1)
-      fail(`Credential is not ${state} after the waiting loop`);
+      fail(`Credential is not ${state} after the waiting loop`)
     }
   }
-
 }

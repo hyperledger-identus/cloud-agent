@@ -19,7 +19,8 @@ permissions:
 jobs:
   build-and-unit-tests:
     name: "Build and unit tests"
-    runs-on: self-hosted
+    # runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     permissions:
       checks: write

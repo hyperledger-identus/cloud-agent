@@ -11,8 +11,11 @@ import org.hyperledger.identus.pollux.core.model.*
 import org.hyperledger.identus.pollux.core.model.error.CredentialServiceError.*
 import org.hyperledger.identus.pollux.core.model.primitives.UriString
 import org.hyperledger.identus.pollux.core.model.primitives.UriString.toUriString
-import org.hyperledger.identus.pollux.core.model.schema.{CredentialDefinition, CredentialSchemaRef}
-import org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaRefType
+import org.hyperledger.identus.pollux.core.model.schema.{
+  CredentialDefinition,
+  CredentialSchemaRef,
+  CredentialSchemaRefType
+}
 import org.hyperledger.identus.pollux.core.model.IssueCredentialRecord.{ProtocolState, Role}
 import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResolver
 import org.hyperledger.identus.pollux.vc.jwt.{CredentialIssuer, JWT, JwtCredential}

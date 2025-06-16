@@ -136,28 +136,28 @@ Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.geirsso
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.geirsson # metaconfig-pprint_2.13 # 0.12.0](https://github.com/olafurpg/metaconfig) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.geirsson # metaconfig-typesafe-config_2.13 # 0.12.0](https://github.com/olafurpg/metaconfig) | <notextile></notextile>
 Apache | [Apache-2.0](https://opensource.org/licenses/Apache-2.0) | [com.github.dasniko # testcontainers-keycloak # 3.2.0](https://github.com/dasniko/testcontainers-keycloak) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.github.jwt-scala # jwt-circe_3 # 9.4.6](https://jwt-scala.github.io/jwt-scala/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.github.jwt-scala # jwt-core_3 # 9.4.6](https://jwt-scala.github.io/jwt-scala/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.github.jwt-scala # jwt-json-common_3 # 9.4.6](https://jwt-scala.github.io/jwt-scala/) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [com.github.jwt-scala # jwt-zio-json_3 # 9.4.6](https://jwt-scala.github.io/jwt-scala/) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [com.google.api.grpc # proto-google-common-protos # 2.29.0](https://github.com/googleapis/sdk-platform-java) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | com.google.code.gson # gson # 2.10.1 | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) | [com.typesafe # config # 1.4.3](https://github.com/lightbend/config) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # izumi-reflect-thirdparty-boopickle-shaded_3 # 2.3.9](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # izumi-reflect_3 # 2.3.9](https://zio.dev) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-concurrent_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-concurrent_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-config-derivation_3 # 4.0.2](https://zio.dev/zio-config/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-config-magnolia_3 # 4.0.2](https://zio.dev/zio-config/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-config-typesafe_3 # 4.0.2](https://zio.dev/zio-config/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-config_3 # 4.0.2](https://zio.dev/zio-config/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-constraintless_3 # 0.3.3](https://zio.dev/zio-constraintless/) | <notextile></notextile>
 Apache | [Apache-2.0](https://github.com/zio/zio-http/blob/master/LICENSE) | [dev.zio # zio-http_3 # 3.0.1](https://zio.dev/zio-http) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-internal-macros_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-internal-macros_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-interop-cats_3 # 23.1.0.3](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-interop-cats_3 # 3.3.0](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-interop-tracer_3 # 23.1.0.3](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-json_3 # 0.7.2](https://zio.dev/zio-json/) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-json_3 # 0.7.3](https://zio.dev/zio-json/) | <notextile></notextile>
-Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [dev.zio # zio-kafka_3 # 2.7.5](https://zio.dev/zio-kafka) | <notextile></notextile>
+Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [dev.zio # zio-kafka_3 # 2.8.2](https://zio.dev/zio-kafka) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [dev.zio # zio-logging-slf4j_3 # 2.3.1](https://zio.dev/zio-logging) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [dev.zio # zio-logging_3 # 2.3.1](https://zio.dev/zio-logging) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-managed_3 # 2.0.0](https://zio.dev) | <notextile></notextile>
@@ -173,19 +173,20 @@ Apache | [Apache-2.0](https://zio.dev/zio-schema/blob/v1.4.1/LICENSE) | [dev.zio
 Apache | [Apache-2.0](https://zio.dev/zio-schema/blob/v1.4.1/LICENSE) | [dev.zio # zio-schema-macros_3 # 1.4.1](https://zio.dev/zio-schema) | <notextile></notextile>
 Apache | [Apache-2.0](https://zio.dev/zio-schema/blob/v1.4.1/LICENSE) | [dev.zio # zio-schema-protobuf_3 # 1.4.1](https://zio.dev/zio-schema) | <notextile></notextile>
 Apache | [Apache-2.0](https://zio.dev/zio-schema/blob/v1.4.1/LICENSE) | [dev.zio # zio-schema_3 # 1.4.1](https://zio.dev/zio-schema) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-stacktracer_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-stacktracer_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-streams_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-streams_3 # 2.1.7](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-streams_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test-magnolia_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test-sbt_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test-magnolia_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test-sbt_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test_3 # 2.0.19](https://zio.dev) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio_3 # 2.1.9](https://zio.dev) | <notextile></notextile>
-Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-core_3 # 0.14.7](https://github.com/circe/circe) | <notextile></notextile>
-Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-generic_3 # 0.14.7](https://github.com/circe/circe) | <notextile></notextile>
-Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-jawn_3 # 0.14.7](https://github.com/circe/circe) | <notextile></notextile>
-Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-numbers_3 # 0.14.7](https://github.com/circe/circe) | <notextile></notextile>
-Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-parser_3 # 0.14.7](https://github.com/circe/circe) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio-test_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [dev.zio # zio_3 # 2.1.11](https://zio.dev) | <notextile></notextile>
+Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-core_3 # 0.14.6](https://github.com/circe/circe) | <notextile></notextile>
+Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-generic_3 # 0.14.6](https://github.com/circe/circe) | <notextile></notextile>
+Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-jawn_3 # 0.14.6](https://github.com/circe/circe) | <notextile></notextile>
+Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-numbers_3 # 0.14.6](https://github.com/circe/circe) | <notextile></notextile>
+Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-parser_3 # 0.14.6](https://github.com/circe/circe) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-yaml-common_3 # 0.15.1](https://github.com/circe/circe-yaml) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.circe # circe-yaml_3 # 0.15.1](https://github.com/circe/circe-yaml) | <notextile></notextile>
 Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | [io.suzaku # boopickle_3 # 1.4.0](https://github.com/suzaku-io/boopickle) | <notextile></notextile>
@@ -199,38 +200,38 @@ Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [org.ht
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.html) | [org.http4s # http4s-core_3 # 0.23.28](https://http4s.org/) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [org.http4s # http4s-crypto_3 # 0.2.4](https://github.com/http4s/http4s-crypto) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0.html) | [org.http4s # http4s-server_3 # 0.23.28](https://http4s.org/) | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # castor-core_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # cloud-agent-wallet-api_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # connect-core_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # connect-sql-doobie_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # event-notification_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-agent-core_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-agent-didcommx_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-data-models_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-connection_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-coordinate-mediation_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-invitation_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-issue-credential_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-outofband-login_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-present-proof_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-report-problem_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-revocation-notification_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-routing-2-0_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-trust-ping_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-resolver_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-verifiable-credentials_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-anoncreds_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-core_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-prex_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-sd-jwt_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-sql-doobie_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-vc-jwt_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # predef_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # prism-node-client_3 # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared-crypto # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared-json # 1.40.0 | <notextile></notextile>
-Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared-test # 1.40.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # castor-core_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # cloud-agent-wallet-api_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # connect-core_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # connect-sql-doobie_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # event-notification_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-agent-core_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-agent-didcommx_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-data-models_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-connection_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-coordinate-mediation_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-invitation_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-issue-credential_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-outofband-login_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-present-proof_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-report-problem_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-revocation-notification_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-routing-2-0_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-protocol-trust-ping_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-resolver_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # mercury-verifiable-credentials_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-anoncreds_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-core_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-prex_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-sd-jwt_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-sql-doobie_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # pollux-vc-jwt_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # predef_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # prism-node-client_3 # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared-crypto # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared-json # 2.0.0 | <notextile></notextile>
+Apache | [Apache-2.0](http://www.apache.org/licenses/LICENSE-2.0) | org.hyperledger # shared-test # 2.0.0 | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) | [org.scala-lang # scala-compiler # 2.13.13](https://www.scala-lang.org/) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) | [org.scala-lang # scala-library # 2.13.12](https://www.scala-lang.org/) | <notextile></notextile>
 Apache | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) | [org.scala-lang # scala-library # 2.13.13](https://www.scala-lang.org/) | <notextile></notextile>
@@ -277,7 +278,7 @@ Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENS
 Apache | [The Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.iohk.atala # sd-jwt-kmp-jvm # 0.1.2](https://docs.atalaprism.io/) | <notextile></notextile>
 Apache | [The Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) | [io.iohk.atala.prism.apollo # apollo-jvm # 1.3.5](https://docs.atalaprism.io/) | <notextile></notextile>
 Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) | [io.setl # rdf-urdna # 1.1](https://github.com/setl/rdf-urdna) | <notextile></notextile>
-Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) | [org.apache.kafka # kafka-clients # 3.7.0](https://kafka.apache.org) | <notextile></notextile>
+Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) | [org.apache.kafka # kafka-clients # 3.7.1](https://kafka.apache.org) | <notextile></notextile>
 Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) | [org.didcommx # didcomm # 0.3.2](https://github.com/sicpa-dlab/didcomm-jvm) | <notextile></notextile>
 Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) | [org.didcommx # peerdid # 0.5.0](https://github.com/sicpa-dlab/peer-did-jvm) | <notextile></notextile>
 Apache | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt) | [org.jetbrains.kotlin # kotlin-stdlib # 1.8.22](https://kotlinlang.org/) | <notextile></notextile>
@@ -373,7 +374,7 @@ BSD | [BSD](https://github.com/scalameta/scalameta/blob/main/LICENSE.md) | [org.
 BSD | [BSD](https://github.com/scalameta/scalameta/blob/main/LICENSE.md) | [org.scalameta # parsers_2.13 # 4.9.3](https://github.com/scalameta/scalameta) | <notextile></notextile>
 BSD | [BSD](https://github.com/scalameta/scalameta/blob/main/LICENSE.md) | [org.scalameta # scalameta_2.13 # 4.9.3](https://github.com/scalameta/scalameta) | <notextile></notextile>
 BSD | [BSD](https://github.com/scalameta/scalameta/blob/main/LICENSE.md) | [org.scalameta # trees_2.13 # 4.9.3](https://github.com/scalameta/scalameta) | <notextile></notextile>
-BSD | [BSD 2-Clause License](https://opensource.org/licenses/BSD-2-Clause) | [com.github.luben # zstd-jni # 1.5.5-6](https://github.com/luben/zstd-jni) | <notextile></notextile>
+BSD | [BSD 2-Clause License](https://opensource.org/licenses/BSD-2-Clause) | [com.github.luben # zstd-jni # 1.5.6-3](https://github.com/luben/zstd-jni) | <notextile></notextile>
 BSD | [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) | com.vladsch.flexmark # flexmark # 0.62.2 | <notextile></notextile>
 BSD | [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) | com.vladsch.flexmark # flexmark-ext-anchorlink # 0.62.2 | <notextile></notextile>
 BSD | [BSD 2-Clause License](http://opensource.org/licenses/BSD-2-Clause) | com.vladsch.flexmark # flexmark-ext-autolink # 0.62.2 | <notextile></notextile>
@@ -442,7 +443,6 @@ MIT | [MIT](http://opensource.org/licenses/MIT) | [org.testcontainers # vault # 
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.tpolecat # doobie-core_3 # 1.0.0-RC5](https://github.com/tpolecat/doobie) | <notextile></notextile>
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.tpolecat # doobie-free_3 # 1.0.0-RC5](https://github.com/tpolecat/doobie) | <notextile></notextile>
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.tpolecat # doobie-hikari_3 # 1.0.0-RC5](https://github.com/tpolecat/doobie) | <notextile></notextile>
-MIT | [MIT](https://opensource.org/licenses/MIT) | [org.tpolecat # doobie-postgres-circe_3 # 1.0.0-RC5](https://github.com/tpolecat/doobie) | <notextile></notextile>
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.tpolecat # doobie-postgres_3 # 1.0.0-RC5](https://github.com/tpolecat/doobie) | <notextile></notextile>
 MIT | [MIT](http://opensource.org/licenses/MIT) | [org.tpolecat # typename_3 # 1.1.0](https://github.com/tpolecat/typename) | <notextile></notextile>
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.typelevel # cats-core_3 # 2.10.0](https://typelevel.org/cats) | <notextile></notextile>
@@ -451,7 +451,7 @@ MIT | [MIT](https://opensource.org/licenses/MIT) | [org.typelevel # cats-free_3 
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.typelevel # cats-kernel_3 # 2.10.0](https://typelevel.org/cats) | <notextile></notextile>
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.typelevel # cats-kernel_3 # 2.12.0](https://typelevel.org/cats) | <notextile></notextile>
 MIT | [MIT](https://opensource.org/licenses/MIT) | [org.typelevel # cats-parse_3 # 1.0.0](https://typelevel.org/cats-parse) | <notextile></notextile>
-MIT | [MIT](http://opensource.org/licenses/MIT) | [org.typelevel # jawn-parser_3 # 1.5.1](https://github.com/typelevel/jawn) | <notextile></notextile>
+MIT | [MIT](http://opensource.org/licenses/MIT) | [org.typelevel # jawn-parser_3 # 1.4.0](https://github.com/typelevel/jawn) | <notextile></notextile>
 MIT | [MIT](http://opensource.org/licenses/MIT) | [org.typelevel # vault_3 # 3.6.0](https://typelevel.org/vault) | <notextile></notextile>
 MIT | [MIT License](https://github.com/multiformats/java-multiaddr/blob/master/LICENSE) | [com.github.multiformats # java-multibase # v1.1.0](https://github.com/multiformats/java-multibase) | <notextile></notextile>
 MIT | [MIT License](http://www.opensource.org/licenses/mit-license.php) | [nl.big-o # liqp # 0.8.2](https://github.com/bkiers/Liqp) | <notextile></notextile>

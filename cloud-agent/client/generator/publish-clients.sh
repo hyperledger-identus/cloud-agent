@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-AGENT_VERSION=${VERSION_TAG:13}
+# Parse the version from the revision, beta or tag (everything that comes after 'v' in the VERSION_TAG)
+AGENT_VERSION=$(echo "$VERSION_TAG" | sed -E 's/.*v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.]+)?).*/\1/')
 echo version=${AGENT_VERSION}
 
 # install dependencies
