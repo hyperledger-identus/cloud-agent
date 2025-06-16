@@ -42,7 +42,7 @@ object ConnectBackgroundJobs extends BackgroundJobsHelper {
       walletAccessContext = WalletAccessContext(WalletId.fromUUID(message.value.walletId))
       record <- connectionService
         .findRecordById(message.value.recordId)
-        .provideSome(ZLayer.succeed(walletAccessContext))
+        .provide(ZLayer.succeed(walletAccessContext))
         .someOrElseZIO(ZIO.dieMessage("Record Not Found"))
       _ <- performExchange(record)
         .tapSomeError { case (walletAccessContext, errorResponse) =>

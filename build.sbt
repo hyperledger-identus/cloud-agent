@@ -44,13 +44,13 @@ lazy val V = new {
   val munitZio = "0.2.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.14"
+  val zio = "2.1.19"
   val zioConfig = "4.0.3"
   val zioLogging = "2.3.2"
   val zioJson = "0.7.6"
   val zioHttp = "3.0.1"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
-  val zioMetricsConnector = "2.3.2"
+  val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
   val zioKafka = "2.8.3"
   val mockito = "3.2.18.0"

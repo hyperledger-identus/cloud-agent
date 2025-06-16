@@ -100,7 +100,7 @@ object AppModule {
     )
 
   val keycloakAuthenticatorLayer: RLayer[
-    AppConfig & WalletManagementService & Client & PermissionManagementService[KeycloakEntity],
+    AppConfig & Client & PermissionManagementService[KeycloakEntity],
     KeycloakAuthenticator
   ] =
     ZLayer.fromZIO {
@@ -110,7 +110,7 @@ object AppModule {
           if (!isEnabled) KeycloakAuthenticatorImpl.disabled
           else
             ZLayer.makeSome[
-              AppConfig & WalletManagementService & Client & PermissionManagementService[KeycloakEntity],
+              AppConfig & Client & PermissionManagementService[KeycloakEntity],
               KeycloakAuthenticator
             ](
               KeycloakConfig.layer,
