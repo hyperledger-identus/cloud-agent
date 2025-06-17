@@ -1,14 +1,14 @@
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.12.0")
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.2")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.4")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.3")
 addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
-addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.10.4")
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.2.1")
-addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.14")
+addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.11.0")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.2.2")
+addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.15")
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.0.7")
 
 // In order to import proper version of com.google.protobuf.ByteString we need to add this dependency
-libraryDependencies ++= Seq("com.thesamet.scalapb" %% "compilerplugin" % "0.11.17")
+libraryDependencies ++= Seq("com.thesamet.scalapb" %% "compilerplugin" % "0.11.18")
 
 // Github Packages
 if (sys.env.get("GITHUB_TOKEN").isDefined) {

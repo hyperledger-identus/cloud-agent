@@ -40,19 +40,19 @@ inThisBuild(
 )
 
 lazy val V = new {
-  val munit = "1.0.2" // "0.7.29"
+  val munit = "1.0.4" // "0.7.29"
   val munitZio = "0.3.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.11"
-  val zioConfig = "4.0.2"
-  val zioLogging = "2.3.1"
-  val zioJson = "0.7.3"
+  val zio = "2.1.19"
+  val zioConfig = "4.0.3"
+  val zioLogging = "2.3.2"
+  val zioJson = "0.7.6"
   val zioHttp = "3.0.1"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "2.8.2"
+  val zioKafka = "2.8.3"
   val mockito = "3.2.18.0"
   val monocle = "3.3.0"
 
@@ -67,16 +67,16 @@ lazy val V = new {
   val testContainersJavaKeycloak = "3.2.0" // scala-steward:off
 
   val doobie = "1.0.0-RC5"
-  val quill = "4.8.5"
-  val flyway = "11.6.0"
-  val postgresDriver = "42.7.4"
+  val quill = "4.8.6"
+  val flyway = "9.22.3"
+  val postgresDriver = "42.7.5"
   val logback = "1.5.18"
   val slf4j = "2.0.17"
 
   val scalaUri = "4.2.0"
 
   val jwtZioVersion = "10.0.4"
-  val zioPreludeVersion = "1.0.0-RC31"
+  val zioPreludeVersion = "1.0.0-RC37"
 
   val apollo = "1.3.5"
 
@@ -434,7 +434,7 @@ val commonSetttings = Seq(
   // Needed for Kotlin coroutines that support new memory management mode
   resolvers += "JetBrains Space Maven Repository" at "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven",
   // Needed for com.github.multiformats:java-multibase
-  resolvers += "scijava" at "	https://maven.scijava.org/content/repositories/public/",
+  resolvers += "scijava" at "https://maven.scijava.org/content/repositories/public/",
   // Override 'updateLicenses' for all project to inject custom DependencyResolution.
   // https://github.com/sbt/sbt-license-report/blob/9675cedb19c794de1119cbcf46a255fc8dcd5d4e/src/main/scala/sbtlicensereport/SbtLicenseReport.scala#L84
   updateLicenses := {

@@ -1,8 +1,7 @@
 package org.hyperledger.identus.mercury.protocol.issuecredential
 
 import org.hyperledger.identus.mercury.model.{AttachmentDescriptor, Base64, JsonData, JwsData, LinkData}
-import zio.json.{DecoderOps, JsonDecoder}
-import zio.json.EncoderOps
+import zio.json.{DecoderOps, EncoderOps, JsonDecoder}
 
 private trait ReadAttachmentsUtils {
 
