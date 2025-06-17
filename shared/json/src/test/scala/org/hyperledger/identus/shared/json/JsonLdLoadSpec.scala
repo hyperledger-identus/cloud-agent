@@ -2,7 +2,6 @@ package org.hyperledger.identus.shared.json
 
 import com.apicatalog.jsonld.document.JsonDocument
 import com.apicatalog.jsonld.JsonLd
-import org.hyperledger.identus.shared.json.Json.*
 import zio.test.*
 import zio.test.Assertion.*
 import zio.ZIO

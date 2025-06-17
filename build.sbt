@@ -6,7 +6,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport.*
 inThisBuild(
   Seq(
     organization := "org.hyperledger",
-    scalaVersion := "3.3.6",
+    scalaVersion := "3.3.5",
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     fork := true,
     run / connectInput := true,
@@ -30,7 +30,7 @@ inThisBuild(
       "-unchecked",
     ),
     scalacOptions += "-Wunused:all",
-    scalacOptions += "-Wconf:cat=deprecation:warning,any:error", // "-Wconf:help",
+    scalacOptions += "-Wconf:any:error,cat=deprecation:warning", // "-Wconf:help",
     // scalacOptions += "-Yexplicit-nulls",
     // scalacOptions += "-Ysafe-init",
     // scalacOptions +=  "-Werror", // <=> "-Xfatal-warnings"
