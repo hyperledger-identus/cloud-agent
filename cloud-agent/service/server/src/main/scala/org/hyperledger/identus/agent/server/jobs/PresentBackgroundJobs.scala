@@ -82,7 +82,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
       walletAccessContext = WalletAccessContext(WalletId.fromUUID(message.value.walletId))
       record <- presentationService
         .findPresentationRecord(DidCommID(message.value.recordId.toString))
-        .provideSome(ZLayer.succeed(walletAccessContext))
+        .provide(ZLayer.succeed(walletAccessContext))
         .someOrElseZIO(ZIO.dieMessage("Record Not Found"))
       _ <- performPresentProofExchange(record)
         .tapSomeError { case f: Failure =>

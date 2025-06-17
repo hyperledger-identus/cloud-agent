@@ -41,9 +41,8 @@ trait VcVerificationServiceSpecHelper {
     emptyDidResolverLayer ++ ResourceUrlResolver.layer >>>
       VcVerificationServiceImpl.layer ++ defaultWalletLayer
 
-  protected val someVcVerificationServiceLayer
-      : URLayer[DIDService & ManagedDIDService & UriResolver, VcVerificationService] =
-    ZLayer.makeSome[DIDService & ManagedDIDService & UriResolver, VcVerificationService](
+  protected val someVcVerificationServiceLayer: URLayer[DIDService & UriResolver, VcVerificationService] =
+    ZLayer.makeSome[DIDService & UriResolver, VcVerificationService](
       ZLayer.fromFunction(PrismDidResolver(_)),
       VcVerificationServiceImpl.layer
     )
