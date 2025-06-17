@@ -6,7 +6,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport.*
 inThisBuild(
   Seq(
     organization := "org.hyperledger",
-    scalaVersion := "3.3.5",
+    scalaVersion := "3.3.6",
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     fork := true,
     run / connectInput := true,
