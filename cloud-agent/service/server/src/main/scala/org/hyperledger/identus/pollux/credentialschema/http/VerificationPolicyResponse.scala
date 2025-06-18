@@ -6,7 +6,7 @@ import org.hyperledger.identus.pollux.core.model.CredentialSchemaAndTrustedIssue
 import org.hyperledger.identus.pollux.credentialschema.http
 import sttp.model.Uri
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.{description, encodedExample, encodedName, validate}
+import sttp.tapir.Schema.annotations.{description, encodedExample, validate}
 import sttp.tapir.Validator.nonEmptyString
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonEncoder}
 

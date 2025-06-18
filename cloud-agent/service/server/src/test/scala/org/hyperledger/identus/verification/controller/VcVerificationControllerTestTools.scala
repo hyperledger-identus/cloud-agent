@@ -10,7 +10,6 @@ import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResol
 import org.hyperledger.identus.pollux.core.service.verification.{VcVerificationService, VcVerificationServiceImpl}
 import org.hyperledger.identus.pollux.vc.jwt.*
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.shared.models.WalletId.*
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.UriContext

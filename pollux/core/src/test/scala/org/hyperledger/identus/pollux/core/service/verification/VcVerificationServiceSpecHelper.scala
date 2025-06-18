@@ -7,7 +7,6 @@ import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResol
 import org.hyperledger.identus.pollux.vc.jwt.*
 import org.hyperledger.identus.shared.http.UriResolver
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.shared.models.WalletId.*
 import zio.*
 import zio.mock.Expectation
 

@@ -4,7 +4,7 @@ import org.hyperledger.identus.agent.walletapi.model.Entity
 import org.hyperledger.identus.api.http.Annotation
 import org.hyperledger.identus.iam.entity.http.model.EntityResponse.annotations
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.{description, encodedExample, validate, validateEach}
+import sttp.tapir.Schema.annotations.{description, encodedExample}
 import sttp.tapir.Validator.*
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 

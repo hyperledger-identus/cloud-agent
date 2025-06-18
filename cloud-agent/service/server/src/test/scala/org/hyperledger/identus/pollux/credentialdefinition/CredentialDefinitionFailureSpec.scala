@@ -14,7 +14,6 @@ import zio.*
 import zio.test.*
 import zio.test.Assertion.*
 import zio.test.TestAspect.*
-import zio.ZIO.*
 
 object CredentialDefinitionFailureSpec extends ZIOSpecDefault with CredentialDefinitionTestTools:
   def spec = (suite("credential-definition-registry bad request spec")(

@@ -1,6 +1,5 @@
 package org.hyperledger.identus.pollux.core.service.serdes
 
-import org.hyperledger.identus.pollux.core.service.serdes.AnoncredPresentationV1.*
 import zio.*
 import zio.test.*
 import zio.test.Assertion.*

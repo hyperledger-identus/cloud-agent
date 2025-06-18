@@ -2,7 +2,6 @@ package org.hyperledger.identus.connect.controller.http
 
 import org.hyperledger.identus.api.http.{Annotation, ErrorResponse}
 import org.hyperledger.identus.connect.controller.http.Connection.annotations
-import org.hyperledger.identus.connect.controller.http.Connection.annotations.goalcode
 import org.hyperledger.identus.connect.core.model
 import org.hyperledger.identus.connect.core.model.ConnectionRecord.Role
 import sttp.model.Uri

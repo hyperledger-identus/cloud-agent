@@ -6,7 +6,7 @@ import org.hyperledger.identus.pollux.core.model.primitives.UriString
 import org.hyperledger.identus.shared.models.KeyId
 import sttp.tapir.{Schema, Validator}
 import sttp.tapir.json.zio.schemaForZioJsonValue
-import sttp.tapir.Schema.annotations.{description, encodedExample, validate}
+import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
 import java.util.UUID

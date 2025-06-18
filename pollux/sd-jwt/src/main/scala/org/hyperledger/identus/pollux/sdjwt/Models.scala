@@ -5,8 +5,6 @@ import org.bouncycastle.crypto.util.{PrivateKeyInfoFactory, SubjectPublicKeyInfo
 import org.hyperledger.identus.shared.crypto.*
 import sdjwtwrapper.*
 
-import java.util.Base64
-
 opaque type IssuerPublicKey = String
 object IssuerPublicKey {
   def fromPem(keyPem: String): IssuerPublicKey = keyPem

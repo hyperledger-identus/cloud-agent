@@ -6,7 +6,6 @@ import org.hyperledger.identus.pollux.core.model.schema.CredentialDefinition
 import org.hyperledger.identus.pollux.core.repository.CredentialDefinitionRepositoryInMemory
 import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResolver
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.shared.models.WalletId.*
 import zio.*
 
 import java.time.OffsetDateTime

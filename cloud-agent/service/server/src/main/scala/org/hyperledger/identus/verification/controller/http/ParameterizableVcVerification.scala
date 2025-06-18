@@ -1,7 +1,7 @@
 package org.hyperledger.identus.verification.controller.http
 
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.{description, encodedExample}
+import sttp.tapir.Schema.annotations.description
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
 /** Represents a parameterizable verification to be performed on a verifiable credential.

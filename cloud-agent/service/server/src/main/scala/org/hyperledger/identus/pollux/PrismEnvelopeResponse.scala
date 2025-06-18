@@ -4,7 +4,7 @@ import org.hyperledger.identus.api.http.*
 import org.hyperledger.identus.pollux.PrismEnvelopeResponse.annotations
 import org.hyperledger.identus.shared.models.PrismEnvelope
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.{default, description, encodedExample, encodedName}
+import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.*
 
 case class PrismEnvelopeResponse(

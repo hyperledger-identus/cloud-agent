@@ -1,8 +1,5 @@
 package org.hyperledger.identus.pollux.sql.model
 
-import doobie.*
-import doobie.postgres.*
-import doobie.postgres.implicits.*
 import io.getquill.doobie.DoobieContext
 import io.getquill.MappedEncoding
 import org.hyperledger.identus.pollux.core.model.ResourceResolutionMethod
