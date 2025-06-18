@@ -87,7 +87,7 @@ lazy val V = new {
   val vaultDriver = "6.2.0"
   val micrometer = "1.13.12"
 
-  val nimbusJwt = "9.48"
+  val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
 }
