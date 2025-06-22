@@ -52,7 +52,7 @@ lazy val V = new {
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "2.8.3"
+  val zioKafka = "2.12.0"
   val mockito = "3.2.18.0"
   val monocle = "3.2.0"
 
