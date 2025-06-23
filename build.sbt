@@ -45,14 +45,14 @@ lazy val V = new {
 
   // https://mvnrepository.com/artifact/dev.zio/zio
   val zio = "2.1.19"
-  val zioConfig = "4.0.3"
-  val zioLogging = "2.3.2"
-  val zioJson = "0.7.6"
-  val zioHttp = "3.0.1"
+  val zioConfig = "4.0.4"
+  val zioLogging = "2.5.0"
+  val zioJson = "0.7.44"
+  val zioHttp = "3.3.3"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "2.8.3"
+  val zioKafka = "2.12.0"
   val mockito = "3.2.18.0"
   val monocle = "3.3.0"
 
@@ -76,7 +76,7 @@ lazy val V = new {
   val scalaUri = "4.2.0"
 
   val jwtZioVersion = "10.0.4"
-  val zioPreludeVersion = "1.0.0-RC37"
+  val zioPreludeVersion = "1.0.0-RC41"
 
   val apollo = "1.3.5"
 
