@@ -5,7 +5,6 @@ import zio.*
 import zio.test.*
 import zio.test.Assertion.equalTo
 import zio.test.TestAspect.*
-import zio.ZIO.*
 
 import scala.util.Try
 

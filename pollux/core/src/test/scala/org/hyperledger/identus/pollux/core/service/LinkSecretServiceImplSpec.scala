@@ -4,7 +4,6 @@ import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemo
 import org.hyperledger.identus.agent.walletapi.storage.GenericSecretStorage
 import org.hyperledger.identus.pollux.anoncreds.AnoncredLinkSecret
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.shared.models.WalletId.*
 import zio.*
 import zio.test.*
 import zio.test.TestAspect.*
