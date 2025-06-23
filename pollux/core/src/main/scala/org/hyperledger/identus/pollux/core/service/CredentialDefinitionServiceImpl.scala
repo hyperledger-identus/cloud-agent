@@ -16,7 +16,7 @@ import org.hyperledger.identus.pollux.core.model.error.CredentialSchemaError.{
 }
 import org.hyperledger.identus.pollux.core.model.schema.`type`.anoncred.AnoncredSchemaSerDesV1
 import org.hyperledger.identus.pollux.core.model.schema.CredentialDefinition
-import org.hyperledger.identus.pollux.core.model.schema.CredentialDefinition.{Filter, FilteredEntries}
+import org.hyperledger.identus.pollux.core.model.schema.CredentialDefinition.FilteredEntries
 import org.hyperledger.identus.pollux.core.model.secret.CredentialDefinitionSecret
 import org.hyperledger.identus.pollux.core.model.ResourceResolutionMethod
 import org.hyperledger.identus.pollux.core.repository.CredentialDefinitionRepository

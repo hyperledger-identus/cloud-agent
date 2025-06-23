@@ -5,7 +5,6 @@ import io.getquill.context.json.PostgresJsonExtensions
 import io.getquill.doobie.DoobieContext
 import org.hyperledger.identus.iam.authentication.apikey.AuthenticationRepositoryError.AuthenticationCompromised
 import org.hyperledger.identus.shared.models.{Failure, StatusCode}
-import zio.*
 import zio.interop.catz.*
 
 import java.time.OffsetDateTime

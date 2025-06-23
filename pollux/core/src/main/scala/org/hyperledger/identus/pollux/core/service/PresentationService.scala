@@ -5,7 +5,6 @@ import org.hyperledger.identus.mercury.protocol.presentproof.*
 import org.hyperledger.identus.pollux.anoncreds.AnoncredPresentation
 import org.hyperledger.identus.pollux.core.model.*
 import org.hyperledger.identus.pollux.core.model.error.PresentationError
-import org.hyperledger.identus.pollux.core.model.presentation.*
 import org.hyperledger.identus.pollux.core.service.serdes.{AnoncredCredentialProofsV1, AnoncredPresentationRequestV1}
 import org.hyperledger.identus.pollux.sdjwt.{HolderPrivateKey, PresentationCompact}
 import org.hyperledger.identus.pollux.vc.jwt.*

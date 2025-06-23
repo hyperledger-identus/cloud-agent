@@ -11,9 +11,9 @@ import org.bouncycastle.jce.ECNamedCurveTable
 import org.hyperledger.identus.shared.models.HexString
 import zio.*
 
-import java.security.{KeyFactory, PublicKey}
 import java.security.interfaces.EdECPublicKey
 import java.security.spec.*
+import java.security.KeyFactory
 import scala.util.Try
 
 trait Apollo {
