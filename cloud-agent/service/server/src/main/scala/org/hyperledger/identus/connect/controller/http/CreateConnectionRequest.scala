@@ -3,7 +3,7 @@ package org.hyperledger.identus.connect.controller.http
 import org.hyperledger.identus.api.http.Annotation
 import org.hyperledger.identus.connect.controller.http.CreateConnectionRequest.annotations
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.{description, encodedExample, validate, validateEach}
+import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
 case class CreateConnectionRequest(

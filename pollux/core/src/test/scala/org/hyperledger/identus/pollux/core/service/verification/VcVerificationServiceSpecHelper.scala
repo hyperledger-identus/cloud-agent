@@ -7,7 +7,6 @@ import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResol
 import org.hyperledger.identus.pollux.vc.jwt.*
 import org.hyperledger.identus.shared.http.UriResolver
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.shared.models.WalletId.*
 import zio.*
 import zio.mock.Expectation
 
@@ -41,9 +40,8 @@ trait VcVerificationServiceSpecHelper {
     emptyDidResolverLayer ++ ResourceUrlResolver.layer >>>
       VcVerificationServiceImpl.layer ++ defaultWalletLayer
 
-  protected val someVcVerificationServiceLayer
-      : URLayer[DIDService & ManagedDIDService & UriResolver, VcVerificationService] =
-    ZLayer.makeSome[DIDService & ManagedDIDService & UriResolver, VcVerificationService](
+  protected val someVcVerificationServiceLayer: URLayer[DIDService & UriResolver, VcVerificationService] =
+    ZLayer.makeSome[DIDService & UriResolver, VcVerificationService](
       ZLayer.fromFunction(PrismDidResolver(_)),
       VcVerificationServiceImpl.layer
     )

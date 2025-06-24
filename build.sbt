@@ -6,7 +6,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport.*
 inThisBuild(
   Seq(
     organization := "org.hyperledger",
-    scalaVersion := "3.3.3",
+    scalaVersion := "3.3.5",
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     fork := true,
     run / connectInput := true,
@@ -30,7 +30,7 @@ inThisBuild(
       "-unchecked",
     ),
     scalacOptions += "-Wunused:all",
-    scalacOptions += "-Wconf:cat=deprecation:warning,any:error", // "-Wconf:help",
+    scalacOptions += "-Wconf:any:error,cat=deprecation:warning", // "-Wconf:help",
     // scalacOptions += "-Yexplicit-nulls",
     // scalacOptions += "-Ysafe-init",
     // scalacOptions +=  "-Werror", // <=> "-Xfatal-warnings"
@@ -40,21 +40,21 @@ inThisBuild(
 )
 
 lazy val V = new {
-  val munit = "1.0.2" // "0.7.29"
-  val munitZio = "0.2.0"
+  val munit = "1.1.1" // "0.7.29"
+  val munitZio = "0.3.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.11"
-  val zioConfig = "4.0.2"
-  val zioLogging = "2.3.1"
-  val zioJson = "0.7.3"
-  val zioHttp = "3.0.1"
+  val zio = "2.1.19"
+  val zioConfig = "4.0.4"
+  val zioLogging = "2.5.0"
+  val zioJson = "0.7.44"
+  val zioHttp = "3.3.3"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.3.1"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "2.8.2"
+  val zioKafka = "2.12.0"
   val mockito = "3.2.18.0"
-  val monocle = "3.2.0"
+  val monocle = "3.3.0"
 
   val tapir = "1.11.7" // scala-steward:off // TODO "1.10.5"
   val http4sBlaze = "0.23.15" // scala-steward:off  // TODO "0.23.16"
@@ -63,20 +63,20 @@ lazy val V = new {
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
-  val testContainersScala = "0.41.3"
+  val testContainersScala = "0.41.8"
   val testContainersJavaKeycloak = "3.2.0" // scala-steward:off
 
-  val doobie = "1.0.0-RC5"
+  val doobie = "1.0.0-RC5" // scala-steward:off
   val quill = "4.8.6"
   val flyway = "9.22.3"
-  val postgresDriver = "42.7.5"
-  val logback = "1.4.14"
-  val slf4j = "2.0.13"
+  val postgresDriver = "42.7.7"
+  val logback = "1.5.18"
+  val slf4j = "2.0.17"
 
-  val scalaUri = "4.0.3"
+  val scalaUri = "4.2.0"
 
-  val jwtZioVersion = "9.4.6"
-  val zioPreludeVersion = "1.0.0-RC31"
+  val jwtZioVersion = "10.0.4"
+  val zioPreludeVersion = "1.0.0-RC41"
 
   val apollo = "1.3.5"
 
@@ -85,9 +85,9 @@ lazy val V = new {
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
 
   val vaultDriver = "6.2.0"
-  val micrometer = "1.13.6"
+  val micrometer = "1.13.12"
 
-  val nimbusJwt = "9.37.3"
+  val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
 }
@@ -111,11 +111,11 @@ lazy val D = new {
   val micrometer: ModuleID = "io.micrometer" % "micrometer-registry-prometheus" % V.micrometer
   val micrometerPrometheusRegistry = "io.micrometer" % "micrometer-core" % V.micrometer
   val scalaUri = Seq(
-    "io.lemonlabs" %% "scala-uri" % V.scalaUri exclude (
+    "com.indoorvivants" %% "scala-uri" % V.scalaUri exclude (
       "org.typelevel",
       "cats-parse_3"
     ), // Exclude cats-parse to avoid deps conflict
-    "org.typelevel" % "cats-parse_3" % "1.0.0", // Replace with version 1.0.0
+    "org.typelevel" % "cats-parse_3" % "1.1.0", // Replace with version 1.0.0
   )
 
   val zioConfig: ModuleID = "dev.zio" %% "zio-config" % V.zioConfig
@@ -125,10 +125,10 @@ lazy val D = new {
   val networkntJsonSchemaValidator = "com.networknt" % "json-schema-validator" % V.jsonSchemaValidator
   val jwtZio = "com.github.jwt-scala" %% "jwt-zio-json" % V.jwtZioVersion
   val jsonCanonicalization: ModuleID = "io.github.erdtman" % "java-json-canonicalization" % "1.1"
-  val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.4.0"
+  val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.4.1"
   val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
-  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.1.38"
+  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.1"
   val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.9.0"
 
   // https://mvnrepository.com/artifact/org.didcommx/didcomm/0.3.2
@@ -167,7 +167,7 @@ lazy val D = new {
   val mockito: ModuleID = "org.scalatestplus" %% "mockito-4-11" % V.mockito % Test
   val monocle: ModuleID = "dev.optics" %% "monocle-core" % V.monocle % Test
   val monocleMacro: ModuleID = "dev.optics" %% "monocle-macro" % V.monocle % Test
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.16" % Test
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
   val apollo = Seq( // TODO remove exclude after fix https://github.com/hyperledger/identus-apollo/issues/192
     "io.iohk.atala.prism.apollo" % "apollo-jvm" % V.apollo exclude (
@@ -365,7 +365,7 @@ lazy val D_CloudAgent = new {
 
   val tapirSttpStubServer =
     "com.softwaremill.sttp.tapir" %% "tapir-sttp-stub-server" % V.tapir % Test
-  val sttpClient3ZioJson = "com.softwaremill.sttp.client3" %% "zio-json" % "3.8.16" % Test
+  val sttpClient3ZioJson = "com.softwaremill.sttp.client3" %% "zio-json" % "3.10.3" % Test
 
   val quillDoobie =
     "io.getquill" %% "quill-doobie" % V.quill exclude ("org.scala-lang.modules", "scala-java8-compat_3")
@@ -434,7 +434,7 @@ val commonSetttings = Seq(
   // Needed for Kotlin coroutines that support new memory management mode
   resolvers += "JetBrains Space Maven Repository" at "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven",
   // Needed for com.github.multiformats:java-multibase
-  resolvers += "scijava" at "https://maven.scijava.org/content/repositories/public/",
+  resolvers += "jitpack" at "https://jitpack.io",
   // Override 'updateLicenses' for all project to inject custom DependencyResolution.
   // https://github.com/sbt/sbt-license-report/blob/9675cedb19c794de1119cbcf46a255fc8dcd5d4e/src/main/scala/sbtlicensereport/SbtLicenseReport.scala#L84
   updateLicenses := {
