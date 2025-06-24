@@ -766,7 +766,7 @@ lazy val polluxCore = project
   .dependsOn(
     shared,
     castorCore % "compile->compile;test->test", // Test is for MockDIDService
-    agentWalletAPI % "compile->compile;test->test", // Test is for MockManagedDIDService
+    cloudAgentWalletAPI % "compile->compile;test->test", // Test is for MockManagedDIDService
     vc,
     resolver,
     agentDidcommx,
@@ -872,7 +872,7 @@ lazy val eventNotification = project
 // #### Cloud Agent ####
 // #####################
 
-lazy val agentWalletAPI = project
+lazy val cloudAgentWalletAPI = project
   .in(file("cloud-agent/service/wallet-api"))
   .configure(commonConfigure)
   .settings(commonSetttings)
@@ -891,6 +891,16 @@ lazy val agentWalletAPI = project
   )
   .dependsOn(sharedTest % "test->test")
   .dependsOn(sharedCrypto % "compile->compile;test->test")
+
+lazy val cloudAgentVdr = project
+  .in(file("cloud-agent/service/vdr"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "cloud-agent-vdr",
+    libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.postgresDependencies,
+    libraryDependencies += "org.jetbrains.kotlin" % "kotlin-stdlib" % "1.9.23" // needed for unmanagedJar
+  )
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -917,7 +927,6 @@ lazy val cloudAgentServer = project
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .enablePlugins(BuildInfoPlugin)
-  .dependsOn(agentWalletAPI % "compile->compile;test->test")
   .dependsOn(
     sharedTest % "test->test",
     agent,
@@ -928,6 +937,8 @@ lazy val cloudAgentServer = project
     connectDoobie,
     castorCore,
     eventNotification,
+    cloudAgentVdr,
+    cloudAgentWalletAPI % "compile->compile;test->test"
   )
 
 // ############################
@@ -976,7 +987,8 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   polluxPreX,
   connectCore,
   connectDoobie,
-  agentWalletAPI,
+  cloudAgentVdr,
+  cloudAgentWalletAPI,
   cloudAgentServer,
   eventNotification,
 )
