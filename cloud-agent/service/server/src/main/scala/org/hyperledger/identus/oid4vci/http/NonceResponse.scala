@@ -1,7 +1,6 @@
 package org.hyperledger.identus.oid4vci.http
 
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.encodedName
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
 case class NonceResponse(
