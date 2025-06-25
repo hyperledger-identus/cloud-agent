@@ -12,19 +12,52 @@ import scala.jdk.CollectionConverters.*
 type VdrUrl = String
 type VdrOptions = Map[String, String]
 
-trait Vdr {
+trait VdrService {
   def identifier: String
   def version: String
 
   def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl]
   def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): Task[Option[VdrUrl]]
-  def read(url: VdrUrl, options: VdrOptions): Task[Array[Byte]]
+  def read(url: VdrUrl): Task[Array[Byte]]
   def delete(url: VdrUrl, options: VdrOptions): Task[Unit]
   def verify(url: VdrUrl, returnData: Boolean = false): Task[Proof]
 }
 
-object Vdr {
-  def layer: TaskLayer[Vdr] =
+class VdrServiceImpl(
+    proxyRef: Ref[VDRProxyMultiDrivers],
+    override val identifier: String,
+    override val version: String
+) extends VdrService {
+
+  override def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl] =
+    proxyRef.get.flatMap { proxy =>
+      ZIO.attemptBlocking(proxy.create(data, options.asJava))
+    }
+
+  override def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): Task[Option[VdrUrl]] =
+    proxyRef.get.flatMap { proxy =>
+      ZIO.attemptBlocking(Option(proxy.update(data, url, options.asJava)))
+    }
+
+  override def read(url: VdrUrl): Task[Array[Byte]] =
+    proxyRef.get.flatMap { proxy =>
+      ZIO.attemptBlocking(proxy.read(url))
+    }
+
+  override def delete(url: VdrUrl, options: VdrOptions): Task[Unit] =
+    proxyRef.get.flatMap { proxy =>
+      ZIO.attemptBlocking(proxy.delete(url, options.asJava))
+    }
+
+  override def verify(url: VdrUrl, returnData: Boolean): Task[Proof] =
+    proxyRef.get.flatMap { proxy =>
+      ZIO.attemptBlocking(proxy.verify(url, returnData))
+    }
+
+}
+
+object VdrServiceImpl {
+  def layer: TaskLayer[VdrService] =
     ZLayer.fromZIO {
       for
         urlManager <- ZIO.attempt(BaseUrlManager.apply("localhost", "BaseURL"))
@@ -48,39 +81,6 @@ object Vdr {
           )
         )
         proxy <- proxyRef.get
-      yield VdrImpl(proxyRef, proxy.getIdentifier(), proxy.getVersion())
+      yield VdrServiceImpl(proxyRef, proxy.getIdentifier(), proxy.getVersion())
     }
-}
-
-private class VdrImpl(
-    proxyRef: Ref[VDRProxyMultiDrivers],
-    override val identifier: String,
-    override val version: String
-) extends Vdr {
-
-  override def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.create(data, options.asJava))
-    }
-
-  override def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): Task[Option[VdrUrl]] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(Option(proxy.update(data, url, options.asJava)))
-    }
-
-  override def read(url: VdrUrl, options: VdrOptions): Task[Array[Byte]] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.read(url))
-    }
-
-  override def delete(url: VdrUrl, options: VdrOptions): Task[Unit] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.delete(url, options.asJava))
-    }
-
-  override def verify(url: VdrUrl, returnData: Boolean): Task[Proof] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.verify(url, returnData))
-    }
-
 }

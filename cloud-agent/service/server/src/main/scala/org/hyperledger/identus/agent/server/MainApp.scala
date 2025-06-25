@@ -5,6 +5,7 @@ import io.micrometer.prometheusmetrics.{PrometheusConfig, PrometheusMeterRegistr
 import org.hyperledger.identus.agent.server.config.AppConfig
 import org.hyperledger.identus.agent.server.http.ZioHttpClient
 import org.hyperledger.identus.agent.server.sql.Migrations as AgentMigrations
+import org.hyperledger.identus.agent.vdr.VdrServiceImpl
 import org.hyperledger.identus.agent.walletapi.service.{
   EntityServiceImpl,
   ManagedDIDServiceWithEventNotificationImpl,
@@ -183,6 +184,7 @@ object MainApp extends ZIOAppDefault {
           WalletManagementServiceImpl.layer,
           VcVerificationServiceImpl.layer,
           PresentationExchangeServiceImpl.layer,
+          VdrServiceImpl.layer,
           // authentication
           AppModule.builtInAuthenticatorLayer,
           AppModule.keycloakAuthenticatorLayer,
