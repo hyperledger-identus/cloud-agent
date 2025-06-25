@@ -10,6 +10,7 @@ import org.hyperledger.identus.pollux.credentialdefinition.CredentialDefinitionR
 import org.hyperledger.identus.pollux.credentialschema.{SchemaRegistryEndpoints, VerificationPolicyEndpoints}
 import org.hyperledger.identus.pollux.prex.PresentationExchangeEndpoints
 import org.hyperledger.identus.system.controller.SystemEndpoints
+import org.hyperledger.identus.vdr.controller.VdrEndpoints
 import sttp.apispec.{SecurityScheme, Tag}
 import sttp.apispec.openapi.*
 import sttp.model.headers.AuthenticationScheme
@@ -113,18 +114,19 @@ object DocModels {
       .tags(
         List(
           ConnectionEndpoints.tag,
-          IssueEndpoints.tag,
-          VerificationPolicyEndpoints.tag,
-          SchemaRegistryEndpoints.tag,
           CredentialDefinitionRegistryEndpoints.tag,
           DIDEndpoints.tag,
           DIDRegistrarEndpoints.tag,
-          WalletManagementEndpoints.tag,
-          SystemEndpoints.tag,
-          EventEndpoints.tag,
           EntityEndpoints.tag,
-          PresentationExchangeEndpoints.tag
-        )
+          EventEndpoints.tag,
+          IssueEndpoints.tag,
+          PresentationExchangeEndpoints.tag,
+          SchemaRegistryEndpoints.tag,
+          SystemEndpoints.tag,
+          VdrEndpoints.tag,
+          VerificationPolicyEndpoints.tag,
+          WalletManagementEndpoints.tag,
+        ).sortBy(_.name)
       )
 
   }
