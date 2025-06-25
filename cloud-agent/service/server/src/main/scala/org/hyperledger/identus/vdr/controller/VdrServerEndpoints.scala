@@ -1,13 +1,16 @@
 package org.hyperledger.identus.vdr.controller
 
+import org.hyperledger.identus.LogUtils.logTrace
 import sttp.tapir.ztapir.*
 import zio.*
 
 class VdrServerEndpoints(vdrController: VdrController) {
 
   private val readEntryServerEndpoint: ZServerEndpoint[Any, Any] =
-    VdrEndpoints.readEntry.zServerLogic { case i =>
-      vdrController.getVdrEntry
+    VdrEndpoints.readEntry.zServerLogic { case (rc, url) =>
+      vdrController
+        .getVdrEntry(url)
+        .logTrace(rc)
     }
 
   val all: List[ZServerEndpoint[Any, Any]] = List(
