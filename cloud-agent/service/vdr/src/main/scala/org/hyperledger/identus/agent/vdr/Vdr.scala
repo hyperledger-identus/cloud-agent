@@ -13,8 +13,8 @@ type VdrUrl = String
 type VdrOptions = Map[String, String]
 
 trait Vdr {
-  def identifier: UIO[String]
-  def version: UIO[String]
+  def identifier: String
+  def version: String
 
   def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl]
   def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): Task[Option[VdrUrl]]
@@ -47,15 +47,16 @@ object Vdr {
             "0.1.0"
           )
         )
-      yield VdrImpl(proxyRef)
+        proxy <- proxyRef.get
+      yield VdrImpl(proxyRef, proxy.getIdentifier(), proxy.getVersion())
     }
 }
 
-private class VdrImpl(proxyRef: Ref[VDRProxyMultiDrivers]) extends Vdr {
-
-  override def identifier: UIO[String] = proxyRef.get.map(_.getIdentifier())
-
-  override def version: UIO[String] = proxyRef.get.map(_.getVersion())
+private class VdrImpl(
+    proxyRef: Ref[VDRProxyMultiDrivers],
+    override val identifier: String,
+    override val version: String
+) extends Vdr {
 
   override def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl] =
     proxyRef.get.flatMap { proxy =>
