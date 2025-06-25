@@ -62,6 +62,7 @@ import org.hyperledger.identus.shared.messaging
 import org.hyperledger.identus.shared.messaging.WalletIdAndRecordId
 import org.hyperledger.identus.shared.models.WalletId
 import org.hyperledger.identus.system.controller.SystemControllerImpl
+import org.hyperledger.identus.vdr.controller.VdrControllerImpl
 import org.hyperledger.identus.verification.controller.VcVerificationControllerImpl
 import zio.*
 import zio.logging.*
@@ -160,6 +161,7 @@ object MainApp extends ZIOAppDefault {
           EventControllerImpl.layer,
           DIDCommControllerImpl.layer,
           PresentationExchangeControllerImpl.layer,
+          VdrControllerImpl.layer,
           // domain
           AppModule.apolloLayer,
           AppModule.didJwtResolverLayer,

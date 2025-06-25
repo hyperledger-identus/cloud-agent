@@ -3,18 +3,18 @@ package org.hyperledger.identus.vdr.controller
 import sttp.tapir.ztapir.*
 import zio.*
 
-class VdrServerEndpoints() {
+class VdrServerEndpoints(vdrController: VdrController) {
 
-  private val readDataServerEndpoint: ZServerEndpoint[Any, Any] =
-    VdrEndpoints.readData.zServerLogic { case i =>
-      ZIO.dieMessage("TODO")
+  private val readEntryServerEndpoint: ZServerEndpoint[Any, Any] =
+    VdrEndpoints.readEntry.zServerLogic { case i =>
+      vdrController.getVdrEntry
     }
 
   val all: List[ZServerEndpoint[Any, Any]] = List(
-    readDataServerEndpoint
+    readEntryServerEndpoint
   )
 }
 
 object VdrServerEndpoints {
-  def all: UIO[List[ZServerEndpoint[Any, Any]]] = ZIO.succeed(VdrServerEndpoints().all)
+  def all: URIO[VdrController, List[ZServerEndpoint[Any, Any]]] = ZIO.fromFunction(VdrServerEndpoints(_)).map(_.all)
 }
