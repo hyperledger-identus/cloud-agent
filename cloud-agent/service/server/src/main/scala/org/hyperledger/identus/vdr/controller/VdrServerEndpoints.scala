@@ -23,6 +23,14 @@ class VdrServerEndpoints(
           .logTrace(rc)
       }
 
+  private val updateEntryServerEndpoint: ZServerEndpoint[Any, Any] =
+    VdrEndpoints.createEntry
+      .zServerLogic { case (rc, data, params) =>
+        vdrController
+          .createVdrEntry(data, params.toMap)
+          .logTrace(rc)
+      }
+
   private val deleteEntryServerEndpoint: ZServerEndpoint[Any, Any] =
     VdrEndpoints.deleteEntry
       .zServerLogic { case (rc, url, params) =>
@@ -34,6 +42,7 @@ class VdrServerEndpoints(
   val all: List[ZServerEndpoint[Any, Any]] = List(
     readEntryServerEndpoint,
     createEntryServerEndpoint,
+    updateEntryServerEndpoint,
     deleteEntryServerEndpoint
   )
 }

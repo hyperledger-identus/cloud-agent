@@ -4,6 +4,7 @@ import org.hyperledger.identus.api.http.EndpointOutputs
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.api.http.RequestContext
 import org.hyperledger.identus.vdr.controller.http.CreateVdrEntryResponse
+import org.hyperledger.identus.vdr.controller.http.UpdateVdrEntryResponse
 import sttp.apispec.Tag
 import sttp.model.QueryParams
 import sttp.model.StatusCode
@@ -51,6 +52,25 @@ object VdrEndpoints {
       .in(queryParams)
       .out(statusCode(StatusCode.Created).description("Created a VDR entry"))
       .out(jsonBody[CreateVdrEntryResponse])
+      .errorOut(EndpointOutputs.basicFailuresAndForbidden)
+      .name("createVdrEntry")
+      .summary("Create VDR entry")
+      .tag(tagName)
+
+  val updateEntry: PublicEndpoint[
+    (RequestContext, String, Array[Byte], QueryParams),
+    ErrorResponse,
+    UpdateVdrEntryResponse,
+    Any
+  ] =
+    endpoint.put
+      .in(extractFromRequest[RequestContext](RequestContext.apply))
+      .in("vdr" / "entries")
+      .in(query[String]("url"))
+      .in(byteArrayBody)
+      .in(queryParams)
+      .out(statusCode(StatusCode.Created).description("Created a VDR entry"))
+      .out(jsonBody[UpdateVdrEntryResponse])
       .errorOut(EndpointOutputs.basicFailuresAndForbidden)
       .name("createVdrEntry")
       .summary("Create VDR entry")
