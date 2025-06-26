@@ -60,7 +60,7 @@ object VdrServiceImpl {
   def layer: TaskLayer[VdrService] =
     ZLayer.fromZIO {
       for
-        urlManager <- ZIO.attempt(BaseUrlManager.apply("localhost", "BaseURL"))
+        urlManager <- ZIO.attempt(BaseUrlManager.apply("http://localhost", "BaseURL"))
         drivers <- ZIO.attempt(
           Array[Driver](
             InMemoryDriver(
