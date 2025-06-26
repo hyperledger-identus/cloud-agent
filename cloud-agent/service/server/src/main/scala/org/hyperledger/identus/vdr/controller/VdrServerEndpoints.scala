@@ -1,15 +1,11 @@
 package org.hyperledger.identus.vdr.controller
 
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
 import org.hyperledger.identus.LogUtils.logTrace
 import sttp.tapir.ztapir.*
 import zio.*
 
 class VdrServerEndpoints(
     vdrController: VdrController,
-    authenticator: Authenticator[BaseEntity],
-    authorizer: Authorizer[BaseEntity]
 ) {
 
   private val readEntryServerEndpoint: ZServerEndpoint[Any, Any] =
@@ -21,27 +17,32 @@ class VdrServerEndpoints(
 
   private val createEntryServerEndpoint: ZServerEndpoint[Any, Any] =
     VdrEndpoints.createEntry
-      .zServerSecurityLogic(SecurityLogic.authorizeWalletAccessWith(_)(authenticator, authorizer))
-      .serverLogic { wac =>
-        { case (rc, data, params) =>
-          vdrController
-            .createVdrEntry(data, params.toMap)
-            .logTrace(rc)
-        }
+      .zServerLogic { case (rc, data, params) =>
+        vdrController
+          .createVdrEntry(data, params.toMap)
+          .logTrace(rc)
+      }
+
+  private val deleteEntryServerEndpoint: ZServerEndpoint[Any, Any] =
+    VdrEndpoints.deleteEntry
+      .zServerLogic { case (rc, url, params) =>
+        vdrController
+          .deleteVdrEntry(url, params.toMap)
+          .logTrace(rc)
       }
 
   val all: List[ZServerEndpoint[Any, Any]] = List(
     readEntryServerEndpoint,
-    createEntryServerEndpoint
+    createEntryServerEndpoint,
+    deleteEntryServerEndpoint
   )
 }
 
 object VdrServerEndpoints {
-  def all: URIO[VdrController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[VdrController, List[ZServerEndpoint[Any, Any]]] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
       vdrController <- ZIO.service[VdrController]
-      vdrEndpoints = VdrServerEndpoints(vdrController, authenticator, authenticator)
+      vdrEndpoints = VdrServerEndpoints(vdrController)
     } yield vdrEndpoints.all
   }
 }
