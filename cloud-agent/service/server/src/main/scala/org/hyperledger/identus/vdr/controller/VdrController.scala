@@ -6,15 +6,16 @@ import org.hyperledger.identus.vdr.controller.http.CreateVdrEntryResponse
 import zio.*
 
 trait VdrController {
-  def getVdrEntry(vdrUrl: String): IO[ErrorResponse, Array[Byte]]
+  def getVdrEntry(url: String): IO[ErrorResponse, Array[Byte]]
   def createVdrEntry(data: Array[Byte], params: Map[String, String]): IO[ErrorResponse, CreateVdrEntryResponse]
+  def deleteVdrEntry(url: String, params: Map[String, String]): IO[ErrorResponse, Unit]
 }
 
 // FIXME: not all errors are defect
 class VdrControllerImpl(service: VdrService) extends VdrController {
 
-  override def getVdrEntry(vdrUrl: String): IO[ErrorResponse, Array[Byte]] =
-    service.read(vdrUrl).orDie
+  override def getVdrEntry(url: String): IO[ErrorResponse, Array[Byte]] =
+    service.read(url).orDie
 
   override def createVdrEntry(
       data: Array[Byte],
@@ -24,6 +25,13 @@ class VdrControllerImpl(service: VdrService) extends VdrController {
       .create(data, params)
       .orDie
       .map(url => CreateVdrEntryResponse(url))
+  }
+
+  override def deleteVdrEntry(
+      url: String,
+      params: Map[String, String]
+  ): IO[ErrorResponse, Unit] = {
+    service.delete(url, params).orDie
   }
 
 }

@@ -3,10 +3,6 @@ package org.hyperledger.identus.vdr.controller
 import org.hyperledger.identus.api.http.EndpointOutputs
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.api.http.RequestContext
-import org.hyperledger.identus.iam.authentication.apikey.ApiKeyCredentials
-import org.hyperledger.identus.iam.authentication.apikey.ApiKeyEndpointSecurityLogic.apiKeyHeader
-import org.hyperledger.identus.iam.authentication.oidc.JwtCredentials
-import org.hyperledger.identus.iam.authentication.oidc.JwtSecurityLogic.jwtAuthHeader
 import org.hyperledger.identus.vdr.controller.http.CreateVdrEntryResponse
 import sttp.apispec.Tag
 import sttp.model.QueryParams
@@ -20,6 +16,8 @@ object VdrEndpoints {
   private val tagDescription =
     s"""
        | Experimental [Verifiable Data Registry](https://github.com/hyperledger-identus/vdr) endpoints.
+       |
+       | VDR interface is a public proxy interface to interact with various VDR drivers.
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))
@@ -33,14 +31,14 @@ object VdrEndpoints {
     .in(extractFromRequest[RequestContext](RequestContext.apply))
     .in("vdr" / "entries")
     .in(query[String]("url"))
+    .out(statusCode(StatusCode.Ok).description("Read a VDR entry successfully"))
     .out(byteArrayBody)
     .errorOut(EndpointOutputs.basicFailuresAndNotFound)
     .name("getVdrEntry")
     .summary("Resolve VDR entry")
     .tag(tagName)
 
-  val createEntry: Endpoint[
-    (ApiKeyCredentials, JwtCredentials),
+  val createEntry: PublicEndpoint[
     (RequestContext, Array[Byte], QueryParams),
     ErrorResponse,
     CreateVdrEntryResponse,
@@ -53,11 +51,26 @@ object VdrEndpoints {
       .in(queryParams)
       .out(statusCode(StatusCode.Created).description("Created a VDR entry"))
       .out(jsonBody[CreateVdrEntryResponse])
-      .securityIn(apiKeyHeader)
-      .securityIn(jwtAuthHeader)
       .errorOut(EndpointOutputs.basicFailuresAndForbidden)
       .name("createVdrEntry")
       .summary("Create VDR entry")
+      .tag(tagName)
+
+  val deleteEntry: PublicEndpoint[
+    (RequestContext, String, QueryParams),
+    ErrorResponse,
+    Unit,
+    Any
+  ] =
+    endpoint.delete
+      .in(extractFromRequest[RequestContext](RequestContext.apply))
+      .in("vdr" / "entries")
+      .in(query[String]("url"))
+      .in(queryParams)
+      .out(statusCode(StatusCode.Ok).description("Deleted a VDR entry"))
+      .errorOut(EndpointOutputs.basicFailuresAndForbidden)
+      .name("deleteVdrEntry")
+      .summary("Delete VDR entry")
       .tag(tagName)
 
 }
