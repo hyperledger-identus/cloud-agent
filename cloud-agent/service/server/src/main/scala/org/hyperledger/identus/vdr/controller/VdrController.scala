@@ -2,8 +2,7 @@ package org.hyperledger.identus.vdr.controller
 
 import org.hyperledger.identus.agent.vdr.VdrService
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.vdr.controller.http.CreateVdrEntryResponse
-import org.hyperledger.identus.vdr.controller.http.UpdateVdrEntryResponse
+import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, UpdateVdrEntryResponse}
 import zio.*
 
 trait VdrController {
