@@ -1,13 +1,9 @@
 package org.hyperledger.identus.vdr.controller
 
-import org.hyperledger.identus.api.http.EndpointOutputs
-import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.api.http.RequestContext
-import org.hyperledger.identus.vdr.controller.http.CreateVdrEntryResponse
-import org.hyperledger.identus.vdr.controller.http.UpdateVdrEntryResponse
+import org.hyperledger.identus.api.http.{EndpointOutputs, ErrorResponse, RequestContext}
+import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, UpdateVdrEntryResponse}
 import sttp.apispec.Tag
-import sttp.model.QueryParams
-import sttp.model.StatusCode
+import sttp.model.{QueryParams, StatusCode}
 import sttp.tapir.*
 import sttp.tapir.json.zio.jsonBody
 

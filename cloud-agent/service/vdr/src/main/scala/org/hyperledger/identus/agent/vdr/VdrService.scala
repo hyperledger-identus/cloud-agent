@@ -1,8 +1,7 @@
 package org.hyperledger.identus.agent.vdr
 
 import drivers.InMemoryDriver
-import interfaces.Driver
-import interfaces.Proof
+import interfaces.{Driver, Proof}
 import proxy.VDRProxyMultiDrivers
 import urlManagers.BaseUrlManager
 import zio.*

@@ -1,10 +1,7 @@
 package org.hyperledger.identus.vdr.controller.http
 
 import sttp.tapir.Schema
-import zio.json.DeriveJsonDecoder
-import zio.json.DeriveJsonEncoder
-import zio.json.JsonDecoder
-import zio.json.JsonEncoder
+import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
 final case class UpdateVdrEntryResponse(url: Option[String])
 
