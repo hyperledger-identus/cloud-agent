@@ -901,6 +901,7 @@ lazy val cloudAgentVdr = project
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.postgresDependencies,
     libraryDependencies += "org.jetbrains.kotlin" % "kotlin-stdlib" % "1.9.23" // needed for unmanagedJar
   )
+  .dependsOn(shared)
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
