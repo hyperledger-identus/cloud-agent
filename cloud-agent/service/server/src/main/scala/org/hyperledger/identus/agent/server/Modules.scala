@@ -1,9 +1,11 @@
 package org.hyperledger.identus.agent.server
 
 import com.typesafe.config.ConfigFactory
+import doobie.hikari.HikariTransactor
 import doobie.util.transactor.Transactor
 import io.grpc.ManagedChannelBuilder
 import io.iohk.atala.prism.protos.node_api.NodeServiceGrpc
+import javax.sql.DataSource
 import org.hyperledger.identus.agent.server.config.{AppConfig, SecretStorageBackend, ValidatedVaultConfig}
 import org.hyperledger.identus.agent.walletapi.service.{EntityService, WalletManagementService}
 import org.hyperledger.identus.agent.walletapi.sql.{
@@ -12,13 +14,7 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcWalletSecretStorage
 }
 import org.hyperledger.identus.agent.walletapi.storage.{DIDSecretStorage, GenericSecretStorage, WalletSecretStorage}
-import org.hyperledger.identus.agent.walletapi.vault.{
-  VaultDIDSecretStorage,
-  VaultKVClient,
-  VaultKVClientImpl,
-  VaultWalletSecretStorage,
-  *
-}
+import org.hyperledger.identus.agent.walletapi.vault.*
 import org.hyperledger.identus.castor.core.service.DIDService
 import org.hyperledger.identus.iam.authentication.admin.{
   AdminApiKeyAuthenticator,
@@ -174,10 +170,10 @@ object RepoModule {
     SystemModule.configLayer >>> dbConfigLayer
   }
 
-  val polluxContextAwareTransactorLayer: TaskLayer[Transactor[ContextAwareTask]] =
+  val polluxContextAwareTransactorLayer: TaskLayer[HikariTransactor[ContextAwareTask]] =
     polluxDbConfigLayer() >>> TransactorLayer.contextAwareTask
 
-  val polluxTransactorLayer: TaskLayer[Transactor[Task]] =
+  val polluxTransactorLayer: TaskLayer[HikariTransactor[Task]] =
     polluxDbConfigLayer(appUser = false) >>> TransactorLayer.task
 
   def connectDbConfigLayer(appUser: Boolean = true): TaskLayer[DbConfig] = {
@@ -187,10 +183,10 @@ object RepoModule {
     SystemModule.configLayer >>> dbConfigLayer
   }
 
-  val connectContextAwareTransactorLayer: TaskLayer[Transactor[ContextAwareTask]] =
+  val connectContextAwareTransactorLayer: TaskLayer[HikariTransactor[ContextAwareTask]] =
     connectDbConfigLayer() >>> TransactorLayer.contextAwareTask
 
-  val connectTransactorLayer: TaskLayer[Transactor[Task]] =
+  val connectTransactorLayer: TaskLayer[HikariTransactor[Task]] =
     connectDbConfigLayer(appUser = false) >>> TransactorLayer.task
 
   def agentDbConfigLayer(appUser: Boolean = true): TaskLayer[DbConfig] = {
@@ -200,11 +196,13 @@ object RepoModule {
     SystemModule.configLayer >>> dbConfigLayer
   }
 
-  val agentContextAwareTransactorLayer: TaskLayer[Transactor[ContextAwareTask]] =
+  val agentContextAwareTransactorLayer: TaskLayer[HikariTransactor[ContextAwareTask]] =
     agentDbConfigLayer() >>> TransactorLayer.contextAwareTask
 
-  val agentTransactorLayer: TaskLayer[Transactor[Task]] =
+  val agentTransactorLayer: TaskLayer[HikariTransactor[Task]] =
     agentDbConfigLayer(appUser = false) >>> TransactorLayer.task
+
+  val agentDataSourceLayer: TaskLayer[DataSource] = agentTransactorLayer.map(xa => ZEnvironment(xa.get.kernel))
 
   val vaultClientLayer: TaskLayer[VaultKVClient] = {
     val vaultClient = ZLayer {

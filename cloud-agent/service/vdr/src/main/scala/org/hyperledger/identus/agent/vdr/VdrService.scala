@@ -1,7 +1,9 @@
 package org.hyperledger.identus.agent.vdr
 
+import drivers.DatabaseDriver
 import drivers.InMemoryDriver
 import interfaces.{Driver, Proof}
+import javax.sql.DataSource
 import proxy.VDRProxyMultiDrivers
 import urlManagers.BaseUrlManager
 import zio.*
@@ -56,18 +58,15 @@ class VdrServiceImpl(
 }
 
 object VdrServiceImpl {
-  def layer: TaskLayer[VdrService] =
+  def layer: RLayer[DataSource, VdrService] =
     ZLayer.fromZIO {
       for
         urlManager <- ZIO.attempt(BaseUrlManager.apply("http://localhost", "BaseURL"))
+        dbDriverDataSource <- ZIO.service[DataSource]
         drivers <- ZIO.attempt(
           Array[Driver](
-            InMemoryDriver(
-              "memory",
-              "memory",
-              "0.1.0",
-              Array.empty
-            )
+            InMemoryDriver("memory", "memory", "0.1.0", Array.empty),
+            DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource)
           )
         )
         // Wrapped in Ref as InMemoryDriver is not thread-safe
