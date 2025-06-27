@@ -1,10 +1,11 @@
 package org.hyperledger.identus.agent.vdr
 
-import drivers.DatabaseDriver
-import drivers.InMemoryDriver
+import drivers.{DatabaseDriver, InMemoryDriver}
 import interfaces.{Driver, Proof}
 import javax.sql.DataSource
+import org.hyperledger.identus.agent.vdr.VdrServiceError.{DriverNotFound, VdrEntryNotFound}
 import proxy.VDRProxyMultiDrivers
+import proxy.VDRProxyMultiDrivers.NoDriverWithThisSpecificationsException
 import urlManagers.BaseUrlManager
 import zio.*
 
@@ -17,11 +18,11 @@ trait VdrService {
   def identifier: String
   def version: String
 
-  def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl]
-  def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): Task[Option[VdrUrl]]
-  def read(url: VdrUrl): Task[Array[Byte]]
-  def delete(url: VdrUrl, options: VdrOptions): Task[Unit]
-  def verify(url: VdrUrl, returnData: Boolean = false): Task[Proof]
+  def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl]
+  def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]]
+  def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]]
+  def delete(url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Unit]
+  def verify(url: VdrUrl, returnData: Boolean = false): UIO[Proof]
 }
 
 class VdrServiceImpl(
@@ -30,29 +31,55 @@ class VdrServiceImpl(
     override val version: String
 ) extends VdrService {
 
-  override def create(data: Array[Byte], options: VdrOptions): Task[VdrUrl] =
+  override def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl] =
     proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.create(data, options.asJava))
+      ZIO
+        .attemptBlocking(proxy.create(data, options.asJava))
+        .refineOrDie { case e: NoDriverWithThisSpecificationsException =>
+          DriverNotFound(e)
+        }
     }
 
-  override def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): Task[Option[VdrUrl]] =
+  override def update(
+      data: Array[Byte],
+      url: VdrUrl,
+      options: VdrOptions
+  ): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]] =
     proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(Option(proxy.update(data, url, options.asJava)))
+      ZIO
+        .attemptBlocking(Option(proxy.update(data, url, options.asJava)))
+        .refineOrDie {
+          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        }
     }
 
-  override def read(url: VdrUrl): Task[Array[Byte]] =
+  override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
     proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.read(url))
+      ZIO
+        .attemptBlocking(proxy.read(url))
+        .refineOrDie {
+          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        }
     }
 
-  override def delete(url: VdrUrl, options: VdrOptions): Task[Unit] =
+  override def delete(url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Unit] =
     proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.delete(url, options.asJava))
+      ZIO
+        .attemptBlocking(proxy.delete(url, options.asJava))
+        .refineOrDie {
+          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        }
     }
 
-  override def verify(url: VdrUrl, returnData: Boolean): Task[Proof] =
+  override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
     proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.verify(url, returnData))
+      ZIO.attemptBlocking(proxy.verify(url, returnData)).orDie
     }
 
 }

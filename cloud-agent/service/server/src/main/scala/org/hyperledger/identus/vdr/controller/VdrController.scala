@@ -5,6 +5,8 @@ import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, UpdateVdrEntryResponse}
 import zio.*
 
+import scala.language.implicitConversions
+
 trait VdrController {
   def getVdrEntry(url: String): IO[ErrorResponse, Array[Byte]]
   def createVdrEntry(data: Array[Byte], params: Map[String, String]): IO[ErrorResponse, CreateVdrEntryResponse]
@@ -16,11 +18,10 @@ trait VdrController {
   def deleteVdrEntry(url: String, params: Map[String, String]): IO[ErrorResponse, Unit]
 }
 
-// FIXME: not all errors are defect
 class VdrControllerImpl(service: VdrService) extends VdrController {
 
   override def getVdrEntry(url: String): IO[ErrorResponse, Array[Byte]] =
-    service.read(url).orDie
+    service.read(url)
 
   override def createVdrEntry(
       data: Array[Byte],
@@ -28,7 +29,6 @@ class VdrControllerImpl(service: VdrService) extends VdrController {
   ): IO[ErrorResponse, CreateVdrEntryResponse] =
     service
       .create(data, params)
-      .orDie
       .map(url => CreateVdrEntryResponse(url))
 
   override def updateVdrEntry(
@@ -38,11 +38,10 @@ class VdrControllerImpl(service: VdrService) extends VdrController {
   ): IO[ErrorResponse, UpdateVdrEntryResponse] =
     service
       .update(data, url, params)
-      .orDie
       .map(url => UpdateVdrEntryResponse(url))
 
   override def deleteVdrEntry(url: String, params: Map[String, String]): IO[ErrorResponse, Unit] =
-    service.delete(url, params).orDie
+    service.delete(url, params)
 
 }
 
