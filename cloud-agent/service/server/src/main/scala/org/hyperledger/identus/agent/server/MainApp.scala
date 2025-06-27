@@ -184,7 +184,7 @@ object MainApp extends ZIOAppDefault {
           WalletManagementServiceImpl.layer,
           VcVerificationServiceImpl.layer,
           PresentationExchangeServiceImpl.layer,
-          VdrServiceImpl.layer,
+          RepoModule.agentDataSourceLayer >>> VdrServiceImpl.layer,
           // authentication
           AppModule.builtInAuthenticatorLayer,
           AppModule.keycloakAuthenticatorLayer,
