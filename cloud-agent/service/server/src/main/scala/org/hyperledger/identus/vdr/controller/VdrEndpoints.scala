@@ -65,11 +65,11 @@ object VdrEndpoints {
       .in(query[String]("url"))
       .in(byteArrayBody)
       .in(queryParams)
-      .out(statusCode(StatusCode.Created).description("Created a VDR entry"))
+      .out(statusCode(StatusCode.Ok).description("Updated a VDR entry"))
       .out(jsonBody[UpdateVdrEntryResponse])
       .errorOut(EndpointOutputs.basicFailuresAndForbidden)
-      .name("createVdrEntry")
-      .summary("Create VDR entry")
+      .name("updateVdrEntry")
+      .summary("Update VDR entry")
       .tag(tagName)
 
   val deleteEntry: PublicEndpoint[
