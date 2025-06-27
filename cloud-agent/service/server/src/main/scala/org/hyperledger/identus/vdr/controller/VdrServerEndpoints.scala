@@ -24,10 +24,10 @@ class VdrServerEndpoints(
       }
 
   private val updateEntryServerEndpoint: ZServerEndpoint[Any, Any] =
-    VdrEndpoints.createEntry
-      .zServerLogic { case (rc, data, params) =>
+    VdrEndpoints.updateEntry
+      .zServerLogic { case (rc, url, data, params) =>
         vdrController
-          .createVdrEntry(data, params.toMap)
+          .updateVdrEntry(url, data, params.toMap)
           .logTrace(rc)
       }
 
