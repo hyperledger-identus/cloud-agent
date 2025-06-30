@@ -21,6 +21,7 @@ import org.hyperledger.identus.pollux.credentialschema.controller.{
 import org.hyperledger.identus.pollux.prex.controller.PresentationExchangeController
 import org.hyperledger.identus.presentproof.controller.PresentProofController
 import org.hyperledger.identus.system.controller.SystemController
+import org.hyperledger.identus.vdr.controller.VdrController
 import org.hyperledger.identus.verification.controller.VcVerificationController
 import org.scalatestplus.mockito.MockitoSugar.*
 import sttp.apispec.openapi.circe.yaml.*
@@ -80,5 +81,6 @@ object OpenAPISpecificationGenerator {
     ZLayer.succeed(mock[CredentialIssuerController]) ++
     ZLayer.succeed(mock[PresentationExchangeController]) ++
     ZLayer.succeed(mock[Oid4vciAuthenticatorFactory]) ++
+    ZLayer.succeed(mock[VdrController]) ++
     configLayer
 }

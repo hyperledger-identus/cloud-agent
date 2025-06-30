@@ -11,18 +11,17 @@ import sttp.tapir.swagger.SwaggerUIOptions
 object ZHttpEndpoints {
 
   private val swaggerUIOptions = SwaggerUIOptions.default
-    .contextPath(List("docs", "prism-agent", "api"))
 
   private val redocUIOptions = RedocUIOptions.default
     .copy(pathPrefix = List("redoc"))
 
   def swaggerEndpoints[F[_]](apiEndpoints: List[ServerEndpoint[Any, F]]): List[ServerEndpoint[Any, F]] =
     SwaggerInterpreter(swaggerUIOptions = swaggerUIOptions, customiseDocsModel = DocModels.customiseDocsModel)
-      .fromServerEndpoints[F](apiEndpoints, "Prism Agent", BuildInfo.version)
+      .fromServerEndpoints[F](apiEndpoints, "Identus Cloud Agent", BuildInfo.version)
 
   def redocEndpoints[F[_]](apiEndpoints: List[ServerEndpoint[Any, F]]): List[ServerEndpoint[Any, F]] =
     RedocInterpreter(redocUIOptions = redocUIOptions, customiseDocsModel = DocModels.customiseDocsModel)
-      .fromServerEndpoints[F](apiEndpoints, "Prism Agent", BuildInfo.version)
+      .fromServerEndpoints[F](apiEndpoints, "Identus Cloud Agent", BuildInfo.version)
 
   def withDocumentations[F[_]](apiEndpoints: List[ServerEndpoint[Any, F]]): List[ServerEndpoint[Any, F]] = {
     apiEndpoints ++ swaggerEndpoints[F](apiEndpoints) ++ redocEndpoints[F](apiEndpoints)
