@@ -26,61 +26,51 @@ trait VdrService {
 }
 
 class VdrServiceImpl(
-    proxyRef: Ref[VDRProxyMultiDrivers],
+    proxy: VDRProxyMultiDrivers,
     override val identifier: String,
     override val version: String
 ) extends VdrService {
 
   override def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO
-        .attemptBlocking(proxy.create(data, options.asJava))
-        .refineOrDie { case e: NoDriverWithThisSpecificationsException =>
-          DriverNotFound(e)
-        }
-    }
+    ZIO
+      .attemptBlocking(proxy.create(data, options.asJava))
+      .refineOrDie { case e: NoDriverWithThisSpecificationsException =>
+        DriverNotFound(e)
+      }
 
   override def update(
       data: Array[Byte],
       url: VdrUrl,
       options: VdrOptions
   ): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO
-        .attemptBlocking(Option(proxy.update(data, url, options.asJava)))
-        .refineOrDie {
-          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        }
-    }
+    ZIO
+      .attemptBlocking(Option(proxy.update(data, url, options.asJava)))
+      .refineOrDie {
+        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+      }
 
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO
-        .attemptBlocking(proxy.read(url))
-        .refineOrDie {
-          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        }
-    }
+    ZIO
+      .attemptBlocking(proxy.read(url))
+      .refineOrDie {
+        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+      }
 
   override def delete(url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Unit] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO
-        .attemptBlocking(proxy.delete(url, options.asJava))
-        .refineOrDie {
-          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        }
-    }
+    ZIO
+      .attemptBlocking(proxy.delete(url, options.asJava))
+      .refineOrDie {
+        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+      }
 
   override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
-    proxyRef.get.flatMap { proxy =>
-      ZIO.attemptBlocking(proxy.verify(url, returnData)).orDie
-    }
+    ZIO.attemptBlocking(proxy.verify(url, returnData)).orDie
 
 }
 
@@ -96,16 +86,12 @@ object VdrServiceImpl {
             DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource)
           )
         )
-        // Wrapped in Ref as InMemoryDriver is not thread-safe
-        proxyRef <- Ref.make(
-          VDRProxyMultiDrivers(
-            urlManager,
-            drivers,
-            "proxy",
-            "0.1.0"
-          )
+        proxy = VDRProxyMultiDrivers(
+          urlManager,
+          drivers,
+          "proxy",
+          "0.1.0"
         )
-        proxy <- proxyRef.get
-      yield VdrServiceImpl(proxyRef, proxy.getIdentifier(), proxy.getVersion())
+      yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
     }
 }
