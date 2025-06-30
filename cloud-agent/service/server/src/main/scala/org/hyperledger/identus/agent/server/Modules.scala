@@ -7,6 +7,8 @@ import io.grpc.ManagedChannelBuilder
 import io.iohk.atala.prism.protos.node_api.NodeServiceGrpc
 import javax.sql.DataSource
 import org.hyperledger.identus.agent.server.config.{AppConfig, SecretStorageBackend, ValidatedVaultConfig}
+import org.hyperledger.identus.agent.vdr.VdrService
+import org.hyperledger.identus.agent.vdr.VdrServiceImpl
 import org.hyperledger.identus.agent.walletapi.service.{EntityService, WalletManagementService}
 import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcDIDSecretStorage,
@@ -136,6 +138,20 @@ object AppModule {
         }
         .flatMap(_.build.map(_.get))
     }
+  }
+
+  val vdrServiceLayer: RLayer[AppConfig, VdrService] = {
+    ZLayer.scoped[AppConfig](
+      ZIO
+        .serviceWith[AppConfig](_.agent.httpEndpoint.publicEndpointUrl)
+        .map { baseUrl =>
+          ZLayer.make[VdrService](
+            RepoModule.agentDataSourceLayer,
+            VdrServiceImpl.layer(baseUrl.toString())
+          )
+        }
+        .flatMap(_.build.map(_.get))
+    )
   }
 }
 

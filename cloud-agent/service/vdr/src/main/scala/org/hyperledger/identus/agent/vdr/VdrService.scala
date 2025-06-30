@@ -17,6 +17,7 @@ type VdrOptions = Map[String, String]
 trait VdrService {
   def identifier: String
   def version: String
+  def baseVdrEntryUrl: String
 
   def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl]
   def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]]
@@ -28,7 +29,8 @@ trait VdrService {
 class VdrServiceImpl(
     proxy: VDRProxyMultiDrivers,
     override val identifier: String,
-    override val version: String
+    override val version: String,
+    override val baseVdrEntryUrl: String,
 ) extends VdrService {
 
   override def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl] =
@@ -75,10 +77,11 @@ class VdrServiceImpl(
 }
 
 object VdrServiceImpl {
-  def layer: RLayer[DataSource, VdrService] =
+  def layer(publicUrl: String): RLayer[DataSource, VdrService] =
     ZLayer.fromZIO {
+      val baseVdrEntryUrl = s"$publicUrl/vdr/entries"
       for
-        urlManager <- ZIO.attempt(BaseUrlManager.apply("http://localhost", "BaseURL"))
+        urlManager <- ZIO.attempt(BaseUrlManager.apply(baseVdrEntryUrl, "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
         drivers <- ZIO.attempt(
           Array[Driver](
@@ -92,6 +95,6 @@ object VdrServiceImpl {
           "proxy",
           "0.1.0"
         )
-      yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
+      yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion(), baseVdrEntryUrl)
     }
 }
