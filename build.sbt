@@ -90,6 +90,7 @@ lazy val V = new {
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
+  val vdr = "0.2.0"
 }
 
 /** Dependencies */
@@ -378,6 +379,8 @@ lazy val D_CloudAgent = new {
   val vaultDriver = "io.github.jopenlibs" % "vault-java-driver" % V.vaultDriver
   val keycloakAuthz = "org.keycloak" % "keycloak-authz-client" % V.keycloak
 
+  val vdr = "org.hyperledger.identus" % "vdr" % V.vdr
+
   // Dependency Modules
   val baseDependencies: Seq[ModuleID] = Seq(
     D.zio,
@@ -415,6 +418,8 @@ lazy val D_CloudAgent = new {
     baseDependencies ++ D.doobieDependencies ++ Seq(D.zioCatsInterop, D.zioMock, vaultDriver)
 
   lazy val iamDependencies: Seq[ModuleID] = Seq(keycloakAuthz, D.jwtZio)
+
+  lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr)
 
   lazy val serverDependencies: Seq[ModuleID] =
     baseDependencies ++ tapirDependencies ++ postgresDependencies ++ Seq(
@@ -898,8 +903,7 @@ lazy val cloudAgentVdr = project
   .settings(commonSetttings)
   .settings(
     name := "cloud-agent-vdr",
-    libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.postgresDependencies,
-    libraryDependencies += "org.jetbrains.kotlin" % "kotlin-stdlib" % "1.9.23" // needed for unmanagedJar
+    libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
   .dependsOn(shared)
 

@@ -25,4 +25,3 @@ cloud-agent/client/kotlin/src/main/kotlin/
 !cloud-agent/client/kotlin/src/main/kotlin/org/hyperledger/identus/client/models/CredentialSubject.kt
 !cloud-agent/client/kotlin/src/main/kotlin/org/hyperledger/identus/client/models/Service.kt
 !cloud-agent/client/kotlin/src/main/kotlin/org/hyperledger/identus/client/models/UpdateManagedDIDServiceAction.kt
-cloud-agent/service/vdr/lib/*.jar
