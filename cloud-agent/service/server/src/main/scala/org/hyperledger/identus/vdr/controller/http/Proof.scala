@@ -1,6 +1,6 @@
 package org.hyperledger.identus.vdr.controller.http
 
-import interfaces.{Proof => VdrProof}
+import interfaces.Proof as VdrProof
 import org.hyperledger.identus.api.http.Annotation
 import org.hyperledger.identus.shared.models.HexString
 import sttp.tapir.Schema
