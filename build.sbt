@@ -90,6 +90,7 @@ lazy val V = new {
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
+  val vdr = "0.2.0"
 }
 
 /** Dependencies */
@@ -378,6 +379,8 @@ lazy val D_CloudAgent = new {
   val vaultDriver = "io.github.jopenlibs" % "vault-java-driver" % V.vaultDriver
   val keycloakAuthz = "org.keycloak" % "keycloak-authz-client" % V.keycloak
 
+  val vdr = "org.hyperledger.identus" % "vdr" % V.vdr
+
   // Dependency Modules
   val baseDependencies: Seq[ModuleID] = Seq(
     D.zio,
@@ -415,6 +418,8 @@ lazy val D_CloudAgent = new {
     baseDependencies ++ D.doobieDependencies ++ Seq(D.zioCatsInterop, D.zioMock, vaultDriver)
 
   lazy val iamDependencies: Seq[ModuleID] = Seq(keycloakAuthz, D.jwtZio)
+
+  lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr)
 
   lazy val serverDependencies: Seq[ModuleID] =
     baseDependencies ++ tapirDependencies ++ postgresDependencies ++ Seq(
@@ -766,7 +771,7 @@ lazy val polluxCore = project
   .dependsOn(
     shared,
     castorCore % "compile->compile;test->test", // Test is for MockDIDService
-    agentWalletAPI % "compile->compile;test->test", // Test is for MockManagedDIDService
+    cloudAgentWalletAPI % "compile->compile;test->test", // Test is for MockManagedDIDService
     vc,
     resolver,
     agentDidcommx,
@@ -872,7 +877,7 @@ lazy val eventNotification = project
 // #### Cloud Agent ####
 // #####################
 
-lazy val agentWalletAPI = project
+lazy val cloudAgentWalletAPI = project
   .in(file("cloud-agent/service/wallet-api"))
   .configure(commonConfigure)
   .settings(commonSetttings)
@@ -891,6 +896,16 @@ lazy val agentWalletAPI = project
   )
   .dependsOn(sharedTest % "test->test")
   .dependsOn(sharedCrypto % "compile->compile;test->test")
+
+lazy val cloudAgentVdr = project
+  .in(file("cloud-agent/service/vdr"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "cloud-agent-vdr",
+    libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(shared)
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -917,7 +932,7 @@ lazy val cloudAgentServer = project
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .enablePlugins(BuildInfoPlugin)
-  .dependsOn(agentWalletAPI % "compile->compile;test->test")
+  .dependsOn(cloudAgentWalletAPI % "compile->compile;test->test")
   .dependsOn(
     sharedTest % "test->test",
     agent,
@@ -928,6 +943,7 @@ lazy val cloudAgentServer = project
     connectDoobie,
     castorCore,
     eventNotification,
+    cloudAgentVdr,
   )
 
 // ############################
@@ -976,7 +992,8 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   polluxPreX,
   connectCore,
   connectDoobie,
-  agentWalletAPI,
+  cloudAgentVdr,
+  cloudAgentWalletAPI,
   cloudAgentServer,
   eventNotification,
 )
