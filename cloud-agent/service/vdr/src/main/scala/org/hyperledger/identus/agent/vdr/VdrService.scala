@@ -33,6 +33,15 @@ class VdrServiceImpl(
     override val baseVdrEntryUrl: String,
 ) extends VdrService {
 
+  extension [R, A](z: ZIO[R, Throwable, A]) {
+    def refineVdrError: ZIO[R, DriverNotFound | VdrEntryNotFound, A] =
+      z.refineOrDie {
+        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+      }
+  }
+
   override def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl] =
     ZIO
       .attemptBlocking(proxy.create(data, options.asJava))
@@ -47,29 +56,17 @@ class VdrServiceImpl(
   ): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]] =
     ZIO
       .attemptBlocking(Option(proxy.update(data, url, options.asJava)))
-      .refineOrDie {
-        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-      }
+      .refineVdrError
 
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
     ZIO
       .attemptBlocking(proxy.read(url))
-      .refineOrDie {
-        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-      }
+      .refineVdrError
 
   override def delete(url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Unit] =
     ZIO
       .attemptBlocking(proxy.delete(url, options.asJava))
-      .refineOrDie {
-        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-      }
+      .refineVdrError
 
   override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
     ZIO.attemptBlocking(proxy.verify(url, returnData)).orDie
