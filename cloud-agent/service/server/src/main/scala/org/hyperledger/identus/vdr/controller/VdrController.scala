@@ -2,7 +2,7 @@ package org.hyperledger.identus.vdr.controller
 
 import org.hyperledger.identus.agent.vdr.VdrService
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, UpdateVdrEntryResponse}
+import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, Proof, UpdateVdrEntryResponse}
 import zio.*
 
 import scala.language.implicitConversions
@@ -16,6 +16,7 @@ trait VdrController {
       params: Map[String, String]
   ): IO[ErrorResponse, UpdateVdrEntryResponse]
   def deleteVdrEntry(url: String, params: Map[String, String]): IO[ErrorResponse, Unit]
+  def entryProof(url: String): IO[ErrorResponse, Proof]
 }
 
 class VdrControllerImpl(service: VdrService) extends VdrController {
@@ -43,6 +44,8 @@ class VdrControllerImpl(service: VdrService) extends VdrController {
   override def deleteVdrEntry(url: String, params: Map[String, String]): IO[ErrorResponse, Unit] =
     service.delete(url, params)
 
+  override def entryProof(url: String): IO[ErrorResponse, Proof] =
+    service.verify(url, false).map(identity)
 }
 
 object VdrControllerImpl {

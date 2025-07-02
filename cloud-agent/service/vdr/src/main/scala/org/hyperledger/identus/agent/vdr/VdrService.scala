@@ -17,7 +17,6 @@ type VdrOptions = Map[String, String]
 trait VdrService {
   def identifier: String
   def version: String
-  def baseVdrEntryUrl: String
 
   def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl]
   def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]]
@@ -30,7 +29,6 @@ class VdrServiceImpl(
     proxy: VDRProxyMultiDrivers,
     override val identifier: String,
     override val version: String,
-    override val baseVdrEntryUrl: String,
 ) extends VdrService {
 
   extension [R, A](z: ZIO[R, Throwable, A]) {
@@ -92,6 +90,6 @@ object VdrServiceImpl {
           "proxy",
           "0.1.0"
         )
-      yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion(), baseVdrEntryUrl)
+      yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
     }
 }
