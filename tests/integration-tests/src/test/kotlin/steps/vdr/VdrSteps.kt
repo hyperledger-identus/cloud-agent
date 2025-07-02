@@ -19,29 +19,36 @@ import org.hyperledger.identus.apollo.utils.decodeHex
 import org.hyperledger.identus.apollo.utils.toHexString
 
 class VdrSteps {
-    @Given("{actor} has a VDR entry with value {}")
-    fun agentHasVdrEntry(actor: Actor, dataHex: String) {
+    @Given("{actor} has a VDR entry with value {} using {} driver")
+    fun agentHasVdrEntry(actor: Actor, dataHex: String, driver: String) {
         val vdrUrl = actor.recall<String>("vdrUrl")
         val vdrData = actor.recall<ByteArray>("vdrData")
-        if (vdrUrl == null || vdrData.toHexString() != dataHex) {
-            agentCreatesVdrEntry(actor, dataHex)
+        val vdrDriver = actor.recall<String>("vdrDriver")
+        if (vdrUrl == null
+            || vdrData == null
+            || vdrDriver == null
+            || vdrData.toHexString() != dataHex
+            || vdrDriver != driver
+        ) {
+            agentCreatesVdrEntry(actor, dataHex, driver)
         }
     }
 
-    @When("{actor} creates a VDR entry with value {}")
-    fun agentCreatesVdrEntry(actor: Actor, dataHex: String) {
+    @When("{actor} creates a VDR entry with value {} using {} driver")
+    fun agentCreatesVdrEntry(actor: Actor, dataHex: String, driver: String) {
         val data = dataHex.decodeHex()
         actor.attemptsTo(
             Post.to("/vdr/entries")
                 .rawBytesBody(data)
                 .with {
-                    it.queryParam("drf", "memory")
+                    it.queryParam("drid", driver)
                 },
             Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_CREATED),
         )
 
         val url = SerenityRest.lastResponse().get<String>("url")
         actor.remember("vdrUrl", url)
+        actor.remember("vdrDriver", driver)
         actor.remember("vdrData", data)
     }
 
@@ -70,7 +77,6 @@ class VdrSteps {
                 },
             Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_OK),
         )
-        actor.forget<ByteArray>("vdrData" )
     }
 
     @Then("{actor} shares the VDR URL with {actor}")
