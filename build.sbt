@@ -932,6 +932,7 @@ lazy val cloudAgentServer = project
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .enablePlugins(BuildInfoPlugin)
+  .dependsOn(cloudAgentWalletAPI % "compile->compile;test->test")
   .dependsOn(
     sharedTest % "test->test",
     agent,
@@ -943,7 +944,6 @@ lazy val cloudAgentServer = project
     castorCore,
     eventNotification,
     cloudAgentVdr,
-    cloudAgentWalletAPI % "compile->compile;test->test"
   )
 
 // ############################
