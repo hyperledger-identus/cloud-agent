@@ -11,7 +11,7 @@ import zio.interop.catz.*
 
 object TransactorLayer {
 
-  def task: RLayer[DbConfig, Transactor[Task]] = {
+  def task: RLayer[DbConfig, HikariTransactor[Task]] = {
     ZLayer.fromZIO {
       ZIO.service[DbConfig].flatMap { config =>
         // Here we use `Dispatcher.apply`
@@ -25,7 +25,7 @@ object TransactorLayer {
     }.flatten
   }
 
-  def contextAwareTask: RLayer[DbConfig, Transactor[ContextAwareTask]] = {
+  def contextAwareTask: RLayer[DbConfig, HikariTransactor[ContextAwareTask]] = {
     ZLayer.fromZIO {
       ZIO.service[DbConfig].flatMap { config =>
         given Async[ContextAwareTask] = summon[Async[Task]].asInstanceOf
@@ -41,8 +41,9 @@ object TransactorLayer {
     }.flatten
   }
 
-  def hikari[A[_]: Async: Dispatcher](config: DbConfig)(using tag: Tag[Transactor[A]]): TaskLayer[Transactor[A]] = {
-
+  def hikari[A[_]: Async: Dispatcher](
+      config: DbConfig
+  )(using tag: Tag[HikariTransactor[A]]): TaskLayer[HikariTransactor[A]] = {
     val transactorLayerZio = ZIO
       .attempt {
         // https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
@@ -55,8 +56,8 @@ object TransactorLayer {
         hikariConfig
       }
       .map { hikariConfig =>
-        val pool: Resource[A, Transactor[A]] = HikariTransactor.fromHikariConfig[A](hikariConfig)
-        pool.toManaged.toLayer[Transactor[A]]
+        val pool: Resource[A, HikariTransactor[A]] = HikariTransactor.fromHikariConfig[A](hikariConfig)
+        pool.toManaged.toLayer[HikariTransactor[A]]
       }
 
     ZLayer.fromZIO(transactorLayerZio).flatten
