@@ -81,7 +81,7 @@ The output of the `diff` command should be empty, as the VDR entry is exactly th
 ### 5. Deactivate the VDR entry
 
 ```bash
-curl -X DELETE "http://localhost:8080/cloud-agent/vdr/entries?url=<ENCODED_VDR_URL>" > sample_out.bin
+curl -X DELETE "http://localhost:8080/cloud-agent/vdr/entries?url=<ENCODED_VDR_URL>"
 ```
 
 Similar to resolving the data, we now change the HTTP method to `DELETE` to deactivate the VDR entry.
