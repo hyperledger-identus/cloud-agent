@@ -25,6 +25,7 @@ import org.hyperledger.identus.pollux.prex.PresentationExchangeServerEndpoints
 import org.hyperledger.identus.presentproof.controller.PresentProofServerEndpoints
 import org.hyperledger.identus.shared.models.*
 import org.hyperledger.identus.system.controller.SystemServerEndpoints
+import org.hyperledger.identus.vdr.controller.VdrServerEndpoints
 import org.hyperledger.identus.verification.controller.VcVerificationServerEndpoints
 import zio.*
 object CloudAgentApp {
@@ -64,6 +65,7 @@ object AgentHttpServer {
     allEventEndpoints <- EventServerEndpoints.all
     allOIDCEndpoints <- CredentialIssuerServerEndpoints.all
     allPresentationExchangeEndpoints <- PresentationExchangeServerEndpoints.all
+    allVdrEndpoints <- VdrServerEndpoints.all
   } yield allCredentialDefinitionRegistryEndpoints ++
     allSchemaRegistryEndpoints ++
     allVerificationPolicyEndpoints ++
@@ -79,7 +81,8 @@ object AgentHttpServer {
     allEntityEndpoints ++
     allWalletManagementEndpoints ++
     allEventEndpoints ++
-    allOIDCEndpoints
+    allOIDCEndpoints ++
+    allVdrEndpoints
 
   def run =
     for {
