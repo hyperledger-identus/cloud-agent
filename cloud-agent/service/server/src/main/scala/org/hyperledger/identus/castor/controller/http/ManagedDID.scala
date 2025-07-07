@@ -56,10 +56,12 @@ object ManagedDID {
   given Conversion[ManagedDIDDetail, ManagedDID] = { didDetail =>
     val operation = didDetail.state.createOperation
     val (longFormDID, status) = didDetail.state.publicationState match {
-      case PublicationState.Created() => Some(PrismDID.buildLongFormFromOperation(operation)) -> "CREATED"
+      case PublicationState.Created() =>
+        Some(PrismDID.buildLongFormFromOperation(operation)) -> "CREATED"
       case PublicationState.PublicationPending(_) =>
         Some(PrismDID.buildLongFormFromOperation(operation)) -> "PUBLICATION_PENDING"
-      case PublicationState.Published(_) => None -> "PUBLISHED"
+      case PublicationState.Published(_) =>
+        None -> "PUBLISHED"
     }
     ManagedDID(
       did = didDetail.did.toString,

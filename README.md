@@ -122,7 +122,7 @@ System requirements can vary depending on the use case. The following are the mi
 
 #### Running locally in demo mode
 
-To run Identus locally you should follow the instructions in the [Quickstart guide](https://hyperledger.github.io/identus-docs/docs/quick-start/)
+To run Identus locally you should follow the instructions in the [Quickstart guide](https://hyperledger-identus.github.io/docs/home/quick-start)
 
 If the Cloud Agent is started successfully, all the running containers should achieve `Healthy` state, and Cloud Agent Rest API should be available at the specified port, for example:
 * `http://localhost:8080/cloud-agent` for the `issuer` instance

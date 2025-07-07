@@ -61,7 +61,7 @@ object StatusListJobs extends BackgroundJobsHelper {
       walletAccessContext = WalletAccessContext(WalletId.fromUUID(message.value.walletId))
       statusListWithCreds <- credentialStatusListService
         .getCredentialStatusListWithCreds(message.value.recordId)
-        .provideSome(ZLayer.succeed(walletAccessContext))
+        .provide(ZLayer.succeed(walletAccessContext))
       _ <- updateStatusList(statusListWithCreds)
     } yield ()) @@ Metric
       .gauge("revocation_status_list_sync_job_ms_gauge")

@@ -2,8 +2,6 @@ package org.hyperledger.identus.pollux.sdjwt
 
 import zio.json.*
 
-import java.util.Base64
-
 private[sdjwt] trait ModelsExtensionMethods {
 
   def jwtHeader: Header

@@ -8,7 +8,7 @@ import sttp.model.Uri
 import sttp.model.Uri.*
 import sttp.tapir.json.zio.schemaForZioJsonValue
 import sttp.tapir.Schema
-import sttp.tapir.Schema.annotations.{default, description, encodedExample, encodedName}
+import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.*
 import zio.json.ast.Json
 

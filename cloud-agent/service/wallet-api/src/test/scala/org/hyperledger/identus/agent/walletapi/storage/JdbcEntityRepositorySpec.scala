@@ -43,7 +43,7 @@ object JdbcEntityRepositorySpec extends ZIOSpecDefault, PostgresTestContainerSup
       ) @@ TestAspect.before(DBTestUtils.runMigrationAgentDB) @@ TestAspect.sequential
 
     testSuite
-      .provideSome(
+      .provide(
         pgContainerLayer,
         systemTransactorLayer,
         contextAwareTransactorLayer,

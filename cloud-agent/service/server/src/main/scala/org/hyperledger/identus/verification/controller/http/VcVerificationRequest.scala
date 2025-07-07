@@ -6,7 +6,6 @@ import sttp.tapir.Schema
 import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.*
 import zio.json.*
-import zio.json.ast.Json
 import zio.json.ast.Json.*
 
 import java.time.OffsetDateTime

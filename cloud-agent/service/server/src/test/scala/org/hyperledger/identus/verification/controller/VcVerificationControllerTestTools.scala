@@ -2,7 +2,6 @@ package org.hyperledger.identus.verification.controller
 
 import org.hyperledger.identus.agent.server.http.CustomServerInterceptors
 import org.hyperledger.identus.agent.walletapi.model.BaseEntity
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.castor.core.model.did.VerificationRelationship
 import org.hyperledger.identus.castor.core.service.MockDIDService
 import org.hyperledger.identus.iam.authentication.{AuthenticatorWithAuthZ, DefaultEntityAuthenticator}
@@ -11,7 +10,6 @@ import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResol
 import org.hyperledger.identus.pollux.core.service.verification.{VcVerificationService, VcVerificationServiceImpl}
 import org.hyperledger.identus.pollux.vc.jwt.*
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.shared.models.WalletId.*
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport
 import sttp.client3.testing.SttpBackendStub
 import sttp.client3.UriContext
@@ -55,8 +53,7 @@ trait VcVerificationControllerTestTools extends PostgresTestContainerSupport {
   protected val defaultWalletLayer = ZLayer.succeed(WalletAccessContext(WalletId.default))
 
   lazy val testEnvironmentLayer =
-    zio.test.testEnvironment ++ ZLayer.makeSome[
-      ManagedDIDService,
+    zio.test.testEnvironment ++ ZLayer.make[
       VcVerificationController & VcVerificationService & AuthenticatorWithAuthZ[BaseEntity]
     ](
       didResolverLayer,

@@ -10,6 +10,7 @@ import org.hyperledger.identus.pollux.credentialdefinition.CredentialDefinitionR
 import org.hyperledger.identus.pollux.credentialschema.{SchemaRegistryEndpoints, VerificationPolicyEndpoints}
 import org.hyperledger.identus.pollux.prex.PresentationExchangeEndpoints
 import org.hyperledger.identus.system.controller.SystemEndpoints
+import org.hyperledger.identus.vdr.controller.VdrEndpoints
 import sttp.apispec.{SecurityScheme, Tag}
 import sttp.apispec.openapi.*
 import sttp.model.headers.AuthenticationScheme
@@ -65,7 +66,7 @@ object DocModels {
               |It supports DID (Decentralized Identifiers) management, verifiable credential exchange, and secure messaging based on DIDComm standards.
               |The API is designed to be interoperable with various blockchain and DLT (Distributed Ledger Technology) platforms, ensuring wide compatibility and flexibility.
               |Key features include connection management, credential issuance and verification, and secure, privacy-preserving communication between entities.
-              |Additional information and the full list of capabilities can be found in the [Open Enterprise Agent documentation](https://github.com/hyperledger-identus/cloud-agent)
+              |Additional information and the full list of capabilities can be found in the [Identus Cloud Agent documentation](https://github.com/hyperledger-identus/cloud-agent)
               |""".stripMargin),
           termsOfService = None,
           contact = None,
@@ -113,18 +114,19 @@ object DocModels {
       .tags(
         List(
           ConnectionEndpoints.tag,
-          IssueEndpoints.tag,
-          VerificationPolicyEndpoints.tag,
-          SchemaRegistryEndpoints.tag,
           CredentialDefinitionRegistryEndpoints.tag,
           DIDEndpoints.tag,
           DIDRegistrarEndpoints.tag,
-          WalletManagementEndpoints.tag,
-          SystemEndpoints.tag,
-          EventEndpoints.tag,
           EntityEndpoints.tag,
-          PresentationExchangeEndpoints.tag
-        )
+          EventEndpoints.tag,
+          IssueEndpoints.tag,
+          PresentationExchangeEndpoints.tag,
+          SchemaRegistryEndpoints.tag,
+          SystemEndpoints.tag,
+          VdrEndpoints.tag,
+          VerificationPolicyEndpoints.tag,
+          WalletManagementEndpoints.tag,
+        ).sortBy(_.name)
       )
 
   }
