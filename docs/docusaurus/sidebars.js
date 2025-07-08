@@ -100,6 +100,13 @@ const sidebars = {
         'multitenancy/tenant-migration',
         'multitenancy/admin-authz-ext-iam'
       ]
+    },
+    {
+      type: 'category',
+      label: 'VDR',
+      items: [
+        'vdr/manage'
+      ]
     }
   ]
 }
