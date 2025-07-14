@@ -139,19 +139,11 @@ object AppModule {
     }
   }
 
-  val vdrServiceLayer: RLayer[AppConfig, VdrService] = {
-    ZLayer.scoped[AppConfig](
-      ZIO
-        .serviceWith[AppConfig](_.agent.httpEndpoint.publicEndpointUrl)
-        .map { baseUrl =>
-          ZLayer.make[VdrService](
-            RepoModule.agentDataSourceLayer,
-            VdrServiceImpl.layer(baseUrl.toString())
-          )
-        }
-        .flatMap(_.build.map(_.get))
+  val vdrServiceLayer: RLayer[AppConfig, VdrService] =
+    ZLayer.make[VdrService](
+      RepoModule.agentDataSourceLayer,
+      VdrServiceImpl.layer
     )
-  }
 }
 
 object GrpcModule {
