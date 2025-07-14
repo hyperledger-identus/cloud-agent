@@ -72,11 +72,10 @@ class VdrServiceImpl(
 }
 
 object VdrServiceImpl {
-  def layer(publicUrl: String): RLayer[DataSource, VdrService] =
+  def layer: RLayer[DataSource, VdrService] =
     ZLayer.fromZIO {
-      val baseVdrEntryUrl = s"$publicUrl/vdr/entries"
       for
-        urlManager <- ZIO.attempt(BaseUrlManager.apply(baseVdrEntryUrl, "BaseURL"))
+        urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
         drivers <- ZIO.attempt(
           Array[Driver](
