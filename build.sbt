@@ -90,7 +90,7 @@ lazy val V = new {
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
-  val vdr = "0.2.0"
+  val vdr = "0.2.1"
 }
 
 /** Dependencies */
