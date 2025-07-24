@@ -46,11 +46,11 @@ lazy val V = new {
   // https://mvnrepository.com/artifact/dev.zio/zio
   val zio = "2.1.19"
   val zioConfig = "4.0.4"
-  val zioLogging = "2.5.0"
+  val zioLogging = "2.5.1"
   val zioJson = "0.7.44"
   val zioHttp = "3.3.3"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
-  val zioMetricsConnector = "2.3.1"
+  val zioMetricsConnector = "2.4.0"
   val zioMock = "1.0.0-RC12"
   val zioKafka = "3.0.0"
   val mockito = "3.2.18.0"
@@ -90,7 +90,7 @@ lazy val V = new {
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
-  val vdr = "0.2.0"
+  val vdr = "0.2.1"
 }
 
 /** Dependencies */
