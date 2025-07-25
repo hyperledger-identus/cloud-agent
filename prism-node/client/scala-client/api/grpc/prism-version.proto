@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  package_name: "proto.prism"
+  flat_package: true
+  java_conversions: false
+  lenses: false
+  getters: false
+  retain_source_code_info: false
+  no_default_values_in_constructor: true
+  scala3_sources: true
+};
+
+// Specifies the protocol version update
+message ProtoProtocolVersionUpdate {
+  string proposer_did = 1; // The DID suffix that proposes the protocol update.
+  ProtocolVersionInfo version = 2; // Information of the new version
+}
+
+message ProtocolVersion {
+  // Represent the major version
+  int32 major_version = 1;
+  // Represent the minor version
+  int32 minor_version = 2;
+}
+
+message ProtocolVersionInfo {
+  reserved 2, 3;
+  string version_name = 1; // (optional) name of the version
+  int32 effective_since = 4; // Cardano block number that tells since which block the update is enforced
+
+  // New major and minor version to be announced,
+  // If major value changes, the node MUST stop issuing and reading events/operations, and upgrade before `effective_since` because the new protocol version.
+  // If minor value changes, the node can opt to not update. All events _published_ by this node would be also
+  // understood by other nodes with the same major version. However, there may be new events that this node won't _read_
+  ProtocolVersion protocol_version = 5;
+}

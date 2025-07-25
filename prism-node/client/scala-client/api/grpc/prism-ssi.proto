@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  package_name: "proto.prism"
+  flat_package: true
+  java_conversions: false
+  lenses: false
+  getters: false
+  retain_source_code_info: false
+  no_default_values_in_constructor: true
+  scala3_sources: true
+};
+
+// The operation to create a public DID.
+message ProtoCreateDID {
+  DIDCreationData did_data = 1; // DIDCreationData with public keys and services
+
+  // The data necessary to create a DID.
+  message DIDCreationData {
+    reserved 1; // Removed DID id field which is empty on creation
+    repeated PublicKey public_keys = 2; // The keys that belong to this DID Document.
+    repeated Service services = 3; // The list of services that belong to this DID Document.
+    repeated string context = 4; // The list of @context values to consider on JSON-LD representations
+  }
+}
+
+// Specifies the necessary data to update a public DID.
+message ProtoUpdateDID {
+  bytes previous_operation_hash = 1; // The hash of the most recent operation that was used to create or update the DID.
+  string id = 2; // @exclude TODO: To be redefined after we start using this operation.
+  repeated UpdateDIDAction actions = 3; // The actual updates to perform on the DID.
+}
+
+message ProtoDeactivateDID {
+  bytes previous_operation_hash = 1; // The hash of the most recent operation that was used to create or update the DID.
+  string id = 2; // DID Suffix of the DID to be deactivated
+}
+
+// ##########
+
+/**
+ * Represents a public key with metadata, necessary for a DID document.
+ */
+message PublicKey {
+  reserved 3, 4, 5, 6;
+  string id = 1; // The key identifier within the DID Document.
+  KeyUsage usage = 2; // The key's purpose.
+
+  // The key's representation.
+  oneof key_data {
+    ECKeyData ec_key_data = 8; // The Elliptic Curve (EC) key.
+    CompressedECKeyData compressed_ec_key_data =  9; // Compressed Elliptic Curve (EC) key.
+  };
+}
+
+// Every key has a single purpose:
+enum KeyUsage {
+  // UNKNOWN_KEY is an invalid value - Protobuf uses 0 if no value is provided and we want the user to explicitly choose the usage.
+  UNKNOWN_KEY = 0;
+  MASTER_KEY = 1;
+  ISSUING_KEY = 2;
+  KEY_AGREEMENT_KEY = 3;
+  AUTHENTICATION_KEY = 4;
+  REVOCATION_KEY = 5;
+  CAPABILITY_INVOCATION_KEY = 6;
+  CAPABILITY_DELEGATION_KEY = 7;
+
+
+  // !!!!!!!!!!!!!!!!!!!!!!
+  VDR_KEY = 8; // Create, Update, Remove - VDR entries. This key does not appear in the document.
+}
+
+/**
+ * Holds the necessary data to recover an Elliptic Curve (EC)'s public key.
+ */
+ message ECKeyData {
+  string curve = 1; // The curve name, like secp256k1.
+  bytes x = 2; // The x coordinate, represented as bytes.
+  bytes y = 3; // The y coordinate, represented as bytes.
+}
+
+/**
+ * Holds the compressed representation of data needed to recover Elliptic Curve (EC)'s public key.
+ */
+message CompressedECKeyData {
+  string curve = 1; // The curve name, like secp256k1.
+  bytes data = 2; // compressed Elliptic Curve (EC) public key data.
+}
+
+// ##########
+
+message Service {
+  string id = 1;
+  string type = 2;
+  string service_endpoint = 3;
+}
+
+// ##########
+
+// The potential details that can be updated in a DID.
+message UpdateDIDAction {
+
+  // The action to perform.
+  oneof action {
+    AddKeyAction add_key = 1; // Used to add a new key to the DID.
+    RemoveKeyAction remove_key = 2; // Used to remove a key from the DID.
+    AddServiceAction add_service = 3; // Used to add a new service to a DID,
+    RemoveServiceAction remove_service = 4; // Used to remove an existing service from a DID,
+    UpdateServiceAction update_service = 5; // Used to Update a list of service endpoints of a given service on a given DID.
+    PatchContextAction patch_context = 6; // Used to Update a list of `@context` strings used during resolution for a given DID.
+  }
+}
+
+
+// The necessary data to add a key to a DID.
+message AddKeyAction {
+  PublicKey key = 1; // The key to include.
+}
+
+// The necessary data to remove a key from a DID.
+message RemoveKeyAction {
+  string keyId = 1; // the key id to remove
+}
+
+message AddServiceAction {
+  Service service = 1;
+}
+
+message RemoveServiceAction {
+  string serviceId = 1;
+}
+
+message UpdateServiceAction {
+  string serviceId = 1; // scoped to the did, unique per did
+  string type = 2; // new type if provided
+  string service_endpoints = 3;
+}
+
+message PatchContextAction {
+  repeated string context = 1; // The list of strings to use by resolvers during resolution when producing a JSON-LD output
+}

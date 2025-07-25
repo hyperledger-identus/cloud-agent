@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  package_name: "proto.prism"
+  flat_package: true
+  java_conversions: false
+  lenses: false
+  getters: false
+  retain_source_code_info: false
+  no_default_values_in_constructor: true
+  scala3_sources: true
+};
+
+// **********************
+// *** Storage Events ***
+// **********************
+
+/* Notes:
+ *
+ * A Storage Event can be one of the three types:
+ *  - ProtoCreateStorageEntry
+ *  - ProtoUpdateStorageEntry
+ *  - ProtoDeactivateStorageEntry
+ * Those three types/structures are independent. But at the same time (just for implementation convenience),
+ *   they shared the a common structure / field positions.
+ *
+ * The fields from position 1 and 2 are reserved are used in the validation process of the Storage Events (now).
+ * The fields from position 3 to 49 are reserved to be used in the validation process of the Storage Events (in the future).
+ *   If one of those fields/position are present (in a valid event) the Indexer MUST consider the Storage Entry and unsupported (no valid) from that moment, forward.
+ * The fields from position 50 to 99 are for adding relevant metadata that does not impact the validation process of the Storage Events.
+ */
+
+/** StorageEventCreateEntry
+ * To be valid, this operation needs to be signed by an issuing key of the DID:
+ * - 1) The issuing key need to be valid at the Event/Operation momment
+ * - 2) The DID needs not to be Deactivate
+ */
+message ProtoCreateStorageEntry {
+  reserved 2; // Only used by ProtoUpdateStorageEntry & ProtoDeactivateStorageEntry
+  reserved 3 to 49; // Those field will be used for validation the Storage Events in the future
+  bytes did_prism_hash = 1; // The specificId of the did:prism.
+  bytes nonce = 50; // Used to generate different reference hash (to make different entries with the same initial data possible)
+  oneof data {
+    // Nothing // The data field can be missing representing ANY type
+    bytes bytes = 100;
+    string ipfs = 101; // CID
+    // string ipns = ??; // https://docs.ipfs.tech/concepts/ipns/
+    StatusListEntry statusListEntry = 102;
+  }
+}
+
+/** StorageEventUpdateEntry
+ * To be valid, this operation needs to be signed by an issuing key of the DID:
+ * - 1) The issuing key need to be valid at the Event/Operation momment
+ * - 2) The DID needs not to be Deactivate
+ */
+message ProtoUpdateStorageEntry {
+  reserved 1, 50; // Only used by ProtoCreateStorageEntry
+  reserved 3 to 49; // Those field will be used for validation the Storage Events in the future
+  bytes previous_event_hash = 2; // The hash of the most recent event that was used to create or update the VDR Entry.
+  oneof data { // The data field can be missing
+    // Nothing // The data field can be missing representing ANY type
+    bytes bytes = 100; // Replace the bytes
+    string ipfs = 101; // Update/replace the data with a CID to IPFS. This is static data
+    StatusListEntry statusListEntry = 102; // compliments the previous state with just the change (similar to a diff)
+  }
+}
+
+message ProtoDeactivateStorageEntry{
+  reserved 1, 50; // Only used by ProtoCreateStorageEntry
+  reserved 3 to 49; // Those field will be used for validation the Storage Events in the future
+  bytes previous_event_hash = 2; // The hash of the most recent event that was used to create or update the VDR Entry.
+}
+
+// ******************
+// *** DATA TYPES ***
+// ******************
+
+/** TODO WIP Status List entry
+ *
+ * This is to be inspired on the following specs (Token Status List & BitstringStatusList):
+ * - Token Status List:
+ *   - https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/:
+ *   - https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/06/
+ * - BitstringStatusList:
+ *   - https://www.w3.org/TR/vc-bitstring-status-list/#bitstringstatuslist
+ *   - https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/10/
+ */
+message StatusListEntry {
+  int64 state = 1;
+  string name = 2; // optional
+  string details = 3; // optional
+
+  // uint32 listSize = 1;
+  // uint32 statusSize = 2;
+  // bytes intStatus = 3;
+}

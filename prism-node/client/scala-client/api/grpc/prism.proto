@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  // scope: FILE
+  package_name: "proto.prism"
+  flat_package: true
+  // single_file: true
+  java_conversions: false
+  // import: "com.thesamet.pb.MyType"
+  // import: "com.thesamet.other._"
+  // preamble: "sealed trait BaseMessage"
+  // preamble: "sealed trait CommonMessage"
+  lenses: false
+  getters: false
+  retain_source_code_info: false
+  no_default_values_in_constructor: true //false
+  // preserve_unknown_fields: false
+  // enum_value_naming: CAMEL_CASE
+  // enum_strip_prefix: false
+  // bytes_type: "scodec.bits.ByteVector"
+  scala3_sources: true
+  // public_constructor_parameters: false
+};
+
+import "prism-credential-batch.proto";
+import "prism-version.proto";
+import "prism-ssi.proto";
+import "prism-storage.proto";
+
+/**
+ * Wraps an PrismBlock and its metadata.
+ */
+message PrismObject {
+  reserved 1, 2, 3; 
+  reserved "block_hash";
+  reserved "block_operation_count"; // Number of operations in the block.
+  reserved "block_byte_length"; // Byte length of the block.
+  
+  PrismBlock block_content = 4; // The block content.
+}
+
+/**
+ * Represent a block that holds evetns/operations.
+ */
+ message PrismBlock {
+  reserved 1; // Represents the version of the block. Deprecated
+  repeated SignedPrismOperation operations = 2; // A signed operation, necessary to post anything on the blockchain.
+  }
+  
+// A signed operation, necessary to post anything on the blockchain.
+message SignedPrismOperation {
+  string signed_with = 1; // The key ID used to sign the operation, it must belong to the DID that signs the operation.
+  bytes signature = 2; // The actual signature.
+  PrismOperation operation = 3; // The operation that was signed.
+}
+
+
+// The possible events/operations affecting the blockchain.
+message PrismOperation {
+  // https://github.com/input-output-hk/atala-prism-sdk/blob/master/protosLib/src/main/proto/node_models.proto
+  //  reserved 3, 4; // fields used by an extension of the protocol. Not relevant for the DID method
+   // The actual operation.
+  oneof operation {
+    // Used to create a public DID.
+    ProtoCreateDID create_did = 1;
+
+    // Used to update an existing public DID.
+    ProtoUpdateDID update_did = 2;
+
+    // Used to issue a batch of credentials.
+    ProtoIssueCredentialBatch issue_credential_batch = 3;
+
+    // Used to revoke a credential batch.
+    ProtoRevokeCredentials revoke_credentials = 4;
+
+    // Used to announce new protocol update
+    ProtoProtocolVersionUpdate protocol_version_update = 5;
+
+    // Used to deactivate DID
+    ProtoDeactivateDID deactivate_did = 6;
+
+    // Used to create a public storage entry.
+    ProtoCreateStorageEntry create_storage_entry = 7;
+
+    // Used to update a storage entry.
+    ProtoUpdateStorageEntry update_storage_entry = 8;
+
+    // Used to deactivate a storage entry.
+    ProtoDeactivateStorageEntry deactivate_storage_entry = 9;
+  };
+}
