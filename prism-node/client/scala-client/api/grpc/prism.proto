@@ -90,3 +90,30 @@ message PrismOperation {
     ProtoDeactivateStorageEntry deactivate_storage_entry = 9;
   };
 }
+
+service NodeService {
+    rpc GetDidDocument(GetDidDocumentRequest) returns (GetDidDocumentResponse) {}
+    rpc ScheduleOperations(ScheduleOperationsRequest) returns (ScheduleOperationsResponse) {}
+}
+
+message GetDidDocumentRequest {
+    string did = 1; // The DID.
+}
+
+message GetDidDocumentResponse {
+    DIDData document = 1; // The DID Document.
+}
+
+message ScheduleOperationsRequest {
+    repeated SignedPrismOperation signed_operations = 1; // a list of signed operations
+}
+
+message ScheduleOperationsResponse {
+}
+
+message DIDData {
+    string id = 1; // The DID suffix, where DID is in form did:prism:[DID suffix]
+    repeated PublicKey public_keys = 2; // The keys that belong to this DID Document.
+    repeated Service services = 3; // The list of services that belong to this DID Document.
+    repeated string context = 4; // The list of @context values to consider on JSON-LD representations
+}
