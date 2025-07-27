@@ -75,7 +75,7 @@ lazy val V = new {
 
   val scalaUri = "4.2.0"
 
-  val jwtZioVersion = "11.0.0"
+  val jwtZioVersion = "11.0.2"
   val zioPreludeVersion = "1.0.0-RC41"
 
   val apollo = "1.3.5"
