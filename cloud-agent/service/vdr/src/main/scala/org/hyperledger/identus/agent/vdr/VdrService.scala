@@ -1,6 +1,10 @@
 package org.hyperledger.identus.agent.vdr
 
 import drivers.{DatabaseDriver, InMemoryDriver}
+import fmgp.crypto.Secp256k1PrivateKey
+import fmgp.did.method.prism.{BlockfrostConfig, DIDPrism}
+import fmgp.did.method.prism.cardano.CardanoWalletConfig
+import hyperledger.identus.vdr.prism.PRISMDriver
 import interfaces.{Driver, Proof}
 import javax.sql.DataSource
 import org.hyperledger.identus.agent.vdr.VdrServiceError.{DriverNotFound, VdrEntryNotFound}
@@ -80,7 +84,17 @@ object VdrServiceImpl {
         drivers <- ZIO.attempt(
           Array[Driver](
             InMemoryDriver("memory", "memory", "0.1.0", Array.empty),
-            DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource)
+            DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource),
+            // TODO: use actual value
+            PRISMDriver(
+              bfConfig = BlockfrostConfig("TODO"),
+              wallet = CardanoWalletConfig(
+                mnemonic = Seq("TODO"),
+                passphrase = "TODO"
+              ),
+              didPrism = DIDPrism("TODO"),
+              vdrKey = Secp256k1PrivateKey(Array.empty),
+            )
           )
         )
         proxy = VDRProxyMultiDrivers(
