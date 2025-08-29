@@ -139,11 +139,18 @@ object AppModule {
     }
   }
 
-  val vdrServiceLayer: RLayer[AppConfig, VdrService] =
-    ZLayer.make[VdrService](
+  val vdrServiceLayer: RLayer[AppConfig, VdrService] = {
+    val vdrConfigLayer = ZLayer.fromFunction((appConfig: AppConfig) => {
+      // TODO: load this from AppConfig
+      VdrServiceImpl.Config(prismDriver = None)
+    })
+    ZLayer.makeSome[AppConfig, VdrService](
+      vdrConfigLayer,
       RepoModule.agentDataSourceLayer,
       VdrServiceImpl.layer
     )
+  }
+
 }
 
 object GrpcModule {

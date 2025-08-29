@@ -76,33 +76,41 @@ class VdrServiceImpl(
 }
 
 object VdrServiceImpl {
-  def layer: RLayer[DataSource, VdrService] =
+  final case class Config(prismDriver: Option[PRISMDriverConfig])
+
+  final case class PRISMDriverConfig(
+      blockfrostApiKey: String,
+      walletMnemonic: Seq[String],
+      walletPassphrase: String,
+      didPrism: String,
+      vdrKey: String,
+      vdrPrivateKey: Array[Byte]
+  )
+
+  def layer: RLayer[DataSource & Config, VdrService] =
     ZLayer.fromZIO {
-      for
+      for {
+        config <- ZIO.service[Config]
         urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
-        drivers <- ZIO.attempt(
-          Array[Driver](
-            InMemoryDriver("memory", "memory", "0.1.0", Array.empty),
-            DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource),
-            // TODO: use actual value
-            PRISMDriver(
-              bfConfig = BlockfrostConfig("TODO"),
-              wallet = CardanoWalletConfig(
-                mnemonic = Seq("TODO"),
-                passphrase = "TODO"
-              ),
-              didPrism = DIDPrism("TODO"),
-              vdrKey = Secp256k1PrivateKey(Array.empty),
-            )
+        maybePrismDriver = config.prismDriver.map { config =>
+          PRISMDriver(
+            bfConfig = BlockfrostConfig(config.blockfrostApiKey),
+            wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
+            didPrism = DIDPrism(config.didPrism),
+            vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey)
           )
-        )
+        }
+        drivers = Array[Driver](
+          InMemoryDriver("memory", "memory", "0.1.0", Array.empty),
+          DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource)
+        ) ++ maybePrismDriver.toSeq
         proxy = VDRProxyMultiDrivers(
           urlManager,
           drivers,
           "proxy",
           "0.1.0"
         )
-      yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
+      } yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
     }
 }
