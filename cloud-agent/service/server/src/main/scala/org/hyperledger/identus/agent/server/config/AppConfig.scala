@@ -5,6 +5,7 @@ import org.hyperledger.identus.iam.authentication.AuthenticationConfig
 import org.hyperledger.identus.pollux.vc.jwt.*
 import org.hyperledger.identus.shared.db.DbConfig
 import org.hyperledger.identus.shared.messaging.MessagingServiceConfig
+import org.hyperledger.identus.shared.models.HexString
 import zio.{Config, ZIO}
 import zio.config.magnolia.*
 
@@ -232,14 +233,24 @@ final case class SecretStorageConfig(
     }
 }
 
-final case class VdrConfig(
-  inMemoryDriver: InMemoryVdrDriverConfig,
-  databaseDriver: DatabaseDriverVdrConfig
-)
-
-final case class InMemoryVdrDriverConfig(enabled: Boolean)
-final case class DatabaseDriverVdrConfig(enabled: Boolean)
-
 enum SecretStorageBackend {
   case vault, postgres
+}
+
+final case class VdrConfig(
+    inMemoryDriverEnabled: Boolean,
+    databaseDriverEnabled: Boolean,
+    prismDriverEnabled: Boolean,
+    prismDriver: Option[PrismDriverVdrConfig]
+)
+
+final case class PrismDriverVdrConfig(
+    blockfrostApiKey: String,
+    walletMnemonic: Seq[String],
+    walletPassphrase: String,
+    didPrism: String,
+    vdrKey: String,
+    vdrPrivateKey: String
+) {
+  def vdrPrivateKeyBytes: Array[Byte] = HexString.fromStringUnsafe(vdrPrivateKey).toByteArray
 }
