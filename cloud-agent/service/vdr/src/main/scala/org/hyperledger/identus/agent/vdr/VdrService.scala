@@ -76,7 +76,11 @@ class VdrServiceImpl(
 }
 
 object VdrServiceImpl {
-  final case class Config(prismDriver: Option[PRISMDriverConfig])
+  final case class Config(
+    enableInMemoryDriver: Boolean,
+    enableDatabaseDriver: Boolean,
+    prismDriver: Option[PRISMDriverConfig]
+  )
 
   final case class PRISMDriverConfig(
       blockfrostApiKey: String,
@@ -95,6 +99,7 @@ object VdrServiceImpl {
         config <- ZIO.service[Config]
         urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
+        // TODO: make each driver optional and configurable
         maybePrismDriver = config.prismDriver.map { config =>
           PRISMDriver(
             bfConfig = BlockfrostConfig(config.blockfrostApiKey),
