@@ -256,7 +256,9 @@ final case class PrismDriverVdrConfig(
     walletPassphrase: String,
     didPrism: String,
     vdrKey: String,
-    vdrPrivateKey: String
+    vdrKeyName: String,
+    vdrPrivateKey: String,
+    stateDir: String
 ) {
   def vdrPrivateKeyBytes: Array[Byte] = HexString.fromStringUnsafe(vdrPrivateKey).toByteArray
 }
