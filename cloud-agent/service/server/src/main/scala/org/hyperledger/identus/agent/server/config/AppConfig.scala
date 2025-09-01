@@ -206,6 +206,7 @@ final case class AgentConfig(
         "The default wallet must be enabled if all the authentication methods are disabled. Default wallet is required for the single-tenant mode."
       )
       _ <- secretStorage.validate
+      _ <- vdr.validate
     } yield ()
 
 }
@@ -242,7 +243,12 @@ final case class VdrConfig(
     databaseDriverEnabled: Boolean,
     prismDriverEnabled: Boolean,
     prismDriver: Option[PrismDriverVdrConfig]
-)
+) {
+  def validate: Either[String, Unit] =
+    if prismDriverEnabled && prismDriver.isEmpty then
+      Left("PRISM vdr is enabled but prismDriver config is not provided.")
+    else Right(())
+}
 
 final case class PrismDriverVdrConfig(
     blockfrostApiKey: String,
