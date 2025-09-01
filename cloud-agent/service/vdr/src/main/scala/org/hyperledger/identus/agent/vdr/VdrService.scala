@@ -84,7 +84,9 @@ object VdrServiceImpl {
       walletPassphrase: String,
       didPrism: String,
       vdrKey: String,
-      vdrPrivateKey: Array[Byte]
+      vdrKeyName: String,
+      vdrPrivateKey: Array[Byte],
+      prismStateDir: String
   )
 
   def layer: RLayer[DataSource & Config, VdrService] =
@@ -98,7 +100,9 @@ object VdrServiceImpl {
             bfConfig = BlockfrostConfig(config.blockfrostApiKey),
             wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
             didPrism = DIDPrism(config.didPrism),
-            vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey)
+            vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
+            keyName = config.vdrKeyName,
+            workdir = config.prismStateDir
           )
         }
         drivers = Array[Driver](
