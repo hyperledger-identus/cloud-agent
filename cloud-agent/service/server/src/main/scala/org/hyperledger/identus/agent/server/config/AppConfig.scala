@@ -194,7 +194,8 @@ final case class AgentConfig(
     secretStorage: SecretStorageConfig,
     webhookPublisher: WebhookPublisherConfig,
     defaultWallet: DefaultWalletConfig,
-    messagingService: MessagingServiceConfig
+    messagingService: MessagingServiceConfig,
+    vdr: VdrConfig
 ) {
   def validate: Either[String, Unit] =
     for {
@@ -230,6 +231,14 @@ final case class SecretStorageConfig(
       case _ => Right(())
     }
 }
+
+final case class VdrConfig(
+  inMemoryDriver: InMemoryVdrDriverConfig,
+  databaseDriver: DatabaseDriverVdrConfig
+)
+
+final case class InMemoryVdrDriverConfig(enabled: Boolean)
+final case class DatabaseDriverVdrConfig(enabled: Boolean)
 
 enum SecretStorageBackend {
   case vault, postgres
