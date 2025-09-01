@@ -17,6 +17,22 @@ object AppConfigSpec extends ZIOSpecDefault {
   )
   // private val baseInvalidHttpEndpointConfig = java.net.URL("http://:8080")
 
+  private val basePrismDriverVdrConfig = PrismDriverVdrConfig(
+    blockfrostApiKey = "api-key",
+    walletMnemonic = Seq("word1", "word2", "word3"),
+    walletPassphrase = "passphrase",
+    didPrism = "did:prism:123",
+    vdrKey = "abcdef",
+    vdrPrivateKey = "abcdef"
+  )
+
+  private val baseVdrConfig = VdrConfig(
+    inMemoryDriverEnabled = false,
+    databaseDriverEnabled = false,
+    prismDriverEnabled = false,
+    prismDriver = None
+  )
+
   override def spec = suite("AppConfigSpec")(
     test("load config successfully") {
       for {
@@ -74,6 +90,22 @@ object AppConfigSpec extends ZIOSpecDefault {
       )
       assert(vaultConfig.validate)(isRight(isSubtype[ValidatedVaultConfig.TokenAuth](anything)))
     },
+    test("fail when prismDriverEnabled is true and prismDriver is None") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = true, prismDriver = None)
+      assert(vdrConfig.validate)(isLeft(containsString("config is not provided")))
+    },
+    test("pass when prismDriverEnabled is true and prismDriver is Some") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = true, prismDriver = Some(basePrismDriverVdrConfig))
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("pass when prismDriverEnabled is false and prismDriver is None") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = false, prismDriver = None)
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("pass when prismDriverEnabled is false and prismDriver is Some") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = false, prismDriver = Some(basePrismDriverVdrConfig))
+      assert(vdrConfig.validate)(isRight(anything))
+    }
   ).provide(SystemModule.configLayer) + {
 
     import AppConfig.given
