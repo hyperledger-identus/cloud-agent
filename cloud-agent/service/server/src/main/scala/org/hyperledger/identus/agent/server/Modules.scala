@@ -141,19 +141,24 @@ object AppModule {
 
   val vdrServiceLayer: RLayer[AppConfig, VdrService] = {
     val vdrConfigLayer = ZLayer.fromFunction((appConfig: AppConfig) => {
-      val prismDriverOpt = appConfig.agent.vdr.prismDriver.map { conf =>
-        org.hyperledger.identus.agent.vdr.VdrServiceImpl.PRISMDriverConfig(
-          blockfrostApiKey = conf.blockfrostApiKey,
-          walletMnemonic = conf.walletMnemonic,
-          walletPassphrase = conf.walletPassphrase,
-          didPrism = conf.didPrism,
-          vdrKey = conf.vdrKey,
-          vdrKeyName = conf.vdrKeyName,
-          vdrPrivateKey = conf.vdrPrivateKeyBytes,
-          prismStateDir = conf.stateDir
-        )
-      }
-      VdrServiceImpl.Config(prismDriver = prismDriverOpt)
+      val prismDriverOpt = appConfig.agent.vdr.prismDriver
+        .map { conf =>
+          VdrServiceImpl.PRISMDriverConfig(
+            blockfrostApiKey = conf.blockfrostApiKey,
+            walletMnemonic = conf.walletMnemonic,
+            walletPassphrase = conf.walletPassphrase,
+            didPrism = conf.didPrism,
+            vdrKey = conf.vdrKey,
+            vdrKeyName = conf.vdrKeyName,
+            vdrPrivateKey = conf.vdrPrivateKeyBytes,
+            prismStateDir = conf.stateDir
+          )
+        }
+      VdrServiceImpl.Config(
+        enableInMemoryDriver = appConfig.agent.vdr.inMemoryDriverEnabled,
+        enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,
+        prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled)
+      )
     })
     ZLayer.makeSome[AppConfig, VdrService](
       vdrConfigLayer,
