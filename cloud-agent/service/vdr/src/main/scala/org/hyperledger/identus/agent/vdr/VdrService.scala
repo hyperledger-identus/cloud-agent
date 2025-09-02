@@ -77,9 +77,9 @@ class VdrServiceImpl(
 
 object VdrServiceImpl {
   final case class Config(
-    enableInMemoryDriver: Boolean,
-    enableDatabaseDriver: Boolean,
-    prismDriver: Option[PRISMDriverConfig]
+      enableInMemoryDriver: Boolean,
+      enableDatabaseDriver: Boolean,
+      prismDriver: Option[PRISMDriverConfig]
   )
 
   final case class PRISMDriverConfig(
@@ -99,7 +99,14 @@ object VdrServiceImpl {
         config <- ZIO.service[Config]
         urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
-        // TODO: make each driver optional and configurable
+        maybeMemoryDriver =
+          if config.enableInMemoryDriver
+          then None
+          else Some(InMemoryDriver("memory", "memory", "0.1.0", Array.empty))
+        maybeDatabaseDriver =
+          if config.enableDatabaseDriver
+          then None
+          else Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
         maybePrismDriver = config.prismDriver.map { config =>
           PRISMDriver(
             bfConfig = BlockfrostConfig(config.blockfrostApiKey),
@@ -110,10 +117,7 @@ object VdrServiceImpl {
             workdir = config.prismStateDir
           )
         }
-        drivers = Array[Driver](
-          InMemoryDriver("memory", "memory", "0.1.0", Array.empty),
-          DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource)
-        ) ++ maybePrismDriver.toSeq
+        drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver).flatten
         proxy = VDRProxyMultiDrivers(
           urlManager,
           drivers,
