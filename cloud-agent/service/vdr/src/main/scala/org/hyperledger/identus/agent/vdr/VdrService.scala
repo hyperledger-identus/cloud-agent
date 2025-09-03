@@ -96,17 +96,17 @@ object VdrServiceImpl {
   def layer: RLayer[DataSource & Config, VdrService] =
     ZLayer.fromZIO {
       for {
-        config <- ZIO.service[Config]
+        config <- ZIO.service[Config].debug("VdrConfig")
         urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
         maybeMemoryDriver =
           if config.enableInMemoryDriver
-          then None
-          else Some(InMemoryDriver("memory", "memory", "0.1.0", Array.empty))
+          then Some(InMemoryDriver("memory", "memory", "0.1.0", Array.empty))
+          else None
         maybeDatabaseDriver =
           if config.enableDatabaseDriver
-          then None
-          else Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
+          then Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
+          else None
         maybePrismDriver = config.prismDriver.map { config =>
           PRISMDriver(
             bfConfig = BlockfrostConfig(config.blockfrostApiKey),
