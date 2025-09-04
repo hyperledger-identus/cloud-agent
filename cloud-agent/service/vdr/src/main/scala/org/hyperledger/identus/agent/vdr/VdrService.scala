@@ -87,7 +87,6 @@ object VdrServiceImpl {
       walletMnemonic: Seq[String],
       walletPassphrase: String,
       didPrism: String,
-      vdrKey: String,
       vdrKeyName: String,
       vdrPrivateKey: Array[Byte],
       prismStateDir: String
@@ -96,7 +95,7 @@ object VdrServiceImpl {
   def layer: RLayer[DataSource & Config, VdrService] =
     ZLayer.fromZIO {
       for {
-        config <- ZIO.service[Config].debug("VdrConfig")
+        config <- ZIO.service[Config]
         urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
         dbDriverDataSource <- ZIO.service[DataSource]
         maybeMemoryDriver =
