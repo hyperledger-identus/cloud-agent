@@ -145,10 +145,9 @@ object AppModule {
         .map { conf =>
           VdrServiceImpl.PRISMDriverConfig(
             blockfrostApiKey = conf.blockfrostApiKey,
-            walletMnemonic = conf.walletMnemonic,
+            walletMnemonic = conf.walletMnemonicSeq,
             walletPassphrase = conf.walletPassphrase,
             didPrism = conf.didPrism,
-            vdrKey = conf.vdrKey,
             vdrKeyName = conf.vdrKeyName,
             vdrPrivateKey = conf.vdrPrivateKeyBytes,
             prismStateDir = conf.stateDir
