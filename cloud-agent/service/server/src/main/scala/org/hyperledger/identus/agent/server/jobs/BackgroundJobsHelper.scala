@@ -74,23 +74,24 @@ trait BackgroundJobsHelper {
       managedDIDService <- ZIO.service[ManagedDIDService]
       didService <- ZIO.service[DIDService]
       // Automatically infer keyId to use by resolving DID and choose the corresponding VerificationRelationship
-
-      // FIXME kidIssuer
-      issuingKeyId <-
-        // kidIssuer.orElse
-        didService
-          .resolveDID(jwtIssuerDID)
-          .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
-          .map { case (_, didData) =>
-            didData.publicKeys
-              .find(pk => pk.purpose == verificationRelationship && pk.publicKeyData.crv == EllipticCurve.SECP256K1)
-              .map(_.id)
+      // The key detection should have parity with `CredentialServiceImpl.getKeyId`
+      issuingKeyId <- didService
+        .resolveDID(jwtIssuerDID)
+        .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
+        .map { case (_, didData) =>
+          val matchingKeys = didData.publicKeys.filter(pk => pk.purpose == verificationRelationship)
+          (matchingKeys, kidIssuer) match {
+            case (Seq(), _)                => None
+            case (Seq(singleKey), None)    => Some(singleKey.id)
+            case (multipleKeys, Some(kid)) => multipleKeys.find(_.id.value.endsWith(kid.value)).map(_.id)
+            case (_, None)                 => None
           }
-          .someOrFail(
-            BackgroundJobError.InvalidState(
-              s"Issuing DID doesn't have a key in ${verificationRelationship.name} to use: $jwtIssuerDID"
-            )
+        }
+        .someOrFail(
+          BackgroundJobError.InvalidState(
+            s"Issuing DID doesn't have a key in ${verificationRelationship.name} with kid ${kidIssuer.map(_.value)} to use: $jwtIssuerDID"
           )
+        )
       jwtIssuer <- managedDIDService
         .findDIDKeyPair(jwtIssuerDID.asCanonical, issuingKeyId)
         .flatMap {
