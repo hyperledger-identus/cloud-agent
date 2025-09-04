@@ -73,8 +73,8 @@ trait BackgroundJobsHelper {
     for {
       managedDIDService <- ZIO.service[ManagedDIDService]
       didService <- ZIO.service[DIDService]
-      // The key detection should be consistent with `CredentialServiceImpl.getKeyId`
-      // but the KID is not exposed to proof and status-list, so we pick any matching key if not provided
+      // Ideally, key detection should be consistent with `CredentialServiceImpl.getKeyId`
+      // but the KID is not exposed in proof flow and status-list, so we pick any matching key if not provided.
       issuingKeyId <- didService
         .resolveDID(jwtIssuerDID)
         .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
@@ -90,7 +90,7 @@ trait BackgroundJobsHelper {
         }
         .someOrFail(
           BackgroundJobError.InvalidState(
-            s"Issuing DID doesn't have a key in ${verificationRelationship.name} with kid ${kidIssuer.map(_.value)} to use: $jwtIssuerDID"
+            s"Issuing DID doesn't have a key in ${verificationRelationship.name} to use: $jwtIssuerDID"
           )
         )
       jwtIssuer <- managedDIDService
