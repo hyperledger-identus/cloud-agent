@@ -73,18 +73,19 @@ trait BackgroundJobsHelper {
     for {
       managedDIDService <- ZIO.service[ManagedDIDService]
       didService <- ZIO.service[DIDService]
-      // Automatically infer keyId to use by resolving DID and choose the corresponding VerificationRelationship
-      // The key detection should have parity with `CredentialServiceImpl.getKeyId`
+      // The key detection should be consistent with `CredentialServiceImpl.getKeyId`
+      // but the KID is not exposed to proof and status-list, so we pick any matching key if not provided
       issuingKeyId <- didService
         .resolveDID(jwtIssuerDID)
         .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
         .map { case (_, didData) =>
-          val matchingKeys = didData.publicKeys.filter(pk => pk.purpose == verificationRelationship)
-          (matchingKeys, kidIssuer) match {
-            case (Seq(), _)                => None
-            case (Seq(singleKey), None)    => Some(singleKey.id)
-            case (multipleKeys, Some(kid)) => multipleKeys.find(_.id.value.endsWith(kid.value)).map(_.id)
-            case (_, None)                 => None
+          val allowedCrv = Set(EllipticCurve.ED25519, EllipticCurve.SECP256K1)
+          val matchingKeys = didData.publicKeys
+            .filter(pk => pk.purpose == verificationRelationship && allowedCrv.contains(pk.publicKeyData.crv))
+          (matchingKeys.toList, kidIssuer) match {
+            case (Nil, _)              => None
+            case (firstKey :: _, None) => Some(firstKey.id)
+            case (keys, Some(kid))     => keys.find(_.id.value.endsWith(kid.value)).map(_.id)
           }
         }
         .someOrFail(
