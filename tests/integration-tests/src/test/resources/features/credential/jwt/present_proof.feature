@@ -45,8 +45,8 @@ Feature: Present Proof Protocol
     Then Verifier has the proof verified
     Examples:
       | assertionMethod | assertionName |
-      | secp256k1       | iss-secp |
-      | Ed25519         | iss-ed   |
+      | secp256k1       | assert-1      |
+      | ed25519         | assert-1      |
 
   Scenario: Connectionless Verification Holder presents jwt credential proof to verifier
     Given Holder has a jwt issued credential from Issuer

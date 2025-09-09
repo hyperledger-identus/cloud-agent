@@ -74,7 +74,6 @@ object StatusListJobs extends BackgroundJobsHelper {
       vcStatusListCredString = statusListWithCreds.statusListCredential
       walletAccessContext = WalletAccessContext(statusListWithCreds.walletId)
       effect = for {
-        _ <- ZIO.debug(s"statusListWithCreds: $statusListWithCreds")
         vcStatusListCredJson <- ZIO.fromEither(vcStatusListCredString.fromJson[Json])
         issuer <- createJwtVcIssuer(statusListWithCreds.issuer, VerificationRelationship.AssertionMethod, None)
         vcStatusListCred <- VCStatusList2021
