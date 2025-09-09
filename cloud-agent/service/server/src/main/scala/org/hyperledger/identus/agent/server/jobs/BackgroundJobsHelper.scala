@@ -93,6 +93,13 @@ trait BackgroundJobsHelper {
             s"Issuing DID doesn't have a key in ${verificationRelationship.name} to use: $jwtIssuerDID"
           )
         )
+      _ <- ZIO.debug {
+        s"""
+           | jwtIssuerDID: $jwtIssuerDID
+           | issuingKeyId input: $kidIssuer
+           | issuingKeyId actual: $issuingKeyId
+           """.stripMargin
+      }
       jwtIssuer <- managedDIDService
         .findDIDKeyPair(jwtIssuerDID.asCanonical, issuingKeyId)
         .flatMap {

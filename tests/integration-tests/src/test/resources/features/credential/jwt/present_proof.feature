@@ -33,6 +33,7 @@ Feature: Present Proof Protocol
     And Issuer adds a '<assertionMethod>' key for 'assertionMethod' purpose with '<assertionName>' name to the custom PRISM DID
     And Issuer creates the custom PRISM DID
     And Issuer publishes DID to ledger
+    And Issuer has a published 'STUDENT_SCHEMA' schema
     When Issuer offers a jwt credential to Holder with 'short' form DID using issuingKid '<assertionName>' and STUDENT_SCHEMA schema
     And Holder receives the credential offer
     And Holder accepts jwt credential offer using 'auth-1' key id
@@ -44,8 +45,8 @@ Feature: Present Proof Protocol
     Then Verifier has the proof verified
     Examples:
       | assertionMethod | assertionName |
-      | secp256k1       | assert-1      |
-      | ed25519         | assert-1      |
+      | secp256k1       | iss-secp |
+      | Ed25519         | iss-ed   |
 
   Scenario: Connectionless Verification Holder presents jwt credential proof to verifier
     Given Holder has a jwt issued credential from Issuer
