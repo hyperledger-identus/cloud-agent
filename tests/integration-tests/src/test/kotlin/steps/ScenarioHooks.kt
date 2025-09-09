@@ -9,15 +9,15 @@ import net.serenitybdd.screenplay.actors.OnStage
 /**
  * Scenario-level hooks to ensure test isolation by clearing actor memory between scenarios.
  * This prevents data leakage when running individual scenarios in isolation for debugging.
- * 
+ *
  * Problem: When running integration test scenarios individually (e.g., during debugging),
  * some scenarios may fail because they depend on data or state created by previous scenarios
  * when run as part of the full test suite.
- * 
+ *
  * Solution: These hooks automatically clean up scenario-specific data between test scenarios
  * while preserving essential configuration (auth tokens, base URLs, etc.) that is set up
  * during the initial test environment initialization.
- * 
+ *
  * Usage: This cleanup happens automatically for all scenarios. No changes needed to existing
  * feature files or step definitions.
  */
@@ -29,14 +29,14 @@ class ScenarioHooks {
      */
     private val preservedKeys = setOf(
         "BEARER_TOKEN",
-        "AUTH_KEY", 
+        "AUTH_KEY",
         "AUTH_HEADER",
         "baseUrl",
         "webhookUrl",
         "WEBHOOK_ID",
         "OID4VCI_AUTH_SERVER_URL",
-        "OID4VCI_AUTH_SERVER_CLIENT_ID", 
-        "OID4VCI_AUTH_SERVER_CLIENT_SECRET"
+        "OID4VCI_AUTH_SERVER_CLIENT_ID",
+        "OID4VCI_AUTH_SERVER_CLIENT_SECRET",
     )
 
     @Before
@@ -63,7 +63,7 @@ class ScenarioHooks {
     private fun clearActorMemories() {
         // Clear memory for all known actor roles
         val knownActorRoles = listOf("Issuer", "Holder", "Verifier", "Admin", "Alice", "Bob")
-        
+
         knownActorRoles.forEach { roleName ->
             try {
                 val actor = OnStage.theActorCalled(roleName)
@@ -84,8 +84,8 @@ class ScenarioHooks {
         val scenarioSpecificKeys = setOf(
             // Connection-related keys
             "connection",
-            "connectionId", 
-            
+            "connectionId",
+
             // DID-related keys
             "customDid",
             "deactivatedDid",
@@ -97,46 +97,46 @@ class ScenarioHooks {
             "currentDID",
             "newDidKeyId",
             "createdDids",
-            
+
             // Schema-related keys
             "anoncredsSchema",
             "createdSchemas",
             "currentSchema",
-            
+
             // Credential-related keys
             "anoncredsCredentialDefinition",
             "credentialConfiguration",
-            "credentialConfigurationId", 
+            "credentialConfigurationId",
             "credentialRecord",
             "currentAssertionKey",
             "currentClaims",
             "currentCredentialType",
             "recordId",
-            
+
             // Service and update-related keys
             "newServiceId",
             "newServiceUrl",
             "updatedPolicyInput",
-            
+
             // OID4VCI-related keys
             "eudiAuthorizedRequest",
             "eudiCredentialOffer",
             "eudiIssuedCredential",
             "requestedCredential",
-            
+
             // Verification and policy keys
             "policy",
             "checks",
             "encodedStatusList",
-            
+
             // VDR keys
             "vdrData",
-            "vdrDriver", 
+            "vdrDriver",
             "vdrUrl",
-            
+
             // API state keys
             "currentAPI",
-            "number"
+            "number",
         )
 
         // Generate dynamic connection keys for all possible actor combinations

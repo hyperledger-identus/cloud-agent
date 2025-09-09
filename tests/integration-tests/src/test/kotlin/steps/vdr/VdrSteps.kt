@@ -24,11 +24,11 @@ class VdrSteps {
         val vdrUrl = actor.recall<String>("vdrUrl")
         val vdrData = actor.recall<ByteArray>("vdrData")
         val vdrDriver = actor.recall<String>("vdrDriver")
-        if (vdrUrl == null
-            || vdrData == null
-            || vdrDriver == null
-            || vdrData.toHexString() != dataHex
-            || vdrDriver != driver
+        if (vdrUrl == null ||
+            vdrData == null ||
+            vdrDriver == null ||
+            vdrData.toHexString() != dataHex ||
+            vdrDriver != driver
         ) {
             agentCreatesVdrEntry(actor, dataHex, driver)
         }
@@ -94,12 +94,12 @@ class VdrSteps {
                 .with {
                     it.queryParam("url", vdrUrl)
                 },
-            Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_OK)
+            Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_OK),
         )
 
         val resolvedVdrData = SerenityRest.lastResponse().body.asByteArray().toHexString()
         actor.attemptsTo(
-            Ensure.that(vdrData).isEqualTo(resolvedVdrData)
+            Ensure.that(vdrData).isEqualTo(resolvedVdrData),
         )
     }
 
@@ -111,7 +111,7 @@ class VdrSteps {
                 .with {
                     it.queryParam("url", vdrUrl)
                 },
-            Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_NOT_FOUND)
+            Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_NOT_FOUND),
         )
     }
 }
