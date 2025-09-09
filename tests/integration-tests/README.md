@@ -503,6 +503,25 @@ After that, follow the next steps:
 > Please note: you still need to set the `PRISM_NODE_VERSION` and `AGENT_VERSION`
 > environment variables for this option to work if you don't use already running agents!
 
+### Test Scenario Isolation
+
+The integration tests include automatic scenario isolation to prevent data leakage when running individual scenarios for debugging purposes.
+
+**Problem:** When running integration test scenarios individually (e.g., during debugging), some scenarios may fail because they depend on data or state created by previous scenarios when run as part of the full test suite.
+
+**Solution:** Scenario-level hooks automatically clean up scenario-specific data between test scenarios while preserving essential configuration (auth tokens, base URLs, etc.) that is set up during the initial test environment initialization.
+
+**Features:**
+- Automatically clears actor memory between scenarios
+- Preserves essential configuration (authentication tokens, webhook URLs, base URLs)
+- Cleans up scenario-specific data (connections, DIDs, credentials, schemas, etc.)
+- Handles dynamic connection keys (e.g., `connection-with-{ActorName}`)
+- Graceful error handling to avoid breaking tests during cleanup
+
+**Usage:** This cleanup happens automatically for all scenarios. No changes are needed to existing feature files or step definitions.
+
+**Implementation:** The isolation is implemented in `ScenarioHooks.kt` using Cucumber `@Before` and `@After` scenario hooks.
+
 ## Analysing reports
 
 ### Full HTML-report ("living documentation")

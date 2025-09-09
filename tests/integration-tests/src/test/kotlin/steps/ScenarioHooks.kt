@@ -8,7 +8,18 @@ import net.serenitybdd.screenplay.actors.OnStage
 
 /**
  * Scenario-level hooks to ensure test isolation by clearing actor memory between scenarios.
- * This prevents data leakage when running individual scenarios in isolation.
+ * This prevents data leakage when running individual scenarios in isolation for debugging.
+ * 
+ * Problem: When running integration test scenarios individually (e.g., during debugging),
+ * some scenarios may fail because they depend on data or state created by previous scenarios
+ * when run as part of the full test suite.
+ * 
+ * Solution: These hooks automatically clean up scenario-specific data between test scenarios
+ * while preserving essential configuration (auth tokens, base URLs, etc.) that is set up
+ * during the initial test environment initialization.
+ * 
+ * Usage: This cleanup happens automatically for all scenarios. No changes needed to existing
+ * feature files or step definitions.
  */
 class ScenarioHooks {
 
@@ -56,7 +67,7 @@ class ScenarioHooks {
         knownActorRoles.forEach { roleName ->
             try {
                 val actor = OnStage.theActorCalled(roleName)
-                clearActorMemory(actor)
+                clearActorMemory(actor, knownActorRoles)
             } catch (e: Exception) {
                 // Actor might not exist for this test scenario, which is fine
                 // We just want to clean up actors that do exist
@@ -67,17 +78,13 @@ class ScenarioHooks {
     /**
      * Clears an individual actor's memory while preserving essential configuration keys.
      */
-    private fun clearActorMemory(actor: Actor) {
+    private fun clearActorMemory(actor: Actor, allActorRoles: List<String>) {
         // Clear all scenario-specific keys that commonly cause data leakage
         // Based on analysis of actual remember() calls in the test codebase
         val scenarioSpecificKeys = setOf(
             // Connection-related keys
             "connection",
             "connectionId", 
-            "connection-with-Issuer",
-            "connection-with-Holder", 
-            "connection-with-Verifier",
-            "connection-with-Admin",
             
             // DID-related keys
             "customDid",
@@ -132,15 +139,10 @@ class ScenarioHooks {
             "number"
         )
 
-        // Also clear connection keys with dynamic names (connection-with-{actorName})
-        val dynamicConnectionKeys = setOf(
-            "connection-with-Issuer",
-            "connection-with-Holder",
-            "connection-with-Verifier", 
-            "connection-with-Admin",
-            "connection-with-Alice",
-            "connection-with-Bob"
-        )
+        // Generate dynamic connection keys for all possible actor combinations
+        val dynamicConnectionKeys = allActorRoles.map { actorName ->
+            "connection-with-$actorName"
+        }.toSet()
 
         // Clear all scenario-specific keys
         (scenarioSpecificKeys + dynamicConnectionKeys).forEach { key ->
