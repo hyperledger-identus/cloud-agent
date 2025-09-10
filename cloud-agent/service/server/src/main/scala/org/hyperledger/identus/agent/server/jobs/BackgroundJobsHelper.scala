@@ -82,10 +82,10 @@ trait BackgroundJobsHelper {
           val allowedCrv = Set(EllipticCurve.ED25519, EllipticCurve.SECP256K1)
           val matchingKeys = didData.publicKeys
             .filter(pk => pk.purpose == verificationRelationship && allowedCrv.contains(pk.publicKeyData.crv))
-          (matchingKeys.toList, kidIssuer) match {
-            case (Nil, _)              => None
-            case (firstKey :: _, None) => Some(firstKey.id)
-            case (keys, Some(kid))     => keys.find(_.id.value.endsWith(kid.value)).map(_.id)
+          (matchingKeys, kidIssuer) match {
+            case (Seq(), _) => None
+            case (firstKey +: _, None) => Some(firstKey.id)
+            case (keys, Some(kid)) => keys.find(_.id.value.endsWith(kid.value)).map(_.id)
           }
         }
         .someOrFail(
