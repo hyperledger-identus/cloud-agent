@@ -78,21 +78,40 @@ trait BackgroundJobsHelper {
       issuingKeyId <- didService
         .resolveDID(jwtIssuerDID)
         .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
-        .map { case (_, didData) =>
+        .flatMap { case (_, didData) =>
           val allowedCrv = Set(EllipticCurve.ED25519, EllipticCurve.SECP256K1)
-          val matchingKeys = didData.publicKeys
-            .filter(pk => pk.purpose == verificationRelationship && allowedCrv.contains(pk.publicKeyData.crv))
-          (matchingKeys.toList, kidIssuer) match {
-            case (Nil, _)              => None
-            case (firstKey :: _, None) => Some(firstKey.id)
-            case (keys, Some(kid))     => keys.find(_.id.value.endsWith(kid.value)).map(_.id)
+          
+          // First check if there are any keys with the required purpose
+          val purposeKeys = didData.publicKeys.filter(_.purpose == verificationRelationship)
+          if (purposeKeys.isEmpty) {
+            ZIO.fail(BackgroundJobError.InvalidState(
+              s"Issuing DID doesn't have any keys with purpose ${verificationRelationship.name}: $jwtIssuerDID"
+            ))
+          } else {
+            // Then check if any of those keys have allowed curves
+            val matchingKeys = purposeKeys.filter(pk => allowedCrv.contains(pk.publicKeyData.crv))
+            if (matchingKeys.isEmpty) {
+              ZIO.fail(BackgroundJobError.InvalidState(
+                s"Issuing DID doesn't have any keys with purpose ${verificationRelationship.name} and allowed curves (${allowedCrv.mkString(", ")}): $jwtIssuerDID"
+              ))
+            } else {
+              // Use +: pattern matching for Seq instead of :: for List
+              (matchingKeys, kidIssuer) match {
+                case (firstKey +: _, None) => ZIO.succeed(firstKey.id)
+                case (keys, Some(kid)) => 
+                  keys.find(_.id.value.endsWith(kid.value)) match {
+                    case Some(key) => ZIO.succeed(key.id)
+                    case None => ZIO.fail(BackgroundJobError.InvalidState(
+                      s"Issuing DID doesn't have a key with purpose ${verificationRelationship.name} matching kidIssuer '$kid': $jwtIssuerDID"
+                    ))
+                  }
+                case _ => ZIO.fail(BackgroundJobError.InvalidState(
+                  s"Unexpected state in key selection for DID: $jwtIssuerDID"
+                ))
+              }
+            }
           }
         }
-        .someOrFail(
-          BackgroundJobError.InvalidState(
-            s"Issuing DID doesn't have a key in ${verificationRelationship.name} to use: $jwtIssuerDID"
-          )
-        )
       jwtIssuer <- managedDIDService
         .findDIDKeyPair(jwtIssuerDID.asCanonical, issuingKeyId)
         .flatMap {
