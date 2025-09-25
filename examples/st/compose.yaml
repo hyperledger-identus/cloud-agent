@@ -44,7 +44,7 @@ services:
       PRISM_NODE_PORT: '50053'
       REST_SERVICE_URL: http://caddy-issuer:8080/cloud-agent
       SECRET_STORAGE_BACKEND: postgres
-    image: ghcr.io/hyperledger/identus-cloud-agent:1.38.0
+    image: hyperledgeridentus/identus-cloud-agent:2.0.0
     restart: always
   caddy-issuer:
     configs:
@@ -85,7 +85,7 @@ services:
       NODE_PSQL_HOST: node-db:5432
       NODE_PSQL_PASSWORD: postgres
       NODE_PSQL_USERNAME: postgres
-    image: ghcr.io/input-output-hk/prism-node:2.4.0
+    image: ghcr.io/input-output-hk/prism-node:2.6.0
     restart: always
   node-db:
     environment:

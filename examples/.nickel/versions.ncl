@@ -1,7 +1,7 @@
 {
   # identus
-  agent = "1.38.0",
-  node = "2.4.0",
+  agent = "2.0.0",
+  node = "2.6.0",
   identusKeycloak = "0.2.0",
   # 3rd party
   caddy = "2.7.6-alpine",
