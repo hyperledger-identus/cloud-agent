@@ -101,7 +101,7 @@ POST {{ issuer_url }}/cloud-agent/schema-registry/schemas
         "properties": {
             "emailAddress": {"type": "string"},
             "givenName": {"type": "string"},
-            "familyName": {"type": "number"}
+            "familyName": {"type": "string"}
         },
         "required": ["emailAddress", "givenName", "familyName"],
         "additionalProperties": false

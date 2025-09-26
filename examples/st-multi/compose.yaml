@@ -76,6 +76,8 @@ services:
       PRISM_NODE_PORT: '50053'
       REST_SERVICE_URL: http://caddy-holder:8081/cloud-agent
       SECRET_STORAGE_BACKEND: postgres
+    extra_hosts:
+    - host.docker.internal:host-gateway
     image: hyperledgeridentus/identus-cloud-agent:2.0.0
     restart: always
   agent-issuer:
@@ -106,6 +108,8 @@ services:
       PRISM_NODE_PORT: '50053'
       REST_SERVICE_URL: http://caddy-issuer:8080/cloud-agent
       SECRET_STORAGE_BACKEND: postgres
+    extra_hosts:
+    - host.docker.internal:host-gateway
     image: hyperledgeridentus/identus-cloud-agent:2.0.0
     restart: always
   agent-verifier:
@@ -136,6 +140,8 @@ services:
       PRISM_NODE_PORT: '50053'
       REST_SERVICE_URL: http://caddy-verifier:8082/cloud-agent
       SECRET_STORAGE_BACKEND: postgres
+    extra_hosts:
+    - host.docker.internal:host-gateway
     image: hyperledgeridentus/identus-cloud-agent:2.0.0
     restart: always
   caddy-holder:

@@ -128,6 +128,7 @@ in
             { "%{args.bootstrapContainer}" = { condition = "service_completed_successfully" } }
           else
             {}
-        )
+        ),
+      extra_hosts = ["host.docker.internal:host-gateway"]
     }
 }

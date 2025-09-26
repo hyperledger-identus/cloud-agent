@@ -53,6 +53,8 @@ services:
       SECRET_STORAGE_BACKEND: vault
       VAULT_ADDR: http://vault-default:8200
       VAULT_TOKEN: admin
+    extra_hosts:
+    - host.docker.internal:host-gateway
     image: hyperledgeridentus/identus-cloud-agent:2.0.0
     restart: always
   caddy-default:
