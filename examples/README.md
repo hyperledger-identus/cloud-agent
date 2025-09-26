@@ -1,40 +1,45 @@
-# How to run examples
+# How to Run Examples
 
 ## Prerequisites
 
-- docker-compose version >= `2.23.1`
+- `docker-compose` version >= `2.23.1`
 
-## Running examples
+## Running Examples
 
-Most of the examples should follow the same pattern.
-Simply go to each example directory and spin up the docker-compose of each example.
+Most examples follow the same pattern.
+Navigate to the desired example directory and start its Docker Compose setup:
 
 ```bash
 cd <EXAMPLE_DIR>
 docker-compose up
 ```
 
-If some example requires a different command, it should be provided in its own local README.
+If an example requires a different command, refer to its local README for instructions.
 
-Once finished, `docker-compose down --volumes` can be used to clean docker volumes to avoid unexpected behavior for the next run.
+When finished, you can clean up Docker volumes to avoid unexpected behavior in future runs:
+
+```bash
+docker-compose down --volumes
+```
 
 ## Examples
 
-| example             | description                                                               |
-|---------------------|---------------------------------------------------------------------------|
-| `st`                | single-tenant configuration without external services (except database)   |
-| `st-multi`          | 3 instances of single-tenant configuration                                |
-| `st-vault`          | single-tenant with Vault for secret storage                               |
-| `st-oid4vci`        | single-tenant agent with Keycloak as external Issuer Authorization Server |
-| `mt`                | multi-tenant configuration using built-in IAM                             |
-| `mt-keycloak`       | multi-tenant configuration using Keycloak for IAM                         |
-| `mt-keycloak-vault` | multi-tenant configuration using Keycloak and Vault                       |
+| Example             | Description                                                               |
+| ------------------- | ------------------------------------------------------------------------- |
+| `st`                | Single-tenant configuration without external services (except database)   |
+| `st-multi`          | Three instances of single-tenant configuration                            |
+| `st-vault`          | Single-tenant with Vault for secret storage                               |
+| `st-oid4vci`        | Single-tenant agent with Keycloak as external Issuer Authorization Server |
+| `mt`                | Multi-tenant configuration using built-in IAM                             |
+| `mt-keycloak`       | Multi-tenant configuration using Keycloak for IAM                         |
+| `mt-keycloak-vault` | Multi-tenant configuration using Keycloak and Vault                       |
 
-## Testing examples
+## Testing Examples
 
-Some example directories may contain a sub-directory called `hurl`.
-Hurl is a CLI tool for testing HTTP requests and can be installed according to [this documentation](https://hurl.dev/docs/installation.html).
-If the example contains a sub-directory named `hurl`, the example can be tested against HTTP calls with the following commands.
+Some example directories may contain a subdirectory called `hurl`.
+Hurl is a CLI tool for testing HTTP requests. You can install it by following [this documentation](https://hurl.dev/docs/installation.html).
+
+If the example contains a `hurl` subdirectory, you can test HTTP calls with:
 
 ```bash
 cd ./hurl
@@ -43,32 +48,35 @@ hurl --variables-file ./local *.hurl --test
 
 # Contributing
 
-All of the docker-compose files in examples are generated using [Nickel](https://nickel-lang.org/).
-They are defined in a shared `.nickel` directory and generated using the `build.sh` script.
+All Docker Compose files in the examples are generated using [Nickel](https://nickel-lang.org/).
+They are defined in the shared `.nickel` directory and generated using the `build.sh` script.
 
 ## Prerequisites
 
 - [Nickel](https://nickel-lang.org/) version >= `1.5` installed
 
-## Generate example compose files
+## Generate Example Compose Files
 
-To generate the docker-compose config for all examples, run
+To generate Docker Compose configs for all examples, run:
 
 ```bash
 cd .nickel
 ./build.sh
 ```
 
-## Updating example compose files
+## Updating Example Compose Files
 
-To update the configuration, simply edit the `*.ncl` config in the `.nickel` directory and regenerate the docker-compose files.
+To update the configuration, edit the relevant `*.ncl` file in the `.nickel` directory and regenerate the Docker Compose files.
 
-## Adding new examples
+## Adding New Examples
 
-To add a new example with docker-compose file, simply create a new configuration key in the `root.ncl` and add a new entry in the `build.sh` script.
-You may need to create the target example directory if it does not already exist.
+To add a new example with a Docker Compose file:
 
-## Example with bootstrapping script
+1. Create a new configuration key in `root.ncl`.
+2. Add a new entry in the `build.sh` script.
+3. Create the target example directory if it does not already exist.
 
-If any example requires initialize steps, it should be made part of the docker-compose `depends_on` construct.
-Ideally, infrastructure bootstrapping should be automatic (database, IAM), but not necessarily application bootstrapping (tenant onboarding).
+## Example with Bootstrapping Script
+
+If an example requires initialization steps, include them in the Docker Compose `depends_on` construct.
+Ideally, infrastructure bootstrapping (e.g., database, IAM) should be automatic, but application bootstrapping (e.g., tenant onboarding) may require manual steps.
