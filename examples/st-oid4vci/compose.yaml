@@ -72,7 +72,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_issuer:/var/lib/postgresql/data
@@ -93,7 +93,7 @@ services:
       HURL_keycloak_admin_user: admin
       HURL_keycloak_base_url: http://external-keycloak-issuer:8080
       HURL_keycloak_realm: students
-    image: ghcr.io/orange-opensource/hurl:4.2.0
+    image: ghcr.io/orange-opensource/hurl:7.0.0
     volumes:
     - ./bootstrap:/hurl
   external-keycloak-issuer:
@@ -142,7 +142,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_node:/var/lib/postgresql/data

@@ -43,7 +43,7 @@ If the example contains a `hurl` subdirectory, you can test HTTP calls with:
 
 ```bash
 cd ./hurl
-hurl --variables-file ./local *.hurl --test
+hurl --variables-file ./local *.hurl --verbose
 ```
 
 # Contributing

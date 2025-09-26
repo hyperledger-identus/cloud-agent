@@ -184,7 +184,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_holder:/var/lib/postgresql/data
@@ -206,7 +206,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_issuer:/var/lib/postgresql/data
@@ -228,7 +228,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_verifier:/var/lib/postgresql/data
@@ -261,7 +261,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_node:/var/lib/postgresql/data

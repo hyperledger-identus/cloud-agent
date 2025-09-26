@@ -79,7 +79,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_default:/var/lib/postgresql/data
@@ -109,7 +109,7 @@ services:
       HURL_keycloak_client_id: agent
       HURL_keycloak_client_secret: agent-secret
       HURL_keycloak_realm: identus
-    image: ghcr.io/orange-opensource/hurl:4.2.0
+    image: ghcr.io/orange-opensource/hurl:7.0.0
     volumes:
     - ../.shared/hurl/simple_realm:/hurl
   node:
@@ -139,7 +139,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_node:/var/lib/postgresql/data
