@@ -6,6 +6,8 @@ HTTP 200
 
 # Admin login
 POST {{ keycloak_base_url }}/realms/master/protocol/openid-connect/token
+[Options]
+delay: 3s
 [FormParams]
 grant_type: password
 client_id: admin-cli

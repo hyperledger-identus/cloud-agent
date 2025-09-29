@@ -16,13 +16,12 @@ in
     (stack.makeAgentStack { name = "issuer", port = 8080 })
     & (stack.makeMockServerStack { port = 7777 })
     & (
-      stack.makeIssuerKeycloakStack
-        {
-          name = "issuer",
-          port = 9980,
-          realm = "students",
-          extraEnvs = { IDENTUS_URL = "http://caddy-issuer:8080/cloud-agent" }
-        }
+      stack.makeIssuerKeycloakStack {
+        name = "issuer",
+        port = 9980,
+        realm = "students",
+        extraEnvs = { IDENTUS_URL = "http://caddy-issuer:8080/cloud-agent" }
+      }
     ),
 
   mt =
@@ -32,11 +31,10 @@ in
     stack.makeAgentStack { name = "default", port = 8080, keycloakEnabled = true },
 
   mt-keycloak-vault =
-    stack.makeAgentStack
-      {
-        name = "default",
-        port = 8080,
-        keycloakEnabled = true,
-        vault.hostPort = 8200,
-      },
+    stack.makeAgentStack {
+      name = "default",
+      port = 8080,
+      keycloakEnabled = true,
+      vault.hostPort = 8200,
+    },
 }

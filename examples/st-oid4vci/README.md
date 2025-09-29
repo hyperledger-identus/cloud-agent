@@ -1,31 +1,32 @@
-# How to run issuance flow
+# How to Run Issuance Flow
 
 ## Prerequisites
 
-- Docker installed v2.24.0 or later
+- Docker version 2.24.0 or later
 
-### 1. Spin up the agent stack with pre-configured Keycloak
+### 1. Start the Agent Stack with Pre-configured Keycloak
 
 ```bash
 docker-compose up
 ```
 
-The Keycloak UI is available at `http://localhost:9980` and the admin username is `admin` with password `admin`.
+The Keycloak UI is available at [http://localhost:9980](http://localhost:9980).
+Admin username: `admin`
+Admin password: `admin`
 
-### 2. Run the issuance demo script
+### 2. Run the Issuance Demo Script
 
-Build the demo application and run it using
+Build and run the demo application:
 
 ```bash
 docker build -t identus-oid4vci-demo:latest ./demo
 docker run --network <NETWORK_NAME> -it identus-oid4vci-demo:latest
 ```
 
-where `NETWORK_NAME` is the docker-compose network name from agent stack.
-By default, this value should be `st-oid4vci_default`.
+Where `<NETWORK_NAME>` is the Docker Compose network name from the agent stack (default: `st-oid4vci_default`).
 
-- 2.1 Follow the instructions in the terminal. The holder will then be asked to log in via a browser
-- 2.2 Enter the username `alice` and password `1234` to log in
-- 2.3 Grant access for the scopes displayed on the consent UI
+- Follow the instructions in the terminal. The holder will be prompted to log in via a browser.
+- Use username `alice` and password `1234` to log in.
+- Grant access for the scopes displayed on the consent UI.
 
-The credential should be issued at the end of the flow and logged to the terminal.
+The credential will be issued at the end of the flow and logged to the terminal.

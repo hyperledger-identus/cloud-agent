@@ -133,6 +133,32 @@ jsonpath "$.state" == "ConnectionResponseReceived"
 ##############################
 # Issuance
 ##############################
+# Issuer create credential schema
+POST {{ agent_url }}/cloud-agent/schema-registry/schemas
+Authorization: Bearer {{ issuer_access_token }}
+{
+    "name": "CitizenId",
+    "version": "1.0.0",
+    "type": "https://w3c-ccg.github.io/vc-json-schemas/schema/2.0/schema.json",
+    "schema": {
+        "$id": "https://example.com/driving-license-1.0",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "emailAddress": {"type": "string"},
+            "givenName": {"type": "string"},
+            "familyName": {"type": "string"}
+        },
+        "required": ["emailAddress", "givenName", "familyName"],
+        "additionalProperties": false
+    },
+    "tags": [],
+    "author": "{{ issuer_did }}"
+}
+HTTP 201
+[Captures]
+schema_guid: jsonpath "$.guid"
+
 # Issuer create credential offer
 POST {{ agent_url }}/cloud-agent/issue-credentials/credential-offers
 Authorization: Bearer {{ issuer_access_token }}
@@ -144,7 +170,8 @@ Authorization: Bearer {{ issuer_access_token }}
   },
   "credentialFormat": "JWT",
   "issuingDID": "{{ issuer_did }}",
-  "connectionId": "{{ issuer_connection_id }}"
+  "connectionId": "{{ issuer_connection_id }}",
+  "schemaId": "http://host.docker.internal:8080/cloud-agent/schema-registry/schemas/{{ schema_guid }}/schema"
 }
 HTTP 201
 [Captures]
