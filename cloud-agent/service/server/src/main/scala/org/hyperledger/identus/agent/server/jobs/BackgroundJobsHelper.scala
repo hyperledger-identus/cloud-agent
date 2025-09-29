@@ -73,24 +73,26 @@ trait BackgroundJobsHelper {
     for {
       managedDIDService <- ZIO.service[ManagedDIDService]
       didService <- ZIO.service[DIDService]
-      // Automatically infer keyId to use by resolving DID and choose the corresponding VerificationRelationship
-
-      // FIXME kidIssuer
-      issuingKeyId <-
-        // kidIssuer.orElse
-        didService
-          .resolveDID(jwtIssuerDID)
-          .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
-          .map { case (_, didData) =>
-            didData.publicKeys
-              .find(pk => pk.purpose == verificationRelationship && pk.publicKeyData.crv == EllipticCurve.SECP256K1)
-              .map(_.id)
+      // Ideally, key detection should be consistent with `CredentialServiceImpl.getKeyId`
+      // but the KID is not exposed in proof flow and status-list, so we pick any matching key if not provided.
+      issuingKeyId <- didService
+        .resolveDID(jwtIssuerDID)
+        .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
+        .map { case (_, didData) =>
+          val allowedCrv = Set(EllipticCurve.ED25519, EllipticCurve.SECP256K1)
+          val matchingKeys = didData.publicKeys
+            .filter(pk => pk.purpose == verificationRelationship && allowedCrv.contains(pk.publicKeyData.crv))
+          (matchingKeys.toList, kidIssuer) match {
+            case (Nil, _)              => None
+            case (firstKey :: _, None) => Some(firstKey.id)
+            case (keys, Some(kid))     => keys.find(_.id.value.endsWith(kid.value)).map(_.id)
           }
-          .someOrFail(
-            BackgroundJobError.InvalidState(
-              s"Issuing DID doesn't have a key in ${verificationRelationship.name} to use: $jwtIssuerDID"
-            )
+        }
+        .someOrFail(
+          BackgroundJobError.InvalidState(
+            s"Issuing DID doesn't have a key in ${verificationRelationship.name} to use: $jwtIssuerDID"
           )
+        )
       jwtIssuer <- managedDIDService
         .findDIDKeyPair(jwtIssuerDID.asCanonical, issuingKeyId)
         .flatMap {

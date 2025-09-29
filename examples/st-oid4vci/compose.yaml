@@ -44,7 +44,9 @@ services:
       PRISM_NODE_PORT: '50053'
       REST_SERVICE_URL: http://caddy-issuer:8080/cloud-agent
       SECRET_STORAGE_BACKEND: postgres
-    image: ghcr.io/hyperledger/identus-cloud-agent:1.38.0
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    image: hyperledgeridentus/identus-cloud-agent:2.0.0
     restart: always
   caddy-issuer:
     configs:
@@ -70,7 +72,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_issuer:/var/lib/postgresql/data
@@ -91,7 +93,7 @@ services:
       HURL_keycloak_admin_user: admin
       HURL_keycloak_base_url: http://external-keycloak-issuer:8080
       HURL_keycloak_realm: students
-    image: ghcr.io/orange-opensource/hurl:4.2.0
+    image: ghcr.io/orange-opensource/hurl:7.0.0
     volumes:
     - ./bootstrap:/hurl
   external-keycloak-issuer:
@@ -122,7 +124,7 @@ services:
       NODE_PSQL_HOST: node-db:5432
       NODE_PSQL_PASSWORD: postgres
       NODE_PSQL_USERNAME: postgres
-    image: ghcr.io/input-output-hk/prism-node:2.4.0
+    image: ghcr.io/input-output-hk/prism-node:2.6.0
     restart: always
   node-db:
     environment:
@@ -140,7 +142,7 @@ services:
       - -d
       - postgres
       timeout: 5s
-    image: postgres:13
+    image: postgres:15
     restart: always
     volumes:
     - pg_data_node:/var/lib/postgresql/data

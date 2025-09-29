@@ -12,6 +12,8 @@ import net.serenitybdd.screenplay.Actor
 import org.apache.http.HttpStatus
 import org.hyperledger.identus.client.models.Connection
 import org.hyperledger.identus.client.models.ConnectionsPage
+import org.hyperledger.identus.client.models.Curve
+import org.hyperledger.identus.client.models.Purpose
 import steps.connection.ConnectionSteps
 import steps.credentials.*
 import steps.did.CreateDidSteps
@@ -30,6 +32,30 @@ class CommonSteps {
         val credentialSteps = CredentialSteps()
 
         jwtCredentialSteps.issuerOffersAJwtCredential(issuer, holder, "short")
+        credentialSteps.holderReceivesCredentialOffer(holder)
+        jwtCredentialSteps.holderAcceptsJwtCredentialOfferForJwt(holder, "auth-1")
+        credentialSteps.issuerIssuesTheCredential(issuer)
+        credentialSteps.holderReceivesTheIssuedCredential(holder)
+    }
+
+    @Given("{actor} has a jwt issued credential using '{curve}' key for '{purpose}' purpose with '{}' name from {actor}")
+    fun holderHasIssuedJwtCredentialFromIssuerWithKey(holder: Actor, curve: Curve, purpose: Purpose, name: String, issuer: Actor) {
+        actorsHaveExistingConnection(issuer, holder)
+
+        val createDidSteps = CreateDidSteps()
+        createDidSteps.agentCreatesUnpublishedDid(holder, DidType.JWT)
+        createDidSteps.actorPreparesCustomDid(issuer)
+        createDidSteps.actorAddsKeyToCustomDid(issuer, curve, purpose, name)
+        createDidSteps.actorCreatesTheCustomPrismDid(issuer)
+        createDidSteps.hePublishesDidToLedger(issuer)
+
+        val jwtCredentialSteps = JwtCredentialSteps()
+        val credentialSteps = CredentialSteps()
+        val credentialSchemasSteps = CredentialSchemasSteps()
+        val schema = CredentialSchema.STUDENT_SCHEMA
+
+        credentialSchemasSteps.agentHasAPublishedSchema(issuer, schema)
+        jwtCredentialSteps.issuerOffersAJwtCredentialWithIssuingKeyId(issuer, holder, "short", name, schema)
         credentialSteps.holderReceivesCredentialOffer(holder)
         jwtCredentialSteps.holderAcceptsJwtCredentialOfferForJwt(holder, "auth-1")
         credentialSteps.issuerIssuesTheCredential(issuer)
