@@ -54,7 +54,21 @@ Authorization: Bearer {{ issuer_access_token }}
 }
 HTTP 201
 [Captures]
-issuer_did: jsonpath "$.longFormDid" # regex "(did:prism:[a-z0-9]+):.+$"
+issuer_did: jsonpath "$.longFormDid" regex "(did:prism:[a-z0-9]+):.+$"
+
+# Issuer publish DID
+POST {{ agent_url }}/cloud-agent/did-registrar/dids/{{ issuer_did }}/publications
+Authorization: Bearer {{ issuer_access_token }}
+HTTP 202
+
+# Issuer wait for DID to be published
+GET {{ agent_url }}/cloud-agent/did-registrar/dids/{{ issuer_did }}
+Authorization: Bearer {{ issuer_access_token }}
+[Options]
+retry: -1
+HTTP 200
+[Asserts]
+jsonpath "$.status" == "PUBLISHED"
 
 # Holder create DID
 POST {{ agent_url }}/cloud-agent/did-registrar/dids
@@ -72,7 +86,7 @@ Authorization: Bearer {{ holder_access_token }}
 }
 HTTP 201
 [Captures]
-holder_did: jsonpath "$.longFormDid" regex "(did:prism:[a-z0-9]+):.+$"
+holder_did: jsonpath "$.longFormDid"
 
 ##############################
 # Issuance Connection
@@ -119,6 +133,32 @@ jsonpath "$.state" == "ConnectionResponseReceived"
 ##############################
 # Issuance
 ##############################
+# Issuer create credential schema
+POST {{ agent_url }}/cloud-agent/schema-registry/schemas
+Authorization: Bearer {{ issuer_access_token }}
+{
+    "name": "CitizenId",
+    "version": "1.0.0",
+    "type": "https://w3c-ccg.github.io/vc-json-schemas/schema/2.0/schema.json",
+    "schema": {
+        "$id": "https://example.com/driving-license-1.0",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+            "emailAddress": {"type": "string"},
+            "givenName": {"type": "string"},
+            "familyName": {"type": "string"}
+        },
+        "required": ["emailAddress", "givenName", "familyName"],
+        "additionalProperties": false
+    },
+    "tags": [],
+    "author": "{{ issuer_did }}"
+}
+HTTP 201
+[Captures]
+schema_guid: jsonpath "$.guid"
+
 # Issuer create credential offer
 POST {{ agent_url }}/cloud-agent/issue-credentials/credential-offers
 Authorization: Bearer {{ issuer_access_token }}
@@ -130,7 +170,8 @@ Authorization: Bearer {{ issuer_access_token }}
   },
   "credentialFormat": "JWT",
   "issuingDID": "{{ issuer_did }}",
-  "connectionId": "{{ issuer_connection_id }}"
+  "connectionId": "{{ issuer_connection_id }}",
+  "schemaId": "http://host.docker.internal:8080/cloud-agent/schema-registry/schemas/{{ schema_guid }}/schema"
 }
 HTTP 201
 [Captures]

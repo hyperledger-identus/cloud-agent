@@ -16,11 +16,10 @@ let CaddyServiceArgs = {
 }
 in
 {
-  makeCaddyConfig | CaddyServiceArgs -> _
-    = fun args =>
-      {
-        "caddyfile_%{args.name}" = {
-          content = m%"
+  makeCaddyConfig | CaddyServiceArgs -> _ = fun args =>
+    {
+      "caddyfile_%{args.name}" = {
+        content = m%"
               :%{std.to_string args.hostPort} {
                 handle_path /didcomm* {
                   reverse_proxy %{args.agent.host}:%{std.to_string args.agent.didcommPort}
@@ -36,19 +35,18 @@ in
                 }
               }
             "%
-        }
-      },
-  makeCaddyService | CaddyServiceArgs -> _
-    = fun args =>
-      {
-        image = "caddy:%{args.version}",
-        restart = "always",
-        configs = [
-          {
-            source = "caddyfile_%{args.name}",
-            target = "/etc/caddy/Caddyfile"
-          }
-        ],
-        ports = ["%{std.to_string args.hostPort}:%{std.to_string args.hostPort}"],
       }
+    },
+  makeCaddyService | CaddyServiceArgs -> _ = fun args =>
+    {
+      image = "caddy:%{args.version}",
+      restart = "always",
+      configs = [
+        {
+          source = "caddyfile_%{args.name}",
+          target = "/etc/caddy/Caddyfile"
+        }
+      ],
+      ports = ["%{std.to_string args.hostPort}:%{std.to_string args.hostPort}"],
+    }
 }
