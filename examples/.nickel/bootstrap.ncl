@@ -8,12 +8,11 @@ let HurlBootstrapServiceArgs = {
 }
 in
 {
-  makeHurlBootstrapService | HurlBootstrapServiceArgs -> _
-    = fun args =>
-      {
-        image = "ghcr.io/orange-opensource/hurl:%{args.version}",
-        volumes = ["%{args.hurlDir}:/hurl"],
-        command = ["--glob", "/hurl/*.hurl", "--test"],
-        environment = args.variables,
-      }
+  makeHurlBootstrapService | HurlBootstrapServiceArgs -> _ = fun args =>
+    {
+      image = "ghcr.io/orange-opensource/hurl:%{args.version}",
+      volumes = ["%{args.hurlDir}:/hurl"],
+      command = ["--glob", "/hurl/*.hurl", "--test"],
+      environment = args.variables,
+    }
 }
