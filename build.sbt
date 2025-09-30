@@ -59,7 +59,7 @@ lazy val V = new {
   val tapir = "1.11.7" // scala-steward:off // TODO "1.10.5"
   val http4sBlaze = "0.23.15" // scala-steward:off  // TODO "0.23.16"
 
-  val typesafeConfig = "1.4.3"
+  val typesafeConfig = "1.4.4"
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
@@ -75,7 +75,7 @@ lazy val V = new {
 
   val scalaUri = "4.2.0"
 
-  val jwtZioVersion = "11.0.0"
+  val jwtZioVersion = "11.0.2"
   val zioPreludeVersion = "1.0.0-RC41"
 
   val apollo = "1.3.5"
@@ -85,7 +85,7 @@ lazy val V = new {
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
 
   val vaultDriver = "6.2.0"
-  val micrometer = "1.13.15"
+  val micrometer = "1.15.2"
 
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
@@ -129,7 +129,7 @@ lazy val D = new {
   val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.6.0"
   val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
-  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.1"
+  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.4"
   val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.9.0"
 
   // https://mvnrepository.com/artifact/org.didcommx/didcomm/0.3.2
