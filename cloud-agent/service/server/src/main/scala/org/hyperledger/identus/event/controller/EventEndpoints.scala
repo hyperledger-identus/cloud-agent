@@ -51,7 +51,7 @@ object EventEndpoints {
   ] = baseEndpoint.post
     .in("webhooks")
     .in(jsonBody[CreateWebhookNotification])
-    .errorOut(EndpointOutputs.basicFailuresWith(FailureVariant.forbidden, FailureVariant.conflict))
+    .errorOut(EndpointOutputs.basicFailuresAndForbiddenWith(FailureVariant.conflict))
     .out(statusCode(StatusCode.Ok).description("Webhook notification has been created successfully"))
     .out(jsonBody[WebhookNotification])
     .summary("Create wallet webhook notifications")

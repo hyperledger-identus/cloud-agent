@@ -19,6 +19,9 @@ object EndpointOutputs {
     )
   }
 
+  def basicFailuresAndForbiddenWith(extraFailures: OneOfVariant[ErrorResponse]*) =
+    basicFailuresWith((Seq(FailureVariant.unauthorized, FailureVariant.forbidden) ++ extraFailures)*)
+
   val basicFailures: EndpointOutput[ErrorResponse] = basicFailuresWith()
 
   val basicFailuresAndForbidden = basicFailuresWith(FailureVariant.unauthorized, FailureVariant.forbidden)

@@ -25,6 +25,7 @@ services:
     image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
       API_KEY_ENABLED: true
+      API_KEY_AUTO_PROVISIONING: true
       API_KEY_AUTHENTICATE_AS_DEFAULT_USER: false
       PRISM_NODE_HOST: host.docker.internal
       PRISM_NODE_PORT:
