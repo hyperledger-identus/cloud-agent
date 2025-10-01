@@ -84,6 +84,7 @@ lazy val V = new {
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.AnoncredSchemaTypeSpec
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
 
+  val commonsLogging = "1.3.5"
   val vaultDriver = "6.2.0"
   val micrometer = "1.15.2"
 
@@ -123,6 +124,7 @@ lazy val D = new {
   val zioConfigMagnolia: ModuleID = "dev.zio" %% "zio-config-magnolia" % V.zioConfig
   val zioConfigTypesafe: ModuleID = "dev.zio" %% "zio-config-typesafe" % V.zioConfig
 
+  val commonsLogging = "commons-logging" % "commons-logging" % V.commonsLogging
   val networkntJsonSchemaValidator = "com.networknt" % "json-schema-validator" % V.jsonSchemaValidator
   val jwtZio = "com.github.jwt-scala" %% "jwt-zio-json" % V.jwtZioVersion
   val jsonCanonicalization: ModuleID = "io.github.erdtman" % "java-json-canonicalization" % "1.1"
@@ -417,7 +419,7 @@ lazy val D_CloudAgent = new {
   lazy val keyManagementDependencies: Seq[ModuleID] =
     baseDependencies ++ D.doobieDependencies ++ Seq(D.zioCatsInterop, D.zioMock, vaultDriver)
 
-  lazy val iamDependencies: Seq[ModuleID] = Seq(keycloakAuthz, D.jwtZio)
+  lazy val iamDependencies: Seq[ModuleID] = Seq(keycloakAuthz, D.jwtZio, D.commonsLogging)
 
   lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr)
 
