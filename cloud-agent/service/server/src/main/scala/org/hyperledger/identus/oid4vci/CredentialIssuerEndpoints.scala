@@ -198,14 +198,7 @@ object CredentialIssuerEndpoints {
       statusCode(StatusCode.Created).description("Credential configuration created successfully")
     )
     .out(jsonBody[CredentialConfiguration])
-    .errorOut(
-      EndpointOutputs.basicFailuresWith(
-        FailureVariant.notFound,
-        FailureVariant.unauthorized,
-        FailureVariant.forbidden,
-        FailureVariant.conflict
-      )
-    )
+    .errorOut(EndpointOutputs.basicFailuresAndForbiddenWith(FailureVariant.notFound, FailureVariant.conflict))
     .name("createCredentialConfiguration")
     .summary("Create a new  credential configuration")
     .description(
