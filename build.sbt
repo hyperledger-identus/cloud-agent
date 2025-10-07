@@ -6,7 +6,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport.*
 inThisBuild(
   Seq(
     organization := "org.hyperledger",
-    scalaVersion := "3.3.5",
+    scalaVersion := "3.3.6",
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     fork := true,
     run / connectInput := true,
@@ -59,7 +59,7 @@ lazy val V = new {
   val tapir = "1.11.7" // scala-steward:off // TODO "1.10.5"
   val http4sBlaze = "0.23.15" // scala-steward:off  // TODO "0.23.16"
 
-  val typesafeConfig = "1.4.4"
+  val typesafeConfig = "1.4.5"
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
@@ -70,12 +70,12 @@ lazy val V = new {
   val quill = "4.8.6"
   val flyway = "9.22.3" // scala-steward:off
   val postgresDriver = "42.7.8"
-  val logback = "1.5.18"
+  val logback = "1.5.19"
   val slf4j = "2.0.17"
 
   val scalaUri = "4.2.0"
 
-  val jwtZioVersion = "11.0.2"
+  val jwtZioVersion = "11.0.3"
   val zioPreludeVersion = "1.0.0-RC41"
 
   val apollo = "1.3.5"
@@ -86,7 +86,7 @@ lazy val V = new {
 
   val commonsLogging = "1.3.5"
   val vaultDriver = "6.2.0"
-  val micrometer = "1.15.2"
+  val micrometer = "1.15.4"
 
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
