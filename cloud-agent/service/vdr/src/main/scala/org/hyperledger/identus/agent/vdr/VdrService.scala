@@ -2,7 +2,7 @@ package org.hyperledger.identus.agent.vdr
 
 import drivers.{DatabaseDriver, InMemoryDriver}
 import fmgp.crypto.Secp256k1PrivateKey
-import fmgp.did.method.prism.{BlockfrostConfig, DIDPrism}
+import fmgp.did.method.prism.{BlockfrostConfig, BlockfrostRyoConfig, DIDPrism}
 import fmgp.did.method.prism.cardano.CardanoWalletConfig
 import hyperledger.identus.vdr.prism.PRISMDriver
 import interfaces.{Driver, Proof}
@@ -108,7 +108,15 @@ object VdrServiceImpl {
           else None
         maybePrismDriver = config.prismDriver.map { config =>
           PRISMDriver(
-            bfConfig = BlockfrostConfig(config.blockfrostApiKey),
+            bfConfig = BlockfrostConfig(
+              config.blockfrostApiKey,
+              Some(
+                BlockfrostRyoConfig(
+                  url = "http://localhost:3000",
+                  protocolMagic = 42
+                )
+              )
+            ),
             wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
             didPrism = DIDPrism(config.didPrism),
             vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
