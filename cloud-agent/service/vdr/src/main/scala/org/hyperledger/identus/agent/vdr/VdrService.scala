@@ -113,7 +113,7 @@ object VdrServiceImpl {
               Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42))
             ),
             wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
-            didPrism = DIDPrism(config.didPrism),
+            didPrism = DIDPrism(config.didPrism.replace("did:prism:", "")),
             vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
             keyName = config.vdrKeyName,
             workdir = config.prismStateDir
