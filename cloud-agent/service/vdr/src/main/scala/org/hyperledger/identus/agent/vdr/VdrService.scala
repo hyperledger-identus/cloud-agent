@@ -110,12 +110,7 @@ object VdrServiceImpl {
           PRISMDriver(
             bfConfig = BlockfrostConfig(
               config.blockfrostApiKey,
-              Some(
-                BlockfrostRyoConfig(
-                  url = "http://localhost:3000",
-                  protocolMagic = 42
-                )
-              )
+              Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42))
             ),
             wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
             didPrism = DIDPrism(config.didPrism),

@@ -92,7 +92,7 @@ lazy val V = new {
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
   val vdr = "0.2.1"
-  val prismVdr = "0.1.1+2-e1e7fdd4+20251028-1817-SNAPSHOT"
+  val prismVdr = "0.1.1+3-1aed4f8c-SNAPSHOT"
 }
 
 /** Dependencies */
