@@ -260,5 +260,5 @@ final case class PrismDriverVdrConfig(
     stateDir: String
 ) {
   def vdrPrivateKeyBytes: Array[Byte] = HexString.fromStringUnsafe(vdrPrivateKey).toByteArray
-  def walletMnemonicSeq: Seq[String] = walletMnemonic.split(" ").filter(_.nonEmpty)
+  def walletMnemonicSeq: Seq[String] = walletMnemonic.split(" ").toSeq.filter(_.nonEmpty)
 }

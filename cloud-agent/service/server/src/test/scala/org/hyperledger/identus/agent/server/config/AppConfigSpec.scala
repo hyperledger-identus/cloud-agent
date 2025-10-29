@@ -19,11 +19,12 @@ object AppConfigSpec extends ZIOSpecDefault {
 
   private val basePrismDriverVdrConfig = PrismDriverVdrConfig(
     blockfrostApiKey = "api-key",
-    walletMnemonic = Seq("word1", "word2", "word3"),
+    walletMnemonic = "",
     walletPassphrase = "passphrase",
     didPrism = "did:prism:123",
-    vdrKey = "abcdef",
-    vdrPrivateKey = "abcdef"
+    vdrKeyName = "abcdef",
+    vdrPrivateKey = "abcdef",
+    stateDir = ""
   )
 
   private val baseVdrConfig = VdrConfig(
