@@ -4,6 +4,8 @@ import drivers.{DatabaseDriver, InMemoryDriver}
 import fmgp.crypto.Secp256k1PrivateKey
 import fmgp.did.method.prism.{BlockfrostConfig, BlockfrostRyoConfig, DIDPrism}
 import fmgp.did.method.prism.cardano.CardanoWalletConfig
+import fmgp.did.method.prism.vdr.Indexer
+import fmgp.did.method.prism.IndexerConfig
 import hyperledger.identus.vdr.prism.PRISMDriver
 import interfaces.{Driver, Proof}
 import javax.sql.DataSource
@@ -89,7 +91,8 @@ object VdrServiceImpl {
       didPrism: String,
       vdrKeyName: String,
       vdrPrivateKey: Array[Byte],
-      prismStateDir: String
+      prismStateDir: String,
+      indexIntervalSecond: Int = 2
   )
 
   def layer: RLayer[DataSource & Config, VdrService] =
@@ -107,19 +110,27 @@ object VdrServiceImpl {
           then Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
           else None
         maybePrismDriver = config.prismDriver.map { config =>
-          PRISMDriver(
-            bfConfig = BlockfrostConfig(
-              config.blockfrostApiKey,
-              Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42))
-            ),
+          val bfConfig = BlockfrostConfig(
+            config.blockfrostApiKey,
+            Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42))
+          )
+          val driver = PRISMDriver(
+            bfConfig = bfConfig,
             wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
             didPrism = DIDPrism(config.didPrism.replace("did:prism:", "")),
             vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
             keyName = config.vdrKeyName,
             workdir = config.prismStateDir
           )
+          val indexerConfig = IndexerConfig(Some(bfConfig), config.prismStateDir)
+          val indexerJob = Indexer.indexerJob
+            .tap(_ => driver.initProgram)
+            .schedule(Schedule.spaced(config.indexIntervalSecond.seconds))
+            .provide(ZLayer.succeed(indexerConfig))
+          (driver, indexerJob)
         }
-        drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver).flatten
+        _ <- maybePrismDriver.fold(ZIO.unit)(_._2).fork
+        drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver.map(_._1)).flatten
         proxy = VDRProxyMultiDrivers(
           urlManager,
           drivers,
