@@ -109,28 +109,8 @@ object VdrServiceImpl {
           if config.enableDatabaseDriver
           then Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
           else None
-        maybePrismDriver = config.prismDriver.map { config =>
-          val bfConfig = BlockfrostConfig(
-            config.blockfrostApiKey,
-            Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42))
-          )
-          val driver = PRISMDriver(
-            bfConfig = bfConfig,
-            wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
-            didPrism = DIDPrism(config.didPrism.replace("did:prism:", "")),
-            vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
-            keyName = config.vdrKeyName,
-            workdir = config.prismStateDir
-          )
-          val indexerConfig = IndexerConfig(Some(bfConfig), config.prismStateDir)
-          val indexerJob = Indexer.indexerJob
-            .tap(_ => driver.initProgram)
-            .schedule(Schedule.spaced(config.indexIntervalSecond.seconds))
-            .provide(ZLayer.succeed(indexerConfig))
-          (driver, indexerJob)
-        }
-        _ <- maybePrismDriver.fold(ZIO.unit)(_._2).fork
-        drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver.map(_._1)).flatten
+        maybePrismDriver <- initPrismDriver
+        drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver).flatten
         proxy = VDRProxyMultiDrivers(
           urlManager,
           drivers,
@@ -139,4 +119,30 @@ object VdrServiceImpl {
         )
       } yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
     }
+
+  private def initPrismDriver: URIO[Config, Option[Driver]] =
+    for
+      config <- ZIO.service[Config]
+      maybePrismDriver = config.prismDriver.map { config =>
+        val bfConfig = BlockfrostConfig(
+          config.blockfrostApiKey,
+          Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42))
+        )
+        val driver = PRISMDriver(
+          bfConfig = bfConfig,
+          wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
+          didPrism = DIDPrism(config.didPrism.replace("did:prism:", "")),
+          vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
+          keyName = config.vdrKeyName,
+          workdir = config.prismStateDir
+        )
+        val indexerConfig = IndexerConfig(Some(bfConfig), config.prismStateDir)
+        val indexerJob = Indexer.indexerJob
+          .tap(_ => driver.initProgram)
+          .schedule(Schedule.spaced(config.indexIntervalSecond.seconds))
+          .provide(ZLayer.succeed(indexerConfig))
+        (driver, indexerJob)
+      }
+      _ <- maybePrismDriver.fold(ZIO.unit)(_._2).fork
+    yield maybePrismDriver.map(_._1)
 }
