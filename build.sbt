@@ -442,30 +442,6 @@ val commonSetttings = Seq(
   resolvers += "JetBrains Space Maven Repository" at "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven",
   // Needed for com.github.multiformats:java-multibase
   resolvers += "jitpack" at "https://jitpack.io",
-  // Override 'updateLicenses' for all project to inject custom DependencyResolution.
-  // https://github.com/sbt/sbt-license-report/blob/9675cedb19c794de1119cbcf46a255fc8dcd5d4e/src/main/scala/sbtlicensereport/SbtLicenseReport.scala#L84
-  updateLicenses := {
-    import sbt.librarymanagement.DependencyResolution
-    import sbt.librarymanagement.ivy.IvyDependencyResolution
-    import sbtlicensereport.license
-
-    val ignore = update.value
-    val overrides = licenseOverrides.value.lift
-    val depExclusions = licenseDepExclusions.value.lift
-    val originatingModule = DepModuleInfo(organization.value, name.value, version.value)
-    val resolution =
-      DependencyResolution(new LicenseReportCustomDependencyResolution(ivyConfiguration.value, ivyModule.value))
-    license.LicenseReport.makeReport(
-      ivyModule.value,
-      resolution,
-      licenseConfigurations.value,
-      licenseSelection.value,
-      overrides,
-      depExclusions,
-      originatingModule,
-      streams.value.log
-    )
-  }
 )
 
 lazy val commonConfigure: Project => Project = _.settings(

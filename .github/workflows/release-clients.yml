@@ -34,6 +34,7 @@ on:
 permissions:
   contents: write
   packages: write
+  id-token: write # Required for npm Trusted Publishing (OIDC)
 
 jobs:
   publish-clients:
@@ -42,7 +43,6 @@ jobs:
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - name: Checkout
@@ -54,6 +54,10 @@ jobs:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org"
           scope: "@hyperledger"
+
+      # Ensure npm version ≥ 11.5.1 for Trusted Publishing
+      - name: Upgrade npm
+        run: npm install -g npm@^11.5.1
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.8.0
@@ -98,7 +102,8 @@ jobs:
               echo "VERSION_TAG=${{ github.event.inputs.releaseTag }}" >> $GITHUB_ENV
           fi
 
-      - name: Publish clients
+      # The npm publish step uses Trusted Publisher via OIDC
+      - name: Publish clients (npm Trusted Publisher)
         working-directory: cloud-agent/client/generator
         env:
           VERSION_TAG: ${{ env.VERSION_TAG }}
@@ -106,4 +111,7 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
           GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
-        run: yarn publish:clients
+        run: |
+          echo "Using npm version $(npm -v)"
+          npm audit signatures
+          yarn publish:clients
