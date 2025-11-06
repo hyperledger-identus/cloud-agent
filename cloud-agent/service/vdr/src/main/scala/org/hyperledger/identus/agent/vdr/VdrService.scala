@@ -15,6 +15,7 @@ import proxy.VDRProxyMultiDrivers.NoDriverWithThisSpecificationsException
 import urlManagers.BaseUrlManager
 import zio.*
 
+import java.nio.file.{Files, Paths}
 import scala.jdk.CollectionConverters.*
 
 type VdrUrl = String
@@ -143,6 +144,33 @@ object VdrServiceImpl {
           .provide(ZLayer.succeed(indexerConfig))
         (driver, indexerJob)
       }
+      _ <- config.prismDriver.fold(ZIO.unit) { config => createIndexerDirectories(config.prismStateDir).orDie }
       _ <- maybePrismDriver.fold(ZIO.unit)(_._2).fork
     yield maybePrismDriver.map(_._1)
+
+  private def createIndexerDirectories(baseDir: String): Task[Unit] = {
+    val requiredDirs = Seq("cardano-21325", "diddoc", "events", "ssi", "vdr")
+
+    (for {
+      _ <- ZIO.logInfo(s"Initializing PRISM indexer directories at: $baseDir")
+      basePath <- ZIO.attemptBlocking(Paths.get(baseDir))
+      _ <- ZIO.attemptBlocking {
+        if (!Files.exists(basePath)) {
+          Files.createDirectories(basePath)
+        }
+      }
+      _ <- ZIO.attemptBlocking {
+        requiredDirs.foreach { dirName =>
+          val dirPath = basePath.resolve(dirName)
+          if (!Files.exists(dirPath)) {
+            Files.createDirectories(dirPath)
+          }
+        }
+      }
+      _ <- ZIO.logInfo(s"Successfully created PRISM indexer directories at: $baseDir")
+    } yield ()).catchAll { e =>
+      ZIO.logError(s"Failed to create PRISM indexer directories at '$baseDir': ${e.getMessage}") *>
+        ZIO.fail(e)
+    }
+  }
 }
