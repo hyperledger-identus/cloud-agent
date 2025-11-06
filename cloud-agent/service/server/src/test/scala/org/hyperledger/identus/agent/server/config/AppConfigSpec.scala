@@ -22,7 +22,6 @@ object AppConfigSpec extends ZIOSpecDefault {
     walletMnemonic = "",
     walletPassphrase = "passphrase",
     didPrism = "did:prism:123",
-    vdrKeyName = "abcdef",
     vdrPrivateKey = "abcdef",
     stateDir = ""
   )

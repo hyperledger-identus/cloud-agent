@@ -148,7 +148,6 @@ object AppModule {
             walletMnemonic = conf.walletMnemonicSeq,
             walletPassphrase = conf.walletPassphrase,
             didPrism = conf.didPrism,
-            vdrKeyName = conf.vdrKeyName,
             vdrPrivateKey = conf.vdrPrivateKeyBytes,
             prismStateDir = conf.stateDir
           )

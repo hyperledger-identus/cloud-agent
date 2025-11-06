@@ -255,7 +255,6 @@ final case class PrismDriverVdrConfig(
     walletMnemonic: String,
     walletPassphrase: String,
     didPrism: String,
-    vdrKeyName: String,
     vdrPrivateKey: String,
     stateDir: String
 ) {
