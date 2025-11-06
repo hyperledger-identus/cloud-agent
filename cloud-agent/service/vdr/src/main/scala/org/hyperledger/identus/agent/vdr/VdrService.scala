@@ -158,8 +158,6 @@ object VdrServiceImpl {
         if (!Files.exists(basePath)) {
           Files.createDirectories(basePath)
         }
-      }
-      _ <- ZIO.attemptBlocking {
         requiredDirs.foreach { dirName =>
           val dirPath = basePath.resolve(dirName)
           if (!Files.exists(dirPath)) {
