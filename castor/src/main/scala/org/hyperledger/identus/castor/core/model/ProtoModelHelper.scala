@@ -127,7 +127,7 @@ private[castor] trait ProtoModelHelper {
         usage = internalPublicKey.purpose match {
           case InternalKeyPurpose.Master     => node_models.KeyUsage.MASTER_KEY
           case InternalKeyPurpose.Revocation => node_models.KeyUsage.REVOCATION_KEY
-          case InternalKeyPurpose.VDRSigning => node_models.KeyUsage.VDR_SIGNING_KEY
+          case InternalKeyPurpose.VDR        => node_models.KeyUsage.VDR_KEY
         },
         addedOn = None,
         revokedOn = None,
@@ -287,7 +287,7 @@ private[castor] trait ProtoModelHelper {
         case node_models.KeyUsage.CAPABILITY_INVOCATION_KEY => Right(VerificationRelationship.CapabilityInvocation)
         case node_models.KeyUsage.CAPABILITY_DELEGATION_KEY => Right(VerificationRelationship.CapabilityDelegation)
         case node_models.KeyUsage.REVOCATION_KEY            => Right(InternalKeyPurpose.Revocation)
-        case node_models.KeyUsage.VDR_SIGNING_KEY           => Right(InternalKeyPurpose.VDRSigning)
+        case node_models.KeyUsage.VDR_KEY                   => Right(InternalKeyPurpose.VDR)
         case node_models.KeyUsage.Unrecognized(unrecognizedValue) =>
           Left(s"unrecognized KeyUsage: $unrecognizedValue on key ${publicKey.id}")
       }

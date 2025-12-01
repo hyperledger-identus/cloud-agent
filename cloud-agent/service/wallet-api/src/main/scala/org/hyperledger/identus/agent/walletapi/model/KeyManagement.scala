@@ -51,13 +51,13 @@ object VerificationRelationshipCounter {
 final case class InternalKeyCounter(
     master: Int,
     revocation: Int,
-    vdrSigning: Int
+    vdr: Int
 ) {
   def next(keyUsage: InternalKeyPurpose): InternalKeyCounter = {
     keyUsage match {
       case InternalKeyPurpose.Master     => copy(master = master + 1)
       case InternalKeyPurpose.Revocation => copy(revocation = revocation + 1)
-      case InternalKeyPurpose.VDRSigning => copy(vdrSigning = vdrSigning + 1)
+      case InternalKeyPurpose.VDR        => copy(vdr = vdr + 1)
     }
   }
 }
@@ -88,7 +88,7 @@ final case class HdKeyIndexCounter(
       case VerificationRelationship.Authentication       => verificationRelationship.authentication
       case InternalKeyPurpose.Master                     => internalKey.master
       case InternalKeyPurpose.Revocation                 => internalKey.revocation
-      case InternalKeyPurpose.VDRSigning                 => internalKey.vdrSigning
+      case InternalKeyPurpose.VDR                        => internalKey.vdr
     }
     ManagedDIDHdKeyPath(didIndex, keyUsage, keyIndex)
   }
@@ -139,7 +139,7 @@ final case class ManagedDIDHdKeyPath(
       case InternalKeyPurpose.Revocation                 => 5
       case VerificationRelationship.CapabilityInvocation => 6
       case VerificationRelationship.CapabilityDelegation => 7
-      case InternalKeyPurpose.VDRSigning                 => 8
+      case InternalKeyPurpose.VDR                        => 8
     }
   }
 }
