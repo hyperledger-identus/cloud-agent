@@ -220,6 +220,7 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
               InternalKeyCounter(
                 master = keyUsageIndexMap.getOrElse(InternalKeyPurpose.Master, 0),
                 revocation = keyUsageIndexMap.getOrElse(InternalKeyPurpose.Revocation, 0),
+                vdrSigning = keyUsageIndexMap.getOrElse(InternalKeyPurpose.VDRSigning, 0),
               )
             )
           )

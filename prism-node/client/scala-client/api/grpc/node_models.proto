@@ -48,6 +48,9 @@ enum KeyUsage {
   // This is used to specify a mechanism that might be used by the DID subject to delegate a cryptographic capability to another party,
   // such as delegating the authority to access a specific HTTP API to a subordinate.
   CAPABILITY_DELEGATION_KEY = 7;
+
+  // This key-type is used to sign VDR operations (per the PRISM VDR driver spec).
+  VDR_SIGNING_KEY = 8;
 }
 
 /**
