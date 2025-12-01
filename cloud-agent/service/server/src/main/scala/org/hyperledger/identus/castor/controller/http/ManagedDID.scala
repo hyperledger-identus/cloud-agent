@@ -3,13 +3,19 @@ package org.hyperledger.identus.castor.controller.http
 import org.hyperledger.identus.agent.walletapi.model.{DIDPublicKeyTemplate, ManagedDIDDetail, PublicationState}
 import org.hyperledger.identus.agent.walletapi.model as walletDomain
 import org.hyperledger.identus.api.http.Annotation
-import org.hyperledger.identus.castor.core.model.did.{EllipticCurve, PrismDID, VerificationRelationship}
+import org.hyperledger.identus.castor.core.model.did.{
+  EllipticCurve,
+  InternalKeyPurpose,
+  PrismDID,
+  VerificationRelationship
+}
 import org.hyperledger.identus.castor.core.model.did as castorDomain
 import org.hyperledger.identus.shared.utils.Traverse.*
 import sttp.tapir.Schema
 import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 
+import java.lang.IllegalArgumentException
 import scala.language.implicitConversions
 
 final case class ManagedDID(
@@ -98,6 +104,7 @@ object CreateManagedDidRequest {
 
 final case class CreateManagedDidRequestDocumentTemplate(
     publicKeys: Seq[ManagedDIDKeyTemplate],
+    internalKeys: Option[Seq[ManagedDIDInternalKeyTemplate]] = None,
     services: Seq[Service],
     contexts: Option[Seq[Context]]
 )
@@ -114,8 +121,13 @@ object CreateManagedDidRequestDocumentTemplate {
       for {
         services <- template.services.traverse(_.toDomain)
         publicKeys = template.publicKeys.map[DIDPublicKeyTemplate](k => k)
+        internalKeys <- template.internalKeys
+          .getOrElse(Nil)
+          .toList
+          .traverse(_.toDomain)
       } yield walletDomain.ManagedDIDTemplate(
         publicKeys = publicKeys,
+        internalKeys = internalKeys,
         services = services,
         contexts = template.contexts.getOrElse(Nil).map(_.value)
       )
@@ -238,6 +250,61 @@ object ManagedDIDKeyTemplate {
       purpose = publicKeyTemplate.purpose,
       curve = publicKeyTemplate.curve.getOrElse(Curve.secp256k1)
     )
+}
+
+enum InternalPurpose {
+  case vdrSigning extends InternalPurpose
+}
+
+object InternalPurpose {
+  given Conversion[InternalPurpose, InternalKeyPurpose] = { case InternalPurpose.vdrSigning =>
+    InternalKeyPurpose.VDRSigning
+  }
+
+  given Conversion[InternalKeyPurpose, InternalPurpose] = {
+    case InternalKeyPurpose.VDRSigning => InternalPurpose.vdrSigning
+    case other                         => throw IllegalArgumentException(s"Unsupported internal purpose: $other")
+  }
+
+  given encoder: JsonEncoder[InternalPurpose] = JsonEncoder[String].contramap(_.toString)
+  given decoder: JsonDecoder[InternalPurpose] =
+    JsonDecoder[String].mapOrFail(s => InternalPurpose.values.find(_.toString == s).toRight(s"Unknown purpose: $s"))
+  given schema: Schema[InternalPurpose] = Schema.derivedEnumeration.defaultStringBased
+}
+
+@description("An internal key template (not exposed in DID Document).")
+final case class ManagedDIDInternalKeyTemplate(
+    @description(ManagedDIDInternalKeyTemplate.annotations.id.description)
+    @encodedExample(ManagedDIDInternalKeyTemplate.annotations.id.example)
+    id: String,
+    @description(ManagedDIDInternalKeyTemplate.annotations.purpose.description)
+    @encodedExample(ManagedDIDInternalKeyTemplate.annotations.purpose.example)
+    purpose: InternalPurpose
+)
+
+object ManagedDIDInternalKeyTemplate {
+  object annotations {
+    object id
+        extends Annotation[String](
+          description = "Identifier of an internal key stored alongside the DID (not published in DID Document)",
+          example = "vdr-1"
+        )
+
+    object purpose
+        extends Annotation[InternalPurpose](
+          description = "Purpose of the internal key. Currently only `vdrSigning` is supported.",
+          example = InternalPurpose.vdrSigning
+        )
+  }
+
+  given encoder: JsonEncoder[ManagedDIDInternalKeyTemplate] = DeriveJsonEncoder.gen[ManagedDIDInternalKeyTemplate]
+  given decoder: JsonDecoder[ManagedDIDInternalKeyTemplate] = DeriveJsonDecoder.gen[ManagedDIDInternalKeyTemplate]
+  given schema: Schema[ManagedDIDInternalKeyTemplate] = Schema.derived
+
+  extension (template: ManagedDIDInternalKeyTemplate) {
+    def toDomain: Either[String, walletDomain.ManagedInternalDIDKeyTemplate] =
+      Right(walletDomain.ManagedInternalDIDKeyTemplate(template.id, template.purpose: InternalKeyPurpose))
+  }
 }
 
 final case class CreateManagedDIDResponse(

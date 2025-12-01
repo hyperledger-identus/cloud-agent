@@ -29,7 +29,7 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
 
   private val makeCreateOpeartionSpec = suite("makeCreateOpeartionSpec")(
     test("make CrateOperation from same seed is deterministic") {
-      val didTemplate = ManagedDIDTemplate(Nil, Nil, Nil)
+      val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       for {
         result1 <- operationFactory.makeCreateOperation(KeyId("master0"), seed)(0, didTemplate)
         (op1, hdKey1) = result1
@@ -39,7 +39,7 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         assert(hdKey1)(equalTo(hdKey2))
     },
     test("make CreateOperation must contain 1 master key") {
-      val didTemplate = ManagedDIDTemplate(Nil, Nil, Nil)
+      val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       for {
         result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
         (op, hdKey) = result
@@ -55,8 +55,8 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
           DIDPublicKeyTemplate("auth-1", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
           DIDPublicKeyTemplate("issue-0", VerificationRelationship.AssertionMethod, EllipticCurve.SECP256K1),
         ),
-        Nil,
-        Nil
+        services = Nil,
+        contexts = Nil
       )
       for {
         result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
@@ -76,8 +76,8 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
           DIDPublicKeyTemplate("auth-1", VerificationRelationship.Authentication, EllipticCurve.ED25519),
           DIDPublicKeyTemplate("comm-0", VerificationRelationship.KeyAgreement, EllipticCurve.X25519),
         ),
-        Nil,
-        Nil
+        services = Nil,
+        contexts = Nil
       )
       for {
         result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)

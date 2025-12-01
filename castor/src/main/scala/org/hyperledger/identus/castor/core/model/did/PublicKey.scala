@@ -11,6 +11,7 @@ final case class PublicKey(
 enum InternalKeyPurpose {
   case Master extends InternalKeyPurpose
   case Revocation extends InternalKeyPurpose
+  case VDRSigning extends InternalKeyPurpose
 }
 
 final case class InternalPublicKey(

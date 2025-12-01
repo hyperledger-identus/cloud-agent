@@ -60,14 +60,25 @@ class OperationFactory(apollo: Apollo) {
         InternalKeyPurpose.Master,
         hdKeysWithCounter._2
       )
+      derivedInternalKeysWithCounter <- ZIO.foldLeft(didTemplate.internalKeys)(
+        (Vector.empty[KeyDerivationOutcome[InternalPublicKey]], masterKeyOutcome.nextCounter)
+      ) { case ((keys, keyCounter), template) =>
+        deriveInternalPublicKey(seed)(KeyId(template.id), template.purpose, keyCounter)
+          .map(outcome => (keys :+ outcome, outcome.nextCounter))
+      }
+      (derivedInternalKeys, _) = derivedInternalKeysWithCounter
       operation = PrismDIDOperation.Create(
-        publicKeys = hdKeysWithCounter._1.map(_._1) ++ randKeys.map(_.publicKey) ++ Seq(masterKeyOutcome.publicKey),
+        publicKeys = hdKeysWithCounter._1.map(_._1) ++
+          randKeys.map(_.publicKey) ++
+          Seq(masterKeyOutcome.publicKey) ++
+          derivedInternalKeys.map(_.publicKey),
         services = didTemplate.services,
         context = didTemplate.contexts
       )
       keys = CreateDIDKey(
         hdKeys = hdKeysWithCounter._1.map(i => i.publicKey.id.value -> i.path).toMap ++
-          Map(masterKeyOutcome.publicKey.id.value -> masterKeyOutcome.path),
+          Map(masterKeyOutcome.publicKey.id.value -> masterKeyOutcome.path) ++
+          derivedInternalKeys.map(i => i.publicKey.id.value -> i.path).toMap,
         randKeys = randKeys.map(i => i.publicKey.id.value -> i.key).toMap,
       )
     } yield operation -> keys

@@ -2,6 +2,7 @@ package org.hyperledger.identus.agent.walletapi.model
 
 import org.hyperledger.identus.castor.core.model.did.{
   EllipticCurve,
+  InternalKeyPurpose,
   Service,
   ServiceEndpoint,
   ServiceType,
@@ -10,6 +11,7 @@ import org.hyperledger.identus.castor.core.model.did.{
 
 final case class ManagedDIDTemplate(
     publicKeys: Seq[DIDPublicKeyTemplate],
+    internalKeys: Seq[ManagedInternalDIDKeyTemplate] = Seq.empty,
     services: Seq[Service],
     contexts: Seq[String]
 )
@@ -18,6 +20,11 @@ final case class DIDPublicKeyTemplate(
     id: String,
     purpose: VerificationRelationship,
     curve: EllipticCurve
+)
+
+final case class ManagedInternalDIDKeyTemplate(
+    id: String,
+    purpose: InternalKeyPurpose
 )
 
 sealed trait UpdateManagedDIDAction
