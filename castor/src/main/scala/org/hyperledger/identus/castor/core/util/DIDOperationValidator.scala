@@ -361,7 +361,8 @@ private trait BaseOperationValidator {
   ): Either[OperationValidationError, Unit] = {
     val keys = keyDataExtractor(operation)
     val masterKeys = keys.collect { case (id, InternalKeyPurpose.Master, keyData) => id -> keyData }
-    val invalidKeyIds = masterKeys
+    val vdrKeys = keys.collect { case (id, InternalKeyPurpose.VDRSigning, keyData) => id -> keyData }
+    val invalidKeyIds = (masterKeys ++ vdrKeys)
       .filter { case (_, pk) =>
         pk match {
           case PublicKeyData.ECKeyData(EllipticCurve.SECP256K1, x, y) =>
