@@ -51,7 +51,7 @@ package object sql {
       case "REVOCATION"            => InternalKeyPurpose.Revocation
       case "CAPABILITY_INVOCATION" => VerificationRelationship.CapabilityInvocation
       case "CAPABILITY_DELEGATION" => VerificationRelationship.CapabilityDelegation
-      case "VDR_SIGNING"           => InternalKeyPurpose.VDRSigning
+      case "VDR_KEY"               => InternalKeyPurpose.VDR
       case s                       => throw InvalidEnum[VerificationRelationship | InternalKeyPurpose](s)
     },
     {
@@ -62,7 +62,7 @@ package object sql {
       case InternalKeyPurpose.Revocation                 => "REVOCATION"
       case VerificationRelationship.CapabilityInvocation => "CAPABILITY_INVOCATION"
       case VerificationRelationship.CapabilityDelegation => "CAPABILITY_DELEGATION"
-      case InternalKeyPurpose.VDRSigning                 => "VDR_SIGNING"
+      case InternalKeyPurpose.VDR                        => "VDR_KEY"
     }
   )
 

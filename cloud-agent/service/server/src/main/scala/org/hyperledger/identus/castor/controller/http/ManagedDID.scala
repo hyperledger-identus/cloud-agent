@@ -253,16 +253,16 @@ object ManagedDIDKeyTemplate {
 }
 
 enum InternalPurpose {
-  case vdrSigning extends InternalPurpose
+  case vdr extends InternalPurpose
 }
 
 object InternalPurpose {
-  given Conversion[InternalPurpose, InternalKeyPurpose] = { case InternalPurpose.vdrSigning =>
-    InternalKeyPurpose.VDRSigning
+  given Conversion[InternalPurpose, InternalKeyPurpose] = { case InternalPurpose.vdr =>
+    InternalKeyPurpose.VDR
   }
 
   given Conversion[InternalKeyPurpose, InternalPurpose] = {
-    case InternalKeyPurpose.VDRSigning => InternalPurpose.vdrSigning
+    case InternalKeyPurpose.VDR => InternalPurpose.vdr
     case other                         => throw IllegalArgumentException(s"Unsupported internal purpose: $other")
   }
 
@@ -292,8 +292,8 @@ object ManagedDIDInternalKeyTemplate {
 
     object purpose
         extends Annotation[InternalPurpose](
-          description = "Purpose of the internal key. Currently only `vdrSigning` is supported.",
-          example = InternalPurpose.vdrSigning
+          description = "Purpose of the internal key. Currently only `vdr` is supported.",
+          example = InternalPurpose.vdr
         )
   }
 

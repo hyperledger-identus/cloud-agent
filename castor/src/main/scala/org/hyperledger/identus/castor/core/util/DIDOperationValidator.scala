@@ -361,7 +361,7 @@ private trait BaseOperationValidator {
   ): Either[OperationValidationError, Unit] = {
     val keys = keyDataExtractor(operation)
     val masterKeys = keys.collect { case (id, InternalKeyPurpose.Master, keyData) => id -> keyData }
-    val vdrKeys = keys.collect { case (id, InternalKeyPurpose.VDRSigning, keyData) => id -> keyData }
+    val vdrKeys = keys.collect { case (id, InternalKeyPurpose.VDR, keyData) => id -> keyData }
     val invalidKeyIds = (masterKeys ++ vdrKeys)
       .filter { case (_, pk) =>
         pk match {
