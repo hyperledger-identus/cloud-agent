@@ -4,10 +4,15 @@ import drivers.{DatabaseDriver, InMemoryDriver}
 import fmgp.crypto.Secp256k1PrivateKey
 import fmgp.did.method.prism.{BlockfrostConfig, BlockfrostRyoConfig, DIDPrism}
 import fmgp.did.method.prism.cardano.CardanoWalletConfig
-// import fmgp.did.method.prism.vdr.Indexer
-// import fmgp.did.method.prism.IndexerConfig
-// import fmgp.did.method.prism.PrismStateInMemory
-import hyperledger.identus.vdr.prism.PRISMDriver
+import fmgp.did.method.prism.vdr.Indexer
+import fmgp.did.method.prism.vdr.VDRService
+import fmgp.did.method.prism.vdr.VDRServiceImpl
+import fmgp.did.method.prism.IndexerConfig
+import fmgp.did.method.prism.PrismChainService
+import fmgp.did.method.prism.PrismChainServiceImpl
+import fmgp.did.method.prism.PrismState
+import fmgp.did.method.prism.PrismStateInMemory
+import hyperledger.identus.vdr.prism.PRISMDriverInMemory
 import interfaces.{Driver, Proof}
 import javax.sql.DataSource
 import org.hyperledger.identus.agent.vdr.VdrServiceError.{DriverNotFound, VdrEntryNotFound}
@@ -110,7 +115,7 @@ object VdrServiceImpl {
           if config.enableDatabaseDriver
           then Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
           else None
-        maybePrismDriver <- initPrismDriver
+        maybePrismDriver <- config.prismDriver.fold(ZIO.none)(config => initPrismDriver(config).asSome)
         drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver).flatten
         proxy = VDRProxyMultiDrivers(
           urlManager,
@@ -121,32 +126,36 @@ object VdrServiceImpl {
       } yield VdrServiceImpl(proxy, proxy.getIdentifier(), proxy.getVersion())
     }
 
-  private def initPrismDriver: URIO[Config, Option[Driver]] =
+  private def initPrismDriver(config: PRISMDriverConfig): UIO[Driver] =
     for
-      config <- ZIO.service[Config]
-      _ <- config.prismDriver.fold(ZIO.unit)(config => createIndexerDirectories(config.prismStateDir).orDie)
-      maybePrismDriver = config.prismDriver.map { config =>
-        val bfConfig = BlockfrostConfig(
-          config.blockfrostApiKey,
-          Some(BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42)) // TODO: pass these from configurations
+      _ <- createIndexerDirectories(config.prismStateDir).orDie
+      bfConfig = BlockfrostConfig(
+        config.blockfrostApiKey,
+        Some(
+          BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42)
+        ) // TODO: pass these from configurations
+      )
+      wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase)
+      chain: PrismChainService = PrismChainServiceImpl(bfConfig, wallet)
+      prismState <- PrismStateInMemory.empty
+      vdrService: VDRService = VDRServiceImpl(chain, prismState)
+      driver = PRISMDriverInMemory(
+        vdrService = vdrService,
+        didPrism = DIDPrism(config.didPrism.replace("did:prism:", "")),
+        vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
+      )
+      indexerConfig: IndexerConfig =
+        IndexerConfig(mBlockfrostConfig = Some(bfConfig), workdir = config.prismStateDir)
+      _ <- Indexer.indexerJobFS
+        .tap(_ =>
+          PRISMDriverInMemory.loadPrismStateFromChunkFiles
+            .map(state => state.lastSyncedBlockEpochSecondNano)
         )
-        val driver = PRISMDriver(
-          bfConfig = bfConfig,
-          wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase),
-          didPrism = DIDPrism(config.didPrism.replace("did:prism:", "")),
-          vdrKey = Secp256k1PrivateKey(config.vdrPrivateKey),
-          workdir = config.prismStateDir
-        )
-        // val indexerConfig = IndexerConfig(Some(bfConfig), config.prismStateDir)
-        // val indexerJob = Indexer.indexerJob
-        val indexerJob = ZIO.unit
-          // .tap(_ => driver.initProgram)
-          // .schedule(Schedule.spaced(config.indexIntervalSecond.seconds))
-          // .provide(ZLayer.succeed(indexerConfig), ZLayer(PrismStateInMemory.empty))
-        (driver, indexerJob)
-      }
-      _ <- maybePrismDriver.fold(ZIO.unit)(_._2).fork
-    yield maybePrismDriver.map(_._1)
+        .schedule(Schedule.spaced(config.indexIntervalSecond.seconds))
+        .provideSome[PrismState](ZLayer.succeed(indexerConfig))
+        .provideEnvironment(ZEnvironment(prismState))
+        .fork
+    yield driver
 
   private def createIndexerDirectories(baseDir: String): Task[Unit] = {
     val requiredDirs = Seq("cardano-21325", "diddoc", "events", "ssi", "vdr")
