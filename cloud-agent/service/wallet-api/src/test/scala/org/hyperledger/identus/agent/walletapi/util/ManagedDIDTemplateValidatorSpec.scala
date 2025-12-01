@@ -95,7 +95,7 @@ object ManagedDIDTemplateValidatorSpec extends ZIOSpecDefault {
             curve = EllipticCurve.SECP256K1
           )
         ),
-        internalKeys = Seq(ManagedInternalDIDKeyTemplate("vdr-1", InternalKeyPurpose.VDRSigning)),
+        internalKeys = Seq(ManagedInternalDIDKeyTemplate("vdr-1", InternalKeyPurpose.VDR)),
         services = Nil,
         contexts = Nil
       )
@@ -120,7 +120,7 @@ object ManagedDIDTemplateValidatorSpec extends ZIOSpecDefault {
             curve = EllipticCurve.SECP256K1
           )
         ),
-        internalKeys = Seq(ManagedInternalDIDKeyTemplate(keyId, InternalKeyPurpose.VDRSigning)),
+        internalKeys = Seq(ManagedInternalDIDKeyTemplate(keyId, InternalKeyPurpose.VDR)),
         services = Nil,
         contexts = Nil
       )
