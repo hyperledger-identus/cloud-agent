@@ -23,8 +23,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  actions: write
 
 # https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/prism-agent-v1.29.0/prism-agent/service/api/http/prism-agent-openapi-spec.yaml
 # https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/main/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml
@@ -33,6 +31,10 @@ jobs:
   oasdiff-breaking:
     name: "Open API specification breaking changes detection"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      actions: write
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3

@@ -7,14 +7,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
 
 jobs:
   scala-steward:
     runs-on: ubuntu-latest
     name: Launch Scala Steward
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3

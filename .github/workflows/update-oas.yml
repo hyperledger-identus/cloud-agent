@@ -9,11 +9,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     name: "Build and Publish Cloud-Agent Revision"
+    permissions:
+      contents: write
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_ACTOR_EMAIL: "hyperledger-bot@hyperledger.org"

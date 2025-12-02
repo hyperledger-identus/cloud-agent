@@ -32,14 +32,16 @@ on:
       - "v*"
 
 permissions:
-  contents: write
-  packages: write
-  id-token: write # Required for npm Trusted Publishing (OIDC)
+  contents: read
 
 jobs:
   publish-clients:
     name: "Build and publish Identus Cloud Agent clients"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write # Required for npm Trusted Publishing (OIDC)
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
