@@ -151,7 +151,8 @@ object AppModule {
             walletPassphrase = conf.walletPassphrase,
             didPrism = conf.didPrism,
             vdrPrivateKey = conf.vdrPrivateKeyBytes,
-            prismStateDir = conf.stateDir
+            prismStateDir = conf.stateDir,
+            indexIntervalSecond = conf.indexIntervalSecond
           )
         }
       VdrServiceImpl.Config(

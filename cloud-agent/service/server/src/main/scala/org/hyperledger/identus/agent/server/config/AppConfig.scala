@@ -263,7 +263,8 @@ final case class PrismDriverVdrConfig(
     walletPassphrase: String,
     didPrism: String,
     vdrPrivateKey: String,
-    stateDir: String
+    stateDir: String,
+    indexIntervalSecond: Int
 ) {
   def vdrPrivateKeyBytes: Array[Byte] = HexString.fromStringUnsafe(vdrPrivateKey).toByteArray
   def walletMnemonicSeq: Seq[String] = walletMnemonic.split(" ").toSeq.filter(_.nonEmpty)
