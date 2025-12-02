@@ -33,7 +33,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "@types/url-parse": "1.4.4",
+    "@types/url-parse": "1.4.11",
     "typescript": "^4.0"
   },
   "publishConfig": {
