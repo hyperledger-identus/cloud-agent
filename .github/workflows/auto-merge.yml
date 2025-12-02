@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   on-pull-request:
     if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'autoupdate')
