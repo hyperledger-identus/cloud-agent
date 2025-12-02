@@ -16,14 +16,19 @@ jobs:
     runs-on: ubuntu-latest
     name: Launch Scala Steward
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
       - name: Checkout the repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: crazy-max/ghaction-import-gpg@v6
+      - uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
@@ -40,7 +45,7 @@ jobs:
           echo "email:       ${{ steps.import_gpg.outputs.email }}"
 
       - name: Launch Scala Steward
-        uses: scala-steward-org/scala-steward-action@v2
+        uses: scala-steward-org/scala-steward-action@f60ccd18bc9d8083e6809d9dc3db4a69a71d856c # v2.78.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

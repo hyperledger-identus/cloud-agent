@@ -14,6 +14,9 @@ concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   megalinter:
     name: Megalinter
@@ -27,8 +30,13 @@ jobs:
 
     steps:
       # Git Checkout
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -36,11 +44,11 @@ jobs:
 
       - name: MegaLinter
         id: ml
-        uses: oxsecurity/megalinter@v8
+        uses: oxsecurity/megalinter@e08c2b05e3dbc40af4c23f41172ef1e068a7d651 # v8.8.0
 
       - name: Archive production artifacts
         if: success() || failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: Mega-Linter reports
           path: |
@@ -48,7 +56,7 @@ jobs:
             mega-linter.log
           overwrite: true
 
-      - uses: crazy-max/ghaction-import-gpg@v6.2.0
+      - uses: crazy-max/ghaction-import-gpg@cb9bde2e2525e640591a934b1fd28eef1dcaf5e5 # v6.2.0
         if: failure() && steps.ml.outputs.has_updated_sources == 1
         id: import_gpg
         with:
@@ -63,7 +71,7 @@ jobs:
       - name: Create Pull Request with applied fixes
         id: cpr
         if: failure() && steps.ml.outputs.has_updated_sources == 1 && (env.APPLY_FIXES_EVENT == 'all' || env.APPLY_FIXES_EVENT == github.event_name) && env.APPLY_FIXES_MODE == 'pull_request' && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository) && !contains(github.event.head_commit.message, 'skip fix')
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: ${{ github.head_ref }}
