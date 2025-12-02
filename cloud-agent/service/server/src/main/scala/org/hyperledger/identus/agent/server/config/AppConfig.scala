@@ -247,11 +247,18 @@ final case class VdrConfig(
   def validate: Either[String, Unit] =
     if prismDriverEnabled && prismDriver.isEmpty then
       Left("PRISM vdr is enabled but prismDriver config is not provided.")
-    else Right(())
+    else if prismDriverEnabled then prismDriver.map(_.validate).getOrElse(Right(()))
+    else Right(()) // Don't validate config when prismDriver is disabled
 }
 
+final case class BlockfrostPrivateNetworkConfig(
+    url: String,
+    protocolMagic: Int
+)
+
 final case class PrismDriverVdrConfig(
-    blockfrostApiKey: String,
+    blockfrostApiKey: Option[String],
+    privateNetwork: Option[BlockfrostPrivateNetworkConfig],
     walletMnemonic: String,
     walletPassphrase: String,
     didPrism: String,
@@ -260,4 +267,14 @@ final case class PrismDriverVdrConfig(
 ) {
   def vdrPrivateKeyBytes: Array[Byte] = HexString.fromStringUnsafe(vdrPrivateKey).toByteArray
   def walletMnemonicSeq: Seq[String] = walletMnemonic.split(" ").toSeq.filter(_.nonEmpty)
+
+  def validate: Either[String, Unit] =
+    (blockfrostApiKey, privateNetwork) match {
+      case (Some(_), Some(_)) =>
+        Left("PRISM driver configuration is invalid. blockfrostApiKey and privateNetwork are mutually exclusive.")
+      case (None, None) =>
+        Left("PRISM driver configuration is invalid. Either blockfrostApiKey or privateNetwork must be provided.")
+      case _ =>
+        Right(())
+    }
 }

@@ -92,7 +92,8 @@ object VdrServiceImpl {
   )
 
   final case class PRISMDriverConfig(
-      blockfrostApiKey: String,
+      blockfrostApiKey: Option[String],
+      privateNetwork: Option[(String, Int)], // (url, protocolMagic)
       walletMnemonic: Seq[String],
       walletPassphrase: String,
       didPrism: String,
@@ -129,12 +130,19 @@ object VdrServiceImpl {
   private def initPrismDriver(config: PRISMDriverConfig): UIO[Driver] =
     for
       _ <- createIndexerDirectories(config.prismStateDir).orDie
-      bfConfig = BlockfrostConfig(
-        config.blockfrostApiKey,
-        Some(
-          BlockfrostRyoConfig(url = "http://localhost:18082", protocolMagic = 42)
-        ) // TODO: pass these from configurations
-      )
+      bfConfig = (config.blockfrostApiKey, config.privateNetwork) match {
+        case (Some(apiKey), None) =>
+          BlockfrostConfig(apiKey, None)
+        case (None, Some((url, protocolMagic))) =>
+          BlockfrostConfig(
+            "", // Empty API key for private network
+            Some(BlockfrostRyoConfig(url = url, protocolMagic = protocolMagic))
+          )
+        case _ =>
+          throw new IllegalStateException(
+            "Invalid blockfrost configuration: exactly one of blockfrostApiKey or privateNetwork must be provided"
+          )
+      }
       wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase)
       chain: PrismChainService = PrismChainServiceImpl(bfConfig, wallet)
       prismState <- PrismStateInMemory.empty

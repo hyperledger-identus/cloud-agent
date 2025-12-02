@@ -145,6 +145,7 @@ object AppModule {
         .map { conf =>
           VdrServiceImpl.PRISMDriverConfig(
             blockfrostApiKey = conf.blockfrostApiKey,
+            privateNetwork = conf.privateNetwork.map(pn => (pn.url, pn.protocolMagic)),
             walletMnemonic = conf.walletMnemonicSeq,
             walletPassphrase = conf.walletPassphrase,
             didPrism = conf.didPrism,
