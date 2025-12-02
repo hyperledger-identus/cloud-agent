@@ -15,6 +15,9 @@ on:
       - "main"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   BENCHMARKING_DIR: "tests/performance-tests/agent-performance-tests-k6"
   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
