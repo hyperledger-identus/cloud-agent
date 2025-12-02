@@ -91,9 +91,14 @@ object VdrServiceImpl {
       prismDriver: Option[PRISMDriverConfig]
   )
 
+  final case class BlockfrostPrivateNetworkConfig(
+      url: String,
+      protocolMagic: Int
+  )
+
   final case class PRISMDriverConfig(
       blockfrostApiKey: Option[String],
-      privateNetwork: Option[(String, Int)], // (url, protocolMagic)
+      privateNetwork: Option[BlockfrostPrivateNetworkConfig],
       walletMnemonic: Seq[String],
       walletPassphrase: String,
       didPrism: String,
@@ -133,10 +138,10 @@ object VdrServiceImpl {
       bfConfig = (config.blockfrostApiKey, config.privateNetwork) match {
         case (Some(apiKey), None) =>
           BlockfrostConfig(apiKey, None)
-        case (None, Some((url, protocolMagic))) =>
+        case (None, Some(networkConfig)) =>
           BlockfrostConfig(
-            "", // Empty API key for private network
-            Some(BlockfrostRyoConfig(url = url, protocolMagic = protocolMagic))
+            "", // Empty API key for private blockfrost instance
+            Some(BlockfrostRyoConfig(url = networkConfig.url, protocolMagic = networkConfig.protocolMagic))
           )
         case _ =>
           throw new IllegalStateException(
