@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /cloud-agent/client/generator
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /cloud-agent/client/typescript
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /examples/st-oid4vci/demo
+    schedule:
+      interval: daily
+
+  - package-ecosystem: pip
+    directory: /examples/st-oid4vci/demo
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /prism-node/client/scala-client/api/grpc
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /tests/didcomm-tests
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /tests/performance-tests/agent-performance-tests-k6
+    schedule:
+      interval: daily

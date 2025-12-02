@@ -28,12 +28,17 @@ jobs:
       REVISION_VERSION: ${{ steps.revision.outputs.REVISION_VERSION }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - uses: crazy-max/ghaction-import-gpg@v6
+      - uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
         id: import_gpg
         with:
           gpg_private_key: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
@@ -43,11 +48,11 @@ jobs:
           git_push_gpgsign: true
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v14
+        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
           java-version: openjdk@1.17
 
-      - uses: coursier/cache-action@v6
+      - uses: coursier/cache-action@4e2615869d13561d626ed48655e1a39e5b192b3c # v6.4.9
         id: coursier-cache
 
       - name: Build Cloud-Agent Open API Specification
@@ -57,7 +62,7 @@ jobs:
           sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS $GITHUB_WORKSPACE/cloud-agent/service/api/cloud-agent-openapi-spec.yaml $VERSION"
 
       - name: Commit and push if changed
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
         with:
           commit_message: "chore(oas) update Open API Specification"
           file_pattern: "cloud-agent/service/api/cloud-agent-openapi-spec.yaml"

@@ -27,26 +27,31 @@ jobs:
       LOGS_DIR: "tests/integration-tests/target/logs"
       REPORTS_DIR: "tests/integration-tests/target/site/serenity"
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v14
+        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
           java-version: openjdk@1.17
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: hyperledger-bot
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Compose
-        uses: ndeloof/install-compose-action@v0.0.1
+        uses: ndeloof/install-compose-action@4a33bc31f327b8231c4f343f6fba704fedc0fa23 # v0.0.1
         with:
           version: v2.12.2 # defaults to 'latest'
           legacy: true # will also install in PATH as `docker-compose`
@@ -62,7 +67,7 @@ jobs:
           echo "agent_version=$(cut -d'=' -f2 version.sbt | tr -d '" ')" >> "${GITHUB_OUTPUT}"
           echo "prism_node_version=$(grep PRISM_NODE_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62 # v3.14.1
         with:
           distribution: "zulu"
           java-version: "21"
@@ -123,7 +128,7 @@ jobs:
 
       - name: Publish e2e test Results
         id: publish-unit-tests
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
         with:
           junit_files: "${{ env.REPORTS_DIR }}/SERENITY-JUNIT-*.xml"
           comment_title: "Integration Test Results"
@@ -131,7 +136,7 @@ jobs:
 
       - name: Upload serenity report
         if: github.ref_name == 'main' || failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: integration-tests-result
           path: ${{ env.REPORTS_DIR }}
@@ -139,7 +144,7 @@ jobs:
 
       - name: Upload logs
         if: github.ref_name == 'main' || failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: docker-logs
           path: ${{ env.LOGS_DIR }}
@@ -147,7 +152,7 @@ jobs:
 
       - name: Slack Notification
         if: github.ref_name == 'main' && failure()
-        uses: rtCamp/action-slack-notify@v2
+        uses: rtCamp/action-slack-notify@e31e87e03dd19038e411e38ae27cbad084a90661 # v2.3.3
         env:
           SLACK_COLOR: ${{ steps.analyze_test_results.outputs.conclusion }}
           SLACK_MESSAGE: |
@@ -159,7 +164,7 @@ jobs:
           SLACK_USERNAME: circleci
           SLACK_WEBHOOK: ${{ secrets.E2E_TESTS_SLACK_WEBHOOK }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 20
 
