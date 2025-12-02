@@ -10,12 +10,14 @@ on:
 
 # Permission can be added at job level or workflow level
 permissions:
-  contents: write # This is required to upload for the dependency-submission
+  contents: read
 
 jobs:
   dependency-graph:
     name: Update Dependency Graph
     runs-on: ubuntu-latest # or windows-latest, or macOS-latest
+    permissions:
+      contents: write # This is required to upload for the dependency-submission
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
