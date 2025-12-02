@@ -59,7 +59,7 @@ jobs:
           REV_TAG: ${{ github.event.inputs.revision_tag }}
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          PR_REPO_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
+          PR_REPO_OWNER: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           echo Revision tag: "$REV_TAG"
           if [[ "$REV_TAG" =~ cloud-agent-v* ]]; then
