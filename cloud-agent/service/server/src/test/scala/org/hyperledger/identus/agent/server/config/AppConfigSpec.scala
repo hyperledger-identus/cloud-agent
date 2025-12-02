@@ -173,7 +173,6 @@ object AppConfigSpec extends ZIOSpecDefault {
           )
         )
       )
-      // When prismDriver is disabled, validation is skipped even if config is invalid
       assert(vdrConfig.validate)(isRight(anything))
     }
   ).provide(SystemModule.configLayer) + {

@@ -248,7 +248,7 @@ final case class VdrConfig(
     if prismDriverEnabled && prismDriver.isEmpty then
       Left("PRISM vdr is enabled but prismDriver config is not provided.")
     else if prismDriverEnabled then prismDriver.map(_.validate).getOrElse(Right(()))
-    else Right(()) // Don't validate config when prismDriver is disabled
+    else Right(())
 }
 
 final case class BlockfrostPrivateNetworkConfig(
