@@ -13,6 +13,7 @@ on:
   pull_request:
 
 permissions:
+  contents: read
   checks: write
   pull-requests: write
 
@@ -23,6 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     permissions:
+      contents: read
       checks: write
       pull-requests: write
     env:
@@ -35,14 +37,19 @@ jobs:
       env:
         TESTCONTAINERS_RYUK_DISABLED: true
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
       - name: Git checkout (merge)
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         if: github.event_name != 'pull_request'
         with:
           fetch-depth: 0
 
       - name: Git checkout (PR)
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         if: github.event_name == 'pull_request'
         with:
           fetch-depth: 0
@@ -72,7 +79,7 @@ jobs:
 
       - name: Publish test results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
         with:
           junit_files: "./target/test-reports/**/TEST-*.xml"
           comment_title: "Unit Test Results"

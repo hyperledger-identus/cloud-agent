@@ -44,15 +44,15 @@ lazy val V = new {
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.20"
-  val zioConfig = "4.0.4"
+  val zio = "2.1.21"
+  val zioConfig = "4.0.5"
   val zioLogging = "2.5.1"
   val zioJson = "0.7.44"
-  val zioHttp = "3.4.0"
+  val zioHttp = "3.4.1"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
-  val zioMetricsConnector = "2.4.3"
+  val zioMetricsConnector = "2.5.0"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "3.0.0"
+  val zioKafka = "3.1.0"
   val mockito = "3.2.18.0"
   val monocle = "3.3.0"
 
@@ -76,7 +76,7 @@ lazy val V = new {
   val scalaUri = "4.2.0"
 
   val jwtZioVersion = "11.0.2"
-  val zioPreludeVersion = "1.0.0-RC41"
+  val zioPreludeVersion = "1.0.0-RC42"
 
   val apollo = "1.3.5"
 
@@ -903,7 +903,7 @@ lazy val cloudAgentServer = project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
-    dockerBaseImage := "openjdk:21-jdk",
+    dockerBaseImage := "eclipse-temurin:21-jdk-ubi9-minimal",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.hyperledger.identus.agent.server.buildinfo",
     Compile / packageDoc / publishArtifact := false
