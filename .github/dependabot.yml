@@ -1,46 +1,74 @@
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: /
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
 
-  - package-ecosystem: npm
-    directory: /cloud-agent/client/generator
+  - package-ecosystem: "npm"
+    directories:
+      - "/"
+      - "/cloud-agent/client/generator"
+      - "/cloud-agent/client/typescript"
+      - "/prism-node/client/scala-client/api/grpc"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      npm-prod-deps:
+        patterns:
+          - "*"
 
-  - package-ecosystem: npm
-    directory: /cloud-agent/client/typescript
+  - package-ecosystem: "npm"
+    directories:
+      - "/tests/didcomm-tests"
+      - "/tests/performance-tests/agent-performance-tests-k6"
     schedule:
-      interval: daily
+      interval: "monthly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      npm-test-deps:
+        patterns:
+          - "*"
 
-  - package-ecosystem: docker
-    directory: /examples/st-oid4vci/demo
+  - package-ecosystem: "docker"
+    directories:
+      - "/examples/st-oid4vci/demo"
     schedule:
-      interval: daily
+      interval: "monthly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      docker-demo-deps:
+        patterns:
+          - "*"
 
-  - package-ecosystem: pip
-    directory: /examples/st-oid4vci/demo
+  - package-ecosystem: "pip"
+    directories:
+      - "/examples/st-oid4vci/demo"
     schedule:
-      interval: daily
-
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: daily
-
-  - package-ecosystem: npm
-    directory: /prism-node/client/scala-client/api/grpc
-    schedule:
-      interval: daily
-
-  - package-ecosystem: npm
-    directory: /tests/didcomm-tests
-    schedule:
-      interval: daily
-
-  - package-ecosystem: npm
-    directory: /tests/performance-tests/agent-performance-tests-k6
-    schedule:
-      interval: daily
+      interval: "monthly"
+      day: "monday"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      pip-demo-deps:
+        patterns:
+          - "*"
