@@ -2,16 +2,18 @@ package org.hyperledger.identus.agent.vdr
 
 import drivers.{DatabaseDriver, InMemoryDriver}
 import fmgp.crypto.Secp256k1PrivateKey
-import fmgp.did.method.prism.{BlockfrostConfig, BlockfrostRyoConfig, DIDPrism}
+import fmgp.did.method.prism.{
+  BlockfrostConfig,
+  BlockfrostRyoConfig,
+  DIDPrism,
+  IndexerConfig,
+  PrismChainService,
+  PrismChainServiceImpl,
+  PrismState,
+  PrismStateInMemory
+}
 import fmgp.did.method.prism.cardano.CardanoWalletConfig
-import fmgp.did.method.prism.vdr.Indexer
-import fmgp.did.method.prism.vdr.VDRService
-import fmgp.did.method.prism.vdr.VDRServiceImpl
-import fmgp.did.method.prism.IndexerConfig
-import fmgp.did.method.prism.PrismChainService
-import fmgp.did.method.prism.PrismChainServiceImpl
-import fmgp.did.method.prism.PrismState
-import fmgp.did.method.prism.PrismStateInMemory
+import fmgp.did.method.prism.vdr.{Indexer, VDRService, VDRServiceImpl}
 import hyperledger.identus.vdr.prism.PRISMDriverInMemory
 import interfaces.{Driver, Proof}
 import javax.sql.DataSource
