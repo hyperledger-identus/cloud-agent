@@ -1,6 +1,6 @@
 certifi==2024.7.4
 cffi==1.16.0
-charset-normalizer==3.3.2
+charset-normalizer==3.4.4
 cryptography==46.0.3
 idna==3.7
 pycparser==2.22
