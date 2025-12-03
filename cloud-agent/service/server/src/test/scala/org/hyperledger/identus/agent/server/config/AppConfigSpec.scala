@@ -21,10 +21,10 @@ object AppConfigSpec extends ZIOSpecDefault {
     blockfrostApiKey = Some("api-key"),
     privateNetwork = None,
     walletMnemonic = "",
-    walletPassphrase = "passphrase",
     didPrism = "did:prism:123",
     vdrPrivateKey = "abcdef",
-    stateDir = ""
+    stateDir = "",
+    indexIntervalSecond = 60
   )
 
   private val baseVdrConfig = VdrConfig(

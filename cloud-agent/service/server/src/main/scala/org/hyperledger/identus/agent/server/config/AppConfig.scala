@@ -260,7 +260,6 @@ final case class PrismDriverVdrConfig(
     blockfrostApiKey: Option[String],
     privateNetwork: Option[BlockfrostPrivateNetworkConfig],
     walletMnemonic: String,
-    walletPassphrase: String,
     didPrism: String,
     vdrPrivateKey: String,
     stateDir: String,

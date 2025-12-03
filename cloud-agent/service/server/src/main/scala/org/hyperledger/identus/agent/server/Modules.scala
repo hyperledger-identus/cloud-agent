@@ -148,7 +148,6 @@ object AppModule {
             privateNetwork =
               conf.privateNetwork.map(pn => VdrServiceImpl.BlockfrostPrivateNetworkConfig(pn.url, pn.protocolMagic)),
             walletMnemonic = conf.walletMnemonicSeq,
-            walletPassphrase = conf.walletPassphrase,
             didPrism = conf.didPrism,
             vdrPrivateKey = conf.vdrPrivateKeyBytes,
             prismStateDir = conf.stateDir,

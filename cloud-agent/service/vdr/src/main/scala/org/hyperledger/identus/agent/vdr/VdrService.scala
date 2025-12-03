@@ -100,7 +100,6 @@ object VdrServiceImpl {
       blockfrostApiKey: Option[String],
       privateNetwork: Option[BlockfrostPrivateNetworkConfig],
       walletMnemonic: Seq[String],
-      walletPassphrase: String,
       didPrism: String,
       vdrPrivateKey: Array[Byte],
       prismStateDir: String,
@@ -152,7 +151,7 @@ object VdrServiceImpl {
             )
           )
       }
-      wallet = CardanoWalletConfig(config.walletMnemonic, config.walletPassphrase)
+      wallet = CardanoWalletConfig(config.walletMnemonic)
       chain: PrismChainService = PrismChainServiceImpl(bfConfig, wallet)
       prismState <- PrismStateInMemory.empty
       vdrService: VDRService = VDRServiceImpl(chain, prismState)
