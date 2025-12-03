@@ -15,6 +15,9 @@ on:
       - "main"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 env:
   BENCHMARKING_DIR: "tests/performance-tests/agent-performance-tests-k6"
   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,25 +30,30 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v14
+        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
           java-version: openjdk@1.17
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v3
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ env.GITHUB_ACTOR }}
           password: ${{ env.GITHUB_TOKEN }}
 
-      - uses: KengoTODA/actions-setup-docker-compose@v1
+      - uses: KengoTODA/actions-setup-docker-compose@aa468051c6851848da9bfe114e7eac913c0bf59c # v1.2.3
         name: Install `docker-compose`
         with:
           version: "2.14.2"
@@ -74,7 +82,7 @@ jobs:
           NODE_REFRESH_AND_SUBMIT_PERIOD: 1s
           NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD: 1s
           NODE_WALLET_MAX_TPS: 1000
-        uses: hoverkraft-tech/compose-action@v2.0.0
+        uses: hoverkraft-tech/compose-action@802a148945af6399a338c7906c267331b39a71af # v2.0.0
         with:
           compose-file: "./infrastructure/shared/docker-compose-combined.yml"
           compose-flags: "--env-file ./infrastructure/local/.env"
@@ -82,20 +90,20 @@ jobs:
           down-flags: "--volumes"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 16.x
           registry-url: "https://npm.pkg.github.com"
           scope: "input-output-hk"
 
       - name: Install dependencies
-        uses: borales/actions-yarn@v5
+        uses: borales/actions-yarn@3766bb1335b98fb13c60eaf358fe20811b730a88 # v5.0.0
         with:
           cmd: install
           dir: ${{ env.BENCHMARKING_DIR }}
 
       - name: Compile tests to JS
-        uses: borales/actions-yarn@v5
+        uses: borales/actions-yarn@3766bb1335b98fb13c60eaf358fe20811b730a88 # v5.0.0
         with:
           cmd: webpack
           dir: ${{ env.BENCHMARKING_DIR }}

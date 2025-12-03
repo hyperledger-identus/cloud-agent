@@ -1,3 +1,18 @@
+## [2.1.0](https://github.com/hyperledger-identus/cloud-agent/compare/v2.0.0...v2.1.0) (2025-10-28)
+
+### Features
+
+* add timer and metric(histogram) to measure job execution duration ([#1576](https://github.com/hyperledger-identus/cloud-agent/issues/1576)) ([1428c67](https://github.com/hyperledger-identus/cloud-agent/commit/1428c6765b5ee2223e3c271a1b9ff5700331eb97))
+* vdr integration ([#1591](https://github.com/hyperledger-identus/cloud-agent/issues/1591)) ([16b89d8](https://github.com/hyperledger-identus/cloud-agent/commit/16b89d83ea1481047e781c3e17ea610da6f3fcc4))
+
+### Bug Fixes
+
+* update broken links in oas ([#1578](https://github.com/hyperledger-identus/cloud-agent/issues/1578)) ([ebaf912](https://github.com/hyperledger-identus/cloud-agent/commit/ebaf91293182ee56767776c355e8a018a86efb11))
+* update default value for API_KEY_AUTO_PROVISIONING to false ([#1628](https://github.com/hyperledger-identus/cloud-agent/issues/1628)) ([67ee436](https://github.com/hyperledger-identus/cloud-agent/commit/67ee436153275d5fc3a2c2b233bdcba417e41770))
+* update examples to ensure they work correctly ([#1625](https://github.com/hyperledger-identus/cloud-agent/issues/1625)) ([b8f58c6](https://github.com/hyperledger-identus/cloud-agent/commit/b8f58c6337d56bd906c8abe8e5e2fe79ad0be45f))
+* update key selection logic to accept Ed25519 in status-list and proof jobs ([#1616](https://github.com/hyperledger-identus/cloud-agent/issues/1616)) ([0b7ac9c](https://github.com/hyperledger-identus/cloud-agent/commit/0b7ac9c26f0e6cc1f94c3264ea7be318b82e4d4e))
+* use custom vdr scheme for vdr endpoints ([#1600](https://github.com/hyperledger-identus/cloud-agent/issues/1600)) ([fd409b5](https://github.com/hyperledger-identus/cloud-agent/commit/fd409b51a44113552e22bd097561487361b4df94))
+
 ## [2.0.0](https://github.com/hyperledger-identus/cloud-agent/compare/v1.40.0...v2.0.0) (2025-05-05)
 
 ### ⚠ BREAKING CHANGES

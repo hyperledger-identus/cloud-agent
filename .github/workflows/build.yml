@@ -11,12 +11,15 @@ on:
     - cron: 0 3 * * 6
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 jobs:
   build:
     name: "Build and Publish Cloud-Agent Revision"
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_ACTOR_EMAIL: "hyperledger-bot@hyperledger.org"
@@ -33,35 +36,40 @@ jobs:
       OAS_PUBLISHED: ${{ steps.upload-oas.conclusion == 'success' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v14
+        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
           java-version: openjdk@1.17
 
-      - uses: coursier/cache-action@v6
+      - uses: coursier/cache-action@4e2615869d13561d626ed48655e1a39e5b192b3c # v6.4.9
         id: coursier-cache
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "lts/*"
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # v2.2.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@885d1462b80bc1c1c7f0b00334ad271f09369c55 # v2.10.0
 
       - name: Extract revision version
         id: revision
@@ -82,7 +90,7 @@ jobs:
 
       - name: Docker Metadata Action
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
         with:
           images: ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent
           tags: |
@@ -97,7 +105,7 @@ jobs:
 
       - name: Push Docker Image
         id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: ./cloud-agent/service/server/target/docker/stage
           platforms: linux/amd64,linux/arm64
@@ -116,7 +124,7 @@ jobs:
 
       - name: Publish Cloud-Agent Open API Specification
         id: upload-oas
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: cloud-agent-openapi-spec-${{ steps.build-oas.outputs.OAS_CHECKSUM}}
           path: ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml
@@ -127,10 +135,17 @@ jobs:
     needs: build
     name: "Dispatch end-to-end"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
       - name: Trigger component integration
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3.0.0
         with:
           token: ${{ secrets.IDENTUS_CI }}
           repository: hyperledger-identus/integration
