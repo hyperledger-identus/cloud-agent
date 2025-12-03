@@ -26,7 +26,7 @@
     "webpack": "webpack"
   },
   "dependencies": {
-    "@hyperledger/identus-cloud-agent-client": "^1.40.1-10a7302",
+    "@hyperledger/identus-cloud-agent-client": "^2.1.0",
     "uuid": "^11.1.0"
   }
 }

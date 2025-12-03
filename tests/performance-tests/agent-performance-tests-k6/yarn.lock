@@ -942,10 +942,10 @@
   resolved "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
 
-"@hyperledger/identus-cloud-agent-client@^1.40.1-10a7302":
-  version "1.40.1-4106e54"
-  resolved "https://registry.npmjs.org/@hyperledger/identus-cloud-agent-client/-/identus-cloud-agent-client-1.40.1-4106e54.tgz#6b5621b57783041613cbf350df0bc105940b02a1"
-  integrity sha512-NyIG/1nZczOySarVsGEqgFMq35VN5s+rEALsc+L6TbRIb/9Ng4nnnkjEr4srlUghE1imqBTT2LurVvqotN6Rtg==
+"@hyperledger/identus-cloud-agent-client@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/@hyperledger/identus-cloud-agent-client/-/identus-cloud-agent-client-2.1.0.tgz#d9b0c3051dd616853780ecbe1dbb601b04daa8d2"
+  integrity sha512-Xtvowh1UY7s4jUJCp2URu5/EXHC7aOX+/gBn6vPUIjLWYng13JU0wAWy9ugTjyERPrAqaZYfhMez3TBEFlBoDg==
   dependencies:
     es6-promise "^4.2.4"
     url-parse "^1.4.3"
