@@ -3,7 +3,7 @@ cffi==1.16.0
 charset-normalizer==3.3.2
 cryptography==46.0.3
 idna==3.7
-pycparser==2.22
+pycparser==2.23
 PyJWT==2.8.0
 requests==2.32.4
 setuptools==78.1.1
