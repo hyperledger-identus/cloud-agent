@@ -103,7 +103,7 @@ object VdrServiceImpl {
       didPrism: String,
       vdrPrivateKey: Array[Byte],
       prismStateDir: String,
-      indexIntervalSecond: Int = 2
+      indexIntervalSecond: Int
   )
 
   def layer: RLayer[DataSource & Config, VdrService] =
