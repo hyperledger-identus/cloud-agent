@@ -40,8 +40,6 @@ data class Agent(
             "KEYCLOAK_CLIENT_ID" to (keycloak?.clientId ?: ""),
             "KEYCLOAK_CLIENT_SECRET" to (keycloak?.clientSecret ?: ""),
             "POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL" to "http://host.docker.internal:$httpPort",
-            "VDR_MEMORY_DRIVER_ENABLED" to "true",
-            "VDR_DATABASE_DRIVER_ENABLED" to "true",
         )
 
         // setup token authentication
