@@ -92,6 +92,7 @@ lazy val V = new {
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
   val vdr = "0.2.1"
+  val prismVdr = "0.3.0"
 }
 
 /** Dependencies */
@@ -382,6 +383,7 @@ lazy val D_CloudAgent = new {
   val keycloakAuthz = "org.keycloak" % "keycloak-authz-client" % V.keycloak
 
   val vdr = "org.hyperledger.identus" % "vdr" % V.vdr
+  val prismVdr = "org.hyperledger.identus" %% "prism-vdr-driver" % V.prismVdr
 
   // Dependency Modules
   val baseDependencies: Seq[ModuleID] = Seq(
@@ -421,7 +423,7 @@ lazy val D_CloudAgent = new {
 
   lazy val iamDependencies: Seq[ModuleID] = Seq(keycloakAuthz, D.jwtZio, D.commonsLogging)
 
-  lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr)
+  lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr, prismVdr)
 
   lazy val serverDependencies: Seq[ModuleID] =
     baseDependencies ++ tapirDependencies ++ postgresDependencies ++ Seq(

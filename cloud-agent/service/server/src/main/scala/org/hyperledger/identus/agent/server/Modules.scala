@@ -139,11 +139,34 @@ object AppModule {
     }
   }
 
-  val vdrServiceLayer: RLayer[AppConfig, VdrService] =
-    ZLayer.make[VdrService](
+  val vdrServiceLayer: RLayer[AppConfig, VdrService] = {
+    val vdrConfigLayer = ZLayer.fromFunction((appConfig: AppConfig) => {
+      val prismDriverOpt = appConfig.agent.vdr.prismDriver
+        .map { conf =>
+          VdrServiceImpl.PRISMDriverConfig(
+            blockfrostApiKey = conf.blockfrostApiKey,
+            privateNetwork =
+              conf.privateNetwork.map(pn => VdrServiceImpl.BlockfrostPrivateNetworkConfig(pn.url, pn.protocolMagic)),
+            walletMnemonic = conf.walletMnemonicSeq,
+            didPrism = conf.didPrism,
+            vdrPrivateKey = conf.vdrPrivateKeyBytes,
+            prismStateDir = conf.stateDir,
+            indexIntervalSecond = conf.indexIntervalSecond
+          )
+        }
+      VdrServiceImpl.Config(
+        enableInMemoryDriver = appConfig.agent.vdr.inMemoryDriverEnabled,
+        enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,
+        prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled)
+      )
+    })
+    ZLayer.makeSome[AppConfig, VdrService](
+      vdrConfigLayer,
       RepoModule.agentDataSourceLayer,
       VdrServiceImpl.layer
     )
+  }
+
 }
 
 object GrpcModule {
