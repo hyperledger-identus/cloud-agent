@@ -49,19 +49,15 @@ class VdrServiceImpl(
 
   extension [R, A](z: ZIO[R, Throwable, A]) {
     def refineVdrError: ZIO[R, DriverNotFound | VdrEntryNotFound, A] =
-      z.debug("refineVdrError")
-        .tapSomeError { case e: FiberFailure =>
-          ZIO.logInfo(s"this is fiber failure: ${e.cause}")
-        }
-        .refineOrDie[DriverNotFound | VdrEntryNotFound] {
-          case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-          case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-          case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-          // Errors thrown from prism-vdr-driver are wrapped in ZIO FiberFailure context
-          case FiberFailure(Cause.Die(e: prism.DataAlreadyDeactivatedException, _)) => VdrEntryNotFound(e)
-          case FiberFailure(Cause.Die(e: prism.DataNotInitializedException, _))     => VdrEntryNotFound(e)
-          case FiberFailure(Cause.Die(e: prism.DataCouldNotBeFoundException, _))    => VdrEntryNotFound(e)
-        }
+      z.refineOrDie[DriverNotFound | VdrEntryNotFound] {
+        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
+        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
+        // Errors thrown from prism-vdr-driver are wrapped in ZIO FiberFailure context
+        case FiberFailure(Cause.Die(e: prism.DataAlreadyDeactivatedException, _)) => VdrEntryNotFound(e)
+        case FiberFailure(Cause.Die(e: prism.DataNotInitializedException, _))     => VdrEntryNotFound(e)
+        case FiberFailure(Cause.Die(e: prism.DataCouldNotBeFoundException, _))    => VdrEntryNotFound(e)
+      }
   }
 
   override def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl] =
