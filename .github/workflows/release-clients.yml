@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      id-token: write # Required for npm Trusted Publishing (OIDC)
+      id-token: write
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
