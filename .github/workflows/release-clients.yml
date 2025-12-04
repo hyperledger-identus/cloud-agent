@@ -39,7 +39,6 @@ jobs:
     name: "Build and publish Identus Cloud Agent clients"
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       packages: write
       id-token: write # Required for npm Trusted Publishing (OIDC)
     env:

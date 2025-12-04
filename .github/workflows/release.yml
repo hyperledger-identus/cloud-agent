@@ -22,7 +22,6 @@ jobs:
       SBT_OPTS: -Xmx2G
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       packages: write
     steps:
       - name: Harden the runner (Audit all outbound calls)
