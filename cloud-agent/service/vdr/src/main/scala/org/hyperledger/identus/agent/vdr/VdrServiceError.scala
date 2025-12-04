@@ -1,6 +1,7 @@
 package org.hyperledger.identus.agent.vdr
 
 import drivers.{DatabaseDriver, InMemoryDriver}
+import hyperledger.identus.vdr.prism
 import org.hyperledger.identus.shared.models.{Failure, StatusCode}
 import proxy.VDRProxyMultiDrivers.NoDriverWithThisSpecificationsException
 
@@ -18,7 +19,8 @@ object VdrServiceError {
         s"The driver with provided specification could not be found"
       )
   final case class VdrEntryNotFound(
-      cause: InMemoryDriver.DataCouldNotBeFoundException | DatabaseDriver.DataCouldNotBeFoundException
+      cause: InMemoryDriver.DataCouldNotBeFoundException | DatabaseDriver.DataCouldNotBeFoundException |
+        prism.DataAlreadyDeactivatedException | prism.DataCouldNotBeFoundException | prism.DataNotInitializedException
   ) extends VdrServiceError(
         StatusCode.NotFound,
         s"The data could not be found from a provided URL"
