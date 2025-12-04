@@ -170,10 +170,7 @@ object VdrServiceImpl {
       indexerConfig: IndexerConfig =
         IndexerConfig(mBlockfrostConfig = Some(bfConfig), workdir = config.prismStateDir)
       _ <- Indexer.indexerJobFS
-        .tap(_ =>
-          PRISMDriverInMemory.loadPrismStateFromChunkFiles
-            .map(state => state.lastSyncedBlockEpochSecondNano)
-        )
+        .tap(_ => PRISMDriverInMemory.loadPrismStateFromChunkFiles)
         .schedule(Schedule.spaced(config.indexIntervalSecond.seconds))
         .provideSome[PrismState](ZLayer.succeed(indexerConfig))
         .provideEnvironment(ZEnvironment(prismState))
