@@ -26,7 +26,6 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-      statuses: write
 
     steps:
       # Git Checkout
