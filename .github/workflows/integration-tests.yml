@@ -15,12 +15,14 @@ defaults:
     shell: bash
 
 permissions:
-  checks: write
-  pull-requests: write
+  contents: read
 
 jobs:
   run-integration-tests:
     name: "Run integration tests"
+    permissions:
+      checks: write
+      pull-requests: write
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     env:
