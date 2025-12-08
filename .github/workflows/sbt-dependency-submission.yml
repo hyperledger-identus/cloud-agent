@@ -24,22 +24,22 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - name: Setup Java and Scala
         uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
           java-version: adopt@1.11
       - name: Setup Node
-        uses: actions/setup-node@3235b876344d2a9aa001b8d1453c930bba69e610 # v3.9.1
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
           node-version: "18" # or whatever
       # - name: Setup Scala.JS
       #   uses: japgolly/setup-scalajs@v1
       - name: Cache sbt
-        uses: coursier/cache-action@288585e12960315492c10d496fafb65b57d9a89b # v6.3.3
+        uses: coursier/cache-action@bebeeb0e6f48ebad66d3783946588ecf43114433 # v7.0.0
       # - name: npm install
       #   run: npm install
-      - uses: scalacenter/sbt-dependency-submission@f3c0455a87097de07b66c3dc1b8619b5976c1c89 # v2.3.1
+      - uses: scalacenter/sbt-dependency-submission@64084844d2b0a9b6c3765f33acde2fbe3f5ae7d3 # v3.1.0
         with:
           working-directory: ./
           modules-ignore:
