@@ -67,7 +67,7 @@ jobs:
           sbt -v coverage test coverageReport coverageAggregate
 
       - name: Cache SonarCloud packages
-        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
+        uses: actions/cache@ea3bbbddb0c9c1dc1e8decda8a8b323e21b0b1bf # v4.2.1
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
