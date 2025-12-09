@@ -1,0 +1,91 @@
+name: SonarCloud SAST Analysis
+
+# This workflow performs Static Application Security Testing (SAST) using SonarCloud
+# Runs on all commits to satisfy OpenSSF Scorecard SAST requirements
+
+concurrency:
+  group: ${{ github.head_ref }}${{ github.ref }}-sonarcloud
+  cancel-in-progress: true
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Security Scan
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SBT_OPTS: -Xmx2G
+    container:
+      image: ghcr.io/hyperledger-labs/ci-debian-jdk-22:0.1.0
+      volumes:
+        - /nix:/nix
+      env:
+        TESTCONTAINERS_RYUK_DISABLED: true
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
+      - name: Git checkout (merge)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: github.event_name != 'pull_request'
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis relevancy
+
+      - name: Git checkout (PR)
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better analysis relevancy
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Download dependencies
+        run: sbt +update
+
+      - name: Run tests with coverage
+        env:
+          HOME: /root
+        run: |
+          sbt -v coverage test coverageReport coverageAggregate
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@ea3bbbddb0c9c1dc1e8decda8a8b323e21b0b1bf # v4.2.1
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@383f7e52eae3ab0510c3cb0e7d9d150bbaeab838 # v3.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=hyperledger-identus_cloud-agent
+            -Dsonar.organization=hyperledger-identus
+            -Dsonar.sources=.
+            -Dsonar.tests=.
+            -Dsonar.test.inclusions=**/*Test.scala,**/*Spec.scala
+            -Dsonar.exclusions=**/target/**,**/node_modules/**,**/*.js,**/*.css,**/*.html
+            -Dsonar.scala.coverage.reportPaths=target/scala-3.3.5/scoverage-report/scoverage.xml
+            -Dsonar.scala.scoverage.reportPath=target/scala-3.3.5/scoverage-report/scoverage.xml
+            -Dsonar.scm.provider=git
+            -Dsonar.qualitygate.wait=true
