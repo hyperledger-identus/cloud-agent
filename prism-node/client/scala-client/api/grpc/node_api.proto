@@ -12,7 +12,7 @@ import "google/protobuf/timestamp.proto";
 
 /**
  * Service for PRISM Node API. Provides a way to store, retrieve and update
- * Decentralized identifiers (DIDs), and Credentials' commitments into/from the underlying blockchain.
+ * Decentralized identifiers (DIDs) into/from the underlying blockchain.
  */
 service NodeService {
     /**
@@ -51,28 +51,6 @@ service NodeService {
     rpc GetNodeNetworkProtocolInfo(GetNodeNetworkProtocolInfoRequest) returns (GetNodeNetworkProtocolInfoResponse) {}
 
     /**
-    * PUBLIC
-    *
-    * Finds the state for a given credential's batch.
-    *
-    * Errors:
-    * - Invalid batch id (INVALID_ARGUMENT)
-    * - Unknown batch id (INVALID_ARGUMENT)
-    */
-    rpc GetBatchState(GetBatchStateRequest) returns (GetBatchStateResponse) {}
-
-    /**
-     * PUBLIC
-     *
-     * Finds the time when a credential was revoked.
-     *
-     * Errors:
-     * - Invalid batch id (INVALID_ARGUMENT)
-     * - Unknown batch id (INVALID_ARGUMENT)
-     */
-    rpc GetCredentialRevocationTime(GetCredentialRevocationTimeRequest) returns (GetCredentialRevocationTimeResponse) {}
-
-    /**
      * PUBLIC
      *
      * Retrieves the status of an operation.
@@ -92,72 +70,43 @@ service NodeService {
      * Schedules a list of operations for further publication.
      */
     rpc ScheduleOperations(ScheduleOperationsRequest) returns (ScheduleOperationsResponse) {}
-}
 
-service NodeExplorerService {
     /**
-     * WHITELISTED_DID
+     * PUBLIC
      *
-     * Return a list of scheduled but unconfirmed operations.
+     * Creates a new VDR storage entry (expects a signed CreateStorageEntry operation).
      */
-    rpc GetScheduledOperations(GetScheduledOperationsRequest) returns (GetScheduledOperationsResponse) {}
+    rpc CreateVdrEntry(CreateVdrEntryRequest) returns (CreateVdrEntryResponse) {}
 
     /**
-     * WHITELISTED_DID
+     * PUBLIC
      *
-     * Return a list of wallet transactions.
+     * Updates an existing VDR storage entry (expects a signed UpdateStorageEntry operation).
      */
-    rpc GetWalletTransactionsPaginated(GetWalletTransactionsRequest) returns (GetWalletTransactionsResponse) {}
+    rpc UpdateVdrEntry(UpdateVdrEntryRequest) returns (UpdateVdrEntryResponse) {}
 
     /**
-    * WHITELISTED_DID
-    *
-    * Return the Node Wallet Balance
-    */
-    rpc GetWalletBalance(GetWalletBalanceRequest) returns (GetWalletBalanceResponse) {}
-
-    /**
-     * WHITELISTED_DID
+     * PUBLIC
      *
-     * Retrieves list of available metrics.
+     * Deactivates an existing VDR storage entry (expects a signed DeactivateStorageEntry operation).
      */
-    rpc GetAvailableMetrics(GetAvailableMetricsRequest) returns (GetAvailableMetricsResponse) {}
+    rpc DeactivateVdrEntry(DeactivateVdrEntryRequest) returns (DeactivateVdrEntryResponse) {}
 
     /**
-     * WHITELISTED_DID
+     * PUBLIC
      *
-     * Get statistics
-    */
-    rpc GetNodeStatistics(GetNodeStatisticsRequest) returns (GetNodeStatisticsResponse) {}
+     * Retrieves a VDR storage entry by its event hash.
+     */
+    rpc GetVdrEntry(GetVdrEntryRequest) returns (GetVdrEntryResponse) {}
+
+    /**
+     * PUBLIC
+     *
+     * Verifies integrity of a VDR storage entry and its chain.
+     */
+    rpc VerifyVdrEntry(VerifyVdrEntryRequest) returns (VerifyVdrEntryResponse) {}
 }
 
-/**
- * Retrieve statistics from the Node.
- */
-message GetNodeStatisticsRequest {
-  repeated string metrics = 1;
-}
-
-/**
- * Statistics from the Node.
- */
-message GetNodeStatisticsResponse {
-  repeated double metrics = 1;
-}
-
-/**
- * Request to find metrics exposed by Node.
- * See NodeService.GetAvailableMetrics for more information.
- */
-message GetAvailableMetricsRequest {}
-
-/**
- * Response with a list of metrics exposed by Node.
- * See NodeService.GetAvailableMetrics for more information.
- */
-message GetAvailableMetricsResponse {
-  repeated string metrics = 1;
-}
 
 /**
  * Request to find a DID Document.
@@ -207,69 +156,6 @@ message GetNodeNetworkProtocolInfoRequest {
 message GetNodeNetworkProtocolInfoResponse {
     ProtocolVersion supported_network_protocol_version = 5; // Network protocol version number supported by Node.
     ProtocolVersion current_network_protocol_version = 6; // Current network protocol version number.
-}
-
-/**
- * Request to get the credential's batch state.
- * See NodeService.GetBatchState for more information.
- */
-message GetBatchStateRequest {
-    string batch_id = 1; // The batch ID.
-}
-/**
- * Response with the credential's batch state.
- * See NodeService.GetBatchState for more information.
- */
-message GetBatchStateResponse {
-    /**
-     * DID suffix used to sign the IssueCredentialBatch operation.
-     */
-    string issuer_did = 1;
-
-    /**
-     * The Merkle root used for the IssueCredential operation.
-     */
-    bytes merkle_root = 2;
-
-    /**
-     * Underlying blockchain data that refers to the transaction that
-     * contains the IssueCredential operation associated with the credential.
-     */
-    LedgerData publication_ledger_data = 3;
-
-    /**
-     * Underlying blockchain data that refers to the transaction that
-     * contains the RevokeCredential operation associated with the credential.
-     * This is optional.
-     */
-    LedgerData revocation_ledger_data = 4;
-
-    /**
-     * Timestamp of the latest synchronized block.
-     */
-    google.protobuf.Timestamp last_synced_block_timestamp = 5;
-
-    /**
-     * The hash of the credential to query about.
-     */
-    bytes issuance_hash = 6;
-}
-
-/**
- * Request to get the credential's revocation time.
- * See NodeService.GetCredentialRevocationTime for more information.
- */
-message GetCredentialRevocationTimeRequest {
-    string batch_id = 1; // The ID corresponding to the credential to query about.
-    bytes credential_hash = 2; // The hash of the credential to query about.
-}
-/**
- * Response with the credential's revocation time.
- * See NodeService.GetCredentialRevocationTime for more information.
- */
-message GetCredentialRevocationTimeResponse {
-    LedgerData revocation_ledger_data = 1; // The ledger data when the credential was revoked. This is optional.
-    google.protobuf.Timestamp last_synced_block_timestamp = 2; // Timestamp of the latest synchronized block.
 }
 
 /**
@@ -327,50 +213,87 @@ message ScheduleOperationsResponse {
     repeated OperationOutput outputs = 1;
 }
 
-/**
- * Request to retrieve all scheduled but not confirmed Atala operations.
- */
-message GetScheduledOperationsRequest {
-    /**
-     * Operations of which type should be returned.
-     */
-    OperationType operationsType = 1;
+// VDR entry management
+message CreateVdrEntryRequest {
+    SignedAtalaOperation signed_operation = 1; // should wrap CreateStorageEntryOperation
+}
+message UpdateVdrEntryRequest {
+    SignedAtalaOperation signed_operation = 1; // should wrap UpdateStorageEntryOperation
+}
+message DeactivateVdrEntryRequest {
+    SignedAtalaOperation signed_operation = 1; // should wrap DeactivateStorageEntryOperation
+}
 
-    enum OperationType {
-        AnyOperationType = 0; // Any operation
-        CreateDidOperationOperationType = 1;
-        UpdateDidOperationOperationType = 2;
-        IssueCredentialBatchOperationType = 3;
-        RevokeCredentialsOperationType = 4;
-        ProtocolVersionUpdateOperationType = 5;
+message CreateVdrEntryResponse {
+    OperationOutput output = 1;
+}
+message UpdateVdrEntryResponse {
+    OperationOutput output = 1;
+}
+message DeactivateVdrEntryResponse {
+    OperationOutput output = 1;
+}
+
+message GetVdrEntryRequest {
+    bytes event_hash = 1;
+}
+
+message VdrEntry {
+    bytes event_hash = 1;
+    string did_suffix = 2;
+    StorageData data = 3;
+    bytes previous_event_hash = 4;
+    bool deactivated = 5;
+    bytes nonce = 6;
+}
+
+message GetVdrEntryResponse {
+    VdrEntry entry = 1;
+}
+
+message VerifyVdrEntryRequest {
+    bytes event_hash = 1;
+}
+
+message VerifyVdrEntryResponse {
+    bool valid = 1;
+    string reason = 2;
+}
+
+
+
+// Used to encode the responses of the operations issued in an AtalaBlock.
+message OperationOutput {
+    oneof result {
+        // Represents the response provided by IssueCredentialBatchOperation.
+        CreateDIDOutput create_did_output = 2;
+        // Represents the response provided by UpdateDIDOperation.
+        UpdateDIDOutput update_did_output = 3;
+        // Represents the response provided by ProtocolVersionUpdateOperation.
+        ProtocolVersionUpdateOutput protocol_version_update_output = 7;
+        DeactivateDIDOutput deactivate_did_output = 8;
+        CreateVdrEntryOutput create_vdr_entry_output = 9;
+        UpdateVdrEntryOutput update_vdr_entry_output = 10;
+        DeactivateVdrEntryOutput deactivate_vdr_entry_output = 11;
+    }
+    oneof operation_maybe {
+        bytes operation_id = 5; // Operation identifier.
+        string error = 6; // Error description if PRISM Node service haven't scheduled the operation.
     }
 }
 
-message GetScheduledOperationsResponse {
-    repeated SignedAtalaOperation scheduled_operations = 1; // a list of scheduled operations
+message CreateDIDOutput {
+    string did_suffix = 1;
 }
-
-/**
- * Request to retrieve wallet transactions, either ongoing or confirmed.
- * Pagination included.
- */
-message GetWalletTransactionsRequest {
-    TransactionState state = 1; // Transaction state: either ongoing or confirmed
-    string last_seen_transaction_id = 2; // Last seen transaction id
-    int32 limit = 3; // The maximum number of transactions to return; must be greater than 0.
-
-    enum TransactionState {
-        Ongoing = 0; // Transactions which hasn't been confirmed by Prism Node
-        Confirmed = 1; // Transactions which ahs been confirmed by Prism Node
-    }
+message UpdateDIDOutput {}
+message ProtocolVersionUpdateOutput {}
+message DeactivateDIDOutput {}
+message CreateVdrEntryOutput {
+    bytes event_hash = 1;
 }
-
-message GetWalletTransactionsResponse {
-    repeated TransactionInfo transactions = 1;
+message UpdateVdrEntryOutput {
+    bytes event_hash = 1;
 }
-
-message GetWalletBalanceRequest {
-}
-message GetWalletBalanceResponse {
-    bytes balance = 1;
+message DeactivateVdrEntryOutput {
+    bytes event_hash = 1;
 }

@@ -263,7 +263,7 @@ object InternalPurpose {
 
   given Conversion[InternalKeyPurpose, InternalPurpose] = {
     case InternalKeyPurpose.VDR => InternalPurpose.vdr
-    case other                         => throw IllegalArgumentException(s"Unsupported internal purpose: $other")
+    case other                  => throw IllegalArgumentException(s"Unsupported internal purpose: $other")
   }
 
   given encoder: JsonEncoder[InternalPurpose] = JsonEncoder[String].contramap(_.toString)
