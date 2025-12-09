@@ -76,7 +76,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.IDENTUS_CI }}
           DOCKERHUB_ORG: ${{ vars.DOCKERHUB_ORG }}
         run: |
-          npm install
+          npm ci
           npx semantic-release
 
       - name: Get release version
