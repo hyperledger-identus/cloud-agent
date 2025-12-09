@@ -33,6 +33,9 @@ repositories {
     maven {
         url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
     }
+    maven {
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    }
 }
 
 dependencies {
@@ -40,7 +43,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-netty:2.3.0")
     testImplementation("io.ktor:ktor-client-apache:2.3.0")
     // RestAPI client
-    testImplementation("org.hyperledger.identus:cloud-agent-client:1.40.1-31e679e")
+    testImplementation("org.hyperledger.identus:cloud-agent-client:2.1.1-6898f51-SNAPSHOT")
     // Test helpers library
     testImplementation("io.iohk.atala:atala-automation:0.4.0")
     // Hoplite for configuration
@@ -105,7 +108,7 @@ afterEvaluate {
             testLogging.showStandardStreams = true
             systemProperty("context", fileName)
             systemProperty("TESTS_CONFIG", "/configs/$fileName.conf")
-            systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "")
+            systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "edge")
             systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
             systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")
             systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))

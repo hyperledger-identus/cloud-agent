@@ -28,6 +28,50 @@ class ManageDidSteps {
         createManageDid(actor, Curve.SECP256K1, Purpose.AUTHENTICATION)
     }
 
+    @When("{actor} creates PRISM DID with internal VDR key")
+    fun createManageDidWithInternalVdrKey(actor: Actor) {
+        val createDidRequest = mapOf(
+            "documentTemplate" to mapOf(
+                "publicKeys" to listOf(
+                    mapOf(
+                        "id" to "auth-1",
+                        "purpose" to "authentication",
+                        "curve" to "secp256k1",
+                    ),
+                ),
+                "internalKeys" to listOf(
+                    mapOf(
+                        "id" to "vdr-1",
+                        "purpose" to "vdr",
+                    ),
+                ),
+                "services" to listOf(
+                    mapOf(
+                        "id" to "svc-1",
+                        "type" to listOf("LinkedDomains"),
+                        "serviceEndpoint" to "https://foo.bar.com/",
+                    ),
+                ),
+            ),
+        )
+
+        actor.attemptsTo(
+            Post.to("/did-registrar/dids").body(createDidRequest),
+        )
+
+        if (SerenityRest.lastResponse().statusCode() == SC_CREATED) {
+            var createdDids = actor.recall<MutableList<String>>("createdDids")
+            if (createdDids == null) {
+                createdDids = mutableListOf()
+            }
+
+            val managedDid = SerenityRest.lastResponse().get<ManagedDID>()
+
+            createdDids.add(managedDid.longFormDid!!)
+            actor.remember("createdDids", createdDids)
+        }
+    }
+
     @When("{actor} creates PRISM DID with {curve} key having {purpose} purpose")
     fun createManageDid(actor: Actor, curve: Curve, purpose: Purpose) {
         val createDidRequest = createPrismDidRequest(curve, purpose)
