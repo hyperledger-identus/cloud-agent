@@ -176,6 +176,11 @@ jobs:
           AGENT_VERSION: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
         run: |
           ./docker/run.sh "$AGENT_VERSION"
-          npm ci
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install --package-lock-only
+            npm ci
+          fi
           npm test
           ./docker/stop.sh
