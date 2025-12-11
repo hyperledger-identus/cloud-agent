@@ -63,7 +63,13 @@ jobs:
 
       # Ensure npm version ≥ 11.5.1 for Trusted Publishing
       - name: Upgrade npm
-        run: npm install -g npm@11.5.1
+        run: |
+          URL="https://registry.npmjs.org/npm/-/npm-11.5.1.tgz"
+          EXPECTED_HASH="f4c82fbff74154f73bd5ce5a2b749700d55eaddebda97b16076bf7033040de34"
+          curl -sSfL "$URL" -o npm.tgz
+          echo "$EXPECTED_HASH npm.tgz" | sha256sum -c -
+          npm install -g npm.tgz
+          rm npm.tgz
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ef76a971e2fa3f867b617efd72f2fbd72cf6f8bc # v2.8.0
