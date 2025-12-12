@@ -104,7 +104,16 @@ jobs:
       - name: Set revision version
         if: ${{ !inputs.releaseTag }}
         working-directory: cloud-agent/client/generator
-        run: yarn version --new-version ${{ inputs.revision }} --no-git-tag-version
+        env:
+          REVISION: ${{ inputs.revision }}
+        run: |
+          set -euo pipefail
+          case "$REVISION" in
+            # allow alphanumerics, dot, dash, underscore
+            ''|*[!A-Za-z0-9._-]*)
+              echo "Invalid revision value"; exit 1 ;;
+          esac
+          yarn version --new-version "$REVISION" --no-git-tag-version
 
       - name: Install generator dependencies
         working-directory: cloud-agent/client/generator
@@ -115,11 +124,29 @@ jobs:
         run: yarn generate:all
 
       - name: Set version for clients
+        env:
+          REVISION: ${{ inputs.revision }}
+          RELEASE_TAG: ${{ github.event.inputs.releaseTag }}
         run: |
-          if [ -z "${{ github.event.inputs.releaseTag }}" ]; then
-              echo "VERSION_TAG=cloud-agent-v${{ inputs.revision }}" >> $GITHUB_ENV
+          set -euo pipefail
+          case "$REVISION" in
+            # allow alphanumerics, dot, dash, underscore
+            ''|*[!A-Za-z0-9._-]*)
+              echo "Invalid revision value"; exit 1 ;;
+          esac
+          case "${RELEASE_TAG:-}" in
+            # allow empty or safe tag characters
+            ''|*[!A-Za-z0-9._-]*)
+              if [ -n "${RELEASE_TAG:-}" ]; then
+                echo "Invalid releaseTag value"; exit 1
+              fi
+              ;;
+          esac
+
+          if [ -z "${RELEASE_TAG:-}" ]; then
+              echo "VERSION_TAG=cloud-agent-v${REVISION}" >> "$GITHUB_ENV"
           else
-              echo "VERSION_TAG=${{ github.event.inputs.releaseTag }}" >> $GITHUB_ENV
+              echo "VERSION_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
           fi
 
       # The npm publish step uses Trusted Publisher via OIDC
