@@ -16,7 +16,7 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcWalletNonSecretStorage
 }
 import org.hyperledger.identus.castor.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
-import org.hyperledger.identus.castor.core.service.DIDServiceImpl
+import org.hyperledger.identus.castor.core.service.PrismNodeDIDService
 import org.hyperledger.identus.castor.core.util.DIDOperationValidator
 import org.hyperledger.identus.connect.controller.ConnectionControllerImpl
 import org.hyperledger.identus.connect.core.service.{ConnectionServiceImpl, ConnectionServiceNotifier}
@@ -176,7 +176,7 @@ object MainApp extends ZIOAppDefault {
           CredentialDefinitionServiceImpl.layer,
           CredentialStatusListServiceImpl.layer,
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
-          DIDServiceImpl.layer,
+          PrismNodeDIDService.layer,
           EntityServiceImpl.layer,
           ManagedDIDServiceWithEventNotificationImpl.layer,
           LinkSecretServiceImpl.layer >>> PresentationServiceImpl.layer >>> PresentationServiceNotifier.layer,
