@@ -10,13 +10,16 @@ import org.hyperledger.identus.castor.core.model.did.{
 }
 import org.hyperledger.identus.castor.core.model.error.{DIDOperationError, DIDResolutionError}
 import zio.*
+import zio.http.*
 
 object NeoPrismDIDService {
-  val layer: URLayer[Any, DIDService] =
-    ZLayer.succeed(NeoPrismDIDService())
+  val layer: URLayer[Client, DIDService] =
+    ZLayer.fromFunction(NeoPrismDIDService(_))
 }
 
-private class NeoPrismDIDService() extends DIDService {
+private class NeoPrismDIDService(client: Client) extends DIDService:
+
+  private val baseClient = client.host("localhost").port(18080)
 
   override def scheduleOperation(
       operation: SignedPrismDIDOperation
@@ -27,6 +30,15 @@ private class NeoPrismDIDService() extends DIDService {
   ): IO[DIDOperationError, Option[ScheduledDIDOperationDetail]] = throw NotImplementedError()
 
   override def resolveDID(did: PrismDID): IO[DIDResolutionError, Option[(DIDMetadata, DIDData)]] =
-    throw NotImplementedError()
-
-}
+    for
+      resp <- baseClient.batched
+        .addHeader("Content-Type", "application/did-resolution")
+        .get(s"api/dids/$did")
+        .mapError(ex => DIDResolutionError.DLTProxyError("Error resolving DID document from NeoPRISM", ex))
+        .debug("resolution result")
+      metadata <- resp.status match
+        case Status.BadRequest => ZIO.none
+        case Status.NotFound   => ZIO.none
+        case _                 => ZIO.dieMessage("not implemented")
+      _ <- ZIO.debug(s"metadata: $metadata")
+    yield throw NotImplementedError()

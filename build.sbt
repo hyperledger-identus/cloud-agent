@@ -269,6 +269,7 @@ lazy val D_Castor = new {
       D.zioMock,
       D.zioTestSbt,
       D.zioTestMagnolia,
+      D.zioHttp,
     )
 
   // Project Dependencies
