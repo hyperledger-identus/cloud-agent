@@ -1,0 +1,534 @@
+openapi: 3.1.0
+info:
+  title: neoprism-node
+  description: ""
+  license:
+    name: ""
+  version: 0.8.0
+servers:
+  - url: http://localhost:8080
+    description: Local
+  - url: https://neoprism.patlo.dev
+    description: Public - mainnet
+  - url: https://neoprism-preprod.patlo.dev
+    description: Public - preprod
+paths:
+  /api/_system/health:
+    get:
+      tags:
+        - System API
+      operationId: health
+      responses:
+        "200":
+          description: Healthy
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Ok
+  /api/_system/metadata:
+    get:
+      tags:
+        - System API
+      operationId: app_meta
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppMeta'
+        "500":
+          description: An unexpected error occurred while retrieving app metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+  /api/did-data/{did}:
+    get:
+      tags:
+        - Indexer API
+      summary: Returns the DIDData protobuf message for a given DID, encoded in hexadecimal.
+      description: The returned data is a protobuf message compatible with the legacy prism-node implementation. The object is encoded in hexadecimal format. This endpoint is useful for testing and verifying compatibility with existing operations already anchored on the blockchain.
+      operationId: did_data
+      parameters:
+        - name: did
+          in: path
+          description: The Decentralized Identifier (DID) for which to retrieve the DIDData protobuf message.
+          required: true
+          schema:
+            $ref: '#/components/schemas/Did'
+      responses:
+        "200":
+          description: Successfully retrieved the DIDData protobuf message, encoded as a hexadecimal string.
+          content:
+            text/plain:
+              schema:
+                type: string
+        "400":
+          description: The provided DID is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+        "404":
+          description: The DID does not exist in the index.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+        "500":
+          description: An unexpected error occurred while retrieving DIDData.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+        "501":
+          description: A functionality is not implemented.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+  /api/dids/{did}:
+    get:
+      tags:
+        - Indexer API
+      summary: Resolves a W3C Decentralized Identifier (DID) according to the DID Resolution specification.
+      description: |-
+        This endpoint is fully compliant with the W3C DID Resolution specification. It returns a DID Resolution Result object, including metadata and the resolved DID Document, following the standard resolution process.
+
+        Optional resolution options may be provided as query parameters, but are not yet supported in this implementation.
+      operationId: did_resolver
+      parameters:
+        - name: did
+          in: path
+          description: The Decentralized Identifier (DID) to resolve.
+          required: true
+          schema:
+            $ref: '#/components/schemas/Did'
+      responses:
+        "200":
+          description: Successfully resolved the DID.
+          content:
+            application/did-resolution:
+              schema:
+                $ref: '#/components/schemas/ResolutionResult'
+            application/did:
+              schema:
+                $ref: '#/components/schemas/DidDocument'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DidDocument'
+        "400":
+          description: The provided DID is invalid.
+          content:
+            application/did-resolution:
+              schema:
+                $ref: '#/components/schemas/ResolutionResult'
+        "404":
+          description: The DID does not exist or not found.
+          content:
+            application/did-resolution:
+              schema:
+                $ref: '#/components/schemas/ResolutionResult'
+        "410":
+          description: The DID has been deactivated.
+          content:
+            application/did-resolution:
+              schema:
+                $ref: '#/components/schemas/ResolutionResult'
+        "500":
+          description: An unexpected error occurred during resolution.
+          content:
+            application/did-resolution:
+              schema:
+                $ref: '#/components/schemas/ResolutionResult'
+        "501":
+          description: A functionality is not implemented.
+          content:
+            application/did-resolution:
+              schema:
+                $ref: '#/components/schemas/ResolutionResult'
+  /api/indexer-stats:
+    get:
+      tags:
+        - Indexer API
+      summary: Retrieves statistics about the indexer's latest processed slot and block.
+      operationId: indexer_stats
+      responses:
+        "200":
+          description: Successfully retrieved indexer statistics, including the latest processed slot and block numbers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexerStats'
+        "500":
+          description: An unexpected error occurred while retrieving indexer statistics.
+          content:
+            application/json: {}
+        "501":
+          description: Indexer service is not available.
+          content:
+            application/json: {}
+  /api/signed-operation-submissions:
+    post:
+      tags:
+        - Submitter API
+      operationId: submit_signed_operations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignedOperationSubmissionRequest'
+        required: true
+      responses:
+        "200":
+          description: Operations submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignedOperationSubmissionResponse'
+        "400":
+          description: Malformed request or invalid operations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+        "500":
+          description: An unexpected error occurred during submission
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+  /api/vdr-data/{entry_hash}:
+    get:
+      tags:
+        - Indexer API
+      summary: Resolve a VDR entry and return its blob data.
+      description: Returns the raw blob data for a VDR entry, using PrismDidService::resolve_vdr. The response is application/octet-stream.
+      operationId: resolve_vdr_blob
+      parameters:
+        - name: entry_hash
+          in: path
+          description: The hex-encoded entry hash to resolve.
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully resolved the VDR entry. Returns the blob data.
+          content:
+            application/octet-stream: {}
+        "404":
+          description: The VDR entry was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+        "500":
+          description: An unexpected error occurred during VDR resolution.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponseBody'
+components:
+  schemas:
+    ApiErrorResponseBody:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    AppMeta:
+      type: object
+      required:
+        - version
+        - mode
+      properties:
+        mode:
+          $ref: '#/components/schemas/AppMetaRunMode'
+        version:
+          type: string
+    AppMetaRunMode:
+      type: string
+      enum:
+        - Indexer
+        - Submitter
+        - Standalone
+    Base64UrlStrNoPad:
+      type: string
+      description: |-
+        # Example
+        ```
+        use identus_apollo::base64::Base64UrlStrNoPad;
+
+        let b = b"hello world";
+        let b64 = Base64UrlStrNoPad::from(b);
+        assert!(b64.to_string() == "aGVsbG8gd29ybGQ");
+        ```
+    BlockNo:
+      type: integer
+      format: int64
+      example: 42
+      minimum: 0
+    Did:
+      type: string
+      example: did:example:123456789abcdefghi
+    DidDocument:
+      type: object
+      required:
+        - '@context'
+        - id
+        - verificationMethod
+      properties:
+        '@context':
+          type: array
+          items:
+            type: string
+        alsoKnownAs:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/Uri'
+        assertionMethod:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/VerificationMethodOrRef'
+        authentication:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/VerificationMethodOrRef'
+        capabilityDelegation:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/VerificationMethodOrRef'
+        capabilityInvocation:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/VerificationMethodOrRef'
+        id:
+          $ref: '#/components/schemas/Did'
+        keyAgreement:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/VerificationMethodOrRef'
+        service:
+          type:
+            - array
+            - "null"
+          items:
+            $ref: '#/components/schemas/Service'
+        verificationMethod:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationMethod'
+    DidDocumentMetadata:
+      type: object
+      properties:
+        canonicalId:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/Did'
+        created:
+          type:
+            - string
+            - "null"
+          format: date-time
+        deactivated:
+          type:
+            - boolean
+            - "null"
+        updated:
+          type:
+            - string
+            - "null"
+          format: date-time
+        versionId:
+          type:
+            - string
+            - "null"
+    DidResolutionError:
+      type: object
+      required:
+        - type
+      properties:
+        detail:
+          type:
+            - string
+            - "null"
+        title:
+          type:
+            - string
+            - "null"
+        type:
+          $ref: '#/components/schemas/DidResolutionErrorCode'
+    DidResolutionErrorCode:
+      type: string
+      enum:
+        - https://www.w3.org/ns/did#INVALID_DID
+        - https://www.w3.org/ns/did#INVALID_DID_DOCUMENT
+        - https://www.w3.org/ns/did#NOT_FOUND
+        - https://www.w3.org/ns/did#REPRESENTATION_NOT_SUPPORTED
+        - https://www.w3.org/ns/did#INVALID_DID_URL
+        - https://www.w3.org/ns/did#METHOD_NOT_SUPPORTED
+        - https://www.w3.org/ns/did#INVALID_OPTIONS
+        - https://www.w3.org/ns/did#INTERNAL_ERROR
+        - https://w3id.org/security#INVALID_PUBLIC_KEY
+        - https://w3id.org/security#INVALID_PUBLIC_KEY_LENGTH
+        - https://w3id.org/security#INVALID_PUBLIC_KEY_TYPE
+        - https://w3id.org/security#UNSUPPORTED_PUBLIC_KEY_TYPE
+        - https://w3id.org/security#INVALID_VERIFICATION_METHOD_URL
+        - https://w3id.org/security#INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID
+        - https://w3id.org/security#INVALID_CONTROLLED_IDENTIFIER_DOCUMENT
+        - https://w3id.org/security#INVALID_VERIFICATION_METHOD
+        - https://w3id.org/security#INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD
+    DidResolutionMetadata:
+      type: object
+      properties:
+        contentType:
+          type:
+            - string
+            - "null"
+        error:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/DidResolutionError'
+    IndexerStats:
+      type: object
+      properties:
+        last_prism_block_number:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/BlockNo'
+        last_prism_slot_number:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/SlotNo'
+    Jwk:
+      type: object
+      required:
+        - kty
+        - crv
+      properties:
+        crv:
+          type: string
+        kty:
+          type: string
+        x:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/Base64UrlStrNoPad'
+        "y":
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/Base64UrlStrNoPad'
+    ResolutionResult:
+      type: object
+      required:
+        - didResolutionMetadata
+        - didDocumentMetadata
+      properties:
+        didDocument:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/DidDocument'
+        didDocumentMetadata:
+          $ref: '#/components/schemas/DidDocumentMetadata'
+        didResolutionMetadata:
+          $ref: '#/components/schemas/DidResolutionMetadata'
+    Service:
+      type: object
+      required:
+        - id
+        - type
+        - serviceEndpoint
+      properties:
+        id:
+          type: string
+        serviceEndpoint:
+          $ref: '#/components/schemas/ServiceEndpoint'
+        type:
+          $ref: '#/components/schemas/ServiceType'
+    ServiceEndpoint:
+      oneOf:
+        - $ref: '#/components/schemas/StringOrMap'
+        - type: array
+          items:
+            $ref: '#/components/schemas/StringOrMap'
+    ServiceType:
+      oneOf:
+        - type: string
+        - type: array
+          items:
+            type: string
+    SignedOperationSubmissionRequest:
+      type: object
+      required:
+        - signed_operations
+      properties:
+        signed_operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SignedPrismOperationHexStr'
+    SignedOperationSubmissionResponse:
+      type: object
+      required:
+        - tx_id
+      properties:
+        tx_id:
+          $ref: '#/components/schemas/TxId'
+    SignedPrismOperationHexStr:
+      type: string
+      description: A hexadecimal string representing a SignedPrismOperation
+      example: 0a086d61737465722d30124630440220442eec28ec60464acd8df155e73f88a1c7faf4549975582ff0601449525aba31022019257250071818066b377b83a8b1765df1b7dc21d9bccfc7d5da036801d3ba0e1a420a400a3e123c0a086d61737465722d3010014a2e0a09736563703235366b3112210398e61c14328a6a844eec6dc084b825ae8525f10204e9244aaf61260bd221a457
+    SlotNo:
+      type: integer
+      format: int64
+      example: 8086
+      minimum: 0
+    StringOrMap:
+      oneOf:
+        - type: string
+        - type: object
+          additionalProperties: {}
+          propertyNames:
+            type: string
+    TxId:
+      type: string
+      example: 5ab0cf7e4c7cd4b63ba84a4fe299409be12ba85607cb6d1a149e80bc2eac070d
+    Uri:
+      type: string
+      example: http://example.com
+    VerificationMethod:
+      type: object
+      required:
+        - id
+        - type
+        - controller
+      properties:
+        controller:
+          type: string
+        id:
+          type: string
+        publicKeyJwk:
+          oneOf:
+            - type: "null"
+            - $ref: '#/components/schemas/Jwk'
+        type:
+          type: string
+    VerificationMethodOrRef:
+      oneOf:
+        - $ref: '#/components/schemas/VerificationMethod'
+        - type: string

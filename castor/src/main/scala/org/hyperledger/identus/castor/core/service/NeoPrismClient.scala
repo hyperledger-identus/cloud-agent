@@ -1,11 +1,12 @@
 package org.hyperledger.identus.castor.core.service
 
 import io.iohk.atala.prism.protos.node_models
-import org.hyperledger.identus.castor.core.model.did.{CanonicalPrismDID, DIDMetadata, PrismDID}
+import org.hyperledger.identus.castor.core.model.did.{CanonicalPrismDID, DIDMetadata, PrismDID, SignedPrismDIDOperation}
+import org.hyperledger.identus.castor.core.model.ProtoModelHelper.*
 import org.hyperledger.identus.shared.models.HexString
 import zio.*
 import zio.http.*
-import zio.json.{DecoderOps, DeriveJsonDecoder, JsonDecoder}
+import zio.json.{DecoderOps, DeriveJsonDecoder, DeriveJsonEncoder, EncoderOps, JsonDecoder, JsonEncoder}
 
 import java.time.Instant
 import scala.collection.immutable.ArraySeq
@@ -24,6 +25,14 @@ trait NeoPrismClient {
     *   None if DID data not found (404), Some if found, throws on other errors
     */
   def getDIDData(did: PrismDID): Task[Option[node_models.DIDData]]
+
+  /** Submit a signed operation to NeoPRISM.
+    * @param signedOperation
+    *   Signed Prism DID operation to submit
+    * @return
+    *   Transaction ID (hex string)
+    */
+  def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String]
 }
 
 private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
@@ -64,6 +73,40 @@ private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
         case status =>
           ZIO.fail(new RuntimeException(s"Unexpected status code from did-data: ${status.code}"))
     yield protoDIDDataOpt
+
+  override def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String] =
+    val signedAtalaOperation = signedOperation.toSignedAtalaOperation
+    val operationBytes = signedAtalaOperation.toByteArray
+    val hexString = HexString.fromByteArray(operationBytes).toString
+    val requestBody = SignedOperationSubmissionRequest(Seq(hexString))
+    for
+      resp <- baseClient.batched
+        .request(
+          Request(
+            method = Method.POST,
+            url = URL.root / "api" / "signed-operation-submissions",
+            headers = Headers(Header.ContentType(MediaType.application.json)),
+            body = Body.fromString(requestBody.toJson)
+          )
+        )
+      txId <- resp.status match
+        case Status.Ok =>
+          resp.body.asString
+            .flatMap { body =>
+              ZIO
+                .fromEither(body.fromJson[SignedOperationSubmissionResponse])
+                .mapError(e => new RuntimeException(s"Failed to decode JSON response: $e"))
+                .map(_.tx_id)
+            }
+        case Status.BadRequest =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Bad request: $body"))
+          }
+        case status =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
+          }
+    yield txId
 
   private def convertToMetadata(documentMetadata: NeoPrismDocumentMetadata): DIDMetadata = {
     val lastOperationHash = documentMetadata.versionId
@@ -145,5 +188,18 @@ object NeoPrismClientImpl {
 
   private object NeoPrismDidDocument {
     given decoder: JsonDecoder[NeoPrismDidDocument] = DeriveJsonDecoder.gen
+  }
+
+  // Request/Response models for submission endpoint
+  private case class SignedOperationSubmissionRequest(signed_operations: Seq[String])
+
+  private object SignedOperationSubmissionRequest {
+    given encoder: JsonEncoder[SignedOperationSubmissionRequest] = DeriveJsonEncoder.gen
+  }
+
+  private case class SignedOperationSubmissionResponse(tx_id: String)
+
+  private object SignedOperationSubmissionResponse {
+    given decoder: JsonDecoder[SignedOperationSubmissionResponse] = DeriveJsonDecoder.gen
   }
 }

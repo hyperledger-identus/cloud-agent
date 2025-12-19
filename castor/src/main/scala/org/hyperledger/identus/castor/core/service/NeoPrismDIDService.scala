@@ -10,7 +10,10 @@ import org.hyperledger.identus.castor.core.model.did.{
 }
 import org.hyperledger.identus.castor.core.model.error.{DIDOperationError, DIDResolutionError}
 import org.hyperledger.identus.castor.core.model.ProtoModelHelper.*
+import org.hyperledger.identus.shared.models.HexString
 import zio.*
+
+import scala.collection.immutable.ArraySeq
 
 object NeoPrismDIDService {
   val layer: URLayer[NeoPrismClient, DIDService] =
@@ -21,7 +24,21 @@ private class NeoPrismDIDService(client: NeoPrismClient) extends DIDService:
 
   override def scheduleOperation(
       operation: SignedPrismDIDOperation
-  ): IO[DIDOperationError, ScheduleDIDOperationOutcome] = throw NotImplementedError()
+  ): IO[DIDOperationError, ScheduleDIDOperationOutcome] =
+    for
+      txId <- client
+        .submitSignedOperation(operation)
+        .mapError(ex => DIDOperationError.DLTProxyError("Error submitting operation to NeoPRISM", ex))
+      operationIdBytes <- ZIO
+        .fromTry(HexString.fromString(txId))
+        .mapError(_ => DIDOperationError.UnexpectedDLTResult(s"Invalid transaction ID format: $txId"))
+        .map(_.toByteArray)
+      outcome = ScheduleDIDOperationOutcome(
+        did = operation.operation.did,
+        operation = operation.operation,
+        operationId = ArraySeq.unsafeWrapArray(operationIdBytes)
+      )
+    yield outcome
 
   override def getScheduledDIDOperationDetail(
       operationId: Array[Byte]

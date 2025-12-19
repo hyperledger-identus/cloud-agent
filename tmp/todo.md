@@ -2,7 +2,7 @@
 
 - [ ] Fully implement NeoprismDIDService
   - [x] `resolverDID`
-  - [ ] `scheduleOperation`
+  - [x] `scheduleOperation`
   - [ ] `getScheduledDIDOperationDetail`
 - [ ] Make prism-node backend configurable
 - [ ] Migration of old data in DID registrar
