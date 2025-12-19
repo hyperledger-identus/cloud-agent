@@ -9,6 +9,7 @@ import zio.json.{DecoderOps, DeriveJsonDecoder, JsonDecoder}
 
 import java.time.Instant
 import scala.collection.immutable.ArraySeq
+import scala.util.Try
 
 trait NeoPrismClient {
 
@@ -75,11 +76,11 @@ private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
     }
 
     val created: Option[Instant] = documentMetadata.created.flatMap { createdStr =>
-      scala.util.Try(Instant.parse(createdStr)).toOption
+      Try(Instant.parse(createdStr)).toOption
     }
 
     val updated: Option[Instant] = documentMetadata.updated.flatMap { updatedStr =>
-      scala.util.Try(Instant.parse(updatedStr)).toOption
+      Try(Instant.parse(updatedStr)).toOption
     }
 
     DIDMetadata(
