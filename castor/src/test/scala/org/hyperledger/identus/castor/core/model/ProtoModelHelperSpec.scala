@@ -102,7 +102,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
     }
   )
 
-  private val didDataFilterSpec = suite("filterRevokedKeysAndServices")(
+  private val didDataFilterSpec = suite("filterRevokedEntries")(
     test("not filter keys if revokedOn is empty") {
       val didData = node_models.DIDData(
         id = "123",

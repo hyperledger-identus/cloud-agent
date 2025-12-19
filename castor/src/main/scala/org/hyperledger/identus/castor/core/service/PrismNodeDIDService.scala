@@ -94,7 +94,7 @@ private class PrismNodeDIDService(didOpValidator: DIDOperationValidator, nodeCli
         .foldZIO(
           _ => ZIO.none,
           didDataProto =>
-            didDataProto.filterRevokedKeysAndServices
+            didDataProto.filterRevokedEntries
               .flatMap(didData => ZIO.fromEither(didData.toDomain))
               .mapError(DIDResolutionError.UnexpectedDLTResult.apply)
               .map { didData =>
