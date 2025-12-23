@@ -33,6 +33,14 @@ trait NeoPrismClient {
     *   Transaction ID (hex string)
     */
   def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String]
+
+  /** Check if a transaction exists on the NeoPRISM node.
+    * @param txId
+    *   Transaction ID (hex string)
+    * @return
+    *   true if transaction found (200), false if not found (404), throws on errors (400/500)
+    */
+  def isTransactionFound(txId: String): Task[Boolean]
 }
 
 private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
@@ -107,6 +115,22 @@ private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
             ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
           }
     yield txId
+
+  override def isTransactionFound(txId: String): Task[Boolean] =
+    for
+      resp <- baseClient.batched.get(s"api/transactions/$txId")
+      found <- resp.status match
+        case Status.Ok => ZIO.succeed(true)
+        case Status.NotFound => ZIO.succeed(false)
+        case Status.BadRequest =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Invalid transaction ID: $body"))
+          }
+        case status =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
+          }
+    yield found
 
   private def convertToMetadata(documentMetadata: NeoPrismDocumentMetadata): DIDMetadata = {
     val lastOperationHash = documentMetadata.versionId

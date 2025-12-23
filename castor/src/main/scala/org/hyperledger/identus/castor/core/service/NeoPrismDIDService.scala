@@ -6,6 +6,7 @@ import org.hyperledger.identus.castor.core.model.did.{
   PrismDID,
   ScheduleDIDOperationOutcome,
   ScheduledDIDOperationDetail,
+  ScheduledDIDOperationStatus,
   SignedPrismDIDOperation
 }
 import org.hyperledger.identus.castor.core.model.error.{DIDOperationError, DIDResolutionError}
@@ -42,7 +43,15 @@ private class NeoPrismDIDService(client: NeoPrismClient) extends DIDService:
 
   override def getScheduledDIDOperationDetail(
       operationId: Array[Byte]
-  ): IO[DIDOperationError, Option[ScheduledDIDOperationDetail]] = throw NotImplementedError()
+  ): IO[DIDOperationError, Option[ScheduledDIDOperationDetail]] =
+    val txIdHex = HexString.fromByteArray(operationId).toString
+    for
+      transactionFound <- client
+        .isTransactionFound(txIdHex)
+        .mapError(ex => DIDOperationError.DLTProxyError("Error checking transaction status from NeoPRISM", ex))
+    yield
+      if transactionFound then Some(ScheduledDIDOperationDetail(status = ScheduledDIDOperationStatus.Confirmed))
+      else Some(ScheduledDIDOperationDetail(status = ScheduledDIDOperationStatus.Pending))
 
   override def resolveDID(did: PrismDID): IO[DIDResolutionError, Option[(DIDMetadata, DIDData)]] =
     for
