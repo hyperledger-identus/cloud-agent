@@ -45,8 +45,7 @@ private class NeoPrismDIDService(client: NeoPrismClient) extends DIDService:
       operationId: Array[Byte]
   ): IO[DIDOperationError, Option[ScheduledDIDOperationDetail]] =
     val txIdHex = HexString.fromByteArray(operationId).toString
-    for
-      transactionFound <- client
+    for transactionFound <- client
         .isTransactionFound(txIdHex)
         .mapError(ex => DIDOperationError.DLTProxyError("Error checking transaction status from NeoPRISM", ex))
     yield

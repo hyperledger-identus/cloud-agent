@@ -1,17 +1,31 @@
 ## Objective
 
-Implement a fully functional `getScheduledDIDOperationDetail` method for NeoPRismDIDService.
-Current, we return a statuc result of status pending to the caller.
-However, you should check the neoprism endpoint `/api/transactions/{tx_id}` to the the transaction detail.
+Now we have added the support for having multiple Node implementation.
 
-For this task, you only need to check the status code.
-If the status code is 200, it means that the transaction is confirm and you can return status "Confirmed".
-Otherwise, you must return the status "Pending".
+- PrismNode (via `PrismNodeDIDService`)
+- NeoPRISM (via `NeoPrismDIDService`)
+
+Currently, we have hardcoded the cloud agent to use neoprism via dependency injection in `MainApp.scala`.
+We want the user to be able to choose between these node implementation.
+
+Please design the configuration to let user choose the implementation.
+Also expose the configuration for `NeoPrismDIDService` which is currently hardcoded the host and ports.
+
+__Draft design__
+
+The new configuration in the `application.conf` might look something like
+
+```hocon
+didNode {
+  didBackend = "prism-node"
+
+  prismNode { ... }
+
+  neoprism { ... }
+}
+```
 
 ## Constraints
 
-- Testing and documentation update are out of scope.
+- When designing the configuration, please keep in mind that the user might have PrismNode running already, we want to keep backward compatible configuration for people already using PrismNode.
 
-## Resources
-
-- For the endpoint of neprism openapi, you can find it at `./tmp/neoprism-openapi.yml`

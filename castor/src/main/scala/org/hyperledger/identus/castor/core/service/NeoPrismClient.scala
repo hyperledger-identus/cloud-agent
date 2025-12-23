@@ -12,6 +12,8 @@ import java.time.Instant
 import scala.collection.immutable.ArraySeq
 import scala.util.Try
 
+case class NeoPrismConfig(baseUrl: URL)
+
 trait NeoPrismClient {
 
   /** Get resolution metadata for a DID.
@@ -43,10 +45,10 @@ trait NeoPrismClient {
   def isTransactionFound(txId: String): Task[Boolean]
 }
 
-private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
+private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends NeoPrismClient {
   import NeoPrismClientImpl.*
 
-  private val baseClient = client.host("localhost").port(18080) // TODO: expose this configuration
+  private val baseClient = client.url(config.baseUrl)
 
   override def getResolutionMetadata(did: PrismDID): Task[Option[DIDMetadata]] =
     for
@@ -120,7 +122,7 @@ private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
     for
       resp <- baseClient.batched.get(s"api/transactions/$txId")
       found <- resp.status match
-        case Status.Ok => ZIO.succeed(true)
+        case Status.Ok       => ZIO.succeed(true)
         case Status.NotFound => ZIO.succeed(false)
         case Status.BadRequest =>
           resp.body.asString.flatMap { body =>
@@ -161,8 +163,8 @@ private class NeoPrismClientImpl(client: Client) extends NeoPrismClient {
 }
 
 object NeoPrismClientImpl {
-  val layer: URLayer[Client, NeoPrismClient] =
-    ZLayer.fromFunction(NeoPrismClientImpl(_))
+  val layer: URLayer[Client & NeoPrismConfig, NeoPrismClient] =
+    ZLayer.fromFunction((client: Client, config: NeoPrismConfig) => NeoPrismClientImpl(client, config))
 
   // JSON response models from NeoPRISM API - private to implementation
   private case class NeoPrismResolutionResult(

@@ -16,8 +16,6 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcWalletNonSecretStorage
 }
 import org.hyperledger.identus.castor.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
-import org.hyperledger.identus.castor.core.service.NeoPrismClientImpl
-import org.hyperledger.identus.castor.core.service.NeoPrismDIDService
 import org.hyperledger.identus.castor.core.util.DIDOperationValidator
 import org.hyperledger.identus.connect.controller.ConnectionControllerImpl
 import org.hyperledger.identus.connect.core.service.{ConnectionServiceImpl, ConnectionServiceNotifier}
@@ -192,13 +190,8 @@ object MainApp extends ZIOAppDefault {
           DefaultPermissionManagementService.layer,
           EntityPermissionManagementService.layer,
           Oid4vciAuthenticatorFactory.layer,
-          // neoprism
-          NeoPrismDIDService.layer,
-          NeoPrismClientImpl.layer,
-          // TODO: make node backend configurable
-          // prism-node
-          // PrismNodeDIDService.layer,
-          // GrpcModule.prismNodeStubLayer,
+          // DID service (configurable backend: prism-node or neoprism)
+          AppModule.didServiceLayer,
           // storage
           RepoModule.agentContextAwareTransactorLayer ++ RepoModule.agentTransactorLayer >>> JdbcDIDNonSecretStorage.layer,
           RepoModule.agentContextAwareTransactorLayer >>> JdbcWalletNonSecretStorage.layer,
