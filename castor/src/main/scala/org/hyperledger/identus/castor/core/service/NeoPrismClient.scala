@@ -36,13 +36,13 @@ trait NeoPrismClient {
     */
   def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String]
 
-  /** Check if a transaction exists on the NeoPRISM node.
-    * @param txId
-    *   Transaction ID (hex string)
+  /** Check if an operation exists on the NeoPRISM node.
+    * @param operationId
+    *   Operation ID (hex string)
     * @return
-    *   true if transaction found (200), false if not found (404), throws on errors (400/500)
+    *   true if operation found (200), false if not found (404), throws on errors (400/500)
     */
-  def isTransactionFound(txId: String): Task[Boolean]
+  def isOperationIndexed(operationId: String): Task[Boolean]
 }
 
 private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends NeoPrismClient {
@@ -99,14 +99,18 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
             body = Body.fromString(requestBody.toJson)
           )
         )
-      txId <- resp.status match
+      operationId <- resp.status match
         case Status.Ok =>
           resp.body.asString
             .flatMap { body =>
               ZIO
                 .fromEither(body.fromJson[SignedOperationSubmissionResponse])
                 .mapError(e => new RuntimeException(s"Failed to decode JSON response: $e"))
-                .map(_.tx_id)
+                .flatMap { response =>
+                  response.operation_ids.headOption match
+                    case Some(opId) => ZIO.succeed(opId)
+                    case None       => ZIO.fail(new RuntimeException("No operation_id returned from NeoPRISM"))
+                }
             }
         case Status.BadRequest =>
           resp.body.asString.flatMap { body =>
@@ -116,17 +120,17 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
           resp.body.asString.flatMap { body =>
             ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
           }
-    yield txId
+    yield operationId
 
-  override def isTransactionFound(txId: String): Task[Boolean] =
+  override def isOperationIndexed(operationId: String): Task[Boolean] =
     for
-      resp <- baseClient.batched.get(s"api/transactions/$txId")
+      resp <- baseClient.batched.get(s"api/operations/$operationId")
       found <- resp.status match
         case Status.Ok       => ZIO.succeed(true)
         case Status.NotFound => ZIO.succeed(false)
         case Status.BadRequest =>
           resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Invalid transaction ID: $body"))
+            ZIO.fail(new RuntimeException(s"Invalid operation ID: $body"))
           }
         case status =>
           resp.body.asString.flatMap { body =>
@@ -223,7 +227,7 @@ object NeoPrismClientImpl {
     given encoder: JsonEncoder[SignedOperationSubmissionRequest] = DeriveJsonEncoder.gen
   }
 
-  private case class SignedOperationSubmissionResponse(tx_id: String)
+  private case class SignedOperationSubmissionResponse(tx_id: String, operation_ids: Seq[String])
 
   private object SignedOperationSubmissionResponse {
     given decoder: JsonDecoder[SignedOperationSubmissionResponse] = DeriveJsonDecoder.gen

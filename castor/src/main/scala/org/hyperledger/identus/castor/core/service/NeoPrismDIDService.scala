@@ -27,12 +27,12 @@ private class NeoPrismDIDService(client: NeoPrismClient) extends DIDService:
       operation: SignedPrismDIDOperation
   ): IO[DIDOperationError, ScheduleDIDOperationOutcome] =
     for
-      txId <- client
+      operationId <- client
         .submitSignedOperation(operation)
         .mapError(ex => DIDOperationError.DLTProxyError("Error submitting operation to NeoPRISM", ex))
       operationIdBytes <- ZIO
-        .fromTry(HexString.fromString(txId))
-        .mapError(_ => DIDOperationError.UnexpectedDLTResult(s"Invalid transaction ID format: $txId"))
+        .fromTry(HexString.fromString(operationId))
+        .mapError(_ => DIDOperationError.UnexpectedDLTResult(s"Invalid operation ID format: $operationId"))
         .map(_.toByteArray)
       outcome = ScheduleDIDOperationOutcome(
         did = operation.operation.did,
@@ -44,13 +44,13 @@ private class NeoPrismDIDService(client: NeoPrismClient) extends DIDService:
   override def getScheduledDIDOperationDetail(
       operationId: Array[Byte]
   ): IO[DIDOperationError, Option[ScheduledDIDOperationDetail]] =
-    val txIdHex = HexString.fromByteArray(operationId).toString
-    for transactionFound <- client
-        .isTransactionFound(txIdHex)
-        .mapError(ex => DIDOperationError.DLTProxyError("Error checking transaction status from NeoPRISM", ex))
+    val operationIdHex = HexString.fromByteArray(operationId).toString
+    for operationFound <- client
+        .isOperationIndexed(operationIdHex)
+        .mapError(ex => DIDOperationError.DLTProxyError("Error checking operation status from NeoPRISM", ex))
     yield
-      if transactionFound then Some(ScheduledDIDOperationDetail(status = ScheduledDIDOperationStatus.Confirmed))
-      else Some(ScheduledDIDOperationDetail(status = ScheduledDIDOperationStatus.Pending))
+      if operationFound then Some(ScheduledDIDOperationDetail(status = ScheduledDIDOperationStatus.Confirmed))
+      else Some(ScheduledDIDOperationDetail(status = ScheduledDIDOperationStatus.AwaitingConfirmation))
 
   override def resolveDID(did: PrismDID): IO[DIDResolutionError, Option[(DIDMetadata, DIDData)]] =
     for
