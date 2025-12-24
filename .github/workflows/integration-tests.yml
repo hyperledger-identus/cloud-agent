@@ -81,6 +81,8 @@ jobs:
           AGENT_VERSION: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
           GITHUB_ACTOR: hyperledger-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEOPRISM_VERSION: 0.9.1
+          TESTS_CONFIG: /configs/basic_neoprism.conf
         #        continue-on-error: true
         run: |
           ./gradlew test --tests "IntegrationTestsRunner"
@@ -93,6 +95,8 @@ jobs:
           AGENT_VERSION: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
           GITHUB_ACTOR: hyperledger-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEOPRISM_VERSION: 0.9.1
+          TESTS_CONFIG: /configs/basic_neoprism.conf
         run: |
           ./gradlew reports
 
