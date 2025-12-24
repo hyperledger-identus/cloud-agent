@@ -5,5 +5,5 @@
   - [x] `scheduleOperation`
   - [x] `getScheduledDIDOperationDetail`
 - [x] Make prism-node backend configurable
-- [ ] Migration of old data in DID registrar
-- [ ] E2E tests
+- [x] Migration of old data in DID registrar
+- [x] E2E tests (integration test setup with neoprism backend)
