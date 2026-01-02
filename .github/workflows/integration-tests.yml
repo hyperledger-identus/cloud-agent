@@ -68,6 +68,7 @@ jobs:
           sbt docker:publishLocal
           echo "agent_version=$(cut -d'=' -f2 version.sbt | tr -d '" ')" >> "${GITHUB_OUTPUT}"
           echo "prism_node_version=$(grep PRISM_NODE_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
+          echo "neoprism_version=$(grep NEOPRISM_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
 
       - uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62 # v3.14.1
         with:
@@ -81,7 +82,7 @@ jobs:
           AGENT_VERSION: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
           GITHUB_ACTOR: hyperledger-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEOPRISM_VERSION: 0.9.1
+          NEOPRISM_VERSION: ${{ steps.build_local_cloud_agent.outputs.neoprism_version }}
           TESTS_CONFIG: /configs/basic_neoprism.conf
         #        continue-on-error: true
         run: |
@@ -95,7 +96,7 @@ jobs:
           AGENT_VERSION: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
           GITHUB_ACTOR: hyperledger-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NEOPRISM_VERSION: 0.9.1
+          NEOPRISM_VERSION: ${{ steps.build_local_cloud_agent.outputs.neoprism_version }}
           TESTS_CONFIG: /configs/basic_neoprism.conf
         run: |
           ./gradlew reports
