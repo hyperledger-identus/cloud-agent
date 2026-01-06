@@ -44,15 +44,15 @@ lazy val V = new {
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.21"
-  val zioConfig = "4.0.5"
-  val zioLogging = "2.5.1"
-  val zioJson = "0.7.44"
-  val zioHttp = "3.4.1"
+  val zio = "2.1.23"
+  val zioConfig = "4.0.6"
+  val zioLogging = "2.5.2"
+  val zioJson = "0.7.45"
+  val zioHttp = "3.7.2"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
-  val zioMetricsConnector = "2.5.0"
+  val zioMetricsConnector = "2.5.4"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "3.1.0"
+  val zioKafka = "3.2.0"
   val mockito = "3.2.18.0"
   val monocle = "3.3.0"
 
@@ -76,7 +76,7 @@ lazy val V = new {
   val scalaUri = "4.2.0"
 
   val jwtZioVersion = "11.0.2"
-  val zioPreludeVersion = "1.0.0-RC42"
+  val zioPreludeVersion = "1.0.0-RC44"
 
   val apollo = "1.3.5"
 
@@ -92,6 +92,7 @@ lazy val V = new {
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
 
   val vdr = "0.2.1"
+  val prismVdr = "0.3.0"
 }
 
 /** Dependencies */
@@ -382,6 +383,7 @@ lazy val D_CloudAgent = new {
   val keycloakAuthz = "org.keycloak" % "keycloak-authz-client" % V.keycloak
 
   val vdr = "org.hyperledger.identus" % "vdr" % V.vdr
+  val prismVdr = "org.hyperledger.identus" %% "prism-vdr-driver" % V.prismVdr
 
   // Dependency Modules
   val baseDependencies: Seq[ModuleID] = Seq(
@@ -421,7 +423,7 @@ lazy val D_CloudAgent = new {
 
   lazy val iamDependencies: Seq[ModuleID] = Seq(keycloakAuthz, D.jwtZio, D.commonsLogging)
 
-  lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr)
+  lazy val vdrDependencies: Seq[ModuleID] = Seq(vdr, prismVdr)
 
   lazy val serverDependencies: Seq[ModuleID] =
     baseDependencies ++ tapirDependencies ++ postgresDependencies ++ Seq(

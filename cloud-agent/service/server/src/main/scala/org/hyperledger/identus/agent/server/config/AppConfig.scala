@@ -5,6 +5,7 @@ import org.hyperledger.identus.iam.authentication.AuthenticationConfig
 import org.hyperledger.identus.pollux.vc.jwt.*
 import org.hyperledger.identus.shared.db.DbConfig
 import org.hyperledger.identus.shared.messaging.MessagingServiceConfig
+import org.hyperledger.identus.shared.models.HexString
 import zio.{Config, ZIO}
 import zio.config.magnolia.*
 
@@ -194,7 +195,8 @@ final case class AgentConfig(
     secretStorage: SecretStorageConfig,
     webhookPublisher: WebhookPublisherConfig,
     defaultWallet: DefaultWalletConfig,
-    messagingService: MessagingServiceConfig
+    messagingService: MessagingServiceConfig,
+    vdr: VdrConfig
 ) {
   def validate: Either[String, Unit] =
     for {
@@ -204,6 +206,7 @@ final case class AgentConfig(
         "The default wallet must be enabled if all the authentication methods are disabled. Default wallet is required for the single-tenant mode."
       )
       _ <- secretStorage.validate
+      _ <- vdr.validate
     } yield ()
 
 }
@@ -233,4 +236,45 @@ final case class SecretStorageConfig(
 
 enum SecretStorageBackend {
   case vault, postgres
+}
+
+final case class VdrConfig(
+    inMemoryDriverEnabled: Boolean,
+    databaseDriverEnabled: Boolean,
+    prismDriverEnabled: Boolean,
+    prismDriver: Option[PrismDriverVdrConfig]
+) {
+  def validate: Either[String, Unit] =
+    if prismDriverEnabled && prismDriver.isEmpty then
+      Left("PRISM vdr is enabled but prismDriver config is not provided.")
+    else if prismDriverEnabled then prismDriver.map(_.validate).getOrElse(Right(()))
+    else Right(())
+}
+
+final case class BlockfrostPrivateNetworkConfig(
+    url: String,
+    protocolMagic: Int
+)
+
+final case class PrismDriverVdrConfig(
+    blockfrostApiKey: Option[String],
+    privateNetwork: Option[BlockfrostPrivateNetworkConfig],
+    walletMnemonic: String,
+    didPrism: String,
+    vdrPrivateKey: String,
+    stateDir: String,
+    indexIntervalSecond: Int
+) {
+  def vdrPrivateKeyBytes: Array[Byte] = HexString.fromStringUnsafe(vdrPrivateKey).toByteArray
+  def walletMnemonicSeq: Seq[String] = walletMnemonic.split(" ").toSeq.filter(_.nonEmpty)
+
+  def validate: Either[String, Unit] =
+    (blockfrostApiKey, privateNetwork) match {
+      case (Some(_), Some(_)) =>
+        Left("PRISM driver configuration is invalid. blockfrostApiKey and privateNetwork are mutually exclusive.")
+      case (None, None) =>
+        Left("PRISM driver configuration is invalid. Either blockfrostApiKey or privateNetwork must be provided.")
+      case _ =>
+        Right(())
+    }
 }

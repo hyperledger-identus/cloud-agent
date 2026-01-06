@@ -17,8 +17,25 @@ object AppConfigSpec extends ZIOSpecDefault {
   )
   // private val baseInvalidHttpEndpointConfig = java.net.URL("http://:8080")
 
+  private val basePrismDriverVdrConfig = PrismDriverVdrConfig(
+    blockfrostApiKey = Some("api-key"),
+    privateNetwork = None,
+    walletMnemonic = "",
+    didPrism = "did:prism:123",
+    vdrPrivateKey = "abcdef",
+    stateDir = "",
+    indexIntervalSecond = 60
+  )
+
+  private val baseVdrConfig = VdrConfig(
+    inMemoryDriverEnabled = false,
+    databaseDriverEnabled = false,
+    prismDriverEnabled = false,
+    prismDriver = None
+  )
+
   override def spec = suite("AppConfigSpec")(
-    test("load config successfully") {
+    test("pass when using postgres secret storage") {
       for {
         appConfig <- ZIO.serviceWith[AppConfig](
           _.focus(_.agent.secretStorage.backend)
@@ -26,7 +43,7 @@ object AppConfigSpec extends ZIOSpecDefault {
         )
       } yield assert(appConfig.validate)(isRight(anything))
     },
-    test("reject config when use vault secret storage and config is empty") {
+    test("reject config when using vault secret storage and config is empty") {
       for {
         appConfig <- ZIO.serviceWith[AppConfig](
           _.focus(_.agent.secretStorage.backend)
@@ -36,7 +53,7 @@ object AppConfigSpec extends ZIOSpecDefault {
         )
       } yield assert(appConfig.validate)(isLeft(containsString("config is not provided")))
     },
-    test("reject config when use vault secret storage and authentication is not provided") {
+    test("reject config when using vault secret storage and authentication is not provided") {
       for {
         appConfig <- ZIO.serviceWith[AppConfig](
           _.focus(_.agent.secretStorage.backend)
@@ -46,7 +63,7 @@ object AppConfigSpec extends ZIOSpecDefault {
         )
       } yield assert(appConfig.validate)(isLeft(containsString("authentication must be provided")))
     },
-    test("load config when use vault secret storage with token authentication") {
+    test("pass when using vault secret storage with token authentication") {
       for {
         appConfig <- ZIO.serviceWith[AppConfig](
           _.focus(_.agent.secretStorage.backend)
@@ -56,7 +73,7 @@ object AppConfigSpec extends ZIOSpecDefault {
         )
       } yield assert(appConfig.validate)(isRight(anything))
     },
-    test("load config when use vault secret storage with appRole authentication") {
+    test("pass when using vault secret storage with appRole authentication") {
       for {
         appConfig <- ZIO.serviceWith[AppConfig](
           _.focus(_.agent.secretStorage.backend)
@@ -66,7 +83,7 @@ object AppConfigSpec extends ZIOSpecDefault {
         )
       } yield assert(appConfig.validate)(isRight(anything))
     },
-    test("prefer vault token authentication when multiple auth methods are provided") {
+    test("pass when vault token authentication is preferred over other auth methods") {
       val vaultConfig = baseVaultConfig.copy(
         token = Some("token"),
         appRoleRoleId = Some("roleId"),
@@ -74,6 +91,90 @@ object AppConfigSpec extends ZIOSpecDefault {
       )
       assert(vaultConfig.validate)(isRight(isSubtype[ValidatedVaultConfig.TokenAuth](anything)))
     },
+    test("reject config when prismDriverEnabled is true and prismDriver is None") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = true, prismDriver = None)
+      assert(vdrConfig.validate)(isLeft(containsString("config is not provided")))
+    },
+    test("pass when prismDriverEnabled is true and prismDriver is Some") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = true, prismDriver = Some(basePrismDriverVdrConfig))
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("pass when prismDriverEnabled is false and prismDriver is None") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = false, prismDriver = None)
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("pass when prismDriverEnabled is false and prismDriver is Some") {
+      val vdrConfig = baseVdrConfig.copy(prismDriverEnabled = false, prismDriver = Some(basePrismDriverVdrConfig))
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("pass when only blockfrostApiKey is provided") {
+      val vdrConfig = baseVdrConfig.copy(
+        prismDriverEnabled = true,
+        prismDriver = Some(
+          basePrismDriverVdrConfig.copy(
+            blockfrostApiKey = Some("api-key"),
+            privateNetwork = None
+          )
+        )
+      )
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("pass when only privateNetwork is provided") {
+      val privateNetworkConfig = BlockfrostPrivateNetworkConfig(
+        url = "http://localhost:18082",
+        protocolMagic = 42
+      )
+      val vdrConfig = baseVdrConfig.copy(
+        prismDriverEnabled = true,
+        prismDriver = Some(
+          basePrismDriverVdrConfig.copy(
+            blockfrostApiKey = None,
+            privateNetwork = Some(privateNetworkConfig)
+          )
+        )
+      )
+      assert(vdrConfig.validate)(isRight(anything))
+    },
+    test("reject config when both blockfrostApiKey and privateNetwork are provided") {
+      val privateNetworkConfig = BlockfrostPrivateNetworkConfig(
+        url = "http://localhost:18082",
+        protocolMagic = 42
+      )
+      val vdrConfig = baseVdrConfig.copy(
+        prismDriverEnabled = true,
+        prismDriver = Some(
+          basePrismDriverVdrConfig.copy(
+            blockfrostApiKey = Some("api-key"),
+            privateNetwork = Some(privateNetworkConfig)
+          )
+        )
+      )
+      assert(vdrConfig.validate)(isLeft(containsString("mutually exclusive")))
+    },
+    test("reject config when neither blockfrostApiKey nor privateNetwork are provided") {
+      val vdrConfig = baseVdrConfig.copy(
+        prismDriverEnabled = true,
+        prismDriver = Some(
+          basePrismDriverVdrConfig.copy(
+            blockfrostApiKey = None,
+            privateNetwork = None
+          )
+        )
+      )
+      assert(vdrConfig.validate)(isLeft(containsString("Either blockfrostApiKey or privateNetwork must be provided")))
+    },
+    test("pass when prismDriverEnabled is false even if prismDriver config is invalid") {
+      val vdrConfig = baseVdrConfig.copy(
+        prismDriverEnabled = false,
+        prismDriver = Some(
+          basePrismDriverVdrConfig.copy(
+            blockfrostApiKey = None,
+            privateNetwork = None
+          )
+        )
+      )
+      assert(vdrConfig.validate)(isRight(anything))
+    }
   ).provide(SystemModule.configLayer) + {
 
     import AppConfig.given
@@ -81,7 +182,7 @@ object AppConfigSpec extends ZIOSpecDefault {
     val didCommEndpointConfig: Config[DidCommEndpointConfig] = deriveConfig[DidCommEndpointConfig]
 
     suite("DidCommEndpointConfig URL type")(
-      test("DidCommEndpointConfig that the correct format") {
+      test("pass when DidCommEndpointConfig has correct format") {
         {
           for {
             didCommEndpointConfig <- ZIO.service[DidCommEndpointConfig]
@@ -94,7 +195,7 @@ object AppConfigSpec extends ZIOSpecDefault {
           )
         )
       },
-      test("reject config when invalid http didcomm service endpoint url provided") {
+      test("reject config when invalid http didcomm service endpoint url is provided") {
 
         assertZIO(
           ConfigProvider
@@ -111,7 +212,7 @@ object AppConfigSpec extends ZIOSpecDefault {
     val secretStorageBackendConfig: Config[TestSecretStorageBackend] = deriveConfig[TestSecretStorageBackend]
 
     suite("SecretStorageBackend enum test deriveConfig")(
-      test("test SecretStorageBackend is postgres") {
+      test("pass when SecretStorageBackend is postgres") {
         {
           for {
             secretStorageBackend <- ZIO.service[TestSecretStorageBackend]
@@ -125,7 +226,7 @@ object AppConfigSpec extends ZIOSpecDefault {
           )
         )
       },
-      test("test SecretStorageBackend is not vault") {
+      test("pass when SecretStorageBackend is not vault") {
         {
           for {
             secretStorageBackend <- ZIO.service[TestSecretStorageBackend]
