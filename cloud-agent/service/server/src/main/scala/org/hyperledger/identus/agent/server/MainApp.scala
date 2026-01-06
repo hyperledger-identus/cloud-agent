@@ -123,6 +123,7 @@ object MainApp extends ZIOAppDefault {
            |
            |HTTP server endpoint is setup as '${appConfig.agent.httpEndpoint.publicEndpointUrl}'
            |DIDComm server endpoint is setup as '${appConfig.agent.didCommEndpoint.publicEndpointUrl}'
+           |DID Node Backend is setup as '${appConfig.didNode.backend}'
            |
            |Feature Flags:
            | - Support for the credential type JWT VC is ${if (flags.enableJWT) "ENABLED" else "DISABLED"}
@@ -169,6 +170,7 @@ object MainApp extends ZIOAppDefault {
           GenericUriResolverImpl.layer,
           PresentationDefinitionValidatorImpl.layer,
           // service
+          AppModule.didServiceLayer,
           AppModule.vdrServiceLayer,
           ConnectionServiceImpl.layer >>> ConnectionServiceNotifier.layer,
           CredentialSchemaServiceImpl.layer,
@@ -190,8 +192,6 @@ object MainApp extends ZIOAppDefault {
           DefaultPermissionManagementService.layer,
           EntityPermissionManagementService.layer,
           Oid4vciAuthenticatorFactory.layer,
-          // DID service (configurable backend: prism-node or neoprism)
-          AppModule.didServiceLayer,
           // storage
           RepoModule.agentContextAwareTransactorLayer ++ RepoModule.agentTransactorLayer >>> JdbcDIDNonSecretStorage.layer,
           RepoModule.agentContextAwareTransactorLayer >>> JdbcWalletNonSecretStorage.layer,
