@@ -40,7 +40,7 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
       case VcVerification.SubjectVerification       => verifySubjectVerification(credential)
       case VcVerification.SemanticCheckOfClaims     => verifySemanticCheckOfClaims(credential)
       case VcVerification.AudienceCheck(aud)        => verifyAudienceCheck(credential, aud)
-      case _ =>
+      case _                                        =>
         ZIO.fail(
           VcVerificationServiceError.UnexpectedError(
             s"Unsupported Verification:$verification"

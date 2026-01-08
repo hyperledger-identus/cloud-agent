@@ -40,19 +40,19 @@ inThisBuild(
 )
 
 lazy val V = new {
-  val munit = "1.2.0" // "0.7.29"
+  val munit = "1.2.1" // "0.7.29"
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
-  val zio = "2.1.21"
-  val zioConfig = "4.0.5"
-  val zioLogging = "2.5.1"
-  val zioJson = "0.7.44"
-  val zioHttp = "3.4.1"
+  val zio = "2.1.23"
+  val zioConfig = "4.0.6"
+  val zioLogging = "2.5.2"
+  val zioJson = "0.7.45"
+  val zioHttp = "3.7.2"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
-  val zioMetricsConnector = "2.5.0"
+  val zioMetricsConnector = "2.5.4"
   val zioMock = "1.0.0-RC12"
-  val zioKafka = "3.1.0"
+  val zioKafka = "3.2.0"
   val mockito = "3.2.18.0"
   val monocle = "3.3.0"
 
@@ -76,7 +76,7 @@ lazy val V = new {
   val scalaUri = "4.2.0"
 
   val jwtZioVersion = "11.0.2"
-  val zioPreludeVersion = "1.0.0-RC42"
+  val zioPreludeVersion = "1.0.0-RC44"
 
   val apollo = "1.3.5"
 
@@ -269,6 +269,7 @@ lazy val D_Castor = new {
       D.zioMock,
       D.zioTestSbt,
       D.zioTestMagnolia,
+      D.zioHttp,
     )
 
   // Project Dependencies

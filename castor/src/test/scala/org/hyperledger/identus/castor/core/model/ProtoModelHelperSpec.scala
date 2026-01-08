@@ -102,7 +102,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
     }
   )
 
-  private val didDataFilterSpec = suite("filterRevokedKeysAndServices")(
+  private val didDataFilterSpec = suite("filterRevokedEntries")(
     test("not filter keys if revokedOn is empty") {
       val didData = node_models.DIDData(
         id = "123",
@@ -114,7 +114,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
         services = Seq(),
         context = Seq()
       )
-      assertZIO(didData.filterRevokedKeysAndServices.map(_.publicKeys.map(_.id)))(
+      assertZIO(didData.filterRevokedEntries.map(_.publicKeys.map(_.id)))(
         hasSameElements(Seq("key1", "key2", "key3"))
       )
     },
@@ -133,7 +133,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
           services = Seq(),
           context = Seq()
         )
-        validKeysId <- didData.filterRevokedKeysAndServices.map(_.publicKeys.map(_.id))
+        validKeysId <- didData.filterRevokedEntries.map(_.publicKeys.map(_.id))
       } yield assert(validKeysId)(hasSameElements(Seq("key1", "key2", "key3")))
     },
     test("filter keys if revokedOn timestamp has passed") {
@@ -151,7 +151,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
           services = Seq(),
           context = Seq()
         )
-        validKeysId <- didData.filterRevokedKeysAndServices.map(_.publicKeys.map(_.id))
+        validKeysId <- didData.filterRevokedEntries.map(_.publicKeys.map(_.id))
       } yield assert(validKeysId)(hasSameElements(Seq("key1")))
     },
     test("filter keys if revokedOn timestamp is exactly now") {
@@ -164,7 +164,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
           services = Seq(),
           context = Seq()
         )
-        validKeysId <- didData.filterRevokedKeysAndServices.map(_.publicKeys.map(_.id))
+        validKeysId <- didData.filterRevokedEntries.map(_.publicKeys.map(_.id))
       } yield assert(validKeysId)(isEmpty)
     },
     test("not filter services if deletedOn is empty") {
@@ -178,7 +178,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
         ),
         context = Seq()
       )
-      assertZIO(didData.filterRevokedKeysAndServices.map(_.services.map(_.id)))(
+      assertZIO(didData.filterRevokedEntries.map(_.services.map(_.id)))(
         hasSameElements(Seq("service1", "service2", "service3"))
       )
     },
@@ -197,7 +197,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
           ),
           context = Seq()
         )
-        validKeysId <- didData.filterRevokedKeysAndServices.map(_.services.map(_.id))
+        validKeysId <- didData.filterRevokedEntries.map(_.services.map(_.id))
       } yield assert(validKeysId)(hasSameElements(Seq("key1", "key2", "key3")))
     },
     test("filter services if deletedOn timestamp has passed") {
@@ -215,7 +215,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
           ),
           context = Seq()
         )
-        validKeysId <- didData.filterRevokedKeysAndServices.map(_.services.map(_.id))
+        validKeysId <- didData.filterRevokedEntries.map(_.services.map(_.id))
       } yield assert(validKeysId)(hasSameElements(Seq("key1")))
     },
     test("filter services if deletedOn timestamp is exactly now") {
@@ -228,7 +228,7 @@ object ProtoModelHelperSpec extends ZIOSpecDefault {
           services = Seq(makeService(id = "key1", deletedOn = Some(ledgerData))),
           context = Seq()
         )
-        validKeysId <- didData.filterRevokedKeysAndServices.map(_.services.map(_.id))
+        validKeysId <- didData.filterRevokedEntries.map(_.services.map(_.id))
       } yield assert(validKeysId)(isEmpty)
     }
   )

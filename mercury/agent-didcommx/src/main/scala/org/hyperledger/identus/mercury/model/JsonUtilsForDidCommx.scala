@@ -38,11 +38,11 @@ object JsonUtilsForDidCommx {
 
   def toJson(json: MyJsonTop): Json.Obj = {
     def myJsonToJson(f: MyJson): Json = f match {
-      case FixJson(value: Json.Null)                 => value // TEST
-      case FixJson(value: Boolean)                   => Json.Bool(value)
-      case FixJson(value: BigDecimal)                => Json.Num(value)
-      case FixJson(value: String)                    => Json.Str(value)
-      case FixJson(elements: Seq[MyJson] @unchecked) => Json.Arr(elements.map(myJsonToJson): _*)
+      case FixJson(value: Json.Null)                      => value // TEST
+      case FixJson(value: Boolean)                        => Json.Bool(value)
+      case FixJson(value: BigDecimal)                     => Json.Num(value)
+      case FixJson(value: String)                         => Json.Str(value)
+      case FixJson(elements: Seq[MyJson] @unchecked)      => Json.Arr(elements.map(myJsonToJson): _*)
       case FixJson(items: Map[String, MyJson] @unchecked) =>
         Json.Obj(items.map { case (s, fixJson) => (s, myJsonToJson(fixJson)) }.toSeq: _*)
     }

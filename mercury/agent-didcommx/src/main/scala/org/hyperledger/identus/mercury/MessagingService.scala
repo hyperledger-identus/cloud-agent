@@ -121,8 +121,8 @@ object MessagingService {
         MessageAndAddress(finalMessage, serviceEndpoint) = auxFinalMessage
         didCommService <- ZIO.service[DidOps]
         to <- finalMessage.to match {
-          case Seq()            => ZIO.fail(SendMessageError(new RuntimeException("Message must have a recipient")))
-          case firstTo +: Seq() => ZIO.succeed(firstTo)
+          case Seq()                => ZIO.fail(SendMessageError(new RuntimeException("Message must have a recipient")))
+          case firstTo +: Seq()     => ZIO.succeed(firstTo)
           case all @ (firstTo +: _) =>
             ZIO.logWarning(s"Message have multi recipients: $all") *> ZIO.succeed(firstTo)
         }

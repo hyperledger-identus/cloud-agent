@@ -125,7 +125,7 @@ object ServiceType {
         castorDomain.ServiceType.Name.fromString(value).map(castorDomain.ServiceType.Single.apply)
       case Multiple(values) =>
         values.toList match {
-          case Nil => Left("serviceType cannot be empty")
+          case Nil          => Left("serviceType cannot be empty")
           case head :: tail =>
             for {
               parsedHead <- castorDomain.ServiceType.Name.fromString(head)

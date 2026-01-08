@@ -229,7 +229,7 @@ private[castor] trait ProtoModelHelper {
     }
 
     /** Return DIDData with keys and services removed by checking revocation time against the current time */
-    def filterRevokedKeysAndServices: UIO[node_models.DIDData] = {
+    def filterRevokedEntries: UIO[node_models.DIDData] = {
       Clock.instant.map { now =>
         didData
           .withPublicKeys(didData.publicKeys.filter { publicKey =>
@@ -313,7 +313,7 @@ private[castor] trait ProtoModelHelper {
   extension (publicKeyData: node_models.PublicKey.KeyData) {
     def toDomain: Either[String, PublicKeyData] = {
       publicKeyData match {
-        case KeyData.Empty => Left(s"unable to convert KeyData.Emtpy to PublicKeyData")
+        case KeyData.Empty                => Left(s"unable to convert KeyData.Emtpy to PublicKeyData")
         case KeyData.EcKeyData(ecKeyData) =>
           for {
             curve <- EllipticCurve

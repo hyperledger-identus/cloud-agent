@@ -13,21 +13,26 @@ import java.net.URL
 import java.time.Duration
 import scala.util.Try
 
+enum DIDNodeBackend {
+  case `prism-node`, neoprism
+}
+
 final case class AppConfig(
     pollux: PolluxConfig,
     agent: AgentConfig,
     connect: ConnectConfig,
-    prismNode: PrismNodeConfig,
+    didNode: DIDNodeConfig,
     featureFlag: FeatureFlagConfig
 ) {
   def validate: Either[String, Unit] =
     for {
       _ <- agent.validate
+      _ <- didNode.validate
     } yield ()
 }
 
 object AppConfig {
-  given Config[java.net.URL] = Config.string.mapOrFail(url =>
+  given Config[URL] = Config.string.mapOrFail(url =>
     val urlRegex = """^(http|https)://[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(:[0-9]{1,5})?(/.*)?$""".r
     urlRegex.findFirstMatchIn(url) match
       case Some(_) =>
@@ -110,9 +115,17 @@ final case class ConnectConfig(
     connectInvitationExpiry: Duration,
 )
 
-final case class PrismNodeConfig(service: GrpcServiceConfig)
-
 final case class GrpcServiceConfig(host: String, port: Int, usePlainText: Boolean)
+
+final case class NeoPrismServiceConfig(baseUrl: URL)
+
+final case class DIDNodeConfig(
+    backend: DIDNodeBackend,
+    prismNode: GrpcServiceConfig,
+    neoprism: NeoPrismServiceConfig
+) {
+  def validate: Either[String, Unit] = Right(())
+}
 
 final case class StatusListRegistryConfig(publicEndpointUrl: java.net.URL)
 

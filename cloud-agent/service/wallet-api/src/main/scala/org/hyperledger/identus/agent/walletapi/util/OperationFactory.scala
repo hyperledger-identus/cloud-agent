@@ -142,9 +142,9 @@ class OperationFactory(apollo: Apollo) {
             // should be impossible otherwise it's a defect
             ZIO.dieMessage("addKey update DID action must have a generated a key-pair")
         }
-      case UpdateManagedDIDAction.RemoveKey(id)       => ZIO.succeed(UpdateDIDAction.RemoveKey(id))
-      case UpdateManagedDIDAction.AddService(service) => ZIO.succeed(UpdateDIDAction.AddService(service))
-      case UpdateManagedDIDAction.RemoveService(id)   => ZIO.succeed(UpdateDIDAction.RemoveService(id))
+      case UpdateManagedDIDAction.RemoveKey(id)        => ZIO.succeed(UpdateDIDAction.RemoveKey(id))
+      case UpdateManagedDIDAction.AddService(service)  => ZIO.succeed(UpdateDIDAction.AddService(service))
+      case UpdateManagedDIDAction.RemoveService(id)    => ZIO.succeed(UpdateDIDAction.RemoveService(id))
       case UpdateManagedDIDAction.UpdateService(patch) =>
         ZIO.succeed(UpdateDIDAction.UpdateService(patch.id, patch.serviceType, patch.serviceEndpoints))
       case UpdateManagedDIDAction.PatchContext(context) => ZIO.succeed(UpdateDIDAction.PatchContext(context))
@@ -155,7 +155,7 @@ class OperationFactory(apollo: Apollo) {
     ZIO.attempt {
       val (publicKeyData, keyPair) = template.curve match {
         case EllipticCurve.SECP256K1 => throw Exception("secp256k1 key must be derived, not randomly generated")
-        case EllipticCurve.ED25519 =>
+        case EllipticCurve.ED25519   =>
           val kp = apollo.ed25519.generateKeyPair
           toPublicKeyData(kp.publicKey) -> kp
         case EllipticCurve.X25519 =>

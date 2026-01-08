@@ -97,12 +97,14 @@ object DIDServiceSpec extends ZIOSpecDefault {
   }
 
   private def didServiceLayer(): ULayer[DIDService] =
-    DIDOperationValidator.layer() ++ mockNodeService() >>> DIDServiceImpl.layer
+    DIDOperationValidator.layer() ++ mockNodeService() >>> PrismNodeDIDService.layer
 
   private def didServiceLayer(createOperation: PrismDIDOperation.Create): ULayer[DIDService] =
-    DIDOperationValidator.layer() ++ mockNodeService(createOperation: PrismDIDOperation.Create) >>> DIDServiceImpl.layer
+    DIDOperationValidator.layer() ++ mockNodeService(
+      createOperation: PrismDIDOperation.Create
+    ) >>> PrismNodeDIDService.layer
 
-  override def spec = suite("DIDServiceImpl")(resolveDIDSpec.provide(didServiceLayer()), resolveDIDMetadataSpec)
+  override def spec = suite("PrismNodeDIDService")(resolveDIDSpec.provide(didServiceLayer()), resolveDIDMetadataSpec)
 
   private val resolveDIDSpec = suite("resolveDID")(
     test("long-form unpublished DID returns content in encoded state") {

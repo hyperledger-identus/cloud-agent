@@ -193,7 +193,7 @@ object CredentialService {
       fields <- ZIO.succeed(claims.asObject.map(_.toMap).getOrElse(Map.empty).toList)
       res <- ZIO.foreach(fields) {
         case (k, Json.Str(v)) => ZIO.succeed(Attribute(name = k, value = v))
-        case (k, v) =>
+        case (k, v)           =>
           ZIO.succeed {
             val jsonValue = v.toJson
             Attribute(

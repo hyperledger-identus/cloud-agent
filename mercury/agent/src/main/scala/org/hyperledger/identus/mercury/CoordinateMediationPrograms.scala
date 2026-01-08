@@ -60,7 +60,7 @@ object CoordinateMediationPrograms {
         .flatMap { json =>
           json.as[MediateGrant] match {
             case Right(mediateGrant) => ZIO.succeed(mediateGrant)
-            case Left(_) =>
+            case Left(_)             =>
               json.as[MediateDeny] match {
                 case Right(mediateDeny) => ZIO.succeed(mediateDeny)
                 case Left(ex)           => ZIO.fail(ex)

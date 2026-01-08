@@ -202,7 +202,7 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
     getManagedDIDState(did)
       .map(_.map(_.didIndex))
       .flatMap {
-        case None => ZIO.none
+        case None           => ZIO.none
         case Some(didIndex) =>
           for {
             keyUsageIndex <- cxnIO.transactWallet(xa)

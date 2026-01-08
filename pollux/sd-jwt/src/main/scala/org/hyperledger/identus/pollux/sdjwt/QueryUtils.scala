@@ -14,7 +14,7 @@ private[sdjwt] object QueryUtils {
       case value: Str                    => Seq((cursor, value))
       case value: Num                    => Seq((cursor, value))
       case Json.Null                     => Seq((cursor, Json.Null))
-      case Arr(elements) =>
+      case Arr(elements)                 =>
         elements.zipWithIndex.flatMap { case (json, index) =>
           val nextCursor = cursor.isArray.element(index)
           getCursors(json, nextCursor)

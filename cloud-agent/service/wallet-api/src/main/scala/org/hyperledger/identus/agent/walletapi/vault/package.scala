@@ -32,7 +32,7 @@ package object vault {
 
     override def decode(kv: Map[String, String]): Try[WalletSeed] = {
       kv.get("value") match {
-        case None => Failure(Exception("A property 'value' is missing from vault KV data"))
+        case None              => Failure(Exception("A property 'value' is missing from vault KV data"))
         case Some(encodedSeed) =>
           HexString
             .fromString(encodedSeed)

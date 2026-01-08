@@ -14,6 +14,7 @@ data class Agent(
     @ConfigAlias("rest_service_url") val restServiceUrl: String?,
     @ConfigAlias("auth_enabled") val authEnabled: Boolean,
     @ConfigAlias("prism_node") val prismNode: VerifiableDataRegistry?,
+    val neoprism: NeoPrism?,
     val keycloak: Keycloak?,
     val vault: Vault?,
 ) : ServiceBase() {
@@ -22,6 +23,11 @@ data class Agent(
     override val container: ComposeContainer
 
     init {
+        // Validate that exactly one backend is configured
+        require((prismNode != null) xor (neoprism != null)) {
+            "Agent must have exactly one backend configured: prism_node or neoprism"
+        }
+
         val env = mutableMapOf(
             "AGENT_VERSION" to version,
             "API_KEY_ENABLED" to authEnabled.toString(),
@@ -29,7 +35,9 @@ data class Agent(
             "DIDCOMM_SERVICE_URL" to (didcommServiceUrl ?: "http://host.docker.internal:$didcommPort"),
             "AGENT_HTTP_PORT" to httpPort.toString(),
             "REST_SERVICE_URL" to (restServiceUrl ?: "http://host.docker.internal:$httpPort"),
-            "PRISM_NODE_PORT" to (prismNode?.httpPort?.toString() ?: ""),
+            "NODE_BACKEND" to if (neoprism != null) "neoprism" else "prism-node",
+            "PRISM_NODE_PORT" to (prismNode?.httpPort?.toString() ?: "50053"),
+            "NEOPRISM_BASE_URL" to (neoprism?.let { "http://host.docker.internal:${it.httpPort}" } ?: "http://host.docker.internal:8080"),
             "SECRET_STORAGE_BACKEND" to if (vault != null) "vault" else "postgres",
             // FIXME: hardcode port 10001 just to avoid invalid URL 'http://host.docker.internal:'
             "VAULT_HTTP_PORT" to (vault?.httpPort?.toString() ?: "10001"),

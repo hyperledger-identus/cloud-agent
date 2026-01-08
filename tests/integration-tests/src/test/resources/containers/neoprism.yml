@@ -1,0 +1,22 @@
+---
+version: "3.8"
+
+services:
+  neoprism:
+    image: hyperledgeridentus/identus-neoprism:${NEOPRISM_VERSION}
+    command:
+      - dev
+    ports:
+      - "${NEOPRISM_PORT}:8080"
+    environment:
+      NPRISM_CARDANO_NETWORK: custom
+      NPRISM_CONFIRMATION_BLOCKS: '0'
+      NPRISM_DB_URL: 'sqlite::memory:'
+      NPRISM_INDEX_INTERVAL: '1'
+      RUST_LOG: info,oura=warn,tower_http::trace=debug
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/_system/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s

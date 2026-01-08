@@ -6,7 +6,12 @@ import doobie.util.transactor.Transactor
 import io.grpc.ManagedChannelBuilder
 import io.iohk.atala.prism.protos.node_api.NodeServiceGrpc
 import javax.sql.DataSource
-import org.hyperledger.identus.agent.server.config.{AppConfig, SecretStorageBackend, ValidatedVaultConfig}
+import org.hyperledger.identus.agent.server.config.{
+  AppConfig,
+  DIDNodeBackend,
+  SecretStorageBackend,
+  ValidatedVaultConfig
+}
 import org.hyperledger.identus.agent.vdr.{VdrService, VdrServiceImpl}
 import org.hyperledger.identus.agent.walletapi.service.{EntityService, WalletManagementService}
 import org.hyperledger.identus.agent.walletapi.sql.{
@@ -16,7 +21,14 @@ import org.hyperledger.identus.agent.walletapi.sql.{
 }
 import org.hyperledger.identus.agent.walletapi.storage.{DIDSecretStorage, GenericSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.agent.walletapi.vault.*
-import org.hyperledger.identus.castor.core.service.DIDService
+import org.hyperledger.identus.castor.core.service.{
+  DIDService,
+  NeoPrismClientImpl,
+  NeoPrismConfig,
+  NeoPrismDIDService,
+  PrismNodeDIDService
+}
+import org.hyperledger.identus.castor.core.util.DIDOperationValidator
 import org.hyperledger.identus.iam.authentication.admin.{
   AdminApiKeyAuthenticator,
   AdminApiKeyAuthenticatorImpl,
@@ -167,6 +179,50 @@ object AppModule {
     )
   }
 
+  val neoPrismConfigLayer: RLayer[AppConfig, NeoPrismConfig] =
+    ZLayer.fromZIO {
+      ZIO.serviceWith[AppConfig](_.didNode.neoprism.baseUrl).flatMap { javaUrl =>
+        zio.http.URL.fromURI(javaUrl.toURI()) match {
+          case Some(url) => ZIO.succeed(NeoPrismConfig(baseUrl = url))
+          case None      =>
+            ZIO.fail(
+              new IllegalArgumentException(
+                s"Invalid NeoPrism base URL '$javaUrl': could not convert to zio.http.URL"
+              )
+            )
+        }
+      }
+    }
+
+  val didServiceLayer: RLayer[
+    AppConfig & Client & DIDOperationValidator,
+    DIDService
+  ] = {
+    ZLayer.scoped[AppConfig & Client & DIDOperationValidator] {
+      ZIO
+        .serviceWith[AppConfig](_.didNode.backend)
+        .flatMap {
+          case DIDNodeBackend.`prism-node` =>
+            ZLayer
+              .makeSome[DIDOperationValidator, DIDService](
+                GrpcModule.prismNodeStubLayer,
+                PrismNodeDIDService.layer
+              )
+              .build
+              .map(_.get[DIDService])
+          case DIDNodeBackend.neoprism =>
+            ZLayer
+              .makeSome[AppConfig & Client, DIDService](
+                neoPrismConfigLayer,
+                NeoPrismClientImpl.layer,
+                NeoPrismDIDService.layer
+              )
+              .build
+              .map(_.get[DIDService])
+        }
+    }
+  }
+
 }
 
 object GrpcModule {
@@ -174,7 +230,7 @@ object GrpcModule {
     val stubLayer = ZLayer.fromZIO(
       ZIO
         .service[AppConfig]
-        .map(_.prismNode.service)
+        .map(_.didNode.prismNode)
         .flatMap(config =>
           if (config.usePlainText) {
             ZIO.attempt(

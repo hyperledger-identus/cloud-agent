@@ -134,7 +134,7 @@ object JWTVerification {
 
   def toECDSAVerifier(publicKey: PublicKey): JWSVerifier = {
     val verifier: JWSVerifier = publicKey match {
-      case key: ECPublicKey => ECDSAVerifier(key)
+      case key: ECPublicKey   => ECDSAVerifier(key)
       case key: EdECPublicKey =>
         val octetKeyPair = Ed25519PublicKey.toPublicKeyOctetKeyPair(key)
         Ed25519Verifier(octetKeyPair)
@@ -152,7 +152,7 @@ object JWTVerification {
       parsedJwt.verify(verifier)
     } match {
       case Failure(exception) => Validation.fail(s"Jwt[$jwt] verification pre-process failed: ${exception.getMessage}")
-      case Success(isValid) =>
+      case Success(isValid)   =>
         if isValid then Validation.unit else Validation.fail(s"Jwt[$jwt] not singed by $publicKey")
     }
   }

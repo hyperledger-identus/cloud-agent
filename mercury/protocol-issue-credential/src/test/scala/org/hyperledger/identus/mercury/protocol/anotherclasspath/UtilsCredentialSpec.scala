@@ -53,7 +53,7 @@ class UtilsCredentialSpec extends ZSuite {
 
     IssueCredential.readFromMessage(msg) match
       case Left(value) => fail("Must Have not error reading message")
-      case Right(obj) => {
+      case Right(obj)  => {
         assertEquals(obj.getCredentialFormatAndCredential.size, 1)
         assertEquals(
           obj.getCredentialFormatAndCredential.map(_._2),
@@ -76,7 +76,7 @@ class UtilsCredentialSpec extends ZSuite {
 
     OfferCredential.readFromMessage(msg) match
       case Left(value) => fail("Must Have not error reading message")
-      case Right(obj) => {
+      case Right(obj)  => {
         assertEquals(obj.getCredentialFormatAndCredential.size, 1)
         assertEquals(
           obj.getCredentialFormatAndCredential.map(_._2),
@@ -120,7 +120,7 @@ class UtilsCredentialSpec extends ZSuite {
 
     RequestCredential.readFromMessage(msg) match
       case Left(value) => fail("Must Have not error reading message")
-      case Right(obj) => {
+      case Right(obj)  => {
         assertEquals(obj.getCredentialFormatAndCredential.size, 1)
         assertEquals(
           obj.getCredentialFormatAndCredential.map(_._2),

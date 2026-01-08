@@ -13,9 +13,9 @@ object OrderCodec {
       try {
         val s2 = new String(Base64.getDecoder.decode(s))
         val order = s2.split(".", 2) match {
-          case Array()          => Order.empty
-          case Array(field)     => Order(field)
-          case Array(field, "") => Order(field)
+          case Array()                 => Order.empty
+          case Array(field)            => Order(field)
+          case Array(field, "")        => Order(field)
           case Array(field, direction) =>
             Order(field, Some(Direction.valueOf(direction)))
           case _ => sys.error("impossible")

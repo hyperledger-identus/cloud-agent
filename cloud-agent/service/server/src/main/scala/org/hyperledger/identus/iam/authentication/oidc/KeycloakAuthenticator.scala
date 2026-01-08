@@ -41,7 +41,7 @@ final class AccessToken private (token: String, claims: JwtClaim, rolesClaimPath
           acc.flatMap(_.asObject).flatMap(_.get(pathSegment))
         }
         rolesJson match {
-          case None => Right(None)
+          case None       => Right(None)
           case Some(json) =>
             json.asArray
               .toRight("Roles claim is not a JSON array of strings.")
@@ -80,7 +80,7 @@ trait KeycloakAuthenticator extends AuthenticatorWithAuthZ[KeycloakEntity] {
     if (isEnabled) {
       credentials match {
         case JwtCredentials(Some(token)) if token.nonEmpty => authenticate(token)
-        case JwtCredentials(Some(_)) =>
+        case JwtCredentials(Some(_))                       =>
           ZIO.logDebug(s"Keycloak authentication is enabled, but bearer token is empty") *>
             ZIO.fail(JwtAuthenticationError.emptyToken)
         case JwtCredentials(None) =>
