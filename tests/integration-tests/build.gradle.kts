@@ -106,6 +106,7 @@ afterEvaluate {
             systemProperty("context", fileName)
             systemProperty("TESTS_CONFIG", "/configs/$fileName.conf")
             systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "")
+            systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
             systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")
             systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
             systemProperty("jdk.net.hosts.file", "hosts_test")
