@@ -103,10 +103,10 @@ object OfferCredential {
 
   def readFromMessage(message: Message): Either[String, OfferCredential] = {
     message.body.as[OfferCredential.Body] match
-      case Left(err) => Left("Fail to parse OfferCredential's body: " + err)
+      case Left(err)   => Left("Fail to parse OfferCredential's body: " + err)
       case Right(body) =>
         message.from match
-          case None => Left("OfferCredential MUST have the sender explicit")
+          case None       => Left("OfferCredential MUST have the sender explicit")
           case Some(from) =>
             message.to match
               case firstTo +: Seq() =>

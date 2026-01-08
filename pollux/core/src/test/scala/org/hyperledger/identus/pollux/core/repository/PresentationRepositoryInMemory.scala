@@ -381,7 +381,7 @@ class PresentationRepositoryInMemory(
   ): UIO[Unit] =
     anyWalletStoreRefBy(recordId).flatMap { mStoreRef =>
       mStoreRef match
-        case None => ZIO.succeed(0)
+        case None           => ZIO.succeed(0)
         case Some(storeRef) =>
           for {
             maybeRecord <- storeRef.get.map(store => store.get(recordId))

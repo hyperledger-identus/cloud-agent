@@ -110,7 +110,7 @@ class ManagedDIDServiceImpl private[walletapi] (
         .mapError(PublishManagedDIDError.WalletStorageError.apply)
         .someOrFail(PublishManagedDIDError.DIDNotFound(did))
       outcome <- didState.publicationState match {
-        case PublicationState.Created() => doPublish(didState)
+        case PublicationState.Created()                              => doPublish(didState)
         case PublicationState.PublicationPending(publishOperationId) =>
           ZIO.succeed(ScheduleDIDOperationOutcome(did, didState.createOperation, publishOperationId))
         case PublicationState.Published(publishOperationId) =>

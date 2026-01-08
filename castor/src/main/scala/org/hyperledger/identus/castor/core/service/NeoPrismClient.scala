@@ -57,7 +57,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         .get(s"api/dids/$did")
       metadataOpt <- resp.status match
         case Status.NotFound => ZIO.none
-        case _ =>
+        case _               =>
           resp.body.asString
             .flatMap { body =>
               ZIO
@@ -126,8 +126,8 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
     for
       resp <- baseClient.batched.get(s"api/operations/$operationId")
       found <- resp.status match
-        case Status.Ok       => ZIO.succeed(true)
-        case Status.NotFound => ZIO.succeed(false)
+        case Status.Ok         => ZIO.succeed(true)
+        case Status.NotFound   => ZIO.succeed(false)
         case Status.BadRequest =>
           resp.body.asString.flatMap { body =>
             ZIO.fail(new RuntimeException(s"Invalid operation ID: $body"))

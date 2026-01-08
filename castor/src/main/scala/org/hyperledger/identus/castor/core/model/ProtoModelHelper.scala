@@ -313,7 +313,7 @@ private[castor] trait ProtoModelHelper {
   extension (publicKeyData: node_models.PublicKey.KeyData) {
     def toDomain: Either[String, PublicKeyData] = {
       publicKeyData match {
-        case KeyData.Empty => Left(s"unable to convert KeyData.Emtpy to PublicKeyData")
+        case KeyData.Empty                => Left(s"unable to convert KeyData.Emtpy to PublicKeyData")
         case KeyData.EcKeyData(ecKeyData) =>
           for {
             curve <- EllipticCurve

@@ -1166,7 +1166,7 @@ class CredentialServiceImpl(
     for {
       record <- credentialRepository.getById(id)
       updatedRecord <- record.protocolState match
-        case currentState if currentState == to => ZIO.succeed(record) // Idempotent behaviour
+        case currentState if currentState == to   => ZIO.succeed(record) // Idempotent behaviour
         case currentState if currentState == from =>
           credentialRepository.updateProtocolState(id, from, to) *> credentialRepository.getById(id)
         case _ => ZIO.fail(InvalidStateForOperation(record.protocolState))
@@ -1270,7 +1270,7 @@ class CredentialServiceImpl(
         )
         .orDieAsUnmanagedFailure
       jwtHeader <- JWTVerification.extractJwtHeader(requestJwt) match
-        case ZValidation.Success(log, header) => ZIO.succeed(header)
+        case ZValidation.Success(log, header)  => ZIO.succeed(header)
         case ZValidation.Failure(log, failure) =>
           ZIO.fail(VCJwtHeaderParsingError(s"Extraction of JwtHeader failed ${failure.toChunk.toString}"))
       ed25519KeyPair <- getEd25519SigningKeyPair(
@@ -1487,7 +1487,7 @@ class CredentialServiceImpl(
   ): IO[CredentialRequestValidationFailed, JwtPresentationPayload] = {
     for {
       _ <- maybeOptions match
-        case None => ZIO.unit
+        case None          => ZIO.unit
         case Some(options) =>
           JwtPresentation.validatePresentation(jwt, options.domain, options.challenge) match
             case ZValidation.Success(log, value) => ZIO.unit

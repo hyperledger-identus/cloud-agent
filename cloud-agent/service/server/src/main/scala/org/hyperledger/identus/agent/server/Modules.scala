@@ -184,7 +184,7 @@ object AppModule {
       ZIO.serviceWith[AppConfig](_.didNode.neoprism.baseUrl).flatMap { javaUrl =>
         zio.http.URL.fromURI(javaUrl.toURI()) match {
           case Some(url) => ZIO.succeed(NeoPrismConfig(baseUrl = url))
-          case None =>
+          case None      =>
             ZIO.fail(
               new IllegalArgumentException(
                 s"Invalid NeoPrism base URL '$javaUrl': could not convert to zio.http.URL"

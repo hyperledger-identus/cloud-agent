@@ -148,7 +148,7 @@ private[castor] trait W3CModelHelper {
 
     private def secp256k1Repr(pk: PublicKeyData): PublicKeyJwk = {
       val (x, y) = pk match {
-        case PublicKeyData.ECKeyData(_, x, y) => (x, y)
+        case PublicKeyData.ECKeyData(_, x, y)           => (x, y)
         case PublicKeyData.ECCompressedKeyData(_, data) =>
           val point = Apollo.default.secp256k1.publicKeyFromEncoded(data.toByteArray).get.getECPoint
           val x = Base64UrlString.fromByteArray(point.x)

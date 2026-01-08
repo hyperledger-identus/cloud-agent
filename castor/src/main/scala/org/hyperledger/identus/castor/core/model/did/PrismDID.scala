@@ -50,7 +50,7 @@ object PrismDID extends ProtoModelHelper {
   def buildLongFormFromAtalaOperation(atalaOperation: node_models.AtalaOperation): Either[String, LongFormPrismDID] =
     atalaOperation.operation match {
       case _: Operation.CreateDid => Right(LongFormPrismDID(atalaOperation))
-      case operation =>
+      case operation              =>
         Left(s"Provided initial state of long form Prism DID is ${operation.value}, CreateDid Atala operation expected")
     }
 
@@ -121,7 +121,7 @@ final case class LongFormPrismDID private[did] (atalaOperation: node_models.Atal
     import ProtoModelHelper.*
     atalaOperation.operation match {
       case Operation.CreateDid(op) => op.toDomain
-      case operation =>
+      case operation               =>
         Left(s"Provided initial state of long form Prism DID is ${operation.value}, CreateDid Atala operation expected")
     }
   }

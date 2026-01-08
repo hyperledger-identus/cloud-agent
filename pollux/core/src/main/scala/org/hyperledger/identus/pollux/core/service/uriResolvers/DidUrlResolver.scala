@@ -57,7 +57,7 @@ class DidUrlResolver(httpUrlResolver: HttpUrlResolver, didResolver: DidResolver)
 
       validatedResult <- result.fromJson[PrismEnvelopeData] match {
         case Right(env) => validateResourceIntegrity(env, maybeResourceHash)
-        case Left(err) =>
+        case Left(err)  =>
           ZIO.logDebug("Error parsing response as PrismEnvelope. Falling back to plain json") *> ZIO.succeed(result)
       }
 

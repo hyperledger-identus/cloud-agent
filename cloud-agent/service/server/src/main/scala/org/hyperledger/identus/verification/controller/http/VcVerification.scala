@@ -51,7 +51,7 @@ object VcVerification {
       maybeParameter: Option[VcVerificationParameter]
   ): IO[ErrorResponse, ServiceVcVerification] = {
     (verification, maybeParameter) match {
-      case (SignatureVerification, None) => ZIO.succeed(ServiceVcVerification.SignatureVerification)
+      case (SignatureVerification, None)                   => ZIO.succeed(ServiceVcVerification.SignatureVerification)
       case (IssuerIdentification, Some(DidParameter(iss))) =>
         ZIO.succeed(ServiceVcVerification.IssuerIdentification(iss))
       case (ExpirationCheck, Some(DateTimeParameter(dateTime))) =>
@@ -66,7 +66,7 @@ object VcVerification {
       case (AlgorithmVerification, None)            => ZIO.succeed(ServiceVcVerification.AlgorithmVerification)
       case (SchemaCheck, None)                      => ZIO.succeed(ServiceVcVerification.SchemaCheck)
       case (SemanticCheckOfClaims, None)            => ZIO.succeed(ServiceVcVerification.SemanticCheckOfClaims)
-      case _ =>
+      case _                                        =>
         ZIO.fail(
           ErrorResponse.badRequest(detail =
             Some(s"Unsupported Verification:$verification and Parameters:$maybeParameter")

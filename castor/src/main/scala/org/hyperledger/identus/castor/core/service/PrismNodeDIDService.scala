@@ -52,7 +52,7 @@ private class PrismNodeDIDService(didOpValidator: DIDOperationValidator, nodeCli
       operationId <- ZIO.fromEither {
         operationOutput.operationMaybe match {
           case OperationMaybe.OperationId(id) => Right(id.toByteArray)
-          case OperationMaybe.Empty =>
+          case OperationMaybe.Empty           =>
             Left(DIDOperationError.UnexpectedDLTResult("operation result does not contain operation detail"))
           case OperationMaybe.Error(e) =>
             Left(DIDOperationError.UnexpectedDLTResult(s"operation result was not successful: $e"))

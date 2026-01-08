@@ -317,7 +317,7 @@ class PresentationServiceNotifier(
       ret <- svc.reportProcessingFailure(recordId, failReason)
       mRecordAfterFail <- presentationRepository.getPresentationRecordByDIDCommID(recordId)
       _ <- mRecordAfterFail match {
-        case None => ZIO.unit
+        case None                  => ZIO.unit
         case Some(recordAfterFail) =>
           notifyOnFail(recordAfterFail, recordAfterFail.walletId)
       }

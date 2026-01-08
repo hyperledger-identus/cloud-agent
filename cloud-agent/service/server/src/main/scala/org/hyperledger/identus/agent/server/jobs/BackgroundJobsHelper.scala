@@ -50,7 +50,7 @@ trait BackgroundJobsHelper {
         .someOrFail(BackgroundJobError.InvalidState(s"Issuer DID does not exist in the wallet: $did"))
         .flatMap {
           case s @ ManagedDIDState(_, _, PublicationState.Published(_)) => ZIO.succeed(s)
-          case s =>
+          case s                                                        =>
             ZIO.cond(
               allowUnpublishedIssuingDID,
               s,
@@ -236,7 +236,7 @@ trait BackgroundJobsHelper {
 
   def retryStepsFromConfig(topicName: String, jobConfig: ConsumerJobConfig): Seq[RetryStep] = {
     val retryTopics = jobConfig.retryStrategy match
-      case None => Seq.empty
+      case None     => Seq.empty
       case Some(rs) =>
         (1 to rs.maxRetries).map(i =>
           (
