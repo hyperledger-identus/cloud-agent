@@ -52,7 +52,7 @@ class KeycloakAuthenticatorImpl(
         }
         .flatMap {
           case head +: Nil => ZIO.succeed(head)
-          case Nil =>
+          case Nil         =>
             ZIO.fail(AuthenticationError.ResourceNotPermitted("No wallet permissions found."))
           case ls =>
             ZIO.fail(
@@ -79,8 +79,8 @@ class KeycloakAuthenticatorImpl(
         .map(_.role.left.map(AuthenticationError.InvalidCredentials(_)))
         .absolve
       ctx <- role match {
-        case EntityRole.Admin  => ZIO.succeed(WalletAdministrationContext.Admin())
-        case EntityRole.Tenant => selfServiceCtx
+        case EntityRole.Admin         => ZIO.succeed(WalletAdministrationContext.Admin())
+        case EntityRole.Tenant        => selfServiceCtx
         case EntityRole.ExternalParty =>
           ZIO.fail(AuthenticationError.InvalidRole("External party cannot access the wallet."))
       }

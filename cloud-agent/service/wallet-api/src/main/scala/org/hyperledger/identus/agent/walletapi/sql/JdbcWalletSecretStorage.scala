@@ -48,7 +48,7 @@ class JdbcWalletSecretStorage(xa: Transactor[ContextAwareTask]) extends WalletSe
     cxnIO
       .transactWallet(xa)
       .flatMap {
-        case None => ZIO.none
+        case None        => ZIO.none
         case Some(bytes) =>
           ZIO
             .fromEither(WalletSeed.fromByteArray(bytes))

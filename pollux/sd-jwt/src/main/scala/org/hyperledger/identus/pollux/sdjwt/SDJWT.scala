@@ -148,7 +148,7 @@ object SDJWT {
       case Failure(ex: SdjwtException.Unspecified)
           if ex.getMessage() == "invalid state: Requested claim doesn't exist" =>
         InvalidToken
-      case Failure(ex) => InvalidError(ex.getMessage())
+      case Failure(ex)     => InvalidError(ex.getMessage())
       case Success(claims) =>
         claims.fromJson[Json] match
           case Left(value)           => InvalidClaimsIsNotJsonObj
@@ -179,7 +179,7 @@ object SDJWT {
         InvalidSignature
       case Failure(ex: SdjwtException.Unspecified) if ex.getMessage() == "invalid input: InvalidToken" =>
         InvalidToken
-      case Failure(ex) => InvalidError(ex.getMessage())
+      case Failure(ex)     => InvalidError(ex.getMessage())
       case Success(claims) =>
         claims.fromJson[Json] match
           case Left(value)           => InvalidClaimsIsNotJsonObj

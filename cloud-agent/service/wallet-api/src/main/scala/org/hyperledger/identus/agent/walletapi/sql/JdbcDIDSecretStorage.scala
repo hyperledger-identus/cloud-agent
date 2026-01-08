@@ -109,7 +109,7 @@ class JdbcDIDSecretStorage(xa: Transactor[ContextAwareTask]) extends DIDSecretSt
     cxnIO
       .transactWallet(xa)
       .flatMap {
-        case None => ZIO.none
+        case None      => ZIO.none
         case Some(jwk) =>
           ZIO
             .fromEither(c.from(jwk))

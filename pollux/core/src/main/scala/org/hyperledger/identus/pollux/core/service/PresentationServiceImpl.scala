@@ -199,7 +199,7 @@ private class PresentationServiceImpl(
                 mediaType = attachment.media_type,
                 format = attachment.format.map {
                   case PresentCredentialRequestFormat.SDJWT.name => PresentCredentialFormat.SDJWT.name
-                  case format =>
+                  case format                                    =>
                     throw throw RuntimeException(
                       s"Unexpected PresentCredentialRequestFormat=$format. Expecting: ${PresentCredentialRequestFormat.SDJWT.name}"
                     )
@@ -276,7 +276,7 @@ private class PresentationServiceImpl(
                 mediaType = attachment.media_type,
                 format = attachment.format.map {
                   case PresentCredentialRequestFormat.Anoncred.name => PresentCredentialFormat.Anoncred.name
-                  case format =>
+                  case format                                       =>
                     throw throw RuntimeException(
                       s"Unexpected PresentCredentialRequestFormat=$format. Expecting: ${PresentCredentialRequestFormat.Anoncred.name}"
                     )
@@ -492,16 +492,16 @@ private class PresentationServiceImpl(
   ): ZIO[WalletAccessContext, PresentationError, PresentationRecord] = {
     for {
       format <- request.attachments match {
-        case Seq() => ZIO.fail(PresentationError.MissingCredential)
+        case Seq()     => ZIO.fail(PresentationError.MissingCredential)
         case Seq(head) =>
           val jsonF = PresentCredentialRequestFormat.JWT.name // stable identifier
           val anoncredF = PresentCredentialRequestFormat.Anoncred.name // stable identifier
           val sdjwtF = PresentCredentialRequestFormat.SDJWT.name // stable identifier
 
           head.format match
-            case None           => ZIO.fail(PresentationError.MissingCredentialFormat)
-            case Some(`jsonF`)  => ZIO.succeed(CredentialFormat.JWT)
-            case Some(`sdjwtF`) => ZIO.succeed(CredentialFormat.SDJWT)
+            case None              => ZIO.fail(PresentationError.MissingCredentialFormat)
+            case Some(`jsonF`)     => ZIO.succeed(CredentialFormat.JWT)
+            case Some(`sdjwtF`)    => ZIO.succeed(CredentialFormat.SDJWT)
             case Some(`anoncredF`) =>
               head.data match
                 case Base64(data) =>

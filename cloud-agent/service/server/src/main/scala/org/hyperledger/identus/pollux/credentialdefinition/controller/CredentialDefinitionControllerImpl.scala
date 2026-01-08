@@ -185,7 +185,7 @@ class CredentialDefinitionControllerImpl(service: CredentialDefinitionService, m
         .someOrFail(ErrorResponse.notFound(detail = Some(s"Issuer DID does not exist in the wallet: $did")))
         .flatMap {
           case s @ ManagedDIDState(_, _, _: PublicationState.Published) => ZIO.succeed(s)
-          case s =>
+          case s                                                        =>
             ZIO.cond(
               allowUnpublishedIssuingDID,
               s,
