@@ -57,13 +57,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: "lts/*"
+          node-version: "22.16.0"
           registry-url: "https://registry.npmjs.org"
           scope: "@hyperledger"
 
       # Ensure npm version ≥ 11.5.1 for Trusted Publishing
       - name: Upgrade npm
-        run: npm install -g npm@^11.5.1
+        run: |
+          URL="https://registry.npmjs.org/npm/-/npm-11.5.1.tgz"
+          EXPECTED_HASH="f4c82fbff74154f73bd5ce5a2b749700d55eaddebda97b16076bf7033040de34"
+          curl -sSfL "$URL" -o npm.tgz
+          echo "$EXPECTED_HASH npm.tgz" | sha256sum -c -
+          npm install -g npm.tgz
+          rm npm.tgz
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ef76a971e2fa3f867b617efd72f2fbd72cf6f8bc # v2.8.0
@@ -84,13 +90,30 @@ jobs:
       - name: Rename OpenAPI specification
         if: ${{ !inputs.releaseTag }}
         working-directory: cloud-agent/service/api/http
+        env:
+          REVISION: ${{ inputs.revision }}
         run: |
-          mv cloud-agent-openapi-spec-${{ inputs.revision }}.yaml cloud-agent-openapi-spec.yaml
+          set -euo pipefail
+          case "$REVISION" in
+            # allow alphanumerics, dot, dash, underscore
+            ''|*[!A-Za-z0-9._-]*)
+              echo "Invalid revision value"; exit 1 ;;
+          esac
+          mv "cloud-agent-openapi-spec-${REVISION}.yaml" cloud-agent-openapi-spec.yaml
 
       - name: Set revision version
         if: ${{ !inputs.releaseTag }}
         working-directory: cloud-agent/client/generator
-        run: yarn version --new-version ${{ inputs.revision }} --no-git-tag-version
+        env:
+          REVISION: ${{ inputs.revision }}
+        run: |
+          set -euo pipefail
+          case "$REVISION" in
+            # allow alphanumerics, dot, dash, underscore
+            ''|*[!A-Za-z0-9._-]*)
+              echo "Invalid revision value"; exit 1 ;;
+          esac
+          yarn version --new-version "$REVISION" --no-git-tag-version
 
       - name: Install generator dependencies
         working-directory: cloud-agent/client/generator
@@ -101,11 +124,29 @@ jobs:
         run: yarn generate:all
 
       - name: Set version for clients
+        env:
+          REVISION: ${{ inputs.revision }}
+          RELEASE_TAG: ${{ github.event.inputs.releaseTag }}
         run: |
-          if [ -z "${{ github.event.inputs.releaseTag }}" ]; then
-              echo "VERSION_TAG=cloud-agent-v${{ inputs.revision }}" >> $GITHUB_ENV
+          set -euo pipefail
+          case "$REVISION" in
+            # allow alphanumerics, dot, dash, underscore
+            ''|*[!A-Za-z0-9._-]*)
+              echo "Invalid revision value"; exit 1 ;;
+          esac
+          case "${RELEASE_TAG:-}" in
+            # allow empty or safe tag characters
+            ''|*[!A-Za-z0-9._-]*)
+              if [ -n "${RELEASE_TAG:-}" ]; then
+                echo "Invalid releaseTag value"; exit 1
+              fi
+              ;;
+          esac
+
+          if [ -z "${RELEASE_TAG:-}" ]; then
+              echo "VERSION_TAG=cloud-agent-v${REVISION}" >> "$GITHUB_ENV"
           else
-              echo "VERSION_TAG=${{ github.event.inputs.releaseTag }}" >> $GITHUB_ENV
+              echo "VERSION_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
           fi
 
       # The npm publish step uses Trusted Publisher via OIDC
