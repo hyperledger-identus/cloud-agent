@@ -10,14 +10,13 @@ on:
   schedule:
     - cron: 0 3 * * 6
 
-permissions:
-  contents: write
-  packages: write
-  id-token: write
-
 jobs:
   build:
     name: "Build and Publish Cloud-Agent Revision"
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
     env:
       GITHUB_ACTOR: "hyperledger-bot"
       GITHUB_ACTOR_EMAIL: "hyperledger-bot@hyperledger.org"
