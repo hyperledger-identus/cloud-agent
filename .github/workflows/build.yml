@@ -139,6 +139,10 @@ jobs:
 
   build-and-publish-clients:
     needs: build
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     if: needs.build.outputs.OAS_PUBLISHED
     uses: ./.github/workflows/release-clients.yml
     secrets: inherit
