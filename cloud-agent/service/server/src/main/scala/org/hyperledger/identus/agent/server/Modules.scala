@@ -12,8 +12,8 @@ import org.hyperledger.identus.agent.server.config.{
   SecretStorageBackend,
   ValidatedVaultConfig
 }
-import org.hyperledger.identus.agent.vdr.{VdrService, VdrServiceImpl}
-import org.hyperledger.identus.agent.walletapi.service.{EntityService, WalletManagementService}
+import org.hyperledger.identus.agent.vdr.{VdrOperationSigner, VdrService, VdrServiceImpl}
+import org.hyperledger.identus.agent.walletapi.service.{EntityService, ManagedDIDService, WalletManagementService}
 import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcDIDSecretStorage,
   JdbcGenericSecretStorage,
@@ -52,6 +52,7 @@ import org.hyperledger.identus.iam.authorization.keycloak.admin.KeycloakPermissi
 import org.hyperledger.identus.pollux.vc.jwt.{DidResolver as JwtDidResolver, PrismDidResolver}
 import org.hyperledger.identus.shared.crypto.Apollo
 import org.hyperledger.identus.shared.db.{ContextAwareTask, DbConfig, TransactorLayer}
+import org.hyperledger.identus.vdr.PrismNodeVdrOperationSigner
 import org.keycloak.authorization.client.AuthzClient
 import zio.*
 import zio.config.typesafe.TypesafeConfigProvider
@@ -151,7 +152,7 @@ object AppModule {
     }
   }
 
-  val vdrServiceLayer: RLayer[AppConfig, VdrService] = {
+  val vdrServiceLayer: RLayer[AppConfig & ManagedDIDService, VdrService] = {
     val vdrConfigLayer = ZLayer.fromFunction((appConfig: AppConfig) => {
       val prismDriverOpt = appConfig.agent.vdr.prismDriver
         .map { conf =>
@@ -166,15 +167,27 @@ object AppModule {
             indexIntervalSecond = conf.indexIntervalSecond
           )
         }
+      val prismNodeDriverOpt = appConfig.agent.vdr.prismNodeDriver.map { conf =>
+        VdrServiceImpl.PrismNodeDriverConfig(
+          host = conf.host,
+          port = conf.port,
+          usePlainText = conf.usePlainText
+        )
+      }
       VdrServiceImpl.Config(
         enableInMemoryDriver = appConfig.agent.vdr.inMemoryDriverEnabled,
         enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,
-        prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled)
+        prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled),
+        prismNodeDriver = prismNodeDriverOpt.filter(_ => appConfig.agent.vdr.prismNodeDriverEnabled)
       )
     })
-    ZLayer.makeSome[AppConfig, VdrService](
+    val signerLayer = PrismNodeVdrOperationSigner.layer
+
+    ZLayer.makeSome[AppConfig & ManagedDIDService, VdrService](
       vdrConfigLayer,
       RepoModule.agentDataSourceLayer,
+      signerLayer,
+      GrpcModule.prismNodeBlockingStubLayer,
       VdrServiceImpl.layer
     )
   }
@@ -226,25 +239,22 @@ object AppModule {
 }
 
 object GrpcModule {
-  val prismNodeStubLayer: TaskLayer[NodeServiceGrpc.NodeServiceStub] = {
-    val stubLayer = ZLayer.fromZIO(
-      ZIO
-        .service[AppConfig]
-        .map(_.didNode.prismNode)
-        .flatMap(config =>
-          if (config.usePlainText) {
-            ZIO.attempt(
-              NodeServiceGrpc.stub(ManagedChannelBuilder.forAddress(config.host, config.port).usePlaintext.build)
-            )
-          } else {
-            ZIO.attempt(
-              NodeServiceGrpc.stub(ManagedChannelBuilder.forAddress(config.host, config.port).build)
-            )
-          }
-        )
-    )
-    SystemModule.configLayer >>> stubLayer
-  }
+  private def mkChannel(cfg: AppConfig): Task[io.grpc.ManagedChannel] =
+    if (cfg.didNode.prismNode.usePlainText)
+      ZIO.attempt(
+        ManagedChannelBuilder.forAddress(cfg.didNode.prismNode.host, cfg.didNode.prismNode.port).usePlaintext.build
+      )
+    else
+      ZIO.attempt(ManagedChannelBuilder.forAddress(cfg.didNode.prismNode.host, cfg.didNode.prismNode.port).build)
+
+  private val prismNodeChannelLayer: TaskLayer[io.grpc.ManagedChannel] =
+    SystemModule.configLayer >>> ZLayer.fromZIO(ZIO.service[AppConfig].flatMap(mkChannel))
+
+  val prismNodeStubLayer: TaskLayer[NodeServiceGrpc.NodeServiceStub] =
+    prismNodeChannelLayer >>> ZLayer.fromFunction(NodeServiceGrpc.stub(_))
+
+  val prismNodeBlockingStubLayer: TaskLayer[NodeServiceGrpc.NodeServiceBlockingStub] =
+    prismNodeChannelLayer >>> ZLayer.fromFunction(NodeServiceGrpc.blockingStub(_))
 }
 
 object RepoModule {

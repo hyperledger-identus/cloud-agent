@@ -1,11 +1,11 @@
 package org.hyperledger.identus.vdr.controller
 
 import org.hyperledger.identus.api.http.{EndpointOutputs, ErrorResponse, RequestContext}
-import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, Proof, UpdateVdrEntryResponse}
 import org.hyperledger.identus.iam.authentication.apikey.ApiKeyCredentials
 import org.hyperledger.identus.iam.authentication.apikey.ApiKeyEndpointSecurityLogic.apiKeyHeader
 import org.hyperledger.identus.iam.authentication.oidc.JwtCredentials
 import org.hyperledger.identus.iam.authentication.oidc.JwtSecurityLogic.jwtAuthHeader
+import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, Proof, UpdateVdrEntryResponse}
 import sttp.apispec.Tag
 import sttp.model.{QueryParams, StatusCode}
 import sttp.tapir.*

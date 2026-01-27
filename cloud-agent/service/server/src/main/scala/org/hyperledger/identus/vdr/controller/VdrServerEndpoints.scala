@@ -1,9 +1,9 @@
 package org.hyperledger.identus.vdr.controller
 
-import org.hyperledger.identus.LogUtils.logTrace
 import org.hyperledger.identus.agent.walletapi.model.BaseEntity
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
 import org.hyperledger.identus.shared.models.WalletAccessContext
+import org.hyperledger.identus.LogUtils.logTrace
 import sttp.tapir.ztapir.*
 import zio.*
 

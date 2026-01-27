@@ -2,8 +2,8 @@ package org.hyperledger.identus.vdr.controller
 
 import org.hyperledger.identus.agent.vdr.VdrService
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, Proof, UpdateVdrEntryResponse}
 import org.hyperledger.identus.shared.models.WalletAccessContext
+import org.hyperledger.identus.vdr.controller.http.{CreateVdrEntryResponse, Proof, UpdateVdrEntryResponse}
 import zio.*
 
 import scala.language.implicitConversions
@@ -21,7 +21,11 @@ trait VdrController {
       params: Map[String, String],
       didKeyId: Option[String]
   ): ZIO[WalletAccessContext, ErrorResponse, UpdateVdrEntryResponse]
-  def deleteVdrEntry(url: String, params: Map[String, String], didKeyId: Option[String]): ZIO[WalletAccessContext, ErrorResponse, Unit]
+  def deleteVdrEntry(
+      url: String,
+      params: Map[String, String],
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, ErrorResponse, Unit]
   def entryProof(url: String): IO[ErrorResponse, Proof]
 }
 
@@ -49,7 +53,11 @@ class VdrControllerImpl(service: VdrService) extends VdrController {
       .update(data, url, params, didKeyId)
       .map(url => UpdateVdrEntryResponse(url))
 
-  override def deleteVdrEntry(url: String, params: Map[String, String], didKeyId: Option[String]): ZIO[WalletAccessContext, ErrorResponse, Unit] =
+  override def deleteVdrEntry(
+      url: String,
+      params: Map[String, String],
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, ErrorResponse, Unit] =
     service.delete(url, params, didKeyId)
 
   override def entryProof(url: String): IO[ErrorResponse, Proof] =
