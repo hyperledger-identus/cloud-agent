@@ -21,6 +21,7 @@ import javax.sql.DataSource
 import org.hyperledger.identus.agent.vdr.VdrServiceError.{DriverNotFound, VdrEntryNotFound}
 import proxy.VDRProxyMultiDrivers
 import proxy.VDRProxyMultiDrivers.NoDriverWithThisSpecificationsException
+import org.hyperledger.identus.shared.models.WalletAccessContext
 import urlManagers.BaseUrlManager
 import zio.*
 
@@ -34,10 +35,23 @@ trait VdrService {
   def identifier: String
   def version: String
 
-  def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl]
-  def update(data: Array[Byte], url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]]
+  def create(
+      data: Array[Byte],
+      options: VdrOptions,
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, DriverNotFound, VdrUrl]
+  def update(
+      data: Array[Byte],
+      url: VdrUrl,
+      options: VdrOptions,
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound, Option[VdrUrl]]
   def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]]
-  def delete(url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Unit]
+  def delete(
+      url: VdrUrl,
+      options: VdrOptions,
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound, Unit]
   def verify(url: VdrUrl, returnData: Boolean = false): UIO[Proof]
 }
 
@@ -60,7 +74,11 @@ class VdrServiceImpl(
       }
   }
 
-  override def create(data: Array[Byte], options: VdrOptions): IO[DriverNotFound, VdrUrl] =
+  override def create(
+      data: Array[Byte],
+      options: VdrOptions,
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, DriverNotFound, VdrUrl] =
     ZIO
       .attemptBlocking(proxy.create(data, options.asJava))
       .refineOrDie { case e: NoDriverWithThisSpecificationsException =>
@@ -70,8 +88,9 @@ class VdrServiceImpl(
   override def update(
       data: Array[Byte],
       url: VdrUrl,
-      options: VdrOptions
-  ): IO[DriverNotFound | VdrEntryNotFound, Option[VdrUrl]] =
+      options: VdrOptions,
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound, Option[VdrUrl]] =
     ZIO
       .attemptBlocking(Option(proxy.update(data, url, options.asJava)))
       .refineVdrError
@@ -81,7 +100,11 @@ class VdrServiceImpl(
       .attemptBlocking(proxy.read(url))
       .refineVdrError
 
-  override def delete(url: VdrUrl, options: VdrOptions): IO[DriverNotFound | VdrEntryNotFound, Unit] =
+  override def delete(
+      url: VdrUrl,
+      options: VdrOptions,
+      didKeyId: Option[String]
+  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound, Unit] =
     ZIO
       .attemptBlocking(proxy.delete(url, options.asJava))
       .refineVdrError
