@@ -39,11 +39,11 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v14
+        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
           java-version: openjdk@1.17
 
-      - uses: coursier/cache-action@v6
+      - uses: coursier/cache-action@2addd381bd2c931f42d4b734b9d0c9b73aac16fb # v6
         id: coursier-cache
 
       - name: Setup Node.js
@@ -52,16 +52,16 @@ jobs:
           node-version: "lts/*"
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@2b82ce82d56a2a04d2637cd93a637ae1b359c0a7 # v2
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@885d1462b80bc1c1c7f0b00334ad271f09369c55 # v2
 
       - name: Extract revision version
         id: revision
@@ -82,7 +82,7 @@ jobs:
 
       - name: Docker Metadata Action
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
         with:
           images: ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent
           tags: |
@@ -97,7 +97,7 @@ jobs:
 
       - name: Push Docker Image
         id: push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6
         with:
           context: ./cloud-agent/service/server/target/docker/stage
           platforms: linux/amd64,linux/arm64
@@ -116,7 +116,7 @@ jobs:
 
       - name: Publish Cloud-Agent Open API Specification
         id: upload-oas
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4.4.3
         with:
           name: cloud-agent-openapi-spec-${{ steps.build-oas.outputs.OAS_CHECKSUM}}
           path: ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml
@@ -130,7 +130,7 @@ jobs:
 
     steps:
       - name: Trigger component integration
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@ff45666b9427631e3450c54a1bcbee4d9ff4d7c0 # v3
         with:
           token: ${{ secrets.IDENTUS_CI }}
           repository: hyperledger-identus/integration
