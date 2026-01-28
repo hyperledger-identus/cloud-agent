@@ -69,6 +69,7 @@ class ManageDidSteps {
 
             createdDids.add(managedDid.longFormDid!!)
             actor.remember("createdDids", createdDids)
+            actor.remember("didKeyId", "vdr-1")
         }
     }
 
@@ -188,13 +189,12 @@ class ManageDidSteps {
         )
     }
 
-    private fun createPrismDidRequest(curve: Curve, purpose: Purpose): CreateManagedDidRequest =
-        CreateManagedDidRequest(
-            CreateManagedDidRequestDocumentTemplate(
-                publicKeys = listOf(ManagedDIDKeyTemplate("auth-1", purpose, curve)),
-                services = listOf(
-                    Service("https://foo.bar.com", listOf("LinkedDomains"), JsonPrimitive("https://foo.bar.com/")),
-                ),
+    private fun createPrismDidRequest(curve: Curve, purpose: Purpose): CreateManagedDidRequest = CreateManagedDidRequest(
+        CreateManagedDidRequestDocumentTemplate(
+            publicKeys = listOf(ManagedDIDKeyTemplate("auth-1", purpose, curve)),
+            services = listOf(
+                Service("https://foo.bar.com", listOf("LinkedDomains"), JsonPrimitive("https://foo.bar.com/")),
             ),
-        )
+        ),
+    )
 }

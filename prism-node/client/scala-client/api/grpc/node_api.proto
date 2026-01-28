@@ -1,8 +1,5 @@
 syntax = "proto3";
 
-option java_multiple_files = true;
-option java_package = "io.iohk.atala.prism.protos";
-
 package io.iohk.atala.prism.protos;
 
 import "common_models.proto";
@@ -10,20 +7,23 @@ import "node_models.proto";
 
 import "google/protobuf/timestamp.proto";
 
+option java_multiple_files = true;
+option java_package = "io.iohk.atala.prism.protos";
+
 /**
  * Service for PRISM Node API. Provides a way to store, retrieve and update
  * Decentralized identifiers (DIDs) into/from the underlying blockchain.
  */
 service NodeService {
-    /**
+  /**
      * PUBLIC
      *
      * Sends a request that can be used to check service health.
      * All PRISM services expose an RPC that accepts this message as request.
      */
-    rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {}
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {}
 
-    /**
+  /**
     * PUBLIC
     *
     * Retrieves a DID Document associated to a DID.
@@ -34,95 +34,94 @@ service NodeService {
     * - Invalid DID (INVALID_ARGUMENT)
     * - Unknown DID (INVALID_ARGUMENT)
     */
-    rpc GetDidDocument(GetDidDocumentRequest) returns (GetDidDocumentResponse) {}
+  rpc GetDidDocument(GetDidDocumentRequest) returns (GetDidDocumentResponse) {}
 
-    /**
+  /**
     * PUBLIC
     *
     * Retrieves the Node version info.
     */
-    rpc GetNodeBuildInfo(GetNodeBuildInfoRequest) returns (GetNodeBuildInfoResponse) {}
+  rpc GetNodeBuildInfo(GetNodeBuildInfoRequest) returns (GetNodeBuildInfoResponse) {}
 
-    /**
+  /**
     * PUBLIC
     *
     * Retrieves the Node version info.
     */
-    rpc GetNodeNetworkProtocolInfo(GetNodeNetworkProtocolInfoRequest) returns (GetNodeNetworkProtocolInfoResponse) {}
+  rpc GetNodeNetworkProtocolInfo(GetNodeNetworkProtocolInfoRequest) returns (GetNodeNetworkProtocolInfoResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Retrieves the status of an operation.
      */
-    rpc GetOperationInfo(GetOperationInfoRequest) returns (GetOperationInfoResponse) {}
+  rpc GetOperationInfo(GetOperationInfoRequest) returns (GetOperationInfoResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Timestamp of the latest block processed by PRISM Node.
      */
-    rpc GetLastSyncedBlockTimestamp(GetLastSyncedBlockTimestampRequest) returns (GetLastSyncedBlockTimestampResponse) {}
+  rpc GetLastSyncedBlockTimestamp(GetLastSyncedBlockTimestampRequest) returns (GetLastSyncedBlockTimestampResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Schedules a list of operations for further publication.
      */
-    rpc ScheduleOperations(ScheduleOperationsRequest) returns (ScheduleOperationsResponse) {}
+  rpc ScheduleOperations(ScheduleOperationsRequest) returns (ScheduleOperationsResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Creates a new VDR storage entry (expects a signed CreateStorageEntry operation).
      */
-    rpc CreateVdrEntry(CreateVdrEntryRequest) returns (CreateVdrEntryResponse) {}
+  rpc CreateVdrEntry(CreateVdrEntryRequest) returns (CreateVdrEntryResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Updates an existing VDR storage entry (expects a signed UpdateStorageEntry operation).
      */
-    rpc UpdateVdrEntry(UpdateVdrEntryRequest) returns (UpdateVdrEntryResponse) {}
+  rpc UpdateVdrEntry(UpdateVdrEntryRequest) returns (UpdateVdrEntryResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Deactivates an existing VDR storage entry (expects a signed DeactivateStorageEntry operation).
      */
-    rpc DeactivateVdrEntry(DeactivateVdrEntryRequest) returns (DeactivateVdrEntryResponse) {}
+  rpc DeactivateVdrEntry(DeactivateVdrEntryRequest) returns (DeactivateVdrEntryResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Retrieves a VDR storage entry by its event hash.
      */
-    rpc GetVdrEntry(GetVdrEntryRequest) returns (GetVdrEntryResponse) {}
+  rpc GetVdrEntry(GetVdrEntryRequest) returns (GetVdrEntryResponse) {}
 
-    /**
+  /**
      * PUBLIC
      *
      * Verifies integrity of a VDR storage entry and its chain.
      */
-    rpc VerifyVdrEntry(VerifyVdrEntryRequest) returns (VerifyVdrEntryResponse) {}
+  rpc VerifyVdrEntry(VerifyVdrEntryRequest) returns (VerifyVdrEntryResponse) {}
 }
-
 
 /**
  * Request to find a DID Document.
  * See NodeService.GetDidDocument for more information.
  */
 message GetDidDocumentRequest {
-    string did = 1; // The DID.
+  string did = 1; // The DID.
 }
 /**
  * Response to a DID Document query.
  * See NodeService.GetDidDocument for more information.
  */
 message GetDidDocumentResponse {
-    DIDData document = 1; // The DID Document.
-    google.protobuf.Timestamp last_synced_block_timestamp = 5; // Timestamp of the latest synchronized block.
-    bytes last_update_operation = 6; // The hash of the last did update operation.
+  DIDData document = 1; // The DID Document.
+  google.protobuf.Timestamp last_synced_block_timestamp = 5; // Timestamp of the latest synchronized block.
+  bytes last_update_operation = 6; // The hash of the last did update operation.
 }
 
 /**
@@ -136,11 +135,11 @@ message GetNodeBuildInfoRequest {
  * See NodeService.GetNodeBuildInfo for more information.
  */
 message GetNodeBuildInfoResponse {
-    reserved 4;
+  reserved 4;
 
-    string version = 1; // The actual version.
-    string scala_version = 2; // The Scala version used to compile the app.
-    string sbt_version = 3; // The SBT version used to compile the app.
+  string version = 1; // The actual version.
+  string scala_version = 2; // The Scala version used to compile the app.
+  string sbt_version = 3; // The SBT version used to compile the app.
 }
 
 /**
@@ -154,8 +153,8 @@ message GetNodeNetworkProtocolInfoRequest {
  * See NodeService.GetNodeProtocolVersionInfo for more information.
  */
 message GetNodeNetworkProtocolInfoResponse {
-    ProtocolVersion supported_network_protocol_version = 5; // Network protocol version number supported by Node.
-    ProtocolVersion current_network_protocol_version = 6; // Current network protocol version number.
+  ProtocolVersion supported_network_protocol_version = 5; // Network protocol version number supported by Node.
+  ProtocolVersion current_network_protocol_version = 6; // Current network protocol version number.
 }
 
 /**
@@ -163,17 +162,17 @@ message GetNodeNetworkProtocolInfoResponse {
  * See NodeService.GetOperationInfo for more information.
  */
 message GetOperationInfoRequest {
-    bytes operation_id = 1; // Operation identifier. The identifier is returned to the corresponding operation request.
+  bytes operation_id = 1; // Operation identifier. The identifier is returned to the corresponding operation request.
 }
 /**
  * Response with the current operation status.
  *  See NodeService.GetOperationInfo for more information.
  */
 message GetOperationInfoResponse {
-    OperationStatus operation_status = 1; // Contains the status of this operation.
-    string transaction_id = 3; // Transaction identifier containing the operation. Presented only when operation was approved by the ledger.
-    google.protobuf.Timestamp last_synced_block_timestamp = 2; // Timestamp of the latest synchronized block.
-    string details = 4; // Contains additional information about the operation state. For example, error descriptions. Can be empty.
+  OperationStatus operation_status = 1; // Contains the status of this operation.
+  string transaction_id = 3; // Transaction identifier containing the operation. Presented only when operation was approved by the ledger.
+  google.protobuf.Timestamp last_synced_block_timestamp = 2; // Timestamp of the latest synchronized block.
+  string details = 4; // Contains additional information about the operation state. For example, error descriptions. Can be empty.
 }
 
 /**
@@ -187,113 +186,114 @@ message GetLastSyncedBlockTimestampRequest {
  * See NodeService.GetLastSyncedBlockTimestampResponse for more information.
  */
 message GetLastSyncedBlockTimestampResponse {
-    /**
+  /**
      * Timestamp of the latest synchronized (processed by PRISM Node) block.
      */
-    google.protobuf.Timestamp last_synced_block_timestamp = 1;
+  google.protobuf.Timestamp last_synced_block_timestamp = 1;
 }
 
 /**
  * Request to retrieve transaction info and operations outputs.
  */
 message ScheduleOperationsRequest {
-    /**
+  /**
     * List of signed operations to apply. The operations will be applied in the order specified here.
     */
-    repeated SignedAtalaOperation signed_operations = 1; // a list of signed operations
+  repeated SignedAtalaOperation signed_operations = 1; // a list of signed operations
 }
 
 /**
  * Response with the transaction info and operations outputs.
  */
 message ScheduleOperationsResponse {
-    /**
+  /**
      * The responses for scheduled operations, ordered the same as the operations sent in ScheduleOperationsRequest.
      */
-    repeated OperationOutput outputs = 1;
+  repeated OperationOutput outputs = 1;
 }
 
 // VDR entry management
 message CreateVdrEntryRequest {
-    SignedAtalaOperation signed_operation = 1; // should wrap CreateStorageEntryOperation
+  SignedAtalaOperation signed_operation = 1; // should wrap CreateStorageEntryOperation
 }
 message UpdateVdrEntryRequest {
-    SignedAtalaOperation signed_operation = 1; // should wrap UpdateStorageEntryOperation
+  SignedAtalaOperation signed_operation = 1; // should wrap UpdateStorageEntryOperation
 }
 message DeactivateVdrEntryRequest {
-    SignedAtalaOperation signed_operation = 1; // should wrap DeactivateStorageEntryOperation
+  SignedAtalaOperation signed_operation = 1; // should wrap DeactivateStorageEntryOperation
 }
 
 message CreateVdrEntryResponse {
-    OperationOutput output = 1;
+  OperationOutput output = 1;
 }
 message UpdateVdrEntryResponse {
-    OperationOutput output = 1;
+  OperationOutput output = 1;
 }
 message DeactivateVdrEntryResponse {
-    OperationOutput output = 1;
+  OperationOutput output = 1;
 }
 
 message GetVdrEntryRequest {
-    bytes event_hash = 1;
+  bytes event_hash = 1;
 }
 
 message VdrEntry {
-    bytes event_hash = 1;
-    string did_suffix = 2;
-    StorageData data = 3;
-    bytes previous_event_hash = 4;
-    bool deactivated = 5;
-    bytes nonce = 6;
+  bytes event_hash = 1;
+  string did_suffix = 2;
+  StorageData data = 3;
+  bytes previous_event_hash = 4;
+  bool deactivated = 5;
+  bytes nonce = 6;
 }
 
 message GetVdrEntryResponse {
-    VdrEntry entry = 1;
+  VdrEntry entry = 1;
 }
 
 message VerifyVdrEntryRequest {
-    bytes event_hash = 1;
+  bytes event_hash = 1;
 }
 
 message VerifyVdrEntryResponse {
-    bool valid = 1;
-    string reason = 2;
+  bool valid = 1;
+  string reason = 2;
 }
-
-
 
 // Used to encode the responses of the operations issued in an AtalaBlock.
 message OperationOutput {
-    oneof result {
-        // Represents the response provided by IssueCredentialBatchOperation.
-        CreateDIDOutput create_did_output = 2;
-        // Represents the response provided by UpdateDIDOperation.
-        UpdateDIDOutput update_did_output = 3;
-        // Represents the response provided by ProtocolVersionUpdateOperation.
-        ProtocolVersionUpdateOutput protocol_version_update_output = 7;
-        DeactivateDIDOutput deactivate_did_output = 8;
-        CreateVdrEntryOutput create_vdr_entry_output = 9;
-        UpdateVdrEntryOutput update_vdr_entry_output = 10;
-        DeactivateVdrEntryOutput deactivate_vdr_entry_output = 11;
-    }
-    oneof operation_maybe {
-        bytes operation_id = 5; // Operation identifier.
-        string error = 6; // Error description if PRISM Node service haven't scheduled the operation.
-    }
+  oneof result {
+    // Represents the response provided by IssueCredentialBatchOperation.
+    CreateDIDOutput create_did_output = 2;
+    // Represents the response provided by UpdateDIDOperation.
+    UpdateDIDOutput update_did_output = 3;
+    // Represents the response provided by ProtocolVersionUpdateOperation.
+    ProtocolVersionUpdateOutput protocol_version_update_output = 7;
+    DeactivateDIDOutput deactivate_did_output = 8;
+    CreateVdrEntryOutput create_vdr_entry_output = 9;
+    UpdateVdrEntryOutput update_vdr_entry_output = 10;
+    DeactivateVdrEntryOutput deactivate_vdr_entry_output = 11;
+  }
+  oneof operation_maybe {
+    bytes operation_id = 5; // Operation identifier.
+    string error = 6; // Error description if PRISM Node service haven't scheduled the operation.
+  }
 }
 
 message CreateDIDOutput {
-    string did_suffix = 1;
+  string did_suffix = 1;
 }
-message UpdateDIDOutput {}
-message ProtocolVersionUpdateOutput {}
-message DeactivateDIDOutput {}
+message UpdateDIDOutput {
+}
+message ProtocolVersionUpdateOutput {
+}
+message DeactivateDIDOutput {
+}
 message CreateVdrEntryOutput {
-    bytes event_hash = 1;
+  bytes event_hash = 1;
 }
 message UpdateVdrEntryOutput {
-    bytes event_hash = 1;
+  bytes event_hash = 1;
 }
 message DeactivateVdrEntryOutput {
-    bytes event_hash = 1;
+  bytes event_hash = 1;
 }
