@@ -255,11 +255,18 @@ final case class VdrConfig(
     inMemoryDriverEnabled: Boolean,
     databaseDriverEnabled: Boolean,
     prismDriverEnabled: Boolean,
-    prismDriver: Option[PrismDriverVdrConfig]
+    prismDriver: Option[PrismDriverVdrConfig],
+    prismNodeDriverEnabled: Boolean,
+    prismNodeDriver: Option[GrpcServiceConfig],
 ) {
   def validate: Either[String, Unit] =
-    if prismDriverEnabled && prismDriver.isEmpty then
+    val enabledCount =
+      List(inMemoryDriverEnabled, databaseDriverEnabled, prismDriverEnabled, prismNodeDriverEnabled).count(identity)
+    if enabledCount > 1 then Left("VDR configuration invalid: only one driver type may be enabled at a time.")
+    else if prismDriverEnabled && prismDriver.isEmpty then
       Left("PRISM vdr is enabled but prismDriver config is not provided.")
+    else if prismNodeDriverEnabled && prismNodeDriver.isEmpty then
+      Left("Prism-node VDR is enabled but prismNodeDriver config is not provided.")
     else if prismDriverEnabled then prismDriver.map(_.validate).getOrElse(Right(()))
     else Right(())
 }

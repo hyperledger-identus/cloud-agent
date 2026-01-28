@@ -31,7 +31,9 @@ object AppConfigSpec extends ZIOSpecDefault {
     inMemoryDriverEnabled = false,
     databaseDriverEnabled = false,
     prismDriverEnabled = false,
-    prismDriver = None
+    prismDriver = None,
+    prismNodeDriverEnabled = false,
+    prismNodeDriver = None
   )
 
   override def spec = suite("AppConfigSpec")(

@@ -59,8 +59,10 @@ services:
       KEYCLOAK_CLIENT_SECRET:
       KEYCLOAK_UMA_AUTO_UPGRADE_RPT: true # no configurable at the moment
       # VDR configuration
-      VDR_MEMORY_DRIVER_ENABLED: true
-      VDR_DATABASE_DRIVER_ENABLED: true
+      VDR_MEMORY_DRIVER_ENABLED: ${VDR_MEMORY_DRIVER_ENABLED:-false}
+      VDR_DATABASE_DRIVER_ENABLED: ${VDR_DATABASE_DRIVER_ENABLED:-false}
+      VDR_PRISM_DRIVER_ENABLED: ${VDR_PRISM_DRIVER_ENABLED:-false}
+      VDR_PRISM_NODE_DRIVER_ENABLED: ${VDR_PRISM_NODE_DRIVER_ENABLED:-false}
       # Kafka Messaging Service
       DEFAULT_KAFKA_ENABLED: true
       ENABLE_ANONCRED: true # Default is false

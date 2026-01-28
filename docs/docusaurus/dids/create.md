@@ -57,6 +57,8 @@ The DID controller can create a new DID by sending a [DID document](/home/concep
 Since key pairs are generated and managed by the Cloud Agent, DID controller only has to specify the key `id`,
 `purpose` (`authentication`, `assertionMethod`, etc.), and optional `curve` (`secp256k1`, `Ed25519`, `X25519`).
 If the `curve` is omitted, the agent uses the `secp256k1` curve by default.
+For VDR signing support, you can also add `internalKeys` with `purpose: "vdr"`. This internal key is not published
+in the DID Document and must use `secp256k1`.
 
 ```bash
 curl --location --request POST 'http://localhost:8080/cloud-agent/did-registrar/dids' \
@@ -70,6 +72,12 @@ curl --location --request POST 'http://localhost:8080/cloud-agent/did-registrar/
           "id": "auth-1",
           "purpose": "authentication",
           "curve": "secp256k1"
+        }
+      ],
+      "internalKeys": [
+        {
+          "id": "vdr-1",
+          "purpose": "vdr"
         }
       ],
       "services": []

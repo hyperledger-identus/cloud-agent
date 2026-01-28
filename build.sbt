@@ -886,7 +886,7 @@ lazy val cloudAgentVdr = project
     name := "cloud-agent-vdr",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(shared)
+  .dependsOn(shared, prismNodeClient)
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))

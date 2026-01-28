@@ -42,6 +42,9 @@ class VdrSteps {
                 .rawBytesBody(data)
                 .with {
                     it.queryParam("drid", driver)
+                    actor.recall<String>("didKeyId")?.let { keyId ->
+                        it.queryParam("didKeyId", keyId)
+                    }
                 },
             Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_CREATED),
         )
@@ -61,6 +64,9 @@ class VdrSteps {
                 .rawBytesBody(data)
                 .with {
                     it.queryParam("url", url)
+                    actor.recall<String>("didKeyId")?.let { keyId ->
+                        it.queryParam("didKeyId", keyId)
+                    }
                 },
             Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_OK),
         )
@@ -74,6 +80,9 @@ class VdrSteps {
             Delete.from("/vdr/entries")
                 .with {
                     it.queryParam("url", url)
+                    actor.recall<String>("didKeyId")?.let { keyId ->
+                        it.queryParam("didKeyId", keyId)
+                    }
                 },
             Ensure.thatTheLastResponse().statusCode().isEqualTo(SC_OK),
         )
