@@ -74,8 +74,8 @@ tasks.test {
     dependsOn("cleanTarget")
     finalizedBy("aggregate", "reports")
     testLogging.showStandardStreams = true
-    // By default skip prism-node specific scenarios; override with -Dcucumber.filter.tags
-    val tagFilter = System.getProperty("cucumber.filter.tags") ?: "not @prism_node"
+    // By default skip all VDR e2e scenarios; override with -Dcucumber.filter.tags
+    val tagFilter = System.getProperty("cucumber.filter.tags") ?: "not @vdr"
     systemProperty("cucumber.filter.tags", tagFilter)
     // Since the test runs on host and system-unter-test runs in containers,
     // We need to make the test on host resolves host.docker.internal same as the containerized services,
@@ -108,7 +108,7 @@ afterEvaluate {
         tasks.register<Test>("test_$fileName") {
             group = "verification"
             testLogging.showStandardStreams = true
-            val tagFilter = System.getProperty("cucumber.filter.tags") ?: "not @prism_node"
+            val tagFilter = System.getProperty("cucumber.filter.tags") ?: "not @vdr"
             systemProperty("context", fileName)
             systemProperty("TESTS_CONFIG", "/configs/$fileName.conf")
             systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "edge")
