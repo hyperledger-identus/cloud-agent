@@ -6,17 +6,10 @@ on:
     - cron: "0 0 * * 0"
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
   scala-steward:
     runs-on: ubuntu-latest
     name: Launch Scala Steward
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
@@ -25,10 +18,6 @@ jobs:
 
       - name: Checkout the repo
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-          persist-credentials: false
 
       - uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
         id: import_gpg
@@ -47,11 +36,9 @@ jobs:
           echo "email:       ${{ steps.import_gpg.outputs.email }}"
 
       - name: Launch Scala Steward
-        uses: scala-steward-org/scala-steward-action@f60ccd18bc9d8083e6809d9dc3db4a69a71d856c # v2.78.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: scala-steward-org/scala-steward-action@df2a4cec1721d0b48be3e1d1f0acdf7543ea0fb4 # v2.84.0
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.HYP_BOT_STEWARD_GITHUB_TOKEN }}
           sign-commits: true
           signing-key: ${{ steps.import_gpg.outputs.keyid }}
           author-email: ${{ steps.import_gpg.outputs.email }}
