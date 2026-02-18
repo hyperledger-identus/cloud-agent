@@ -29,6 +29,7 @@ services:
       NODE_BACKEND:
       PRISM_NODE_HOST: host.docker.internal
       PRISM_NODE_PORT: ${PRISM_NODE_PORT:-50053}
+      PRISM_NODE_USE_PLAINTEXT: "true"
       NEOPRISM_BASE_URL:
       CASTOR_DB_HOST: postgres
       POLLUX_DB_HOST: postgres
