@@ -88,4 +88,10 @@ object ManagedDIDTemplateValidator {
     else Left(s"Unsupported internal key purpose for key(s): ${unsupported.mkString("[", ", ", "]")}")
   }
 
+  private def validateInternalKeyPurpose(template: ManagedDIDTemplate): Either[String, Unit] = {
+    val unsupported = template.internalKeys.filterNot(_.purpose == InternalKeyPurpose.VDR).map(_.id)
+    if (unsupported.isEmpty) Right(())
+    else Left(s"Unsupported internal key purpose for key(s): ${unsupported.mkString("[", ", ", "]")}")
+  }
+
 }
