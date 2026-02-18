@@ -1,7 +1,9 @@
+---
+version: "3.8"
+
 services:
   keycloak:
     image: quay.io/keycloak/keycloak:23.0.7
-    pull_policy: if_not_present
     ports:
       - "${KEYCLOAK_HTTP_PORT}:8080"
     environment:

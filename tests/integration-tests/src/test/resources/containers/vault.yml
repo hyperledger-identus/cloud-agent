@@ -1,8 +1,10 @@
+---
+version: "3.8"
+
 services:
 
   vault:
     image: hashicorp/vault:1.13.3
-    pull_policy: if_not_present
     ports:
       - "${VAULT_PORT}:8200"
     environment:
