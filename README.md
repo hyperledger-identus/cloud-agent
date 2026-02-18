@@ -7,13 +7,14 @@
   <br>
   <br>
   <a href='https://coveralls.io/github/hyperledger-identus/cloud-agent?branch=main'><img src='https://coveralls.io/repos/github/hyperledger-identus/cloud-agent/badge.svg?branch=main' alt='Coverage Status' /></a>
+  <a href='https://sonarcloud.io/summary/new_code?id=hyperledger-identus_cloud-agent'><img src='https://sonarcloud.io/api/project_badges/measure?project=hyperledger-identus_cloud-agent&metric=alert_status' alt='Quality Gate' /></a>
+  <a href="https://www.bestpractices.dev/projects/11732"><img src="https://www.bestpractices.dev/projects/11732/badge"></a>
   <a href="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/unit-tests.yml"> <img src="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/unit-tests.yml/badge.svg" alt="Unit tests" /> </a>
   <a href="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/integration-tests.yml"> <img src="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/integration-tests.yml/badge.svg" alt="End-to-end tests" /> </a>
   <a href="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/performance-tests.yml"> <img src="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/performance-tests.yml/badge.svg" alt="Performance tests" /> </a>
   <a href="https://index.scala-lang.org/scala-steward-org/scala-steward">
       <img src="https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=" alt="Scala Steward badge">
   </a>
-
 
 </p>
 <hr>
