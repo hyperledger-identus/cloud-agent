@@ -48,6 +48,9 @@ enum KeyUsage {
   // This is used to specify a mechanism that might be used by the DID subject to delegate a cryptographic capability to another party,
   // such as delegating the authority to access a specific HTTP API to a subordinate.
   CAPABILITY_DELEGATION_KEY = 7;
+
+  // This key-type is used to sign VDR operations (per the PRISM VDR driver spec).
+  VDR_KEY = 8;
 }
 
 /**
@@ -77,8 +80,8 @@ message PublicKey {
   reserved 3, 4;
   string id = 1; // The key identifier within the DID Document.
   KeyUsage usage = 2; // The key's purpose.
-  LedgerData added_on = 5; // TODO: deprecated
-  LedgerData revoked_on = 6; // TODO: deprecated
+  LedgerData added_on = 5; // The ledger details related to the event that added the key to the DID Document.
+  LedgerData revoked_on = 6; // The ledger details related to the event that revoked the key to the DID Document.
 
   // The key's representation.
   oneof key_data {
@@ -158,26 +161,6 @@ message UpdateDIDOperation {
   repeated UpdateDIDAction actions = 3; // The actual updates to perform on the DID.
 }
 
-// Represents a credential's batch.
-//
-// Check the protocol docs to understand it.
-message CredentialBatchData {
-  string issuer_did = 1; // The DID suffix that issues the credential's batch.
-  bytes merkle_root = 2; // The Merkle root for the credential's batch.
-}
-
-// Specifies the data to issue a credential batch.
-message IssueCredentialBatchOperation {
-  CredentialBatchData credential_batch_data = 1; // The actual credential batch data.
-}
-
-// Specifies the credentials to revoke (the whole batch, or just a subset of it).
-message RevokeCredentialsOperation {
-  bytes previous_operation_hash = 1; // The hash of the operation that issued the batch.
-  string credential_batch_id = 2; // The corresponding batch ID, as returned in IssueCredentialBatchResponse.
-  repeated bytes credentials_to_revoke = 3; // The hashes of the credentials to revoke. If empty, the full batch is revoked.
-}
-
 // Specifies the protocol version update
 message ProtocolVersionUpdateOperation {
   string proposer_did = 1; // The DID suffix that proposes the protocol update.
@@ -208,6 +191,36 @@ message DeactivateDIDOperation {
   string id = 2; // DID Suffix of the DID to be deactivated
 }
 
+// **************
+// ***  VDR   ***
+// **************
+
+// Opaque data stored in the VDR entry. Validation is intentionally minimal.
+message StorageData {
+  oneof content {
+    bytes bytes = 1; // raw payload
+    string ipfs_cid = 2; // optional IPFS reference
+  }
+}
+
+// Create a new VDR storage entry for a DID.
+message CreateStorageEntryOperation {
+  bytes did_prism_hash = 1; // DID suffix (hash) this storage entry belongs to.
+  bytes nonce = 2; // Optional nonce to diversify entry hashes.
+  StorageData data = 3; // Payload to store.
+}
+
+// Update an existing VDR storage entry.
+message UpdateStorageEntryOperation {
+  bytes previous_event_hash = 1; // Hash of the previous storage event.
+  StorageData data = 2; // New payload (opaque).
+}
+
+// Deactivate an existing VDR storage entry.
+message DeactivateStorageEntryOperation {
+  bytes previous_event_hash = 1; // Hash of the previous storage event.
+}
+
 // The possible operations affecting the blockchain.
 message AtalaOperation {
   // The actual operation.
@@ -218,17 +231,20 @@ message AtalaOperation {
     // Used to update an existing public DID.
     UpdateDIDOperation update_did = 2;
 
-    // Used to issue a batch of credentials.
-    IssueCredentialBatchOperation issue_credential_batch = 3;
-
-    // Used to revoke a credential batch.
-    RevokeCredentialsOperation revoke_credentials = 4;
-
     // Used to announce new protocol update
     ProtocolVersionUpdateOperation protocol_version_update = 5;
 
     // Used to deactivate DID
     DeactivateDIDOperation deactivate_did = 6;
+
+    // Used to create a VDR storage entry
+    CreateStorageEntryOperation create_storage_entry = 7;
+
+    // Used to update a VDR storage entry
+    UpdateStorageEntryOperation update_storage_entry = 8;
+
+    // Used to deactivate a VDR storage entry
+    DeactivateStorageEntryOperation deactivate_storage_entry = 9;
   };
 }
 
@@ -248,46 +264,30 @@ message LedgerData {
   TimestampInfo timestamp_info = 3; // The timestamp of the protocol event.
 }
 
-// Used to encode the responses of the operations issued in an AtalaBlock.
-message OperationOutput {
-  oneof result {
-    // Represents the response provided by IssueCredentialBatchOperation.
-    IssueCredentialBatchOutput batch_output = 1;
-    // Represents the response provided by CreateDIDOperation.
-    CreateDIDOutput create_did_output = 2;
-    // Represents the response provided by UpdateDIDOperation.
-    UpdateDIDOutput update_did_output = 3;
-    // Represents the response provided by RevokeCredentialOperation.
-    RevokeCredentialsOutput revoke_credentials_output = 4;
-    // Represents the response provided by ProtocolVersionUpdateOperation.
-    ProtocolVersionUpdateOutput protocol_version_update_output = 7;
-    DeactivateDIDOutput deactivate_did_output = 8;
-  }
-  oneof operation_maybe {
-    bytes operation_id = 5; // Operation identifier.
-    string error = 6; // Error description if PRISM Node service haven't scheduled the operation.
-  }
-}
-
-message IssueCredentialBatchOutput {
-  string batch_id = 1;
-}
-message CreateDIDOutput {
-  string did_suffix = 1;
-}
-message UpdateDIDOutput {
-}
-message RevokeCredentialsOutput {
-}
-message ProtocolVersionUpdateOutput {
-}
-message DeactivateDIDOutput {
-}
-
 message Service {
   string id = 1;
   string type = 2;
-  string service_endpoint = 3;
-  LedgerData added_on = 4; // TODO: deprecated
-  LedgerData deleted_on = 5; // TODO: deprecated
+
+  string service_endpoint = 3; // can be one URI, JSON object, or array of either URIs of objects
+  LedgerData added_on = 4; // (when present) The ledger details related to the event that added the service.
+  LedgerData deleted_on = 5; // (when present) The ledger details related to the event that revoked the service.
+}
+
+/**
+ * Represent a block that holds operations.
+ * @exclude Intended for internal usage inside. Not publicly accessible from gRPC.
+ */
+message AtalaBlock {
+  reserved 1; // Represents the version of the block. Deprecated
+  repeated SignedAtalaOperation operations = 2; // A signed operation, necessary to post anything on the blockchain.
+}
+
+/**
+ * Wraps an AtalaBlock and its metadata.
+ * @exclude Intended for internal usage inside. Not publicly accessible from gRPC.
+ */
+message AtalaObject {
+  reserved 1, 2, 3; // Removed block_hash field.
+  reserved "block_hash", "block_operation_count", "block_byte_length";
+  AtalaBlock block_content = 4; // The block content.
 }

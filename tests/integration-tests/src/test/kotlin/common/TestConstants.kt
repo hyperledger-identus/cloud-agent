@@ -3,7 +3,10 @@ package common
 import org.hyperledger.identus.client.models.*
 
 object TestConstants {
-    val TESTS_CONFIG = System.getProperty("TESTS_CONFIG") ?: "/configs/basic.conf"
+    val TESTS_CONFIG =
+        System.getProperty("TESTS_CONFIG")
+            ?: System.getenv("TESTS_CONFIG")
+            ?: "/configs/basic_neoprism.conf"
     val TEST_VERIFICATION_POLICY = VerificationPolicyInput(
         name = "Trusted Issuer and SchemaID",
         description = "Verification Policy with trusted issuer and schemaId",

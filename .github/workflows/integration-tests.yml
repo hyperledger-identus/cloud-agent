@@ -18,8 +18,8 @@ permissions:
   contents: read
 
 jobs:
-  run-integration-tests:
-    name: "Run integration tests"
+  run-integration-tests-neoprism:
+    name: "Run integration tests (neoprism)"
     permissions:
       checks: write
       pull-requests: write
@@ -28,6 +28,7 @@ jobs:
     env:
       LOGS_DIR: "tests/integration-tests/target/logs"
       REPORTS_DIR: "tests/integration-tests/target/site/serenity"
+      DOCKER_API_VERSION: "1.44"
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
@@ -40,7 +41,8 @@ jobs:
       - name: Setup Java and Scala
         uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
         with:
-          java-version: openjdk@1.17
+          # Latest available OpenJDK from jabba (per setup-scala docs)
+          java-version: openjdk@
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -55,7 +57,7 @@ jobs:
       - name: Install Compose
         uses: ndeloof/install-compose-action@4a33bc31f327b8231c4f343f6fba704fedc0fa23 # v0.0.1
         with:
-          version: v2.12.2 # defaults to 'latest'
+          version: v2.29.2 # align with Docker 27.x
           legacy: true # will also install in PATH as `docker-compose`
 
       - name: Build local version of Cloud Agent
@@ -75,7 +77,7 @@ jobs:
           distribution: "zulu"
           java-version: "21"
 
-      - name: Run integration tests
+      - name: Run integration tests (neoprism)
         working-directory: "tests/integration-tests"
         env:
           PRISM_NODE_VERSION: ${{ steps.build_local_cloud_agent.outputs.prism_node_version }}
@@ -84,11 +86,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEOPRISM_VERSION: ${{ steps.build_local_cloud_agent.outputs.neoprism_version }}
           TESTS_CONFIG: /configs/basic_neoprism.conf
+          VDR_MEMORY_DRIVER_ENABLED: "true"
+          VDR_DATABASE_DRIVER_ENABLED: "true"
         #        continue-on-error: true
         run: |
-          ./gradlew test --tests "IntegrationTestsRunner"
+          export DOCKER_API_VERSION=1.44
+          export DOCKER_HOST=unix:///var/run/docker.sock
+          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_prism_node"
 
-      - name: Make report of integration tests
+      - name: Make report of integration tests (neoprism)
         working-directory: "tests/integration-tests"
         if: always()
         env:
@@ -98,8 +104,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NEOPRISM_VERSION: ${{ steps.build_local_cloud_agent.outputs.neoprism_version }}
           TESTS_CONFIG: /configs/basic_neoprism.conf
+          VDR_MEMORY_DRIVER_ENABLED: "true"
+          VDR_DATABASE_DRIVER_ENABLED: "true"
         run: |
-          ./gradlew reports
+          export DOCKER_API_VERSION=1.44
+          export DOCKER_HOST=unix:///var/run/docker.sock
+          ./gradlew reports -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_prism_node"
 
       - name: Extract test results
         working-directory: "tests/integration-tests"
@@ -133,7 +143,7 @@ jobs:
             echo "ignored=${IGNORED_TESTS}";
           } >> "$GITHUB_OUTPUT"
 
-      - name: Publish e2e test Results
+      - name: Publish e2e test Results (neoprism)
         id: publish-unit-tests
         uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
         with:
@@ -141,7 +151,7 @@ jobs:
           comment_title: "Integration Test Results"
           check_name: "Integration Test Results"
 
-      - name: Upload serenity report
+      - name: Upload serenity report (neoprism)
         if: github.ref_name == 'main' || failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -149,7 +159,7 @@ jobs:
           path: ${{ env.REPORTS_DIR }}
           compression-level: 9
 
-      - name: Upload logs
+      - name: Upload logs (neoprism)
         if: github.ref_name == 'main' || failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -157,7 +167,7 @@ jobs:
           path: ${{ env.LOGS_DIR }}
           compression-level: 9
 
-      - name: Slack Notification
+      - name: Slack Notification (neoprism)
         if: github.ref_name == 'main' && failure()
         uses: rtCamp/action-slack-notify@e31e87e03dd19038e411e38ae27cbad084a90661 # v2.3.3
         env:
@@ -184,3 +194,111 @@ jobs:
           npm i
           npm test
           ./docker/stop.sh
+
+  run-integration-tests-prism-node:
+    name: "Run integration tests (prism-node)"
+    permissions:
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
+    env:
+      LOGS_DIR: "tests/integration-tests/target/logs"
+      REPORTS_DIR: "tests/integration-tests/target/site/serenity"
+      DOCKER_API_VERSION: "1.44"
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup Java and Scala
+        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
+        with:
+          java-version: openjdk@
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: hyperledger-bot
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Compose
+        uses: ndeloof/install-compose-action@4a33bc31f327b8231c4f343f6fba704fedc0fa23 # v0.0.1
+        with:
+          version: v2.29.2
+          legacy: true
+
+      - name: Build local version of Cloud Agent
+        id: build_local_cloud_agent_prism
+        env:
+          ENV_FILE: "infrastructure/local/.env"
+          GITHUB_ACTOR: hyperledger-bot
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sbt docker:publishLocal
+          echo "agent_version=$(cut -d'=' -f2 version.sbt | tr -d '\" ')" >> "${GITHUB_OUTPUT}"
+          echo "prism_node_version=$(grep PRISM_NODE_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
+
+      - uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62 # v3.14.1
+        with:
+          distribution: "zulu"
+          java-version: "21"
+
+      - name: Run integration tests (prism-node)
+        working-directory: "tests/integration-tests"
+        env:
+          PRISM_NODE_VERSION: ${{ steps.build_local_cloud_agent_prism.outputs.prism_node_version }}
+          AGENT_VERSION: ${{ steps.build_local_cloud_agent_prism.outputs.agent_version }}
+          GITHUB_ACTOR: hyperledger-bot
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TESTS_CONFIG: /configs/basic.conf
+        run: |
+          export DOCKER_API_VERSION=1.44
+          export DOCKER_HOST=unix:///var/run/docker.sock
+          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="@vdr_prism_node"
+
+      - name: Make report of integration tests (prism-node)
+        working-directory: "tests/integration-tests"
+        if: always()
+        env:
+          PRISM_NODE_VERSION: ${{ steps.build_local_cloud_agent_prism.outputs.prism_node_version }}
+          AGENT_VERSION: ${{ steps.build_local_cloud_agent_prism.outputs.agent_version }}
+          GITHUB_ACTOR: hyperledger-bot
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TESTS_CONFIG: /configs/basic.conf
+        run: |
+          export DOCKER_API_VERSION=1.44
+          export DOCKER_HOST=unix:///var/run/docker.sock
+          ./gradlew reports -Dcucumber.filter.tags="@vdr_prism_node"
+
+      - name: Publish e2e test Results (prism-node)
+        id: publish-unit-tests-prism
+        uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
+        with:
+          junit_files: "${{ env.REPORTS_DIR }}/SERENITY-JUNIT-*.xml"
+          comment_title: "Integration Test Results (prism-node)"
+          check_name: "Integration Test Results (prism-node)"
+
+      - name: Upload serenity report (prism-node)
+        if: github.ref_name == 'main' || failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: integration-tests-result-prism-node
+          path: ${{ env.REPORTS_DIR }}
+          compression-level: 9
+
+      - name: Upload logs (prism-node)
+        if: github.ref_name == 'main' || failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: docker-logs-prism-node
+          path: ${{ env.LOGS_DIR }}
+          compression-level: 9

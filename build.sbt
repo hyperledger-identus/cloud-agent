@@ -35,7 +35,12 @@ inThisBuild(
     // scalacOptions += "-Ysafe-init",
     // scalacOptions +=  "-Werror", // <=> "-Xfatal-warnings"
     scalacOptions += "-Dquill.macro.log=false", // disable quill macro logs // TODO https://github.com/zio/zio-protoquill/issues/470,
-    scalacOptions ++= Seq("-Xmax-inlines", "50") // increase above 32 (https://github.com/circe/circe/issues/2162)
+    scalacOptions ++= Seq("-Xmax-inlines", "50"), // increase above 32 (https://github.com/circe/circe/issues/2162)
+    Test / javaOptions ++= Seq("-Dlog4j2.disable.jmx=true", "-Ddocker.api.version=1.44"),
+    Test / envVars ++= Map(
+      "DOCKER_API_VERSION" -> "1.44",
+      "DOCKER_HOST" -> "unix:///var/run/docker.sock"
+    )
   )
 )
 
@@ -63,7 +68,8 @@ lazy val V = new {
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
-  val testContainersScala = "0.43.0"
+  // align with Docker client API used by GH runners
+  val testContainersScala = "0.44.1"
   val testContainersJavaKeycloak = "3.2.0" // scala-steward:off
 
   val doobie = "1.0.0-RC5" // scala-steward:off
@@ -886,7 +892,7 @@ lazy val cloudAgentVdr = project
     name := "cloud-agent-vdr",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(shared)
+  .dependsOn(shared, prismNodeClient)
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -906,7 +912,7 @@ lazy val cloudAgentServer = project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
-    dockerBaseImage := "eclipse-temurin:21-jdk-ubi9-minimal",
+    dockerBaseImage := "eclipse-temurin:22-jdk-ubi9-minimal",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.hyperledger.identus.agent.server.buildinfo",
     Compile / packageDoc / publishArtifact := false

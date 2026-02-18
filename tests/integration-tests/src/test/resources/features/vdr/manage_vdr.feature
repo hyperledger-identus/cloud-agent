@@ -1,4 +1,4 @@
-@vdr
+@vdr_memory_and_db
 Feature: Manage a VDR entry
 
   Scenario Outline: Successfully create and resolve VDR entry using <driver> driver
