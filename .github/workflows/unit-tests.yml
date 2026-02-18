@@ -32,13 +32,6 @@ jobs:
         with:
           egress-policy: audit
 
-      - name: Setup Docker 27 with BuildKit
-        uses: docker/setup-docker@70e0f6611db0a5b2fbb40e7bc314c0307f735c52 # v4.3.0
-        with:
-          version: "27.3.1"
-          daemon-config: |
-            { "features": { "buildkit": true } }
-
       - name: Git checkout (merge)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         if: github.event_name != 'pull_request'
