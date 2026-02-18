@@ -28,7 +28,7 @@ services:
       API_KEY_AUTHENTICATE_AS_DEFAULT_USER: false
       NODE_BACKEND:
       PRISM_NODE_HOST: host.docker.internal
-      PRISM_NODE_PORT:
+      PRISM_NODE_PORT: ${PRISM_NODE_PORT:-50053}
       NEOPRISM_BASE_URL:
       CASTOR_DB_HOST: postgres
       POLLUX_DB_HOST: postgres
