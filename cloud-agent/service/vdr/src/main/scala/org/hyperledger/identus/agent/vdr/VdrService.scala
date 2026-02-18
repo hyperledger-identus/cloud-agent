@@ -216,7 +216,7 @@ object VdrServiceImpl {
         signer <- ZIO.service[VdrOperationSigner]
         stub <- ZIO.service[node_api.NodeServiceGrpc.NodeServiceBlockingStub]
         urlManager <- ZIO.attempt(BaseUrlManager.apply("vdr://", "BaseURL"))
-        prismNodeSvc <- config.prismNodeDriver match
+        prismNodeSvc: Option[VdrService] <- config.prismNodeDriver match
           case Some(_) => PrismNodeVdrService.init(stub, signer, urlManager).map(Some(_))
           case None    => ZIO.none
         dbDriverDataSource <- ZIO.service[DataSource]
@@ -228,10 +228,16 @@ object VdrServiceImpl {
           if config.enableDatabaseDriver
           then Some(DatabaseDriver("database", "0.1.0", Array.empty, dbDriverDataSource))
           else None
-        maybePrismDriver <- config.prismDriver.fold(ZIO.none)(config => initPrismDriver(config).asSome)
-        drivers = Array[Option[Driver]](maybeMemoryDriver, maybeDatabaseDriver, maybePrismDriver).flatten
+        maybePrismDriver <- config.prismDriver match
+          case Some(c) => initPrismDriver(c).map(Some(_))
+          case None    => ZIO.none
+        drivers = Array(
+          maybeMemoryDriver,
+          maybeDatabaseDriver,
+          maybePrismDriver
+        ).flatten
         _ <- ZIO.logInfo(
-          s"VDR driver init | memory=${config.enableInMemoryDriver}, database=${config.enableDatabaseDriver}, prism=${config.prismDriver.isDefined}, prism-node=${config.prismNodeDriver.isDefined}; loaded=${drivers.map(_.getIdentifier()).mkString(",")}"
+          s"VDR driver init | memory=${config.enableInMemoryDriver}, database=${config.enableDatabaseDriver}, prism=${config.prismDriver.isDefined}, prism-node=${config.prismNodeDriver.isDefined && prismNodeSvc.isDefined}; loaded=${drivers.map(_.getIdentifier()).mkString(",")}"
         )
         proxyOpt <-
           if drivers.nonEmpty then ZIO.attempt(Some(VDRProxyMultiDrivers(urlManager, drivers, "proxy", "0.1.0")))
