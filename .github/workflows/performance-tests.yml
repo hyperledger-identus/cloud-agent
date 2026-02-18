@@ -31,7 +31,7 @@ jobs:
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
         with:
           egress-policy: audit
 
@@ -47,13 +47,13 @@ jobs:
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ env.GITHUB_ACTOR }}
           password: ${{ env.GITHUB_TOKEN }}
 
-      - uses: KengoTODA/actions-setup-docker-compose@aa468051c6851848da9bfe114e7eac913c0bf59c # v1.2.3
+      - uses: KengoTODA/actions-setup-docker-compose@477353946803dd64eaa44008b865b6bfc88cab4e # v1.2.4
         name: Install `docker-compose`
         with:
           version: "2.14.2"
@@ -82,7 +82,7 @@ jobs:
           NODE_REFRESH_AND_SUBMIT_PERIOD: 1s
           NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD: 1s
           NODE_WALLET_MAX_TPS: 1000
-        uses: hoverkraft-tech/compose-action@802a148945af6399a338c7906c267331b39a71af # v2.0.0
+        uses: hoverkraft-tech/compose-action@4894d2492015c1774ee5a13a95b1072093087ec3 # v2.5.0
         with:
           compose-file: "./infrastructure/shared/docker-compose-combined.yml"
           compose-flags: "--env-file ./infrastructure/local/.env"
@@ -90,7 +90,7 @@ jobs:
           down-flags: "--volumes"
 
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        uses: actions/setup-node@d02c89dce7e1ba9ef629ce0680989b3a1cc72edb # v4.4.0
         with:
           node-version: 16.x
           registry-url: "https://npm.pkg.github.com"
