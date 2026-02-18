@@ -9,6 +9,8 @@
   <a href='https://coveralls.io/github/hyperledger-identus/cloud-agent?branch=main'><img src='https://coveralls.io/repos/github/hyperledger-identus/cloud-agent/badge.svg?branch=main' alt='Coverage Status' /></a>
   <a href='https://sonarcloud.io/summary/new_code?id=hyperledger-identus_cloud-agent'><img src='https://sonarcloud.io/api/project_badges/measure?project=hyperledger-identus_cloud-agent&metric=alert_status' alt='Quality Gate' /></a>
   <a href="https://www.bestpractices.dev/projects/11732"><img src="https://www.bestpractices.dev/projects/11732/badge"></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/hyperledger-identus/cloud-agent"><img src="https://api.scorecard.dev/projects/github.com/hyperledger-identus/cloud-agent/badge"/></a>
+  <br>
   <a href="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/unit-tests.yml"> <img src="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/unit-tests.yml/badge.svg" alt="Unit tests" /> </a>
   <a href="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/integration-tests.yml"> <img src="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/integration-tests.yml/badge.svg" alt="End-to-end tests" /> </a>
   <a href="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/performance-tests.yml"> <img src="https://github.com/hyperledger-identus/cloud-agent/actions/workflows/performance-tests.yml/badge.svg" alt="Performance tests" /> </a>
