@@ -46,6 +46,7 @@ This note captures how the PRISM node implements the VDR storage driver after th
 
 ## Runtime parameters
 - Prism-node image is parameterised: `PRISM_NODE_VERSION` (defaults to `edge` in e2e). Override to a released tag for stability.
+- Prism-node endpoint is configured with `PRISM_NODE_HOST` / `PRISM_NODE_PORT` (`VDR_PRISM_NODE_*` is deprecated).
 - Docker API requirement: e2e and CI set `DOCKER_API_VERSION=1.44` to satisfy the GitHub-hosted Docker daemon. Set this env when running tests locally if you hit client/daemon version errors.
 - CI runs two jobs in parallel:
   - **neoprism**: uses `basic_neoprism.conf`, memory/db VDR drivers enabled.
