@@ -28,6 +28,20 @@ object ManagedDIDTemplateValidatorSpec extends ZIOSpecDefault {
       val template = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       assert(ManagedDIDTemplateValidator.validate(template))(isRight)
     },
+    test("reject DID template if secp256k1 used for key agreement") {
+      val template = ManagedDIDTemplate(
+        publicKeys = Seq(
+          DIDPublicKeyTemplate(
+            id = "bad-key",
+            purpose = VerificationRelationship.KeyAgreement,
+            curve = EllipticCurve.SECP256K1
+          )
+        ),
+        services = Nil,
+        contexts = Nil
+      )
+      assert(ManagedDIDTemplateValidator.validate(template))(isLeft)
+    },
     test("accept valid non-empty DID template") {
       val template = ManagedDIDTemplate(
         publicKeys = Seq(

@@ -1,10 +1,8 @@
----
-version: "3.8"
-
 services:
   # Mandatory PostgreSQL database for the Open Enterprise Agent
   postgres:
     image: postgres:13
+    pull_policy: if_not_present
     environment:
       POSTGRES_MULTIPLE_DATABASES: "castor,pollux,connect,agent"
       POSTGRES_USER: postgres
@@ -23,6 +21,7 @@ services:
   # Open Enterprise Agent
   identus-cloud-agent:
     image: docker.io/hyperledgeridentus/identus-cloud-agent:2.1.1-SNAPSHOT
+    pull_policy: if_not_present
     environment:
       API_KEY_ENABLED: true
       API_KEY_AUTO_PROVISIONING: true
@@ -91,6 +90,7 @@ services:
       - "host.docker.internal:host-gateway"
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    pull_policy: if_not_present
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -99,6 +99,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.9.2
+    pull_policy: if_not_present
     depends_on:
       - zookeeper
     #    ports:
@@ -126,6 +127,7 @@ services:
 
   init-kafka:
     image: confluentinc/cp-kafka:7.9.2
+    pull_policy: if_not_present
     depends_on:
       kafka:
         condition: service_healthy
