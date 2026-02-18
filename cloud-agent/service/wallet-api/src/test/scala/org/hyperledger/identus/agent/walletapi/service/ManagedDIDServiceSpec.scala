@@ -124,7 +124,11 @@ object ManagedDIDServiceSpec
       publicKeys: Seq[DIDPublicKeyTemplate] = Nil,
       services: Seq[Service] = Nil,
       context: Seq[String] = Nil
-  ): ManagedDIDTemplate = ManagedDIDTemplate(publicKeys, services, context)
+  ): ManagedDIDTemplate = ManagedDIDTemplate(
+    publicKeys = publicKeys,
+    services = services,
+    contexts = context
+  )
 
   private def resolutionResult(
       deactivated: Boolean = false,

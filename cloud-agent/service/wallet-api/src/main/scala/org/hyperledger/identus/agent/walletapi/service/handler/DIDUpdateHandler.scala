@@ -105,6 +105,10 @@ private class HdKeyUpdateMaterial(nonSecretStorage: DIDNonSecretStorage, secretS
         val meta = ManagedDIDKeyMeta.HD(keyPath)
         nonSecretStorage.insertKeyMeta(did, KeyId(keyId), meta, operationHash)
       }
+      _ <- ZIO.foreach(keys.internalKeys.toList) { case (keyId, keyPath) =>
+        val meta = ManagedDIDKeyMeta.HD(keyPath)
+        nonSecretStorage.insertKeyMeta(did, KeyId(keyId), meta, operationHash)
+      }
       _ <- ZIO.foreach(keys.randKeyMeta.toList) { case (keyId, rand) =>
         val meta = ManagedDIDKeyMeta.Rand(rand)
         nonSecretStorage.insertKeyMeta(did, KeyId(keyId), meta, operationHash)

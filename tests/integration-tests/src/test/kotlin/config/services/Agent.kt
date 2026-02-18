@@ -17,16 +17,28 @@ data class Agent(
     val neoprism: NeoPrism?,
     val keycloak: Keycloak?,
     val vault: Vault?,
+    //TODO: leave only one config alias
+    @ConfigAlias("vdr_driver") @ConfigAlias("vdr_driver_default") val vdrDriverDefault: String? = null,
 ) : ServiceBase() {
 
     override val logServices = listOf("identus-cloud-agent")
     override val container: ComposeContainer
 
     init {
-        // Validate that exactly one backend is configured
-        require((prismNode != null) xor (neoprism != null)) {
-            "Agent must have exactly one backend configured: prism_node or neoprism"
+        // Validate that when external backends are requested, the config is present
+        require(!(vdrDriverDefault == "prism-node" && prismNode == null)) {
+            "prism-node driver selected but prism_node service configuration is missing"
         }
+        require(!(vdrDriverDefault == "neoprism" && neoprism == null)) {
+            "neoprism driver selected but neoprism service configuration is missing"
+        }
+
+        val selectedDriver =
+            vdrDriverDefault ?: when {
+                prismNode != null -> "prism-node"
+                neoprism != null -> "neoprism"
+                else -> "memory"
+            }
 
         val env = mutableMapOf(
             "AGENT_VERSION" to version,
@@ -35,8 +47,13 @@ data class Agent(
             "DIDCOMM_SERVICE_URL" to (didcommServiceUrl ?: "http://host.docker.internal:$didcommPort"),
             "AGENT_HTTP_PORT" to httpPort.toString(),
             "REST_SERVICE_URL" to (restServiceUrl ?: "http://host.docker.internal:$httpPort"),
-            "NODE_BACKEND" to if (neoprism != null) "neoprism" else "prism-node",
+            "NODE_BACKEND" to when (selectedDriver) {
+                "neoprism" -> "neoprism"
+                "prism-node" -> "prism-node"
+                else -> ""
+            },
             "PRISM_NODE_PORT" to (prismNode?.httpPort?.toString() ?: "50053"),
+            "PRISM_NODE_VERSION" to (prismNode?.version ?: ""),
             "NEOPRISM_BASE_URL" to (neoprism?.let { "http://host.docker.internal:${it.httpPort}" } ?: "http://host.docker.internal:8080"),
             "SECRET_STORAGE_BACKEND" to if (vault != null) "vault" else "postgres",
             // FIXME: hardcode port 10001 just to avoid invalid URL 'http://host.docker.internal:'
@@ -48,6 +65,19 @@ data class Agent(
             "KEYCLOAK_CLIENT_ID" to (keycloak?.clientId ?: ""),
             "KEYCLOAK_CLIENT_SECRET" to (keycloak?.clientSecret ?: ""),
             "POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL" to "http://host.docker.internal:$httpPort",
+            // VDR driver selection (mutually exclusive)
+            "VDR_MEMORY_DRIVER_ENABLED" to (
+                System.getenv("VDR_MEMORY_DRIVER_ENABLED") ?: (selectedDriver == "memory").toString()
+            ),
+            "VDR_DATABASE_DRIVER_ENABLED" to (
+                System.getenv("VDR_DATABASE_DRIVER_ENABLED") ?: (selectedDriver == "database").toString()
+            ),
+            "VDR_PRISM_DRIVER_ENABLED" to (
+                System.getenv("VDR_PRISM_DRIVER_ENABLED") ?: "false"
+            ),
+            "VDR_PRISM_NODE_DRIVER_ENABLED" to (
+                System.getenv("VDR_PRISM_NODE_DRIVER_ENABLED") ?: (selectedDriver == "prism-node").toString()
+            ),
         )
 
         // setup token authentication

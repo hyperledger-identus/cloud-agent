@@ -117,6 +117,7 @@ jobs:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
           GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "Using npm version $(npm -v)"
           npm audit signatures

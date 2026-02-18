@@ -12,9 +12,6 @@ on:
       - "main"
   pull_request:
 
-permissions:
-  pull-requests: write
-
 jobs:
   build-and-unit-tests:
     name: "Build and unit tests"

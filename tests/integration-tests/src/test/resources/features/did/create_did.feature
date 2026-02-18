@@ -22,6 +22,11 @@ Feature: Create and publish DID
       | X25519  | authentication  |
       | X25519  | assertionMethod |
 
+  Scenario: Create PRISM DID with internal VDR key
+    When Issuer creates PRISM DID with internal VDR key
+    Then He sees PRISM DID was created successfully
+    And He sees PRISM DID data was stored correctly with secp256k1 and authentication
+
   Scenario: Successfully publish DID to ledger
     Given Issuer creates empty unpublished DID
     When He publishes DID to ledger

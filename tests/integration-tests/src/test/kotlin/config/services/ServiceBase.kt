@@ -12,6 +12,10 @@ abstract class ServiceBase : Startable {
             logDir.deleteRecursively()
             logDir.mkdirs()
         }
+        // Force docker client API to 1.44 for containerised docker-compose (GH runners docker 27)
+        init {
+            System.setProperty("DOCKER_API_VERSION", System.getProperty("DOCKER_API_VERSION", "1.44"))
+        }
     }
 
     abstract val container: ComposeContainer
@@ -37,6 +41,7 @@ abstract class ServiceBase : Startable {
     }
 
     override fun stop() {
+        Thread.sleep(5000) //wait 5 seconds to write the meaningful log
         logWriters.forEach {
             it.close()
         }

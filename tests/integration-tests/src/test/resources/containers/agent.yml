@@ -22,7 +22,7 @@ services:
 
   # Open Enterprise Agent
   identus-cloud-agent:
-    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:2.1.1-SNAPSHOT
     environment:
       API_KEY_ENABLED: true
       API_KEY_AUTO_PROVISIONING: true
@@ -59,12 +59,14 @@ services:
       KEYCLOAK_CLIENT_SECRET:
       KEYCLOAK_UMA_AUTO_UPGRADE_RPT: true # no configurable at the moment
       # VDR configuration
-      VDR_MEMORY_DRIVER_ENABLED: true
-      VDR_DATABASE_DRIVER_ENABLED: true
+      VDR_MEMORY_DRIVER_ENABLED: ${VDR_MEMORY_DRIVER_ENABLED:-false}
+      VDR_DATABASE_DRIVER_ENABLED: ${VDR_DATABASE_DRIVER_ENABLED:-false}
+      VDR_PRISM_DRIVER_ENABLED: ${VDR_PRISM_DRIVER_ENABLED:-false}
+      VDR_PRISM_NODE_DRIVER_ENABLED: ${VDR_PRISM_NODE_DRIVER_ENABLED:-false}
       # Kafka Messaging Service
       DEFAULT_KAFKA_ENABLED: true
       ENABLE_ANONCRED: true # Default is false
-      LOG_LEVEL: INFO
+      LOG_LEVEL: TRACE
     depends_on:
       postgres:
         condition: service_healthy
