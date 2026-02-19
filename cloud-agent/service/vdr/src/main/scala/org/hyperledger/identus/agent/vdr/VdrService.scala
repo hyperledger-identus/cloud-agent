@@ -388,11 +388,10 @@ class PrismNodeVdrService(
       _ <- logRequest("head", s"entryId=$entryIdHex")
       resp <- ZIO
         .attemptBlocking(
+          // prism-node edge proto only accepts event_hash; entry_id/latest removed.
           stub.getVdrEntry(
             node_api.GetVdrEntryRequest(
-              eventHash = com.google.protobuf.ByteString.EMPTY,
-              entryId = com.google.protobuf.ByteString.copyFrom(entryIdBytes),
-              latest = true
+              eventHash = com.google.protobuf.ByteString.copyFrom(entryIdBytes)
             )
           )
         )
@@ -458,16 +457,13 @@ class PrismNodeVdrService(
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
     (for {
       hash <- bytesFromHex(extractHash(url))
-      _ <- logRequest("read", s"url=$url")
+      _ <- logRequest("read", s"url=$url hashLen=${hash.length}")
       resp <- ZIO
         .attemptBlocking(
           stub.getVdrEntry(
             node_api.GetVdrEntryRequest(
-              // Ask for the latest entry in the chain identified by entryId.
-              // eventHash left empty so the node follows the chain head.
-              eventHash = com.google.protobuf.ByteString.EMPTY,
-              entryId = com.google.protobuf.ByteString.copyFrom(hash),
-              latest = true
+              // prism-node expects the immutable entry hash in eventHash.
+              eventHash = com.google.protobuf.ByteString.copyFrom(hash)
             )
           )
         )
@@ -489,7 +485,7 @@ class PrismNodeVdrService(
       data = entry.getData
       dataBytes =
         if data.content.bytes.isDefined then data.getBytes.toByteArray
-        else if data.content.ipfsCid.isDefined then data.getIpfsCid.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+        else if data.content.ipfs.isDefined then data.getIpfs.getBytes(java.nio.charset.StandardCharsets.UTF_8)
         else Array.emptyByteArray
     } yield dataBytes).mapError {
       case e: StatusRuntimeException                => mapStatusError(e)

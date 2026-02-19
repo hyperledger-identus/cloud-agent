@@ -197,10 +197,17 @@ message DeactivateDIDOperation {
 
 // Opaque data stored in the VDR entry. Validation is intentionally minimal.
 message StorageData {
-  oneof content {
-    bytes bytes = 1; // raw payload
-    string ipfs_cid = 2; // optional IPFS reference
-  }
+    oneof content {
+        bytes bytes = 1; // raw payload
+        string ipfs = 2; // optional IPFS reference
+        StatusListEntry status_list_entry = 3; // optional status list payload
+    }
+}
+
+message StatusListEntry {
+    int64 state = 1;
+    string name = 2;
+    string details = 3;
 }
 
 // Create a new VDR storage entry for a DID.
