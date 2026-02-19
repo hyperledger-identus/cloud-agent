@@ -176,7 +176,9 @@ class VdrSteps {
 
         requireNotNull(vdrUrl) { "VDR URL missing in actor/session context; cannot resolve entry" }
         val vdrDriver = actor.recall<String>("vdrDriver")
+        // The step argument is the source of truth for expected payload; store it for subsequent steps.
         val vdrData = dataHex
+        actor.remember("vdrData", dataHex.decodeHex())
         Serenity.recordReportData()
             .withTitle("VDR resolve request")
             .andContents("url=$vdrUrl\ndriver=${vdrDriver ?: "<none>"}")
@@ -203,11 +205,15 @@ class VdrSteps {
             .withTitle("VDR resolve response")
             .andContents(
                 "status=${SerenityRest.lastResponse().statusCode}\n" +
-                    "body=${SerenityRest.lastResponse().body.asString()}"
+                    "body=${SerenityRest.lastResponse().body.asString()}\n" +
+                    "expected=$vdrData"
             )
 
         actor.attemptsTo(Ensure.that(status).isEqualTo(SC_OK))
         val resolvedVdrData = SerenityRest.lastResponse().body.asByteArray().toHexString()
+        Serenity.recordReportData()
+            .withTitle("VDR resolve comparison")
+            .andContents("url=$vdrUrl\nexpected=$vdrData\nactual=$resolvedVdrData")
         actor.attemptsTo(Ensure.that(vdrData).isEqualTo(resolvedVdrData))
     }
 

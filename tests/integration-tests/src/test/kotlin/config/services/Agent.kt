@@ -40,6 +40,9 @@ data class Agent(
                 else -> "memory"
             }
 
+        fun flag(envName: String, fallback: () -> Boolean): String =
+            System.getenv(envName) ?: fallback().toString()
+
         val env = mutableMapOf(
             "AGENT_VERSION" to version,
             "API_KEY_ENABLED" to authEnabled.toString(),
@@ -66,12 +69,12 @@ data class Agent(
             "KEYCLOAK_CLIENT_SECRET" to (keycloak?.clientSecret ?: ""),
             "POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL" to "http://host.docker.internal:$httpPort",
             // VDR driver selection (mutually exclusive)
-            "VDR_MEMORY_DRIVER_ENABLED" to (
-                System.getenv("VDR_MEMORY_DRIVER_ENABLED") ?: (selectedDriver == "memory").toString()
-            ),
-            "VDR_DATABASE_DRIVER_ENABLED" to (
-                System.getenv("VDR_DATABASE_DRIVER_ENABLED") ?: (selectedDriver == "database").toString()
-            ),
+            "VDR_MEMORY_DRIVER_ENABLED" to flag("VDR_MEMORY_DRIVER_ENABLED") {
+                selectedDriver == "memory" || selectedDriver == "prism-node"
+            },
+            "VDR_DATABASE_DRIVER_ENABLED" to flag("VDR_DATABASE_DRIVER_ENABLED") {
+                selectedDriver == "database" || selectedDriver == "prism-node"
+            },
             "VDR_PRISM_DRIVER_ENABLED" to (
                 System.getenv("VDR_PRISM_DRIVER_ENABLED") ?: "false"
             ),

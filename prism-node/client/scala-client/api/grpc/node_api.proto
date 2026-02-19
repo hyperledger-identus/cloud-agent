@@ -235,9 +235,10 @@ message DeactivateVdrEntryResponse {
 }
 
 message GetVdrEntryRequest {
+    // Immutable event hash that identifies a VDR entry (chain head for updates).
     bytes event_hash = 1;
-    bytes entry_id = 2;
-    bool latest = 3;
+    // Reserved fields kept for backward compatibility with older clients.
+    reserved 2, 3;
 }
 
 message VdrEntry {
@@ -245,7 +246,6 @@ message VdrEntry {
     string did_suffix = 2;
     StorageData data = 3;
     bytes previous_event_hash = 4;
-    bool deactivated = 5;
     bytes nonce = 6;
     VdrEntryStatus status = 7;
 }

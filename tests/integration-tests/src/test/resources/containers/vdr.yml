@@ -13,7 +13,7 @@ services:
       retries: 5
 
   prism-node:
-    image: docker.io/inputoutput/prism-node:${PRISM_NODE_VERSION:-2.6.1-SNAPSHOT}
+    image: docker.io/inputoutput/prism-node:${PRISM_NODE_VERSION:-edge}
     pull_policy: if_not_present
     environment:
       NODE_PSQL_HOST: node-db:5432

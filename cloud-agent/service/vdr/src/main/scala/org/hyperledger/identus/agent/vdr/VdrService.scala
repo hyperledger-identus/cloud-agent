@@ -402,7 +402,7 @@ class PrismNodeVdrService(
       entry = resp.getEntry
       _ <- ZIO
         .fail(VdrEntryNotFound(new prism.DataAlreadyDeactivatedException(RefVDR(entryIdHex))))
-        .when(entry.deactivated || entry.status == node_api.VdrEntryStatus.DEACTIVATED)
+        .when(entry.status == node_api.VdrEntryStatus.DEACTIVATED)
       _ <- logResponse(
         "head",
         s"status=${entry.status} hash=${HexString.fromByteArray(entry.eventHash.toByteArray)}"
@@ -470,22 +470,23 @@ class PrismNodeVdrService(
         .tapError(e => ZIO.logError(s"[prism-node VDR] read error: ${e}"))
       entry = resp.getEntry
       _ <- ZIO.logDebug(
-        s"[prism-node VDR] read entry metadata url=$url status=${entry.status} deactivated=${entry.deactivated} hash=${entry.eventHash.toByteArray.map("%02X" format _).mkString}"
+        s"[prism-node VDR] read entry metadata url=$url status=${entry.status} hash=${entry.eventHash.toByteArray.map("%02X" format _).mkString}"
       )
       _ <- ZIO
         .fail(new prism.DataAlreadyDeactivatedException(RefVDR(hexString(hash))))
-        .when(entry.deactivated || entry.status == node_api.VdrEntryStatus.DEACTIVATED)
+        .when(entry.status == node_api.VdrEntryStatus.DEACTIVATED)
       verification <- ZIO.attemptBlocking(
         stub.verifyVdrEntry(node_api.VerifyVdrEntryRequest(com.google.protobuf.ByteString.copyFrom(hash)))
       )
       _ <- ZIO
         .fail(new RuntimeException(s"VDR entry verification failed for $url: ${verification.reason}"))
         .when(!verification.valid)
-      _ <- logResponse("read", s"entryBytes=${entry.toByteArray.length}, deactivated=${entry.deactivated}")
+      _ <- logResponse("read", s"entryBytes=${entry.toByteArray.length}, status=${entry.status}")
       data = entry.getData
       dataBytes =
         if data.content.bytes.isDefined then data.getBytes.toByteArray
         else if data.content.ipfs.isDefined then data.getIpfs.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+        else if data.content.statusListEntry.isDefined then data.getStatusListEntry.toByteArray
         else Array.emptyByteArray
     } yield dataBytes).mapError {
       case e: StatusRuntimeException                => mapStatusError(e)
