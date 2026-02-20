@@ -1,6 +1,6 @@
 package org.hyperledger.identus.agent.walletapi.model
 
-import org.hyperledger.identus.castor.core.model.error.DIDOperationError
+import org.hyperledger.identus.castor.core.model.error.{DIDOperationError, DIDResolutionError}
 
 package object error {
   final case class CommonWalletStorageError(cause: Throwable)
@@ -14,6 +14,7 @@ package object error {
 
   given Conversion[CommonWalletStorageError, GetManagedDIDError] = e => GetManagedDIDError.WalletStorageError(e.cause)
   given Conversion[DIDOperationError, GetManagedDIDError] = GetManagedDIDError.OperationError(_)
+  given Conversion[DIDResolutionError, GetManagedDIDError] = GetManagedDIDError.ResolutionError(_)
 
   given Conversion[CommonWalletStorageError, UpdateManagedDIDError] = e =>
     UpdateManagedDIDError.WalletStorageError(e.cause)

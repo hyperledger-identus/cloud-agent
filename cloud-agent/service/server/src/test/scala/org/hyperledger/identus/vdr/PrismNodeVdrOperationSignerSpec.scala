@@ -34,6 +34,7 @@ object PrismNodeVdrOperationSignerSpec extends ZIOSpecDefault {
     override def findDIDKeyPair(did: CanonicalPrismDID, keyId: KeyId) =
       ZIO.succeed(keys.getOrElse(keyId, None).asInstanceOf[Option[Secp256k1KeyPair]])
     override def getManagedDIDState(did: CanonicalPrismDID) = ZIO.succeed(Some(didState))
+    override def isDidDeactivated(did: CanonicalPrismDID) = ZIO.succeed(false)
     override def listManagedDIDPage(offset: Int, limit: Int) = ZIO.succeed((Seq(didDetail), 1))
     override def publishStoredDID(did: CanonicalPrismDID) = ZIO.dieMessage("unused")
     override def createAndStoreDID(didTemplate: ManagedDIDTemplate) = ZIO.dieMessage("unused")

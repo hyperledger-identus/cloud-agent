@@ -133,6 +133,23 @@ final class PrismNodeVdrOperationSigner(
           ZIO.logWarning(s"[vdr signer] failed to fetch DID state for ${did.toString}: ${err.toString}")
       }
 
+  private def ensureDidActive(
+      did: CanonicalPrismDID
+  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, Unit] =
+    managedDIDService
+      .isDidDeactivated(did)
+      .mapError(err => VdrServiceError.MissingVdrKey(new Exception(err.toString)))
+      .flatMap { deactivated =>
+        ZIO
+          .fail(
+            VdrServiceError.MissingVdrKey(
+              new Exception(s"DID ${did.toString} is deactivated; cannot perform VDR operation")
+            )
+          )
+          .when(deactivated)
+          .unit
+      }
+
   override def signCreate(
       data: Array[Byte],
       didKeyId: Option[String]
@@ -140,6 +157,7 @@ final class PrismNodeVdrOperationSigner(
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
+      _ <- ensureDidActive(did)
       key <- resolveKey(did, Some(parsed._2.value))
       _ <- ZIO.logInfo(
         s"[vdr signer] signCreate did=${did.toString} key=${parsed._2.value} bytes=${data.length}"
@@ -163,6 +181,7 @@ final class PrismNodeVdrOperationSigner(
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
+      _ <- ensureDidActive(did)
       key <- resolveKey(did, Some(parsed._2.value))
       _ <- ZIO.logInfo(
         s"[vdr signer] signUpdate did=${did.toString} key=${parsed._2.value} prevHash=${HexString.fromByteArray(previousEventHash)} bytes=${data.length}"
@@ -184,6 +203,7 @@ final class PrismNodeVdrOperationSigner(
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
+      _ <- ensureDidActive(did)
       key <- resolveKey(did, Some(parsed._2.value))
       _ <- ZIO.logInfo(
         s"[vdr signer] signDeactivate did=${did.toString} key=${parsed._2.value} prevHash=${HexString.fromByteArray(previousEventHash)}"

@@ -6,6 +6,7 @@ object TestConstants {
     val TESTS_CONFIG =
         System.getProperty("TESTS_CONFIG")
             ?: System.getenv("TESTS_CONFIG")
+            // Fallback to repository-local path so tests still run when /configs is not mounted
             ?: "/configs/basic_neoprism.conf"
     val TEST_VERIFICATION_POLICY = VerificationPolicyInput(
         name = "Trusted Issuer and SchemaID",
