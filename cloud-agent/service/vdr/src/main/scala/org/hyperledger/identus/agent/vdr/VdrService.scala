@@ -20,7 +20,7 @@ import hyperledger.identus.vdr.prism.PRISMDriverInMemory
 import interfaces.{Driver, Proof}
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
-import io.iohk.atala.prism.protos.node_api
+import io.iohk.atala.prism.protos.{node_api, node_models}
 import javax.sql.DataSource
 import org.hyperledger.identus.agent.vdr.VdrServiceError.{DriverNotFound, MissingVdrKey, VdrEntryNotFound}
 import org.hyperledger.identus.shared.models.HexString
@@ -439,7 +439,10 @@ class PrismNodeVdrService(
     for {
       _ <- logRequest("create", s"bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}")
       signed <- signer.signCreate(data, didKeyId)
-      out <- scheduleSingle(signed, "createVdrEntry")
+      out <- scheduleSingle(signed, "createVdrEntry").mapError {
+        case d: DriverNotFound   => d
+        case nf: VdrEntryNotFound => DriverNotFound(nf.cause)
+      }
       _ <- logResponse("create", s"output=$out")
     } yield mapCreateOutput(out, options)
 
