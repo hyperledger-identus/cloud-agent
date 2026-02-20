@@ -381,6 +381,28 @@ class PrismNodeVdrService(
   private def logResponse(name: String, payload: String): UIO[Unit] =
     ZIO.logDebug(s"[prism-node VDR] $name response: $payload")
 
+  private def scheduleSingle(
+      signed: node_models.SignedAtalaOperation,
+      method: String
+  ): IO[DriverNotFound | VdrEntryNotFound, node_api.OperationOutput] =
+    ZIO
+      .attemptBlocking(
+        stub.scheduleOperations(node_api.ScheduleOperationsRequest(signedOperations = Seq(signed)))
+      )
+      .mapBoth(
+        {
+          case e: StatusRuntimeException => mapStatusError(e)
+          case e: Throwable              => DriverNotFound(e)
+        },
+        resp => resp.outputs.headOption
+      )
+      .flatMap {
+        case Some(out) if out.operationMaybe.isError =>
+          ZIO.fail(DriverNotFound(new RuntimeException(out.getError)))
+        case Some(out) => ZIO.succeed(out)
+        case None      => ZIO.fail(DriverNotFound(new RuntimeException(s"$method returned no outputs")))
+      }
+
   /** Fetch the current head for the immutable entry id (the hash in the URL). */
   private def fetchLatestHead(entryIdHex: String): IO[DriverNotFound | VdrEntryNotFound, node_api.VdrEntry] =
     for {
@@ -417,17 +439,9 @@ class PrismNodeVdrService(
     for {
       _ <- logRequest("create", s"bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}")
       signed <- signer.signCreate(data, didKeyId)
-      resp <- ZIO
-        .attemptBlocking(stub.createVdrEntry(node_api.CreateVdrEntryRequest(Some(signed))))
-        .mapError {
-          case e: StatusRuntimeException => DriverNotFound(e)
-          case e: Throwable              => DriverNotFound(e)
-        }
-      _ <- logResponse(
-        "create",
-        s"operationId=${resp.getOutput.getOperationId.toByteArray.length} bytes, output=${resp.getOutput}"
-      )
-    } yield mapCreateOutput(resp.getOutput, options)
+      out <- scheduleSingle(signed, "createVdrEntry")
+      _ <- logResponse("create", s"output=$out")
+    } yield mapCreateOutput(out, options)
 
   override def update(
       data: Array[Byte],
@@ -444,14 +458,9 @@ class PrismNodeVdrService(
         s"entryId=$entryIdHex, head=${HexString.fromByteArray(previous)}, bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}"
       )
       signed <- signer.signUpdate(previous, data, didKeyId)
-      resp <- ZIO
-        .attemptBlocking(stub.updateVdrEntry(node_api.UpdateVdrEntryRequest(Some(signed))))
-        .mapError {
-          case e: StatusRuntimeException => mapStatusError(e)
-          case e: Throwable              => DriverNotFound(e)
-        }
-      _ <- logResponse("update", s"output=${resp.getOutput}")
-      opIdHex = hexString(resp.getOutput.getOperationId.toByteArray)
+      out <- scheduleSingle(signed, "updateVdrEntry")
+      _ <- logResponse("update", s"output=$out")
+      opIdHex = hexString(out.getOperationId.toByteArray)
     } yield Some(VdrOperationResult(url, Some(opIdHex)))
 
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
@@ -508,14 +517,9 @@ class PrismNodeVdrService(
         s"entryId=$entryIdHex, head=${HexString.fromByteArray(previous)}, didKeyId=${didKeyId.getOrElse("none")}"
       )
       signed <- signer.signDeactivate(previous, didKeyId)
-      resp <- ZIO
-        .attemptBlocking(stub.deactivateVdrEntry(node_api.DeactivateVdrEntryRequest(Some(signed))))
-        .mapError {
-          case e: StatusRuntimeException => mapStatusError(e)
-          case e: Throwable              => DriverNotFound(e)
-        }
-      _ <- logResponse("delete", s"ok=true")
-    } yield Some(hexString(resp.getOutput.getOperationId.toByteArray))
+      out <- scheduleSingle(signed, "deactivateVdrEntry")
+      _ <- logResponse("delete", s"output=$out")
+    } yield Some(hexString(out.getOperationId.toByteArray))
 
   override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
     (for {
