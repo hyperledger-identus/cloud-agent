@@ -39,14 +39,14 @@ jobs:
           fetch-depth: 0
 
       - name: Set up JDK 21 (Temurin) with sbt cache
-        uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62 # v3.14.1 pinned
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0 pinned
         with:
           java-version: 21
           distribution: temurin
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@48062bf7c939ae1892d9954660ddbe27ac17c2fb # v1 pinned
+        uses: sbt/setup-sbt@8bc8138dd0cbdac06258e1c39f060df71b42a6e9 # v1.1.18 pinned
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
