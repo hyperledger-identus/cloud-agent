@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
         with:
           egress-policy: audit
 
@@ -64,7 +64,7 @@ jobs:
           sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS $GITHUB_WORKSPACE/cloud-agent/service/api/cloud-agent-openapi-spec.yaml $VERSION"
 
       - name: Commit and push if changed
-        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
           commit_message: "chore(oas) update Open API Specification"
           file_pattern: "cloud-agent/service/api/cloud-agent-openapi-spec.yaml"

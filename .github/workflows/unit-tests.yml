@@ -33,7 +33,7 @@ jobs:
         TESTCONTAINERS_RYUK_DISABLED: true
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
         with:
           egress-policy: audit
 
@@ -74,7 +74,7 @@ jobs:
 
       - name: Publish test results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
           junit_files: "./target/test-reports/**/TEST-*.xml"
           comment_title: "Unit Test Results"
