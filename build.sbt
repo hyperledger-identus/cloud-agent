@@ -20,6 +20,7 @@ Global / concurrentRestrictions += Tags.limit(Tags.Network, 1)
 
 coverageDataDir := target.value / "coverage"
 coberturaFile := target.value / "coverage" / "coverage-report" / "cobertura.xml"
+coverageExcludedPackages := "(?i).*proto.*;.*grpc.*;.*scalapb.*;.*protobuf.*;.*generated.*"
 
 inThisBuild(
   Seq(
