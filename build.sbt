@@ -905,6 +905,26 @@ lazy val vdrCore = project
   )
   .dependsOn(shared, prismNodeClient)
 
+lazy val vdrMemory = project
+  .in(file("vdr/memory"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-memory",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore)
+
+lazy val vdrPrismNode = project
+  .in(file("vdr/prism-node"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-prism-node",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, prismNodeClient)
+
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
   .configure(commonConfigure)
@@ -990,6 +1010,9 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   polluxPreX,
   connectCore,
   connectDoobie,
+  vdrCore,
+  vdrMemory,
+  vdrPrismNode,
   cloudAgentVdr,
   cloudAgentWalletAPI,
   cloudAgentServer,
