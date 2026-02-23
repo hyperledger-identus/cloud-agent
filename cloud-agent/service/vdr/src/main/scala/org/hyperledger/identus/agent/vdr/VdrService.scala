@@ -440,7 +440,7 @@ class PrismNodeVdrService(
       _ <- logRequest("create", s"bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}")
       signed <- signer.signCreate(data, didKeyId)
       out <- scheduleSingle(signed, "createVdrEntry").mapError {
-        case d: DriverNotFound   => d
+        case d: DriverNotFound    => d
         case nf: VdrEntryNotFound => DriverNotFound(nf.cause)
       }
       _ <- logResponse("create", s"output=$out")

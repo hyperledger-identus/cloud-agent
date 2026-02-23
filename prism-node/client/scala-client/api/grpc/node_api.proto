@@ -195,8 +195,6 @@ message ScheduleOperationsResponse {
 message GetVdrEntryRequest {
     // Immutable event hash that identifies a VDR entry (chain head for updates).
     bytes event_hash = 1;
-    // Reserved fields kept for backward compatibility with older clients.
-    reserved 2, 3;
 }
 
 message VdrEntry {

@@ -1,12 +1,12 @@
 syntax = "proto3";
 
+option java_multiple_files = true;
+option java_package = "io.iohk.atala.prism.protos";
+
 package io.iohk.atala.prism.protos;
 
 import "common_models.proto";
 import "google/protobuf/timestamp.proto";
-
-option java_multiple_files = true;
-option java_package = "io.iohk.atala.prism.protos";
 
 // Includes timestamping details about a blockchain's block.
 message TimestampInfo {
@@ -175,11 +175,11 @@ message ProtocolVersion {
 }
 
 message ProtocolVersionInfo {
-  reserved 2, 3;
-  string version_name = 1; // (optional) name of the version
-  int32 effective_since = 4; // Cardano block number that tells since which block the update is enforced
+    reserved 2, 3;
+    string version_name = 1; // (optional) name of the version
+    int32 effective_since = 4; // Cardano block number that tells since which block the update is enforced
 
-  // New major and minor version to be announced,
+    // New major and minor version to be announced,
   // If major value changes, the node MUST stop issuing and reading operations, and upgrade before `effective_since` because the new protocol version.
   // If minor value changes, the node can opt to not update. All events _published_ by this node would be also
   // understood by other nodes with the same major version. However, there may be new events that this node won't _read_
