@@ -18,7 +18,6 @@ import fmgp.did.method.prism.vdr.{Indexer, VDRService, VDRServiceImpl}
 import hyperledger.identus.vdr.prism
 import hyperledger.identus.vdr.prism.PRISMDriverInMemory
 import interfaces.{Driver, Proof}
-import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.iohk.atala.prism.protos.{node_api, node_models}
 import javax.sql.DataSource
@@ -62,6 +61,34 @@ trait VdrService {
   def verify(url: VdrUrl, returnData: Boolean = false): UIO[Proof]
 
   def getOperationStatus(operationId: String): IO[DriverNotFound, VdrOperationStatus]
+}
+
+/** Thin wrapper around the gRPC stub so it can be replaced in tests. */
+trait PrismNodeClient {
+  def scheduleOperations(
+      req: node_api.ScheduleOperationsRequest
+  ): Task[node_api.ScheduleOperationsResponse]
+  def getVdrEntry(req: node_api.GetVdrEntryRequest): Task[node_api.GetVdrEntryResponse]
+  def verifyVdrEntry(req: node_api.VerifyVdrEntryRequest): Task[node_api.VerifyVdrEntryResponse]
+  def getOperationInfo(req: node_api.GetOperationInfoRequest): Task[node_api.GetOperationInfoResponse]
+}
+
+private final class PrismNodeGrpcClient(
+    stub: node_api.NodeServiceGrpc.NodeServiceBlockingStub
+) extends PrismNodeClient {
+  override def scheduleOperations(
+      req: node_api.ScheduleOperationsRequest
+  ): Task[node_api.ScheduleOperationsResponse] =
+    ZIO.attemptBlocking(stub.scheduleOperations(req))
+
+  override def getVdrEntry(req: node_api.GetVdrEntryRequest): Task[node_api.GetVdrEntryResponse] =
+    ZIO.attemptBlocking(stub.getVdrEntry(req))
+
+  override def verifyVdrEntry(req: node_api.VerifyVdrEntryRequest): Task[node_api.VerifyVdrEntryResponse] =
+    ZIO.attemptBlocking(stub.verifyVdrEntry(req))
+
+  override def getOperationInfo(req: node_api.GetOperationInfoRequest): Task[node_api.GetOperationInfoResponse] =
+    ZIO.attemptBlocking(stub.getOperationInfo(req))
 }
 
 class VdrServiceImpl(
@@ -324,17 +351,18 @@ object PrismNodeVdrService {
       signer: VdrOperationSigner,
       urlManager: BaseUrlManager
   ): Task[VdrService] =
-    ZIO.succeed(new PrismNodeVdrService(stub, signer, urlManager))
+    ZIO.succeed(new PrismNodeVdrService(new PrismNodeGrpcClient(stub), signer, urlManager))
 }
 
 class PrismNodeVdrService(
-    stub: node_api.NodeServiceGrpc.NodeServiceBlockingStub,
+    client: PrismNodeClient,
     signer: VdrOperationSigner,
     urlManager: BaseUrlManager
 ) extends VdrService {
   override val identifier: String = "prism-node"
   override val version: String = "1.0.0"
   private val family: String = "prism"
+  private val ops = PrismVdrLogic(client)
 
   private def hexString(bytes: Array[Byte]): String = HexString.fromByteArray(bytes).toString
   private def bytesFromHex(url: String): Task[Array[Byte]] = ZIO.fromTry(HexString.fromString(url)).map(_.toByteArray)
@@ -367,69 +395,16 @@ class PrismNodeVdrService(
   }
 
   private def mapStatusError(e: StatusRuntimeException): DriverNotFound | VdrEntryNotFound =
-    e.getStatus.getCode match
-      case Status.Code.NOT_FOUND | Status.Code.UNKNOWN => VdrEntryNotFound(e)
-      case Status.Code.FAILED_PRECONDITION             => VdrEntryNotFound(e) // e.g., latest entry is deactivated
-      case _                                           => DriverNotFound(e)
+    ops.mapStatusError(e)
 
   private def extractHash(url: String): String =
-    url.split("#").lastOption.getOrElse(url)
+    ops.extractHash(url)
 
   private def logRequest(name: String, payload: String): UIO[Unit] =
-    ZIO.logDebug(s"[prism-node VDR] $name request: $payload")
+    ops.logRequest(name, payload)
 
   private def logResponse(name: String, payload: String): UIO[Unit] =
-    ZIO.logDebug(s"[prism-node VDR] $name response: $payload")
-
-  private def scheduleSingle(
-      signed: node_models.SignedAtalaOperation,
-      method: String
-  ): IO[DriverNotFound | VdrEntryNotFound, node_api.OperationOutput] =
-    ZIO
-      .attemptBlocking(
-        stub.scheduleOperations(node_api.ScheduleOperationsRequest(signedOperations = Seq(signed)))
-      )
-      .mapBoth(
-        {
-          case e: StatusRuntimeException => mapStatusError(e)
-          case e: Throwable              => DriverNotFound(e)
-        },
-        resp => resp.outputs.headOption
-      )
-      .flatMap {
-        case Some(out) if out.operationMaybe.isError =>
-          ZIO.fail(DriverNotFound(new RuntimeException(out.getError)))
-        case Some(out) => ZIO.succeed(out)
-        case None      => ZIO.fail(DriverNotFound(new RuntimeException(s"$method returned no outputs")))
-      }
-
-  /** Fetch the current head for the immutable entry id (the hash in the URL). */
-  private def fetchLatestHead(entryIdHex: String): IO[DriverNotFound | VdrEntryNotFound, node_api.VdrEntry] =
-    for {
-      entryIdBytes <- bytesFromHex(entryIdHex).mapError(DriverNotFound(_))
-      _ <- logRequest("head", s"entryId=$entryIdHex")
-      resp <- ZIO
-        .attemptBlocking(
-          // prism-node edge proto only accepts event_hash; entry_id/latest removed.
-          stub.getVdrEntry(
-            node_api.GetVdrEntryRequest(
-              eventHash = com.google.protobuf.ByteString.copyFrom(entryIdBytes)
-            )
-          )
-        )
-        .mapError {
-          case e: StatusRuntimeException => mapStatusError(e)
-          case e: Throwable              => DriverNotFound(e)
-        }
-      entry = resp.getEntry
-      _ <- ZIO
-        .fail(VdrEntryNotFound(new prism.DataAlreadyDeactivatedException(RefVDR(entryIdHex))))
-        .when(entry.status == node_api.VdrEntryStatus.DEACTIVATED)
-      _ <- logResponse(
-        "head",
-        s"status=${entry.status} hash=${HexString.fromByteArray(entry.eventHash.toByteArray)}"
-      )
-    } yield entry
+    ops.logResponse(name, payload)
 
   override def create(
       data: Array[Byte],
@@ -439,7 +414,7 @@ class PrismNodeVdrService(
     for {
       _ <- logRequest("create", s"bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}")
       signed <- signer.signCreate(data, didKeyId)
-      out <- scheduleSingle(signed, "createVdrEntry").mapError {
+      out <- ops.scheduleSingle(signed, "createVdrEntry").mapError {
         case d: DriverNotFound    => d
         case nf: VdrEntryNotFound => DriverNotFound(nf.cause)
       }
@@ -454,14 +429,14 @@ class PrismNodeVdrService(
   ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey, Option[VdrOperationResult]] =
     for {
       entryIdHex <- ZIO.succeed(extractHash(url))
-      head <- fetchLatestHead(entryIdHex)
+      head <- ops.fetchLatestHead(entryIdHex)
       previous = head.eventHash.toByteArray
       _ <- logRequest(
         "update",
         s"entryId=$entryIdHex, head=${HexString.fromByteArray(previous)}, bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}"
       )
       signed <- signer.signUpdate(previous, data, didKeyId)
-      out <- scheduleSingle(signed, "updateVdrEntry")
+      out <- ops.scheduleSingle(signed, "updateVdrEntry")
       _ <- logResponse("update", s"output=$out")
       opIdHex = hexString(out.getOperationId.toByteArray)
     } yield Some(VdrOperationResult(url, Some(opIdHex)))
@@ -470,13 +445,11 @@ class PrismNodeVdrService(
     (for {
       hash <- bytesFromHex(extractHash(url))
       _ <- logRequest("read", s"url=$url hashLen=${hash.length}")
-      resp <- ZIO
-        .attemptBlocking(
-          stub.getVdrEntry(
-            node_api.GetVdrEntryRequest(
-              // prism-node expects the immutable entry hash in eventHash.
-              eventHash = com.google.protobuf.ByteString.copyFrom(hash)
-            )
+      resp <- client
+        .getVdrEntry(
+          node_api.GetVdrEntryRequest(
+            // prism-node expects the immutable entry hash in eventHash.
+            eventHash = com.google.protobuf.ByteString.copyFrom(hash)
           )
         )
         .tapError(e => ZIO.logError(s"[prism-node VDR] read error: ${e}"))
@@ -487,8 +460,8 @@ class PrismNodeVdrService(
       _ <- ZIO
         .fail(new prism.DataAlreadyDeactivatedException(RefVDR(hexString(hash))))
         .when(entry.status == node_api.VdrEntryStatus.DEACTIVATED)
-      verification <- ZIO.attemptBlocking(
-        stub.verifyVdrEntry(node_api.VerifyVdrEntryRequest(com.google.protobuf.ByteString.copyFrom(hash)))
+      verification <- client.verifyVdrEntry(
+        node_api.VerifyVdrEntryRequest(com.google.protobuf.ByteString.copyFrom(hash))
       )
       _ <- ZIO
         .fail(new RuntimeException(s"VDR entry verification failed for $url: ${verification.reason}"))
@@ -513,14 +486,14 @@ class PrismNodeVdrService(
   ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey, Option[String]] =
     for {
       entryIdHex <- ZIO.succeed(extractHash(url))
-      head <- fetchLatestHead(entryIdHex)
+      head <- ops.fetchLatestHead(entryIdHex)
       previous = head.eventHash.toByteArray
       _ <- logRequest(
         "delete",
         s"entryId=$entryIdHex, head=${HexString.fromByteArray(previous)}, didKeyId=${didKeyId.getOrElse("none")}"
       )
       signed <- signer.signDeactivate(previous, didKeyId)
-      out <- scheduleSingle(signed, "deactivateVdrEntry")
+      out <- ops.scheduleSingle(signed, "deactivateVdrEntry")
       _ <- logResponse("delete", s"output=$out")
     } yield Some(hexString(out.getOperationId.toByteArray))
 
@@ -528,9 +501,7 @@ class PrismNodeVdrService(
     (for {
       hash <- bytesFromHex(url)
       _ <- logRequest("verify", s"url=$url, returnData=$returnData")
-      resp <- ZIO.attemptBlocking(
-        stub.verifyVdrEntry(node_api.VerifyVdrEntryRequest(com.google.protobuf.ByteString.copyFrom(hash)))
-      )
+      resp <- client.verifyVdrEntry(node_api.VerifyVdrEntryRequest(com.google.protobuf.ByteString.copyFrom(hash)))
       _ <- logResponse("verify", s"valid=${resp.valid}")
       proofBytes = if (resp.valid) hash else Array.emptyByteArray
     } yield Proof("prism-node", Array.emptyByteArray, proofBytes)).orDie
@@ -539,11 +510,9 @@ class PrismNodeVdrService(
     (for {
       _ <- logRequest("getOperationStatus", s"operationId=$operationId")
       opIdBytes <- ZIO.fromTry(HexString.fromString(operationId)).map(_.toByteArray)
-      resp <- ZIO.attemptBlocking(
-        stub.getOperationInfo(
-          node_api.GetOperationInfoRequest(
-            com.google.protobuf.ByteString.copyFrom(opIdBytes)
-          )
+      resp <- client.getOperationInfo(
+        node_api.GetOperationInfoRequest(
+          com.google.protobuf.ByteString.copyFrom(opIdBytes)
         )
       )
       _ <- logResponse("getOperationStatus", s"status=${resp.operationStatus}")
