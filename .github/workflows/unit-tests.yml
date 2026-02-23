@@ -32,6 +32,16 @@ jobs:
         with:
           egress-policy: audit
 
+      - name: Set up JDK 21 (Temurin) with sbt cache
+        uses: actions/setup-java@17f84c3641ba7b8f6deff6309fc4c864478f5d62 # v3.14.1 pinned
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+
+      - name: Set up sbt
+        uses: sbt/setup-sbt@48062bf7c939ae1892d9954660ddbe27ac17c2fb # v1 pinned
+
       - name: Git checkout (merge)
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         if: github.event_name != 'pull_request'
