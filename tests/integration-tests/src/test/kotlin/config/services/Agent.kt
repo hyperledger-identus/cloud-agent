@@ -56,7 +56,7 @@ data class Agent(
                 else -> ""
             },
             "PRISM_NODE_PORT" to (prismNode?.httpPort?.toString() ?: "50053"),
-            "PRISM_NODE_VERSION" to (prismNode?.version ?: ""),
+            "PRISM_NODE_VERSION" to (prismNode?.version ?: "edge"),
             "NEOPRISM_BASE_URL" to (neoprism?.let { "http://host.docker.internal:${it.httpPort}" } ?: "http://host.docker.internal:8080"),
             "SECRET_STORAGE_BACKEND" to if (vault != null) "vault" else "postgres",
             // FIXME: hardcode port 10001 just to avoid invalid URL 'http://host.docker.internal:'
