@@ -893,7 +893,7 @@ lazy val cloudAgentVdr = project
     name := "cloud-agent-vdr",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(shared, prismNodeClient, vdrCore)
+  .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrDatabase, vdrMemory, vdrProxy)
 
 lazy val vdrCore = project
   .in(file("vdr/core"))
@@ -923,7 +923,43 @@ lazy val vdrPrismNode = project
     name := "vdr-prism-node",
     libraryDependencies ++= D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(vdrCore, prismNodeClient)
+  .dependsOn(vdrCore, prismNodeClient, shared % "compile->compile;test->test")
+
+lazy val vdrDatabase = project
+  .in(file("vdr/database"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-database",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies ++ D_CloudAgent.postgresDependencies,
+    Test / libraryDependencies ++= Seq(
+      "com.dimafeng" %% "testcontainers-scala-postgresql" % V.testContainersScala % Test
+    ),
+  )
+  .dependsOn(vdrCore, shared)
+
+lazy val vdrBlockfrost = project
+  .in(file("vdr/blockfrost"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-blockfrost",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, shared)
+
+lazy val vdrProxy = project
+  .in(file("vdr/proxy"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-proxy",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies ++ Seq(
+      "com.h2database" % "h2" % "2.2.224"
+    ),
+    Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
+  )
+  .dependsOn(vdrCore, vdrPrismNode, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -1013,6 +1049,8 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   vdrCore,
   vdrMemory,
   vdrPrismNode,
+  vdrDatabase,
+  vdrProxy,
   cloudAgentVdr,
   cloudAgentWalletAPI,
   cloudAgentServer,
