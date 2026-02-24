@@ -1047,6 +1047,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   connectCore,
   connectDoobie,
   vdrCore,
+  vdrBlockfrost,
   vdrMemory,
   vdrPrismNode,
   vdrDatabase,
@@ -1060,3 +1061,10 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
 lazy val root = project
   .in(file("."))
   .aggregate(aggregatedProjects: _*)
+
+// Silence lint warnings globally for now (sbt lintUnusedKeys raises noise on scoped test deps)
+Global / lintUnused := false
+Global / excludeLintKeys ++= Set(
+  vdrDatabase / Test / libraryDependencies,
+  vdrProxy / Test / libraryDependencies
+)
