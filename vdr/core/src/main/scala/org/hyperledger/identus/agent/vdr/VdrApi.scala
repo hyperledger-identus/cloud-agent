@@ -17,7 +17,11 @@ trait VdrService {
       data: Array[Byte],
       options: VdrOptions,
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.DriverNotFound | VdrServiceError.MissingVdrKey, VdrOperationResult]
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.DriverNotFound | VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    VdrOperationResult
+  ]
   def update(
       data: Array[Byte],
       url: VdrUrl,
@@ -25,7 +29,8 @@ trait VdrService {
       didKeyId: Option[String]
   ): ZIO[
     WalletAccessContext,
-    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey,
+    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey |
+      VdrServiceError.DeactivatedDid,
     Option[VdrOperationResult]
   ]
   def read(url: VdrUrl): IO[VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound, Array[Byte]]
@@ -35,7 +40,8 @@ trait VdrService {
       didKeyId: Option[String]
   ): ZIO[
     WalletAccessContext,
-    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey,
+    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey |
+      VdrServiceError.DeactivatedDid,
     Option[String]
   ]
   def verify(url: VdrUrl, returnData: Boolean = false): UIO[Proof]

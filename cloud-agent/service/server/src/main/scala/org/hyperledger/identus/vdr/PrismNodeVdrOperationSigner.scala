@@ -135,14 +135,14 @@ final class PrismNodeVdrOperationSigner(
 
   private def ensureDidActive(
       did: CanonicalPrismDID
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, Unit] =
+  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid, Unit] =
     managedDIDService
       .isDidDeactivated(did)
-      .mapError(err => VdrServiceError.MissingVdrKey(new Exception(err.toString)))
+      .mapError(err => VdrServiceError.DeactivatedDid(new Exception(err.toString)))
       .flatMap { deactivated =>
         ZIO
           .fail(
-            VdrServiceError.MissingVdrKey(
+            VdrServiceError.DeactivatedDid(
               new Exception(s"DID ${did.toString} is deactivated; cannot perform VDR operation")
             )
           )
@@ -153,7 +153,11 @@ final class PrismNodeVdrOperationSigner(
   override def signCreate(
       data: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ] =
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
@@ -177,7 +181,11 @@ final class PrismNodeVdrOperationSigner(
       previousEventHash: Array[Byte],
       data: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ] =
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
@@ -199,7 +207,11 @@ final class PrismNodeVdrOperationSigner(
   override def signDeactivate(
       previousEventHash: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ] =
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)

@@ -9,7 +9,12 @@ import org.hyperledger.identus.agent.vdr.blockfrost.BlockfrostPrismDriverProvide
 import org.hyperledger.identus.agent.vdr.database.DatabaseDriverProvider
 import org.hyperledger.identus.agent.vdr.memory.MemoryDriverProvider
 import org.hyperledger.identus.agent.vdr.VdrConfigs.PRISMDriverConfig
-import org.hyperledger.identus.agent.vdr.VdrServiceError.{DriverNotFound, MissingVdrKey, VdrEntryNotFound}
+import org.hyperledger.identus.agent.vdr.VdrServiceError.{
+  DeactivatedDid,
+  DriverNotFound,
+  MissingVdrKey,
+  VdrEntryNotFound
+}
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import proxy.VDRProxyMultiDrivers
 import proxy.VDRProxyMultiDrivers.NoDriverWithThisSpecificationsException
@@ -78,7 +83,7 @@ class VdrServiceImpl(
       data: Array[Byte],
       options: VdrOptions,
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, DriverNotFound | MissingVdrKey, VdrOperationResult] =
+  ): ZIO[WalletAccessContext, DriverNotFound | MissingVdrKey | DeactivatedDid, VdrOperationResult] =
     if (wantPrismNode(options)) {
       prismNodeService match
         case Some(s) => s.create(data, options, didKeyId)
@@ -96,33 +101,39 @@ class VdrServiceImpl(
       url: VdrUrl,
       options: VdrOptions,
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey, Option[VdrOperationResult]] =
-    if (prismNodeService.nonEmpty && (!proxyUrl(url) || isPrismNodeUrl(url)))
-      prismNodeService.get.update(data, url, options, didKeyId)
-    else
-      useProxy(p => Option(p.update(data, url, options.asJava))).map(_.map(VdrOperationResult(_, None)))
+  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey | DeactivatedDid, Option[
+    VdrOperationResult
+  ]] =
+    prismNodeService match
+      case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) =>
+        s.update(data, url, options, didKeyId)
+      case _ =>
+        useProxy(p => Option(p.update(data, url, options.asJava))).map(_.map(VdrOperationResult(_, None)))
 
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
-    if (prismNodeService.nonEmpty && (!proxyUrl(url) || isPrismNodeUrl(url)))
-      prismNodeService.get.read(url)
-    else
-      useProxy(_.read(url))
+    prismNodeService match
+      case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) =>
+        s.read(url)
+      case _ =>
+        useProxy(_.read(url))
 
   override def delete(
       url: VdrUrl,
       options: VdrOptions,
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey, Option[String]] =
-    if (prismNodeService.nonEmpty && (!proxyUrl(url) || isPrismNodeUrl(url)))
-      prismNodeService.get.delete(url, options, didKeyId)
-    else
-      useProxy(_.delete(url, options.asJava)).as(None)
+  ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey | DeactivatedDid, Option[String]] =
+    prismNodeService match
+      case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) =>
+        s.delete(url, options, didKeyId)
+      case _ =>
+        useProxy(_.delete(url, options.asJava)).as(None)
 
   override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
-    if (prismNodeService.nonEmpty && !proxyUrl(url))
-      prismNodeService.get.verify(url, returnData)
-    else
-      orDieProxy(useProxy(_.verify(url, returnData)))
+    prismNodeService match
+      case Some(s) if !proxyUrl(url) =>
+        s.verify(url, returnData)
+      case _ =>
+        orDieProxy(useProxy(_.verify(url, returnData)))
 
   override def getOperationStatus(operationId: String): IO[DriverNotFound, VdrOperationStatus] =
     prismNodeService match

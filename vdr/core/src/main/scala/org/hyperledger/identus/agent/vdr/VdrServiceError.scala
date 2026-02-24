@@ -23,6 +23,11 @@ object VdrServiceError {
         StatusCode.BadRequest,
         s"No VDR signing key available for the current wallet/DID"
       )
+  final case class DeactivatedDid(cause: Throwable)
+      extends VdrServiceError(
+        StatusCode.BadRequest,
+        s"The DID is deactivated; VDR operation not allowed"
+      )
   final case class VdrEntryNotFound(
       cause: InMemoryDriver.DataCouldNotBeFoundException | DatabaseDriver.DataCouldNotBeFoundException |
         prism.DataAlreadyDeactivatedException | prism.DataCouldNotBeFoundException | prism.DataNotInitializedException |

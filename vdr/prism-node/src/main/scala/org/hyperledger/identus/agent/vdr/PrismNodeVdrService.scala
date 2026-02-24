@@ -67,7 +67,11 @@ class PrismNodeVdrService(
       data: Array[Byte],
       options: VdrOptions,
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.DriverNotFound | VdrServiceError.MissingVdrKey, VdrOperationResult] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.DriverNotFound | VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    VdrOperationResult
+  ] =
     for {
       _ <- logRequest("create", s"bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}")
       signed <- signer.signCreate(data, didKeyId)
@@ -85,7 +89,8 @@ class PrismNodeVdrService(
       didKeyId: Option[String]
   ): ZIO[
     WalletAccessContext,
-    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey,
+    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey |
+      VdrServiceError.DeactivatedDid,
     Option[VdrOperationResult]
   ] =
     for {
@@ -146,7 +151,8 @@ class PrismNodeVdrService(
       didKeyId: Option[String]
   ): ZIO[
     WalletAccessContext,
-    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey,
+    VdrServiceError.DriverNotFound | VdrServiceError.VdrEntryNotFound | VdrServiceError.MissingVdrKey |
+      VdrServiceError.DeactivatedDid,
     Option[String]
   ] =
     for {

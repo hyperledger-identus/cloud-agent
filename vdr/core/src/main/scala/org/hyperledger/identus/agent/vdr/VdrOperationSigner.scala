@@ -8,14 +8,26 @@ trait VdrOperationSigner {
   def signCreate(
       data: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation]
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ]
   def signUpdate(
       previousEventHash: Array[Byte],
       data: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation]
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ]
   def signDeactivate(
       previousEventHash: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation]
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ]
 }
