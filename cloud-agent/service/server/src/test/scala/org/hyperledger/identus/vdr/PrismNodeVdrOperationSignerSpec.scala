@@ -1,7 +1,6 @@
 package org.hyperledger.identus.vdr
 
 import org.hyperledger.identus.agent.vdr.VdrServiceError.{DeactivatedDid, MissingVdrKey}
-import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
 import org.hyperledger.identus.agent.walletapi.model.{
   ManagedDIDDetail,
   ManagedDIDState,
@@ -9,6 +8,7 @@ import org.hyperledger.identus.agent.walletapi.model.{
   PublicationState,
   UpdateManagedDIDAction
 }
+import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
 import org.hyperledger.identus.castor.core.model.did.*
