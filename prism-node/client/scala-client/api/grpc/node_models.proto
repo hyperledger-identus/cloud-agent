@@ -212,20 +212,23 @@ message StatusListEntry {
 
 // Create a new VDR storage entry for a DID.
 message CreateStorageEntryOperation {
-  bytes did_prism_hash = 1; // DID suffix (hash) this storage entry belongs to.
-  bytes nonce = 2; // Optional nonce to diversify entry hashes.
-  StorageData data = 3; // Payload to store.
+    bytes did_prism_hash = 1; // DID suffix (hash) this storage entry belongs to.
+    reserved 2, 3;
+    bytes nonce = 50; // Optional nonce to diversify entry hashes.
+    StorageData data = 100; // Payload to store.
 }
 
 // Update an existing VDR storage entry.
 message UpdateStorageEntryOperation {
-  bytes previous_event_hash = 1; // Hash of the previous storage event.
-  StorageData data = 2; // New payload (opaque).
+    reserved 1;
+    bytes previous_event_hash = 2; // Hash of the previous storage event.
+    StorageData data = 100; // New payload (opaque).
 }
 
 // Deactivate an existing VDR storage entry.
 message DeactivateStorageEntryOperation {
-  bytes previous_event_hash = 1; // Hash of the previous storage event.
+    reserved 1;
+    bytes previous_event_hash = 2; // Hash of the previous storage event.
 }
 
 // The possible operations affecting the blockchain.

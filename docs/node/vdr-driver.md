@@ -6,6 +6,7 @@ This note captures how the PRISM node implements the VDR storage driver after th
 - **entry_id** is the immutable identifier returned when a VDR entry is first created.  
 - Each mutation (update / deactivate) produces a new **entry_hash**. The head table keeps the latest hash for a given `entry_id`.
 - Clients must use the original `entry_id` in URLs; the node resolves it to the latest hash before applying a new operation.
+- VDR operations are rejected when the owning DID is deactivated. This guard currently runs in the prism-node signer; extend the same check to other VDR drivers as they become DID-aware.
 
 ## Operation rules
 1. **Create**  

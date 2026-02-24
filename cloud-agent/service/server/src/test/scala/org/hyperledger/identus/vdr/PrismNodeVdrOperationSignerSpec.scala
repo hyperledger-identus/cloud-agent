@@ -1,6 +1,7 @@
 package org.hyperledger.identus.vdr
 
-import org.hyperledger.identus.agent.vdr.VdrServiceError.MissingVdrKey
+import org.hyperledger.identus.agent.vdr.VdrServiceError.{DeactivatedDid, MissingVdrKey}
+import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
 import org.hyperledger.identus.agent.walletapi.model.{
   ManagedDIDDetail,
   ManagedDIDState,
@@ -27,14 +28,17 @@ object PrismNodeVdrOperationSignerSpec extends ZIOSpecDefault {
   private val didState = ManagedDIDState(createOp, didIndex = 0, PublicationState.Created())
   private val didDetail = ManagedDIDDetail(didState.did, didState)
 
-  private class StubManagedDIDService(keys: Map[KeyId, Option[Any]]) extends ManagedDIDService {
+  private class StubManagedDIDService(
+      keys: Map[KeyId, Option[Any]],
+      deactivated: Either[GetManagedDIDError, Boolean] = Right(false)
+  ) extends ManagedDIDService {
     override def nonSecretStorage: DIDNonSecretStorage = throw new NotImplementedError
     override def syncManagedDIDState = ZIO.dieMessage("unused")
     override def syncUnconfirmedUpdateOperations = ZIO.dieMessage("unused")
     override def findDIDKeyPair(did: CanonicalPrismDID, keyId: KeyId) =
       ZIO.succeed(keys.getOrElse(keyId, None).asInstanceOf[Option[Secp256k1KeyPair]])
     override def getManagedDIDState(did: CanonicalPrismDID) = ZIO.succeed(Some(didState))
-    override def isDidDeactivated(did: CanonicalPrismDID) = ZIO.succeed(false)
+    override def isDidDeactivated(did: CanonicalPrismDID) = ZIO.fromEither(deactivated)
     override def listManagedDIDPage(offset: Int, limit: Int) = ZIO.succeed((Seq(didDetail), 1))
     override def publishStoredDID(did: CanonicalPrismDID) = ZIO.dieMessage("unused")
     override def createAndStoreDID(didTemplate: ManagedDIDTemplate) = ZIO.dieMessage("unused")
@@ -77,6 +81,32 @@ object PrismNodeVdrOperationSignerSpec extends ZIOSpecDefault {
         for {
           result <- signer.signCreate("data".getBytes(), None).provideLayer(walletCtxLayer).exit
         } yield assert(result)(fails(isSubtype[MissingVdrKey](anything)))
+      },
+      test("fails with DeactivatedDid when DID is deactivated") {
+        val signer = new PrismNodeVdrOperationSigner(
+          new StubManagedDIDService(Map(KeyId("vdr-1") -> Some(keyPair)), deactivated = Right(true))
+        )
+        for {
+          result <- signer.signCreate("data".getBytes(), None).provideLayer(walletCtxLayer).exit
+        } yield assert(result)(fails(isSubtype[DeactivatedDid](anything)))
+      },
+      test("fails with DeactivatedDid when deactivation check errors") {
+        val signer = new PrismNodeVdrOperationSigner(
+          new StubManagedDIDService(
+            Map(KeyId("vdr-1") -> Some(keyPair)),
+            deactivated = Left(
+              GetManagedDIDError.OperationError(
+                org.hyperledger.identus.castor.core.model.error.DIDOperationError.DLTProxyError(
+                  "boom",
+                  new RuntimeException("boom")
+                )
+              )
+            )
+          )
+        )
+        for {
+          result <- signer.signCreate("data".getBytes(), None).provideLayer(walletCtxLayer).exit
+        } yield assert(result)(fails(isSubtype[DeactivatedDid](anything)))
       }
     )
 }
