@@ -23,8 +23,13 @@ import steps.vdr.VdrLog
 import java.net.URLEncoder
 
 class VdrSteps {
+    companion object {
+        private const val NONE_VALUE = "<none>"
+    }
+
     private fun ctx(actor: Actor): VdrContext = actor.recall("vdrCtx") ?: VdrContext()
     private fun saveCtx(actor: Actor, c: VdrContext) = actor.remember("vdrCtx", c)
+    private fun recallString(actor: Actor, key: String): String? = runCatching { actor.recall<String>(key) }.getOrNull()
 
     @Given("{actor} has a VDR entry with value {} using {} driver")
     fun agentHasVdrEntry(actor: Actor, dataHex: String, driver: String) {
@@ -39,9 +44,9 @@ class VdrSteps {
     fun agentCreatesVdrEntry(actor: Actor, dataHex: String, driver: String) {
         val driverEnum = VdrDriver.fromName(driver)
         val data = dataHex.decodeHex()
-        val didKeyId = actor.recall<String>("didKeyId")
-        val did = actor.recall<String>("shortFormDid")
-        VdrLog.request("create", "driver=$driver\nshortDid=${did ?: "<none>"}\ndidKeyId=${didKeyId ?: "<none>"}\nbytes=$dataHex")
+        val didKeyId = recallString(actor, "didKeyId")
+        val did = recallString(actor, "shortFormDid")
+        VdrLog.request("create", "driver=$driver\nshortDid=${did ?: NONE_VALUE}\ndidKeyId=${didKeyId ?: NONE_VALUE}\nbytes=$dataHex")
         val client = VdrClient(actor)
         val resp = client.postEntry(data, driverEnum, didKeyId)
         val newCtx = ctx(actor)
@@ -62,11 +67,11 @@ class VdrSteps {
     @When("{actor} updates the VDR entry with value {}")
     fun agentUpdateVdrEntry(actor: Actor, dataHex: String) {
         val c = ctx(actor)
-        val url = c.currentUrl ?: c.entryId ?: actor.recall<String>("vdrUrl")
+        val url = c.currentUrl ?: c.entryId ?: recallString(actor, "vdrUrl")
         requireNotNull(url) { "Missing VDR url for update" }
         val data = dataHex.decodeHex()
-        val didKeyId = c.didKeyId ?: actor.recall<String>("didKeyId")
-        VdrLog.request("update", "url=$url\ndidKeyId=${didKeyId ?: "<none>"}\nbytes=$dataHex")
+        val didKeyId = c.didKeyId ?: recallString(actor, "didKeyId")
+        VdrLog.request("update", "url=$url\ndidKeyId=${didKeyId ?: NONE_VALUE}\nbytes=$dataHex")
         val client = VdrClient(actor)
         val resp = client.putEntry(url, data, didKeyId)
         val newCtx = c.withUrls(resp.url ?: url).withOperation(resp.operationId).withPayload(data)
@@ -80,7 +85,7 @@ class VdrSteps {
     @When("{actor} deletes the VDR entry")
     fun agentDeleteVdrEntry(actor: Actor) {
         val c = ctx(actor)
-        val url = c.currentUrl ?: c.entryId ?: actor.recall<String>("vdrUrl")
+        val url = c.currentUrl ?: c.entryId ?: recallString(actor, "vdrUrl")
         requireNotNull(url) { "Missing VDR url for delete" }
         val client = VdrClient(actor)
         client.deleteEntry(url, c.didKeyId)
@@ -93,7 +98,7 @@ class VdrSteps {
     @Then("{actor} shares the VDR URL with {actor}")
     fun actorShareVdrUrlTo(fromActor: Actor, toActor: Actor) {
         val c = ctx(fromActor)
-        val url = c.entryId ?: fromActor.recall<String>("vdrUrl")
+        val url = c.entryId ?: recallString(fromActor, "vdrUrl")
         toActor.remember("vdrUrl", url)
         saveCtx(toActor, c.copy()) // shallow copy to share driver/ids
         fromActor.recall<String>("vdrDriver")?.let { toActor.remember("vdrDriver", it) }
@@ -103,9 +108,9 @@ class VdrSteps {
     fun agentResolveVdrEntry(actor: Actor, dataHex: String) {
         val c = ctx(actor)
         val vdrUrl = c.currentUrl
-            ?: actor.recall<String>("vdrCurrentUrl")
+            ?: recallString(actor, "vdrCurrentUrl")
             ?: c.entryId
-            ?: SerenityRest.lastResponse().get<String>("url")
+            ?: runCatching { SerenityRest.lastResponse().get<String>("url") }.getOrNull()
         requireNotNull(vdrUrl) { "VDR URL missing in actor/session context; cannot resolve entry" }
         val driver = c.driver
         // Prefer the last remembered expected value (set during create/update); fall back to the step arg.
@@ -142,7 +147,8 @@ class VdrSteps {
     @Then("{actor} could not resolve the VDR URL")
     fun agentResolveVdrEntry(actor: Actor) {
         val c = ctx(actor)
-        val vdrUrl = c.currentUrl ?: c.entryId ?: actor.recall<String>("vdrUrl")
+        val vdrUrl = c.currentUrl ?: c.entryId ?: recallString(actor, "vdrUrl")
+        requireNotNull(vdrUrl) { "VDR URL missing in actor/session context; cannot check unresolved entry" }
         val driver = c.driver
         val maxAttempts = if (driver == VdrDriver.PRISM_NODE) 24 else 12
         if (driver == VdrDriver.PRISM_NODE) waitForPrismOperation(actor)
@@ -150,7 +156,7 @@ class VdrSteps {
         val status = Poll.until(
             timeout = java.time.Duration.ofSeconds((maxAttempts * 5).toLong()),
             interval = java.time.Duration.ofSeconds(5),
-            action = { client.getEntry(vdrUrl!!) },
+            action = { client.getEntry(vdrUrl) },
             condition = { it == SC_NOT_FOUND || it == SC_BAD_REQUEST }
         )
         assertThat(status).isEqualTo(SC_NOT_FOUND)

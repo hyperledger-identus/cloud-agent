@@ -29,6 +29,7 @@ class VdrServiceImpl(
     override val identifier: String,
     override val version: String
 ) extends VdrService {
+  private val PrismNodeDriverId = "prism-node"
 
   extension [R, A](z: ZIO[R, Throwable, A]) {
     def refineVdrError: ZIO[R, DriverNotFound | VdrEntryNotFound, A] =
@@ -45,9 +46,9 @@ class VdrServiceImpl(
 
   private def proxyUrl(url: String): Boolean = url.startsWith("vdr://")
   private def wantPrismNode(options: VdrOptions): Boolean =
-    options.get("drid").contains("prism-node") || options.get("drf").contains("prism-node")
+    options.get("drid").contains(PrismNodeDriverId) || options.get("drf").contains(PrismNodeDriverId)
   private def isPrismNodeUrl(url: String): Boolean =
-    url.contains("drid=prism-node") || url.contains("drf=prism")
+    url.contains(s"drid=$PrismNodeDriverId") || url.contains("drf=prism")
 
   private def mapProxyError(th: Throwable): DriverNotFound | VdrEntryNotFound = th match
     case e: NoDriverWithThisSpecificationsException                           => DriverNotFound(e)
@@ -88,7 +89,7 @@ class VdrServiceImpl(
       prismNodeService match
         case Some(s) => s.create(data, options, didKeyId)
         case None    =>
-          ZIO.fail(DriverNotFound(new NoDriverWithThisSpecificationsException("prism-node", null, Array.empty)))
+          ZIO.fail(DriverNotFound(new NoDriverWithThisSpecificationsException(PrismNodeDriverId, null, Array.empty)))
     } else {
       useProxy(_.create(data, options.asJava)).map(url => VdrOperationResult(url, None)).mapError {
         case d: DriverNotFound   => d

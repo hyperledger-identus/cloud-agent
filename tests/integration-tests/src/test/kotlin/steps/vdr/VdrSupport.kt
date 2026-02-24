@@ -83,6 +83,10 @@ object Poll {
  * Minimal helper around SerenityRest for VDR scenarios.
  */
 class VdrClient(private val actor: Actor) {
+    companion object {
+        private const val OCTET_STREAM = "application/octet-stream"
+        private const val ENTRIES_ENDPOINT = "/vdr/entries"
+    }
 
     private fun authSpec(): RequestSpecification {
         val spec = SerenityRest.given()
@@ -109,11 +113,11 @@ class VdrClient(private val actor: Actor) {
     fun postEntry(body: ByteArray, driver: VdrDriver, didKeyId: String?): VdrOpResponse {
         ensureApiAbility()
         authSpec()
-            .contentType("application/octet-stream")
+            .contentType(OCTET_STREAM)
             .body(body)
             .also { driver.applyParams(it) }
             .also { didKeyId?.let { key -> it.queryParam("didKeyId", key) } }
-            .post("/vdr/entries")
+            .post(ENTRIES_ENDPOINT)
 
         val status = SerenityRest.lastResponse().statusCode
         VdrLog.response("create", "status=$status\nbody=${SerenityRest.lastResponse().body.asString()}")
@@ -129,11 +133,11 @@ class VdrClient(private val actor: Actor) {
     fun putEntry(url: String, body: ByteArray, didKeyId: String?): VdrOpResponse {
         ensureApiAbility()
         authSpec()
-            .contentType("application/octet-stream")
+            .contentType(OCTET_STREAM)
             .queryParam("url", url)
             .also { didKeyId?.let { key -> it.queryParam("didKeyId", key) } }
             .body(body)
-            .put("/vdr/entries")
+            .put(ENTRIES_ENDPOINT)
 
         val status = SerenityRest.lastResponse().statusCode
         if (status != HttpStatus.SC_OK) {
@@ -151,7 +155,7 @@ class VdrClient(private val actor: Actor) {
         authSpec()
             .queryParam("url", url)
             .also { didKeyId?.let { key -> it.queryParam("didKeyId", key) } }
-            .delete("/vdr/entries")
+            .delete(ENTRIES_ENDPOINT)
         val status = SerenityRest.lastResponse().statusCode
         if (status != HttpStatus.SC_OK) {
             throw AssertionError("Expected 200 but got $status")
@@ -161,9 +165,9 @@ class VdrClient(private val actor: Actor) {
     fun getEntry(url: String): Int {
         ensureApiAbility()
         authSpec()
-            .header("Accept", "application/octet-stream")
+            .header("Accept", OCTET_STREAM)
             .queryParam("url", url)
-            .get("/vdr/entries")
+            .get(ENTRIES_ENDPOINT)
         return SerenityRest.lastResponse().statusCode
     }
 

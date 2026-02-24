@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import scala.jdk.CollectionConverters.*
 
 object VdrServiceImplSpec extends ZIOSpecDefault {
+  private val VdrScheme = "vdr://"
 
   private class CountingDriver(id: String) extends Driver {
     val createCount = new AtomicInteger(0)
@@ -133,7 +134,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
     suite("VdrServiceImpl routing")(
       test("routes proxy URLs to proxy driver") {
         val driver = new CountingDriver("memory")
-        val proxy = VDRProxyMultiDrivers(BaseUrlManager("vdr://", "BaseURL"), Array(driver), "proxy", "0.1.0")
+        val proxy = VDRProxyMultiDrivers(BaseUrlManager(VdrScheme, "BaseURL"), Array(driver), "proxy", "0.1.0")
         val svc = new VdrServiceImpl(
           Some(proxy),
           None,
@@ -142,17 +143,17 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         )
 
         for {
-          _ <- svc.read("vdr://foo")
+          _ <- svc.read(s"${VdrScheme}foo")
           res <- svc.create("data".getBytes(), Map.empty, None).provideLayer(walletLayer)
         } yield assertTrue(
           driver.readCount.get() == 1,
           driver.createCount.get() == 1,
-          res.url.startsWith("vdr://")
+          res.url.startsWith(VdrScheme)
         )
       },
       test("routes raw URLs to prism-node service when present") {
         val driver = new CountingDriver("memory")
-        val proxy = VDRProxyMultiDrivers(BaseUrlManager("vdr://", "BaseURL"), Array(driver), "proxy", "0.1.0")
+        val proxy = VDRProxyMultiDrivers(BaseUrlManager(VdrScheme, "BaseURL"), Array(driver), "proxy", "0.1.0")
         val prism = new CountingPrismService
         val svc = new VdrServiceImpl(
           Some(proxy),
@@ -167,7 +168,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
       },
       test("create uses prism-node when drid=prism-node") {
         val driver = new CountingDriver("memory")
-        val proxy = VDRProxyMultiDrivers(BaseUrlManager("vdr://", "BaseURL"), Array(driver), "proxy", "0.1.0")
+        val proxy = VDRProxyMultiDrivers(BaseUrlManager(VdrScheme, "BaseURL"), Array(driver), "proxy", "0.1.0")
         val prism = new CountingPrismService
         val svc = new VdrServiceImpl(
           Some(proxy),
@@ -184,7 +185,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         val first = new CountingDriver("first")
         val second = new CountingDriver("second")
         val proxy =
-          VDRProxyMultiDrivers(BaseUrlManager("vdr://", "BaseURL"), Array(first, second), "proxy", "0.1.0")
+          VDRProxyMultiDrivers(BaseUrlManager(VdrScheme, "BaseURL"), Array(first, second), "proxy", "0.1.0")
         val svc = new VdrServiceImpl(
           Some(proxy),
           None,
