@@ -172,7 +172,7 @@ final class PrismNodeVdrOperationSigner(
           node_models.CreateStorageEntryOperation(
             didPrismHash = ByteString.copyFrom(did.stateHash.toByteArray),
             nonce = ByteString.copyFrom(Random.nextBytes(16)),
-            data = Some(node_models.StorageData(node_models.StorageData.Content.Bytes(ByteString.copyFrom(data))))
+            data = node_models.CreateStorageEntryOperation.Data.Bytes(ByteString.copyFrom(data))
           )
         )
     } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
@@ -199,7 +199,7 @@ final class PrismNodeVdrOperationSigner(
         .withUpdateStorageEntry(
           node_models.UpdateStorageEntryOperation(
             previousEventHash = ByteString.copyFrom(previousEventHash),
-            data = Some(node_models.StorageData(node_models.StorageData.Content.Bytes(ByteString.copyFrom(data))))
+            data = node_models.UpdateStorageEntryOperation.Data.Bytes(ByteString.copyFrom(data))
           )
         )
     } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
