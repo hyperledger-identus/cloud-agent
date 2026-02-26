@@ -28,7 +28,7 @@ jobs:
       TESTCONTAINERS_RYUK_DISABLED: true
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
         with:
           egress-policy: audit
 
@@ -54,7 +54,7 @@ jobs:
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@8bc8138dd0cbdac06258e1c39f060df71b42a6e9 # v1.1.18 pinned
+        uses: sbt/setup-sbt@1cad58d595b729a71ca2254cdf5b43dd6f42d4bb # v1.1.18 pinned
 
       - name: Download dependencies
         run: sbt +update
@@ -79,7 +79,7 @@ jobs:
 
       - name: Publish test results
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action@34d7c956a59aed1bfebf31df77b8de55db9bbaaf # v2.21.0
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
           junit_files: "./target/test-reports/**/TEST-*.xml"
           comment_title: "Unit Test Results"
