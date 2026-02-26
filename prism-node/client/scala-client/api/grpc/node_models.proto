@@ -214,28 +214,29 @@ message StatusListEntry {
 message CreateStorageEntryOperation {
     bytes did_prism_hash = 1; // DID suffix (hash) this storage entry belongs to.
     reserved 2;
+    reserved 3 to 49;
     bytes nonce = 50; // Optional nonce to diversify entry hashes.
     oneof data {
-        bytes bytes = 100;                        // Raw payload.
-        string ipfs = 101;                        // IPFS CID reference.
-        StatusListEntry status_list_entry = 102;  // Status list payload (cloud-agent extension).
+        bytes bytes = 100; // Raw payload.
+        string ipfs = 101; // IPFS CID reference.
     }
 }
 
 // Update an existing VDR storage entry.
 message UpdateStorageEntryOperation {
     reserved 1, 50;
+    reserved 3 to 49;
     bytes previous_event_hash = 2; // Hash of the previous storage event.
     oneof data {
-        bytes bytes = 100;                        // Raw payload.
-        string ipfs = 101;                        // IPFS CID reference.
-        StatusListEntry status_list_entry = 102;  // Status list payload (cloud-agent extension).
+        bytes bytes = 100; // Raw payload.
+        string ipfs = 101; // IPFS CID reference.
     }
 }
 
 // Deactivate an existing VDR storage entry.
 message DeactivateStorageEntryOperation {
-    reserved 1;
+    reserved 1, 50;
+    reserved 3 to 49;
     bytes previous_event_hash = 2; // Hash of the previous storage event.
 }
 
