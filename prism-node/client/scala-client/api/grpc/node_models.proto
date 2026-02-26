@@ -1,12 +1,12 @@
 syntax = "proto3";
 
+option java_multiple_files = true;
+option java_package = "io.iohk.atala.prism.protos";
+
 package io.iohk.atala.prism.protos;
 
 import "common_models.proto";
 import "google/protobuf/timestamp.proto";
-
-option java_multiple_files = true;
-option java_package = "io.iohk.atala.prism.protos";
 
 // Includes timestamping details about a blockchain's block.
 message TimestampInfo {
@@ -175,11 +175,11 @@ message ProtocolVersion {
 }
 
 message ProtocolVersionInfo {
-  reserved 2, 3;
-  string version_name = 1; // (optional) name of the version
-  int32 effective_since = 4; // Cardano block number that tells since which block the update is enforced
+    reserved 2, 3;
+    string version_name = 1; // (optional) name of the version
+    int32 effective_since = 4; // Cardano block number that tells since which block the update is enforced
 
-  // New major and minor version to be announced,
+    // New major and minor version to be announced,
   // If major value changes, the node MUST stop issuing and reading operations, and upgrade before `effective_since` because the new protocol version.
   // If minor value changes, the node can opt to not update. All events _published_ by this node would be also
   // understood by other nodes with the same major version. However, there may be new events that this node won't _read_
@@ -197,28 +197,47 @@ message DeactivateDIDOperation {
 
 // Opaque data stored in the VDR entry. Validation is intentionally minimal.
 message StorageData {
-  oneof content {
-    bytes bytes = 1; // raw payload
-    string ipfs_cid = 2; // optional IPFS reference
-  }
+    oneof content {
+        bytes bytes = 1; // raw payload
+        string ipfs = 2; // optional IPFS reference
+        StatusListEntry status_list_entry = 3; // optional status list payload
+    }
+}
+
+message StatusListEntry {
+    int64 state = 1;
+    string name = 2;
+    string details = 3;
 }
 
 // Create a new VDR storage entry for a DID.
 message CreateStorageEntryOperation {
-  bytes did_prism_hash = 1; // DID suffix (hash) this storage entry belongs to.
-  bytes nonce = 2; // Optional nonce to diversify entry hashes.
-  StorageData data = 3; // Payload to store.
+    bytes did_prism_hash = 1; // DID suffix (hash) this storage entry belongs to.
+    reserved 2;
+    reserved 3 to 49;
+    bytes nonce = 50; // Optional nonce to diversify entry hashes.
+    oneof data {
+        bytes bytes = 100; // Raw payload.
+        string ipfs = 101; // IPFS CID reference.
+    }
 }
 
 // Update an existing VDR storage entry.
 message UpdateStorageEntryOperation {
-  bytes previous_event_hash = 1; // Hash of the previous storage event.
-  StorageData data = 2; // New payload (opaque).
+    reserved 1, 50;
+    reserved 3 to 49;
+    bytes previous_event_hash = 2; // Hash of the previous storage event.
+    oneof data {
+        bytes bytes = 100; // Raw payload.
+        string ipfs = 101; // IPFS CID reference.
+    }
 }
 
 // Deactivate an existing VDR storage entry.
 message DeactivateStorageEntryOperation {
-  bytes previous_event_hash = 1; // Hash of the previous storage event.
+    reserved 1, 50;
+    reserved 3 to 49;
+    bytes previous_event_hash = 2; // Hash of the previous storage event.
 }
 
 // The possible operations affecting the blockchain.

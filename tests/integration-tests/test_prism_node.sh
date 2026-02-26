@@ -9,7 +9,7 @@ export VDR_MEMORY_DRIVER_ENABLED=true
 export VDR_DATABASE_DRIVER_ENABLED=true
 export VDR_PRISM_NODE_DRIVER_ENABLED=true
 export AGENT_VERSION=2.1.1-SNAPSHOT
-export PRISM_NODE_VERSION=${PRISM_NODE_VERSION:-edge}
+export PRISM_NODE_VERSION=${PRISM_NODE_VERSION:-2.6.1-SNAPSHOT}
 
 # Optional: bump versions if needed
 ./gradlew clean

@@ -51,25 +51,35 @@ object ManagedDIDTemplateValidator {
   }
 
   private def validateCurveUsage(template: ManagedDIDTemplate): Either[String, Unit] = {
-    val ed25519AllowedUsage = Set(VerificationRelationship.Authentication, VerificationRelationship.AssertionMethod)
-    val x25519AllowedUsage = Set(VerificationRelationship.KeyAgreement)
-    val disallowedKeys = template.publicKeys
-      .filter { k =>
-        k.curve match {
-          case EllipticCurve.ED25519 => !ed25519AllowedUsage.contains(k.purpose)
-          case EllipticCurve.X25519  => !x25519AllowedUsage.contains(k.purpose)
-          case _                     => false
-        }
-      }
-      .map(_.id)
+    val allowedByCurve: Map[EllipticCurve, Set[VerificationRelationship]] = Map(
+      EllipticCurve.ED25519 -> Set(
+        VerificationRelationship.Authentication,
+        VerificationRelationship.AssertionMethod
+      ),
+      EllipticCurve.X25519 -> Set(VerificationRelationship.KeyAgreement),
+      // SECP256K1 should not be used for key-agreement
+      EllipticCurve.SECP256K1 -> Set(
+        VerificationRelationship.Authentication,
+        VerificationRelationship.AssertionMethod,
+        VerificationRelationship.CapabilityDelegation,
+        VerificationRelationship.CapabilityInvocation
+      )
+    )
+
+    val disallowedKeys = template.publicKeys.collect {
+      case k if allowedByCurve.get(k.curve).exists(!_.contains(k.purpose)) => k.id
+    }
 
     if (disallowedKeys.isEmpty) Right(())
-    else
+    else {
+      val messages = allowedByCurve
+        .map { case (curve, purposes) => s"$curve -> ${purposes.mkString("[", ", ", "]")}" }
+        .mkString("; ")
       Left(
-        s"Invalid key purpose for key ${disallowedKeys.mkString("[", ", ", "]")}. " +
-          s"Ed25519 must be used in ${ed25519AllowedUsage.mkString("[", ", ", "]")}. " +
-          s"X25519 must be used in ${x25519AllowedUsage.mkString("[", ", ", "]")}"
+        s"Invalid key purpose for key(s) ${disallowedKeys.mkString("[", ", ", "]")}. " +
+          s"Allowed combinations: $messages"
       )
+    }
   }
 
   private def validateInternalKeyPurpose(template: ManagedDIDTemplate): Either[String, Unit] = {

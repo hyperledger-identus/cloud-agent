@@ -23,6 +23,7 @@ env:
   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_ACTOR: ${{ github.actor }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DOCKER_API_VERSION: "1.44"
 
 jobs:
   run-e2e-tests:
@@ -31,12 +32,12 @@ jobs:
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
         with:
           egress-policy: audit
 
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Java and Scala
         uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
@@ -47,16 +48,16 @@ jobs:
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ env.GITHUB_ACTOR }}
           password: ${{ env.GITHUB_TOKEN }}
 
-      - uses: KengoTODA/actions-setup-docker-compose@aa468051c6851848da9bfe114e7eac913c0bf59c # v1.2.3
+      - uses: KengoTODA/actions-setup-docker-compose@477353946803dd64eaa44008b865b6bfc88cab4e # v1.2.4
         name: Install `docker-compose`
         with:
-          version: "2.14.2"
+          version: "2.27.1"
 
       - name: Build local version of Cloud Agent
         env:
@@ -82,7 +83,7 @@ jobs:
           NODE_REFRESH_AND_SUBMIT_PERIOD: 1s
           NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD: 1s
           NODE_WALLET_MAX_TPS: 1000
-        uses: hoverkraft-tech/compose-action@802a148945af6399a338c7906c267331b39a71af # v2.0.0
+        uses: hoverkraft-tech/compose-action@4894d2492015c1774ee5a13a95b1072093087ec3 # v2.5.0
         with:
           compose-file: "./infrastructure/shared/docker-compose-combined.yml"
           compose-flags: "--env-file ./infrastructure/local/.env"
@@ -90,7 +91,7 @@ jobs:
           down-flags: "--volumes"
 
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        uses: actions/setup-node@774c1d62961e73038a114d59c8847023c003194d # v4.4.0
         with:
           node-version: 16.x
           registry-url: "https://npm.pkg.github.com"

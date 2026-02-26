@@ -74,27 +74,6 @@ service NodeService {
     /**
      * PUBLIC
      *
-     * Creates a new VDR storage entry (expects a signed CreateStorageEntry operation).
-     */
-    rpc CreateVdrEntry(CreateVdrEntryRequest) returns (CreateVdrEntryResponse) {}
-
-    /**
-     * PUBLIC
-     *
-     * Updates an existing VDR storage entry (expects a signed UpdateStorageEntry operation).
-     */
-    rpc UpdateVdrEntry(UpdateVdrEntryRequest) returns (UpdateVdrEntryResponse) {}
-
-    /**
-     * PUBLIC
-     *
-     * Deactivates an existing VDR storage entry (expects a signed DeactivateStorageEntry operation).
-     */
-    rpc DeactivateVdrEntry(DeactivateVdrEntryRequest) returns (DeactivateVdrEntryResponse) {}
-
-    /**
-     * PUBLIC
-     *
      * Retrieves a VDR storage entry by its event hash.
      */
     rpc GetVdrEntry(GetVdrEntryRequest) returns (GetVdrEntryResponse) {}
@@ -213,31 +192,9 @@ message ScheduleOperationsResponse {
     repeated OperationOutput outputs = 1;
 }
 
-// VDR entry management
-message CreateVdrEntryRequest {
-    SignedAtalaOperation signed_operation = 1; // should wrap CreateStorageEntryOperation
-}
-message UpdateVdrEntryRequest {
-    SignedAtalaOperation signed_operation = 1; // should wrap UpdateStorageEntryOperation
-}
-message DeactivateVdrEntryRequest {
-    SignedAtalaOperation signed_operation = 1; // should wrap DeactivateStorageEntryOperation
-}
-
-message CreateVdrEntryResponse {
-    OperationOutput output = 1;
-}
-message UpdateVdrEntryResponse {
-    OperationOutput output = 1;
-}
-message DeactivateVdrEntryResponse {
-    OperationOutput output = 1;
-}
-
 message GetVdrEntryRequest {
+    // Immutable event hash that identifies a VDR entry (chain head for updates).
     bytes event_hash = 1;
-    bytes entry_id = 2;
-    bool latest = 3;
 }
 
 message VdrEntry {
@@ -245,7 +202,6 @@ message VdrEntry {
     string did_suffix = 2;
     StorageData data = 3;
     bytes previous_event_hash = 4;
-    bool deactivated = 5;
     bytes nonce = 6;
     VdrEntryStatus status = 7;
 }
