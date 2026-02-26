@@ -23,6 +23,7 @@ env:
   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_ACTOR: ${{ github.actor }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  DOCKER_API_VERSION: "1.44"
 
 jobs:
   run-e2e-tests:
@@ -36,7 +37,7 @@ jobs:
           egress-policy: audit
 
       - name: Checkout
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Setup Java and Scala
         uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
@@ -56,7 +57,7 @@ jobs:
       - uses: KengoTODA/actions-setup-docker-compose@aa468051c6851848da9bfe114e7eac913c0bf59c # v1.2.3
         name: Install `docker-compose`
         with:
-          version: "2.14.2"
+          version: "2.27.1"
 
       - name: Build local version of Cloud Agent
         env:

@@ -33,18 +33,20 @@ jobs:
       OAS_PUBLISHED: ${{ steps.upload-oas.conclusion == 'success' }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
+      - name: Set up JDK 21 (Temurin) with sbt cache
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0 pinned
         with:
-          java-version: openjdk@
+          java-version: 21
+          distribution: temurin
+          cache: sbt
 
-      - uses: coursier/cache-action@2addd381bd2c931f42d4b734b9d0c9b73aac16fb # v6
-        id: coursier-cache
+      - name: Set up sbt
+        uses: sbt/setup-sbt@8bc8138dd0cbdac06258e1c39f060df71b42a6e9 # v1.1.18 pinned
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

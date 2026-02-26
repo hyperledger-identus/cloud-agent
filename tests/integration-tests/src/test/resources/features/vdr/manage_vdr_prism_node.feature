@@ -13,5 +13,9 @@ Feature: Manage a VDR entry with prism-node driver
     When Issuer updates the VDR entry with value 445566
     Then Issuer uses the VDR URL to locate the data with value 445566
 
+    # Second update to detect cache vs. latest-head handling
+    When Issuer updates the VDR entry with value 778899
+    Then Issuer uses the VDR URL to locate the data with value 778899
+
     When Issuer deletes the VDR entry
     Then Issuer could not resolve the VDR URL

@@ -84,18 +84,6 @@ object DIDServiceSpec extends ZIOSpecDefault {
       override def scheduleOperations(request: ScheduleOperationsRequest): Future[ScheduleOperationsResponse] =
         Future.failed(throw new NotImplementedError)
 
-      override def createVdrEntry(
-          request: node_api.CreateVdrEntryRequest
-      ): Future[node_api.CreateVdrEntryResponse] = Future.failed(throw new NotImplementedError)
-
-      override def updateVdrEntry(
-          request: node_api.UpdateVdrEntryRequest
-      ): Future[node_api.UpdateVdrEntryResponse] = Future.failed(throw new NotImplementedError)
-
-      override def deactivateVdrEntry(
-          request: node_api.DeactivateVdrEntryRequest
-      ): Future[node_api.DeactivateVdrEntryResponse] = Future.failed(throw new NotImplementedError)
-
       override def getVdrEntry(request: node_api.GetVdrEntryRequest): Future[node_api.GetVdrEntryResponse] =
         Future.failed(throw new NotImplementedError)
 

@@ -118,7 +118,10 @@ afterEvaluate {
             testLogging.showStandardStreams = true
             jvmArgs("-Dlog4j2.disable.jmx=true")
             systemProperty("context", fileName)
-            systemProperty("TESTS_CONFIG", "/configs/$fileName.conf")
+            val mounted = file("/configs/$fileName.conf")
+            val local = project.layout.projectDirectory.file("src/test/resources/configs/$fileName.conf").asFile
+            val chosenConfig = if (mounted.exists()) mounted.absolutePath else local.absolutePath
+            systemProperty("TESTS_CONFIG", chosenConfig)
             systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "")
             systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
             systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")

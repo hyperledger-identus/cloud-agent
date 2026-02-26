@@ -133,13 +133,35 @@ final class PrismNodeVdrOperationSigner(
           ZIO.logWarning(s"[vdr signer] failed to fetch DID state for ${did.toString}: ${err.toString}")
       }
 
+  private def ensureDidActive(
+      did: CanonicalPrismDID
+  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid, Unit] =
+    managedDIDService
+      .isDidDeactivated(did)
+      .mapError(err => VdrServiceError.DeactivatedDid(new Exception(err.toString)))
+      .flatMap { deactivated =>
+        ZIO
+          .fail(
+            VdrServiceError.DeactivatedDid(
+              new Exception(s"DID ${did.toString} is deactivated; cannot perform VDR operation")
+            )
+          )
+          .when(deactivated)
+          .unit
+      }
+
   override def signCreate(
       data: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ] =
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
+      _ <- ensureDidActive(did)
       key <- resolveKey(did, Some(parsed._2.value))
       _ <- ZIO.logInfo(
         s"[vdr signer] signCreate did=${did.toString} key=${parsed._2.value} bytes=${data.length}"
@@ -150,7 +172,7 @@ final class PrismNodeVdrOperationSigner(
           node_models.CreateStorageEntryOperation(
             didPrismHash = ByteString.copyFrom(did.stateHash.toByteArray),
             nonce = ByteString.copyFrom(Random.nextBytes(16)),
-            data = Some(node_models.StorageData(node_models.StorageData.Content.Bytes(ByteString.copyFrom(data))))
+            data = node_models.CreateStorageEntryOperation.Data.Bytes(ByteString.copyFrom(data))
           )
         )
     } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
@@ -159,10 +181,15 @@ final class PrismNodeVdrOperationSigner(
       previousEventHash: Array[Byte],
       data: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ] =
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
+      _ <- ensureDidActive(did)
       key <- resolveKey(did, Some(parsed._2.value))
       _ <- ZIO.logInfo(
         s"[vdr signer] signUpdate did=${did.toString} key=${parsed._2.value} prevHash=${HexString.fromByteArray(previousEventHash)} bytes=${data.length}"
@@ -172,7 +199,7 @@ final class PrismNodeVdrOperationSigner(
         .withUpdateStorageEntry(
           node_models.UpdateStorageEntryOperation(
             previousEventHash = ByteString.copyFrom(previousEventHash),
-            data = Some(node_models.StorageData(node_models.StorageData.Content.Bytes(ByteString.copyFrom(data))))
+            data = node_models.UpdateStorageEntryOperation.Data.Bytes(ByteString.copyFrom(data))
           )
         )
     } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
@@ -180,10 +207,15 @@ final class PrismNodeVdrOperationSigner(
   override def signDeactivate(
       previousEventHash: Array[Byte],
       didKeyId: Option[String]
-  ): ZIO[WalletAccessContext, VdrServiceError.MissingVdrKey, node_models.SignedAtalaOperation] =
+  ): ZIO[
+    WalletAccessContext,
+    VdrServiceError.MissingVdrKey | VdrServiceError.DeactivatedDid,
+    node_models.SignedAtalaOperation
+  ] =
     for {
       parsed <- ZIO.succeed(parseDidAndKey(didKeyId))
       did <- selectDid(parsed._2, parsed._1)
+      _ <- ensureDidActive(did)
       key <- resolveKey(did, Some(parsed._2.value))
       _ <- ZIO.logInfo(
         s"[vdr signer] signDeactivate did=${did.toString} key=${parsed._2.value} prevHash=${HexString.fromByteArray(previousEventHash)}"

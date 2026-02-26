@@ -13,6 +13,7 @@ import org.hyperledger.identus.agent.server.config.{
   ValidatedVaultConfig
 }
 import org.hyperledger.identus.agent.vdr.{VdrOperationSigner, VdrService, VdrServiceImpl}
+import org.hyperledger.identus.agent.vdr.VdrConfigs
 import org.hyperledger.identus.agent.walletapi.service.{EntityService, ManagedDIDService, WalletManagementService}
 import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcDIDSecretStorage,
@@ -157,10 +158,10 @@ object AppModule {
     val vdrConfigLayer = ZLayer.fromFunction((appConfig: AppConfig) => {
       val prismDriverOpt = appConfig.agent.vdr.prismDriver
         .map { conf =>
-          VdrServiceImpl.PRISMDriverConfig(
+          VdrConfigs.PRISMDriverConfig(
             blockfrostApiKey = conf.blockfrostApiKey,
             privateNetwork =
-              conf.privateNetwork.map(pn => VdrServiceImpl.BlockfrostPrivateNetworkConfig(pn.url, pn.protocolMagic)),
+              conf.privateNetwork.map(pn => VdrConfigs.BlockfrostPrivateNetworkConfig(pn.url, pn.protocolMagic)),
             walletMnemonic = conf.walletMnemonicSeq,
             didPrism = conf.didPrism,
             vdrPrivateKey = conf.vdrPrivateKeyBytes,

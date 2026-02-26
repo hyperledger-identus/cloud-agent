@@ -54,6 +54,8 @@ object DIDRegistrarController {
   given Conversion[GetManagedDIDError, ErrorResponse] = {
     case GetManagedDIDError.OperationError(e) =>
       ErrorResponse.internalServerError(detail = Some(e.toString))
+    case GetManagedDIDError.ResolutionError(e) =>
+      ErrorResponse.internalServerError(detail = Some(e.toString))
     case GetManagedDIDError.WalletStorageError(e) =>
       ErrorResponse.internalServerError(detail = Some(e.getMessage))
   }

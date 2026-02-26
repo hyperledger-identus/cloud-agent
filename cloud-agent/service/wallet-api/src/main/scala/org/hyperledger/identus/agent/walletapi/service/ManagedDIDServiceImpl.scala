@@ -243,6 +243,14 @@ class ManagedDIDServiceImpl private[walletapi] (
     } yield outcome
   }
 
+  override def isDidDeactivated(
+      did: CanonicalPrismDID
+  ): ZIO[WalletAccessContext, GetManagedDIDError, Boolean] =
+    didService
+      .resolveDID(did)
+      .mapError(GetManagedDIDError.ResolutionError.apply)
+      .map(_.exists(_._1.deactivated))
+
   /** return hash of previous operation. Currently support only last confirmed operation */
   private def computePreviousOperationHash[E](
       did: CanonicalPrismDID,
