@@ -6,6 +6,7 @@ megalinter-reports/
 .bsp
 .jvmopts
 .metals
+.sbtopts
 sbt-launch.jar
 **/project/metals.sbt
 target

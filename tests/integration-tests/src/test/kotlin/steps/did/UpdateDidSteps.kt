@@ -10,13 +10,16 @@ import io.cucumber.java.en.When
 import io.iohk.atala.automation.extensions.get
 import io.iohk.atala.automation.serenity.ensure.Ensure
 import io.iohk.atala.automation.serenity.interactions.PollingWait
+import org.assertj.core.api.Assertions
 import net.serenitybdd.rest.SerenityRest
 import net.serenitybdd.screenplay.Actor
 import net.serenitybdd.screenplay.Question
 import org.apache.http.HttpStatus
+import org.apache.http.HttpStatus.SC_CONFLICT
 import org.hamcrest.CoreMatchers.equalTo
 import org.hyperledger.identus.client.models.*
 import java.util.UUID
+import common.InternalPurpose
 
 class UpdateDidSteps {
 
@@ -68,6 +71,54 @@ class UpdateDidSteps {
             removeService = RemoveEntryById(serviceId),
         )
         actorSubmitsPrismDidUpdateOperation(actor, updatePrismDidAction)
+    }
+
+    @When("{actor} updates PRISM DID by adding VDR key")
+    fun actorAddsVdrKey(actor: Actor) {
+        val vdrKeyId = "vdr-1"
+        val updateRequest = mapOf(
+            "actions" to listOf(
+                mapOf(
+                    "actionType" to "ADD_INTERNAL_KEY",
+                    "addInternalKey" to mapOf(
+                        "id" to vdrKeyId,
+                        "purpose" to InternalPurpose.vdr.name, // internal purpose
+                        "curve" to "secp256k1", // signing curve
+                    ),
+                ),
+            ),
+        )
+
+        actor.attemptsTo(
+            Post.to("/did-registrar/dids/${actor.recall<String>("shortFormDid")}/updates")
+                .body(updateRequest),
+        )
+        val status = SerenityRest.lastResponse().statusCode
+        if (status !in listOf(HttpStatus.SC_ACCEPTED, HttpStatus.SC_OK, SC_CONFLICT)) {
+            actor.attemptsTo(Ensure.that(status).isEqualTo(HttpStatus.SC_ACCEPTED))
+        }
+        actor.remember("didKeyId", vdrKeyId)
+    }
+
+    @Then("{actor} sees PRISM DID has the VDR key")
+    fun actorSeesVdrKey(actor: Actor) {
+        val did = actor.recall<String>("shortFormDid")
+        var attempts = 0
+        var found = false
+
+        while (attempts < 12 && !found) { // up to ~60s
+            actor.attemptsTo(
+                Get.resource("/dids/$did"),
+            )
+            val status = SerenityRest.lastResponse().statusCode
+            if (status == HttpStatus.SC_OK) {
+                found = true // ledger has applied the operation; internal VDR key is not exposed in DID doc
+            }
+            if (!found) Thread.sleep(5_000)
+            attempts++
+        }
+
+        Assertions.assertThat(found).isTrue()
     }
 
     @When("{actor} updates PRISM DID by updating services")

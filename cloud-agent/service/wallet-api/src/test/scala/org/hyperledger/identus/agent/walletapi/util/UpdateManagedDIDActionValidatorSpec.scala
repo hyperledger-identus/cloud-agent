@@ -13,7 +13,7 @@ object UpdateManagedDIDActionValidatorSpec extends ZIOSpecDefault {
 
   override def spec = suite("UpdateManagedDIDActionValidator")(
     test("reject actions if contain reserved key-id") {
-      val actions = Seq(
+      val reservedAdd = Seq(
         UpdateManagedDIDAction.AddKey(
           DIDPublicKeyTemplate(
             id = ManagedDIDService.DEFAULT_MASTER_KEY_ID,
@@ -22,7 +22,10 @@ object UpdateManagedDIDActionValidatorSpec extends ZIOSpecDefault {
           )
         )
       )
-      assert(UpdateManagedDIDActionValidator.validate(actions))(isLeft)
+      val reservedRemoveInternal =
+        Seq(UpdateManagedDIDAction.RemoveInternalKey(ManagedDIDService.DEFAULT_MASTER_KEY_ID))
+      assert(UpdateManagedDIDActionValidator.validate(reservedAdd))(isLeft) &&
+      assert(UpdateManagedDIDActionValidator.validate(reservedRemoveInternal))(isLeft)
     },
     test("reject actions if key usage is not allowed") {
       val makeActions = (keyTemplate: DIDPublicKeyTemplate) => Seq(UpdateManagedDIDAction.AddKey(keyTemplate))
