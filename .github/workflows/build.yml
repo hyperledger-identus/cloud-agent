@@ -111,17 +111,17 @@ jobs:
       - name: Build Cloud-Agent Open API Specification
         id: build-oas
         run: |
-          sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml revision"
-          checksum=$(sha256sum ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION }}.yaml | awk '{ print $1 }')
+          sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec.yaml revision"
+          checksum=$(sha256sum ./cloud-agent-openapi-spec.yaml | awk '{ print $1 }')
           OAS_CHECKSUM=${checksum:0:8}
-          echo "OAS_CHECKSUM=OAS_CHECKSUM" >> "$GITHUB_OUTPUT"
+          echo "OAS_CHECKSUM=$OAS_CHECKSUM" >> "$GITHUB_OUTPUT"
 
       - name: Publish Cloud-Agent Open API Specification
         id: upload-oas
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: cloud-agent-openapi-spec-${{ steps.build-oas.outputs.OAS_CHECKSUM}}
-          path: ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml
+          path: ./cloud-agent-openapi-spec.yaml
           overwrite: true
           compression-level: 0
 
@@ -143,11 +143,11 @@ jobs:
     needs: build
     permissions:
       contents: read
-      packages: write
       id-token: write
-    if: needs.build.outputs.OAS_PUBLISHED
+    if: needs.build.outputs.OAS_PUBLISHED == 'true'
     uses: ./.github/workflows/release-clients.yml
     secrets: inherit
     with:
+      release: false
       revision: ${{ needs.build.outputs.REVISION_VERSION }}
       check_sum: ${{ needs.build.outputs.OAS_CHECKSUM }}
