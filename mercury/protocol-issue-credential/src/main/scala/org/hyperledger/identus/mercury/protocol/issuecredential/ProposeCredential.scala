@@ -79,10 +79,10 @@ object ProposeCredential {
 
   def readFromMessage(message: Message): Either[String, ProposeCredential] = {
     message.body.as[ProposeCredential.Body] match
-      case Left(err) => Left("Fail to parse ProposeCredential's body: " + err)
+      case Left(err)   => Left("Fail to parse ProposeCredential's body: " + err)
       case Right(body) =>
         message.from match
-          case None => Left("ProposeCredential MUST have the sender explicit")
+          case None       => Left("ProposeCredential MUST have the sender explicit")
           case Some(from) =>
             message.to match
               case firstTo +: Seq() =>

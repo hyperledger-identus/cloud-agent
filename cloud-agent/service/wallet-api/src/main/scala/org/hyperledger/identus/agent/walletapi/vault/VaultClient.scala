@@ -129,7 +129,7 @@ object VaultKVClientImpl {
           status match {
             case 200 => ZIO.some(resp)
             case 404 => ZIO.none
-            case _ =>
+            case _   =>
               ZIO
                 .fail(Exception(s"$message - Got response status code $status, expected 200"))
                 .tapError(_ => ZIO.logError(s"$message - Response status: $status. Response body: $body"))
@@ -146,7 +146,7 @@ object VaultKVClientImpl {
           val body = new String(bytes, StandardCharsets.UTF_8)
           status match {
             case 200 => ZIO.succeed(resp)
-            case _ =>
+            case _   =>
               ZIO
                 .fail(Exception(s"$message - Got response status code $status, expected 200"))
                 .tapError(_ => ZIO.logError(s"$message - Response status: $status. Response body: $body"))

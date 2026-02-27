@@ -80,7 +80,7 @@ class WalletManagementControllerImpl(
       me: BaseEntity
   )(implicit rc: RequestContext): ZIO[WalletAdministrationContext, ErrorResponse, WalletDetail] = {
     ZIO.serviceWithZIO[WalletAdministrationContext] {
-      case WalletAdministrationContext.Admin() => doCreateWallet(request).map(i => i)
+      case WalletAdministrationContext.Admin()        => doCreateWallet(request).map(i => i)
       case WalletAdministrationContext.SelfService(_) =>
         for {
           wallet <- doCreateWallet(request)

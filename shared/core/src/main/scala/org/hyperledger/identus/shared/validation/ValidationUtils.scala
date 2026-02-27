@@ -11,7 +11,7 @@ object ValidationUtils {
       max: Int
   ): Validation[String, Option[String]] = {
     value match
-      case None => Validation.succeed(value)
+      case None    => Validation.succeed(value)
       case Some(v) =>
         val len = v.length
         if (min <= len && max >= len) Validation.succeed(value)

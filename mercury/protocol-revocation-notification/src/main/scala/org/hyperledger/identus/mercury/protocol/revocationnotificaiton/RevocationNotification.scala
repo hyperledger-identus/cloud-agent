@@ -58,10 +58,10 @@ object RevocationNotification {
 
   def readFromMessage(message: Message): Either[String, RevocationNotification] =
     message.body.as[RevocationNotification.Body] match
-      case Left(err) => Left("Fail to parse RevocationNotification's body: " + err)
+      case Left(err)   => Left("Fail to parse RevocationNotification's body: " + err)
       case Right(body) =>
         message.from match
-          case None => Left("OfferCredential MUST have the sender explicit")
+          case None       => Left("OfferCredential MUST have the sender explicit")
           case Some(from) =>
             message.to match
               case firstTo +: Seq() =>

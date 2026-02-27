@@ -4,10 +4,6 @@ import com.google.protobuf.ByteString
 import io.iohk.atala.prism.protos.{node_api, node_models}
 import io.iohk.atala.prism.protos.common_models.{HealthCheckRequest, HealthCheckResponse}
 import io.iohk.atala.prism.protos.node_api.{
-  GetBatchStateRequest,
-  GetBatchStateResponse,
-  GetCredentialRevocationTimeRequest,
-  GetCredentialRevocationTimeResponse,
   GetDidDocumentRequest,
   GetDidDocumentResponse,
   GetLastSyncedBlockTimestampRequest,
@@ -78,13 +74,6 @@ object DIDServiceSpec extends ZIOSpecDefault {
           request: GetNodeNetworkProtocolInfoRequest
       ): Future[GetNodeNetworkProtocolInfoResponse] = Future.failed(throw new NotImplementedError)
 
-      override def getBatchState(request: GetBatchStateRequest): Future[GetBatchStateResponse] =
-        Future.failed(throw new NotImplementedError)
-
-      override def getCredentialRevocationTime(
-          request: GetCredentialRevocationTimeRequest
-      ): Future[GetCredentialRevocationTimeResponse] = Future.failed(throw new NotImplementedError)
-
       override def getOperationInfo(request: GetOperationInfoRequest): Future[GetOperationInfoResponse] =
         Future.failed(throw new NotImplementedError)
 
@@ -94,15 +83,24 @@ object DIDServiceSpec extends ZIOSpecDefault {
 
       override def scheduleOperations(request: ScheduleOperationsRequest): Future[ScheduleOperationsResponse] =
         Future.failed(throw new NotImplementedError)
+
+      override def getVdrEntry(request: node_api.GetVdrEntryRequest): Future[node_api.GetVdrEntryResponse] =
+        Future.failed(throw new NotImplementedError)
+
+      override def verifyVdrEntry(
+          request: node_api.VerifyVdrEntryRequest
+      ): Future[node_api.VerifyVdrEntryResponse] = Future.failed(throw new NotImplementedError)
   }
 
   private def didServiceLayer(): ULayer[DIDService] =
-    DIDOperationValidator.layer() ++ mockNodeService() >>> DIDServiceImpl.layer
+    DIDOperationValidator.layer() ++ mockNodeService() >>> PrismNodeDIDService.layer
 
   private def didServiceLayer(createOperation: PrismDIDOperation.Create): ULayer[DIDService] =
-    DIDOperationValidator.layer() ++ mockNodeService(createOperation: PrismDIDOperation.Create) >>> DIDServiceImpl.layer
+    DIDOperationValidator.layer() ++ mockNodeService(
+      createOperation: PrismDIDOperation.Create
+    ) >>> PrismNodeDIDService.layer
 
-  override def spec = suite("DIDServiceImpl")(resolveDIDSpec.provide(didServiceLayer()), resolveDIDMetadataSpec)
+  override def spec = suite("PrismNodeDIDService")(resolveDIDSpec.provide(didServiceLayer()), resolveDIDMetadataSpec)
 
   private val resolveDIDSpec = suite("resolveDID")(
     test("long-form unpublished DID returns content in encoded state") {

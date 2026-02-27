@@ -20,7 +20,7 @@ trait ApiKeyAuthenticator extends AuthenticatorWithAuthZ[Entity], EntityAuthoriz
         case ApiKeyCredentials(apiKey) =>
           apiKey match {
             case Some(value) if value.nonEmpty => authenticate(value)
-            case Some(value) =>
+            case Some(value)                   =>
               ZIO.logDebug(s"ApiKey API authentication is enabled, but `apikey` token is empty") *>
                 ZIO.fail(ApiKeyAuthenticationError.emptyApiKey)
             case None =>

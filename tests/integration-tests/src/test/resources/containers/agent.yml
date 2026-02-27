@@ -1,10 +1,8 @@
----
-version: "3.8"
-
 services:
   # Mandatory PostgreSQL database for the Open Enterprise Agent
   postgres:
     image: postgres:13
+    pull_policy: if_not_present
     environment:
       POSTGRES_MULTIPLE_DATABASES: "castor,pollux,connect,agent"
       POSTGRES_USER: postgres
@@ -22,13 +20,17 @@ services:
 
   # Open Enterprise Agent
   identus-cloud-agent:
-    image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
+    image: docker.io/hyperledgeridentus/identus-cloud-agent:2.1.1-SNAPSHOT
+    pull_policy: if_not_present
     environment:
       API_KEY_ENABLED: true
       API_KEY_AUTO_PROVISIONING: true
       API_KEY_AUTHENTICATE_AS_DEFAULT_USER: false
+      NODE_BACKEND:
       PRISM_NODE_HOST: host.docker.internal
-      PRISM_NODE_PORT:
+      PRISM_NODE_PORT: ${PRISM_NODE_PORT:-50053}
+      PRISM_NODE_USE_PLAINTEXT: "true"
+      NEOPRISM_BASE_URL:
       CASTOR_DB_HOST: postgres
       POLLUX_DB_HOST: postgres
       CONNECT_DB_HOST: postgres
@@ -57,12 +59,14 @@ services:
       KEYCLOAK_CLIENT_SECRET:
       KEYCLOAK_UMA_AUTO_UPGRADE_RPT: true # no configurable at the moment
       # VDR configuration
-      VDR_MEMORY_DRIVER_ENABLED: true
-      VDR_DATABASE_DRIVER_ENABLED: true
+      VDR_MEMORY_DRIVER_ENABLED: ${VDR_MEMORY_DRIVER_ENABLED:-false}
+      VDR_DATABASE_DRIVER_ENABLED: ${VDR_DATABASE_DRIVER_ENABLED:-false}
+      VDR_PRISM_DRIVER_ENABLED: ${VDR_PRISM_DRIVER_ENABLED:-false}
+      VDR_PRISM_NODE_DRIVER_ENABLED: ${VDR_PRISM_NODE_DRIVER_ENABLED:-false}
       # Kafka Messaging Service
       DEFAULT_KAFKA_ENABLED: true
       ENABLE_ANONCRED: true # Default is false
-      LOG_LEVEL: INFO
+      LOG_LEVEL: TRACE
     depends_on:
       postgres:
         condition: service_healthy
@@ -87,6 +91,7 @@ services:
       - "host.docker.internal:host-gateway"
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    pull_policy: if_not_present
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -95,6 +100,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.9.2
+    pull_policy: if_not_present
     depends_on:
       - zookeeper
     #    ports:
@@ -122,6 +128,7 @@ services:
 
   init-kafka:
     image: confluentinc/cp-kafka:7.9.2
+    pull_policy: if_not_present
     depends_on:
       kafka:
         condition: service_healthy

@@ -36,7 +36,7 @@ object CustomServerInterceptors {
   def tapirExceptionHandler[F[_]]: ExceptionHandler[F] = ExceptionHandler.pure[F](ctx =>
     ctx.e match
       case UnmanagedFailureException(failure: Failure) => Some(tapirDefectHandler(failure))
-      case e =>
+      case e                                           =>
         Some(
           tapirDefectHandler(
             ErrorResponse(

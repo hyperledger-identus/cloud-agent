@@ -56,12 +56,12 @@ def json2Map(json: Json): Any = json match {
 
 def mapValueToJson(obj: java.lang.Object): Json = {
   obj match {
-    case null                 => Json.Null
-    case b: java.lang.Boolean => Json.Bool(b)
-    case i: java.lang.Integer => Json.Num(i)
-    case d: java.lang.Double  => Json.Num(d)
-    case l: java.lang.Long    => Json.Num(l)
-    case s: java.lang.String  => Json.Str(String.valueOf(s))
+    case null                                           => Json.Null
+    case b: java.lang.Boolean                           => Json.Bool(b)
+    case i: java.lang.Integer                           => Json.Num(i)
+    case d: java.lang.Double                            => Json.Num(d)
+    case l: java.lang.Long                              => Json.Num(l)
+    case s: java.lang.String                            => Json.Str(String.valueOf(s))
     case array: com.nimbusds.jose.shaded.json.JSONArray => {
       Json.Arr(array.iterator().asScala.map(mapValueToJson).toList: _*)
     }

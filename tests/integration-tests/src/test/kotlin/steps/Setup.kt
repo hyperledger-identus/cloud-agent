@@ -39,6 +39,7 @@ object Setup {
         config.services?.keycloak?.setUsers(config.roles)?.start()
         config.services?.keycloakOid4vci?.setUsers(config.roles.filter { it.name == "Holder" })?.start()
         config.services?.prismNode?.start()
+        config.services?.neoprism?.start()
         config.services?.vault?.start()
         config.agents?.forEach {
             it.start()
@@ -193,6 +194,7 @@ object Setup {
         }
         config.services?.keycloak?.stop()
         config.services?.prismNode?.stop()
+        config.services?.neoprism?.stop()
         config.services?.vault?.stop()
     }
 }
@@ -206,6 +208,7 @@ fun init() {
 
 @AfterAll
 fun clearStage() {
+    Thread.sleep(30000)
     Setup.stopActors()
     Setup.stopServices()
 }

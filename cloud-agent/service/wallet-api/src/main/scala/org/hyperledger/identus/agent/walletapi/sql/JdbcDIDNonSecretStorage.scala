@@ -202,7 +202,7 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
     getManagedDIDState(did)
       .map(_.map(_.didIndex))
       .flatMap {
-        case None => ZIO.none
+        case None           => ZIO.none
         case Some(didIndex) =>
           for {
             keyUsageIndex <- cxnIO.transactWallet(xa)
@@ -220,6 +220,7 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
               InternalKeyCounter(
                 master = keyUsageIndexMap.getOrElse(InternalKeyPurpose.Master, 0),
                 revocation = keyUsageIndexMap.getOrElse(InternalKeyPurpose.Revocation, 0),
+                vdr = keyUsageIndexMap.getOrElse(InternalKeyPurpose.VDR, 0),
               )
             )
           )

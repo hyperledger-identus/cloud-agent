@@ -20,7 +20,7 @@ class LinkSecretServiceImpl(genericSecretStorage: GenericSecretStorage) extends 
       .get[String, AnoncredLinkSecret](LinkSecretServiceImpl.defaultLinkSecretId)
       .flatMap {
         case Some(secret) => ZIO.succeed(secret)
-        case None =>
+        case None         =>
           val linkSecret = AnoncredLinkSecret()
           genericSecretStorage
             .set[String, AnoncredLinkSecret](LinkSecretServiceImpl.defaultLinkSecretId, linkSecret)

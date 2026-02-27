@@ -71,10 +71,10 @@ object RequestCredential {
 
   def readFromMessage(message: Message): Either[String, RequestCredential] = {
     message.body.as[RequestCredential.Body] match
-      case Left(err) => Left("Fail to parse RequestCredential's body: " + err)
+      case Left(err)   => Left("Fail to parse RequestCredential's body: " + err)
       case Right(body) =>
         message.from match
-          case None => Left("RequestCredential MUST have the sender explicit")
+          case None       => Left("RequestCredential MUST have the sender explicit")
           case Some(from) =>
             message.to match
               case firstTo +: Seq() =>

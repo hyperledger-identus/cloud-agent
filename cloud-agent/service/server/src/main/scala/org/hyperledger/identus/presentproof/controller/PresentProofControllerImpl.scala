@@ -250,7 +250,7 @@ class PresentProofControllerImpl(
         case "request-reject"      => presentationService.rejectRequestPresentation(didCommId)
         case "presentation-accept" => presentationService.acceptPresentation(didCommId)
         case "presentation-reject" => presentationService.rejectPresentation(didCommId)
-        case a =>
+        case a                     =>
           ZIO.fail(
             ErrorResponse.badRequest(
               detail = Some(

@@ -1,0 +1,23 @@
+# These binaries are intentionally included in the repository because they are
+# required for build tooling or platform-specific runtime components.  
+# No additional binary artifacts are permitted beyond this list.
+
+optConfig:
+  optOutStrategy: true
+  optOutArchivedRepos: true
+
+action: log
+
+ignoreFiles:
+  # Gradle wrapper JAR used for reproducible builds
+  - gradle-wrapper.jar
+
+  # JVM library needed for anoncreds functionality
+  - anoncreds-jvm-1.0-SNAPSHOT.jar
+
+  # Native bindings required for anoncreds on macOS
+  - libuniffi_anoncreds_wrapper.dylib
+
+  # Native bindings required for anoncreds on Linux
+  - libuniffi_anoncreds_wrapper.so
+

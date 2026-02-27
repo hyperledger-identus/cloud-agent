@@ -13,10 +13,10 @@ object SDJWT {
   sealed trait Valid extends ClaimsValidationResult
   case object ValidAnyMatch extends Valid
   case class ValidClaims(claims: Json.Obj) extends Valid {
-    def verifyDiscoseClaims(query: Json.Obj): SDJWT.ValidAnyMatch.type | SDJWT.ClaimsDoNotMatch.type =
+    def verifyDiscloseClaims(query: Json.Obj): SDJWT.ValidAnyMatch.type | SDJWT.ClaimsDoNotMatch.type =
       if (QueryUtils.testClaims(query, claims)) SDJWT.ValidAnyMatch else SDJWT.ClaimsDoNotMatch
 
-    def verifyDiscoseClaims(
+    def verifyDiscloseClaims(
         query: Json.Obj,
         iss: Option[String],
         sub: Option[String],
@@ -29,7 +29,7 @@ object SDJWT {
         iat.map("iat" -> Json.Num(_)),
         exp.map("exp" -> Json.Num(_)),
       ).flatten.foldLeft(query)((q, v) => q.add(v._1, v._2))
-      verifyDiscoseClaims(fullQuery)
+      verifyDiscloseClaims(fullQuery)
     }
   }
   sealed trait Invalid extends ClaimsValidationResult
@@ -148,7 +148,7 @@ object SDJWT {
       case Failure(ex: SdjwtException.Unspecified)
           if ex.getMessage() == "invalid state: Requested claim doesn't exist" =>
         InvalidToken
-      case Failure(ex) => InvalidError(ex.getMessage())
+      case Failure(ex)     => InvalidError(ex.getMessage())
       case Success(claims) =>
         claims.fromJson[Json] match
           case Left(value)           => InvalidClaimsIsNotJsonObj
@@ -179,7 +179,7 @@ object SDJWT {
         InvalidSignature
       case Failure(ex: SdjwtException.Unspecified) if ex.getMessage() == "invalid input: InvalidToken" =>
         InvalidToken
-      case Failure(ex) => InvalidError(ex.getMessage())
+      case Failure(ex)     => InvalidError(ex.getMessage())
       case Success(claims) =>
         claims.fromJson[Json] match
           case Left(value)           => InvalidClaimsIsNotJsonObj

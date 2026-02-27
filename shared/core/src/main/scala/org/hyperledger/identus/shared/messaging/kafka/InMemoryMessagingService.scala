@@ -57,7 +57,7 @@ class InMemoryConsumer[K, V](
           key = ConsumerGroupKey(groupId, topic)
           topicProcessedMessages <- processedMessagesMap.get(key).flatMap {
             case Some(map) => ZIO.succeed(map)
-            case None =>
+            case None      =>
               for {
                 newMap <- ConcurrentMap.empty[Offset, TimeStamp]
                 _ <- processedMessagesMap.put(key, newMap)
@@ -81,7 +81,7 @@ class InMemoryProducer[K, V](
   override def produce(topic: String, key: K, value: V): Task[Unit] = for {
     queueAndOffsetRef <- topicQueues.get(topic).flatMap {
       case Some(qAndOffSetRef) => ZIO.succeed(qAndOffSetRef)
-      case None =>
+      case None                =>
         for {
           newQueue <- Queue.sliding[Message[_, _]](queueCapacity)
           newOffSetRef <- Ref.make(Offset(0L))

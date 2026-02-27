@@ -16,7 +16,6 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcWalletNonSecretStorage
 }
 import org.hyperledger.identus.castor.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
-import org.hyperledger.identus.castor.core.service.DIDServiceImpl
 import org.hyperledger.identus.castor.core.util.DIDOperationValidator
 import org.hyperledger.identus.connect.controller.ConnectionControllerImpl
 import org.hyperledger.identus.connect.core.service.{ConnectionServiceImpl, ConnectionServiceNotifier}
@@ -124,6 +123,7 @@ object MainApp extends ZIOAppDefault {
            |
            |HTTP server endpoint is setup as '${appConfig.agent.httpEndpoint.publicEndpointUrl}'
            |DIDComm server endpoint is setup as '${appConfig.agent.didCommEndpoint.publicEndpointUrl}'
+           |DID Node Backend is setup as '${appConfig.didNode.backend}'
            |
            |Feature Flags:
            | - Support for the credential type JWT VC is ${if (flags.enableJWT) "ENABLED" else "DISABLED"}
@@ -170,13 +170,13 @@ object MainApp extends ZIOAppDefault {
           GenericUriResolverImpl.layer,
           PresentationDefinitionValidatorImpl.layer,
           // service
+          AppModule.didServiceLayer,
           AppModule.vdrServiceLayer,
           ConnectionServiceImpl.layer >>> ConnectionServiceNotifier.layer,
           CredentialSchemaServiceImpl.layer,
           CredentialDefinitionServiceImpl.layer,
           CredentialStatusListServiceImpl.layer,
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
-          DIDServiceImpl.layer,
           EntityServiceImpl.layer,
           ManagedDIDServiceWithEventNotificationImpl.layer,
           LinkSecretServiceImpl.layer >>> PresentationServiceImpl.layer >>> PresentationServiceNotifier.layer,
@@ -192,8 +192,6 @@ object MainApp extends ZIOAppDefault {
           DefaultPermissionManagementService.layer,
           EntityPermissionManagementService.layer,
           Oid4vciAuthenticatorFactory.layer,
-          // grpc
-          GrpcModule.prismNodeStubLayer,
           // storage
           RepoModule.agentContextAwareTransactorLayer ++ RepoModule.agentTransactorLayer >>> JdbcDIDNonSecretStorage.layer,
           RepoModule.agentContextAwareTransactorLayer >>> JdbcWalletNonSecretStorage.layer,

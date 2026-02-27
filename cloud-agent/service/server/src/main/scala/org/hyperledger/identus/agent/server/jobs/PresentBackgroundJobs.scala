@@ -745,7 +745,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
                 mediaType = attachment.media_type,
                 format = attachment.format.map {
                   case PresentCredentialRequestFormat.JWT.name => PresentCredentialFormat.JWT.name
-                  case format =>
+                  case format                                  =>
                     throw throw RuntimeException(
                       s"Unexpected PresentCredentialRequestFormat=$format. Expecting: ${PresentCredentialRequestFormat.JWT.name}"
                     )

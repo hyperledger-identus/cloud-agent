@@ -28,10 +28,12 @@ object AppConfigSpec extends ZIOSpecDefault {
   )
 
   private val baseVdrConfig = VdrConfig(
-    inMemoryDriverEnabled = false,
+    inMemoryDriverEnabled = true, // enable a default driver so base config validates
     databaseDriverEnabled = false,
     prismDriverEnabled = false,
-    prismDriver = None
+    prismDriver = None,
+    prismNodeDriverEnabled = false,
+    prismNodeDriver = None
   )
 
   override def spec = suite("AppConfigSpec")(
