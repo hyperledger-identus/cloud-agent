@@ -14,117 +14,117 @@ object ArchConstraints {
     * - Transitive: checks the full transitive closure
     */
   val forbiddenDeps: Seq[(String, String, String, DepScope)] = Seq(
-    // Phase 5: Direct-only — polluxCore should not directly depend on cloudAgentWalletAPI
-    // (transitive dep via walletManagementApi is acceptable during migration)
+    // credentialsCore should not directly depend on walletManagement
+    // (transitive dep via walletManagementApi is acceptable)
     (
-      "polluxCore",
-      "cloudAgentWalletAPI",
-      "polluxCore (credentials-core) should not directly depend on cloudAgentWalletAPI (wallet-management); use walletManagementApi instead",
+      "credentialsCore",
+      "walletManagement",
+      "credentialsCore should not directly depend on walletManagement; use walletManagementApi instead",
       Direct
     ),
     // Core modules should not depend on the server
     (
-      "castorCore",
-      "cloudAgentServer",
-      "castorCore (did-core) should not depend on cloudAgentServer (api-server)",
+      "didCore",
+      "apiServer",
+      "didCore should not depend on apiServer",
       Transitive
     ),
     (
-      "polluxCore",
-      "cloudAgentServer",
-      "polluxCore (credentials-core) should not depend on cloudAgentServer (api-server)",
+      "credentialsCore",
+      "apiServer",
+      "credentialsCore should not depend on apiServer",
       Transitive
     ),
     (
-      "connectCore",
-      "cloudAgentServer",
-      "connectCore (connections-core) should not depend on cloudAgentServer (api-server)",
+      "connectionsCore",
+      "apiServer",
+      "connectionsCore should not depend on apiServer",
       Transitive
     ),
     (
-      "eventNotification",
-      "cloudAgentServer",
-      "eventNotification (notifications) should not depend on cloudAgentServer (api-server)",
+      "notifications",
+      "apiServer",
+      "notifications should not depend on apiServer",
       Transitive
     ),
     (
-      "castorCore",
-      "models",
-      "castorCore (did-core) should not depend on mercury models (didcomm-models)",
+      "didCore",
+      "didcommModels",
+      "didCore should not depend on didcommModels",
       Transitive
     ),
-    // Phase 4: Background jobs and IAM should not be depended on by domain core modules
+    // Background jobs and IAM should not be depended on by domain core modules
     (
-      "castorCore",
+      "didCore",
       "apiServerJobs",
-      "castorCore (did-core) should not depend on apiServerJobs (background jobs)",
+      "didCore should not depend on apiServerJobs",
       Transitive
     ),
     (
-      "polluxCore",
+      "credentialsCore",
       "apiServerJobs",
-      "polluxCore (credentials-core) should not depend on apiServerJobs (background jobs)",
+      "credentialsCore should not depend on apiServerJobs",
       Transitive
     ),
     (
-      "connectCore",
+      "connectionsCore",
       "apiServerJobs",
-      "connectCore (connections-core) should not depend on apiServerJobs (background jobs)",
+      "connectionsCore should not depend on apiServerJobs",
       Transitive
     ),
     (
-      "castorCore",
+      "didCore",
       "apiServerIam",
-      "castorCore (did-core) should not depend on apiServerIam (IAM)",
+      "didCore should not depend on apiServerIam",
       Transitive
     ),
     (
-      "polluxCore",
+      "credentialsCore",
       "apiServerIam",
-      "polluxCore (credentials-core) should not depend on apiServerIam (IAM)",
+      "credentialsCore should not depend on apiServerIam",
       Transitive
     ),
     (
-      "connectCore",
+      "connectionsCore",
       "apiServerIam",
-      "connectCore (connections-core) should not depend on apiServerIam (IAM)",
+      "connectionsCore should not depend on apiServerIam",
       Transitive
     ),
     (
-      "eventNotification",
+      "notifications",
       "apiServerJobs",
-      "eventNotification (notifications) should not depend on apiServerJobs (background jobs)",
+      "notifications should not depend on apiServerJobs",
       Transitive
     ),
     (
-      "eventNotification",
+      "notifications",
       "apiServerIam",
-      "eventNotification (notifications) should not depend on apiServerIam (IAM)",
+      "notifications should not depend on apiServerIam",
       Transitive
     ),
-    // Phase 3: Adapter direction constraints — core modules should not depend on persistence adapters
+    // Adapter direction constraints — core modules should not depend on persistence adapters
     (
-      "polluxCore",
-      "polluxDoobie",
-      "polluxCore (credentials-core) should not depend on polluxDoobie (persistence adapter)",
-      Transitive
-    ),
-    (
-      "connectCore",
-      "connectDoobie",
-      "connectCore (connections-core) should not depend on connectDoobie (persistence adapter)",
+      "credentialsCore",
+      "credentialsPersistenceDoobie",
+      "credentialsCore should not depend on credentialsPersistenceDoobie (persistence adapter)",
       Transitive
     ),
     (
-      "castorCore",
-      "polluxDoobie",
-      "castorCore (did-core) should not depend on polluxDoobie (persistence adapter)",
+      "connectionsCore",
+      "connectionsPersistenceDoobie",
+      "connectionsCore should not depend on connectionsPersistenceDoobie (persistence adapter)",
       Transitive
     ),
     (
-      "castorCore",
-      "connectDoobie",
-      "castorCore (did-core) should not depend on connectDoobie (persistence adapter)",
+      "didCore",
+      "credentialsPersistenceDoobie",
+      "didCore should not depend on credentialsPersistenceDoobie (persistence adapter)",
+      Transitive
+    ),
+    (
+      "didCore",
+      "connectionsPersistenceDoobie",
+      "didCore should not depend on connectionsPersistenceDoobie (persistence adapter)",
       Transitive
     ),
   )

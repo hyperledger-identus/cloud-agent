@@ -508,17 +508,17 @@ lazy val sharedTest = (project in file("modules/shared/test"))
   .dependsOn(shared)
 
 // #########################
-// ### Models & Services ###
+// ###     DIDComm       ###
 // #########################
 
 /** Just data models and interfaces of service.
   *
   * This module must not depend on external libraries!
   */
-lazy val models = project
+lazy val didcommModels = project
   .in(file("modules/didcomm/models"))
   .configure(commonConfigure)
-  .settings(name := "mercury-data-models")
+  .settings(name := "didcomm-models")
   .settings(
     libraryDependencies ++= Seq(D.zio)
   )
@@ -530,15 +530,15 @@ lazy val didcommApi = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "didcomm-api")
-  .dependsOn(shared, models)
+  .dependsOn(shared, didcommModels)
 
-/* TODO move code from agentDidcommx to here
+/* TODO move code from didcommAgentDidcommx to here
 models implementation for didcommx () */
 // lazy val modelsDidcommx = project
 //   .in(file("models-didcommx"))
 //   .settings(name := "mercury-models-didcommx")
 //   .settings(libraryDependencies += D.didcommx)
-//   .dependsOn(models)
+//   .dependsOn(didcommModels)
 
 // #################
 // ### Protocols ###
@@ -547,30 +547,30 @@ models implementation for didcommx () */
 lazy val protocolConnection = project
   .in(file("modules/didcomm/protocol-connection"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-connection")
+  .settings(name := "didcomm-protocol-connection")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models, protocolInvitation)
+  .dependsOn(didcommModels, protocolInvitation)
 
 lazy val protocolCoordinateMediation = project
   .in(file("modules/didcomm/protocol-coordinate-mediation"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-coordinate-mediation")
+  .settings(name := "didcomm-protocol-coordinate-mediation")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 lazy val protocolDidExchange = project
   .in(file("modules/didcomm/protocol-did-exchange"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-did-exchange")
+  .settings(name := "didcomm-protocol-did-exchange")
   .settings(libraryDependencies += D.zio)
-  .dependsOn(models, protocolInvitation)
+  .dependsOn(didcommModels, protocolInvitation)
 
 lazy val protocolInvitation = project
   .in(file("modules/didcomm/protocol-invitation"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-invitation")
+  .settings(name := "didcomm-protocol-invitation")
   .settings(libraryDependencies += D.zio)
   .settings(
     libraryDependencies ++= Seq(
@@ -578,85 +578,85 @@ lazy val protocolInvitation = project
       D.munitZio
     )
   )
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 // lazy val protocolMercuryMailbox = project
 //   .in(file("mercury/protocol-mercury-mailbox"))
 //   .settings(predefSetttings)
-//   .settings(name := "mercury-protocol-mailbox")
+//   .settings(name := "didcomm-protocol-mailbox")
 //   .settings(libraryDependencies += D.zio)
 //   .dependsOn(models, protocolInvitation, protocolRouting)
 
 lazy val protocolLogin = project
   .in(file("modules/didcomm/protocol-outofband-login"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-outofband-login")
+  .settings(name := "didcomm-protocol-outofband-login")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 lazy val protocolReportProblem = project
   .in(file("modules/didcomm/protocol-report-problem"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-report-problem")
+  .settings(name := "didcomm-protocol-report-problem")
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 lazy val protocolRouting = project
   .in(file("modules/didcomm/protocol-routing"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-routing-2-0")
+  .settings(name := "didcomm-protocol-routing-2-0")
   .settings(libraryDependencies += D.zio)
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 lazy val protocolIssueCredential = project
   .in(file("modules/didcomm/protocol-issue-credential"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-issue-credential")
+  .settings(name := "didcomm-protocol-issue-credential")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models, protocolInvitation)
+  .dependsOn(didcommModels, protocolInvitation)
 
 lazy val protocolRevocationNotification = project
   .in(file("modules/didcomm/protocol-revocation-notification"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-revocation-notification")
+  .settings(name := "didcomm-protocol-revocation-notification")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 lazy val protocolPresentProof = project
   .in(file("modules/didcomm/protocol-present-proof"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-present-proof")
+  .settings(name := "didcomm-protocol-present-proof")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models, protocolInvitation)
+  .dependsOn(didcommModels, protocolInvitation)
 
-lazy val vc = project
+lazy val didcommVC = project
   .in(file("modules/didcomm/vc"))
   .configure(commonConfigure)
-  .settings(name := "mercury-verifiable-credentials")
+  .settings(name := "didcomm-verifiable-credentials")
   .dependsOn(protocolIssueCredential, protocolPresentProof) //TODO merge those two modules into this one
 
 lazy val protocolTrustPing = project
   .in(file("modules/didcomm/protocol-trust-ping"))
   .configure(commonConfigure)
-  .settings(name := "mercury-protocol-trust-ping")
+  .settings(name := "didcomm-protocol-trust-ping")
   .settings(libraryDependencies += D.zio)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 // ################
 // ### Resolver ###
 // ################
 
 // TODO move stuff to the models module
-lazy val resolver = project // maybe merge into models
+lazy val didcommResolver = project
   .in(file("modules/didcomm/resolver"))
   .configure(commonConfigure)
-  .settings(name := "mercury-resolver")
+  .settings(name := "didcomm-resolver")
   .settings(
     libraryDependencies ++= Seq(
       D.didcommx,
@@ -667,20 +667,20 @@ lazy val resolver = project // maybe merge into models
     ),
     testFrameworks += new TestFramework("munit.Framework")
   )
-  .dependsOn(models)
+  .dependsOn(didcommModels)
 
 // ##############
 // ### Agents ###
 // ##############
 
-lazy val agent = project // maybe merge into models
+lazy val didcommAgent = project
   .in(file("modules/didcomm/agent"))
   .configure(commonConfigure)
-  .settings(name := "mercury-agent-core")
+  .settings(name := "didcomm-agent")
   .settings(libraryDependencies ++= Seq(D.zioLog, D.zioSLF4J))
   .dependsOn(
-    models,
-    resolver,
+    didcommModels,
+    didcommResolver,
     protocolCoordinateMediation,
     protocolInvitation,
     protocolRouting,
@@ -689,20 +689,20 @@ lazy val agent = project // maybe merge into models
     protocolIssueCredential,
     protocolRevocationNotification,
     protocolPresentProof,
-    vc,
+    didcommVC,
     protocolConnection,
     protocolReportProblem,
     protocolTrustPing,
   )
 
 /** agents implementation with didcommx */
-lazy val agentDidcommx = project
+lazy val didcommAgentDidcommx = project
   .in(file("modules/didcomm/agent-didcommx"))
   .configure(commonConfigure)
-  .settings(name := "mercury-agent-didcommx")
+  .settings(name := "didcomm-agent-didcommx")
   .settings(libraryDependencies += D.didcommx)
   .settings(libraryDependencies += D.munitZio)
-  .dependsOn(agent) //modelsDidcommx
+  .dependsOn(didcommAgent) //modelsDidcommx
 
 // ///** TODO Demos agents and services implementation with did-scala */
 // lazy val agentDidScala =
@@ -731,7 +731,7 @@ val prismNodeClient = project
   )
 
 // #####################
-// #####  castor  ######
+// #####   DID    ######
 // #####################
 
 lazy val didApi = project
@@ -739,53 +739,53 @@ lazy val didApi = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "did-api")
-  .dependsOn(shared, castorCore)
+  .dependsOn(shared, didCore)
 
-lazy val castorCore = project
+lazy val didCore = project
   .in(file("modules/did/core"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "castor-core",
+    name := "did-core",
     libraryDependencies ++= D_Castor.coreDependencies
   )
   .dependsOn(shared, prismNodeClient)
   .dependsOn(sharedCrypto % "compile->compile;test->test")
 
 // #####################
-// #####  pollux  ######
+// ### Credentials  ####
 // #####################
 
-lazy val polluxVcJWT = project
+lazy val credentialsVcJWT = project
   .in(file("modules/credentials/vc-jwt"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "pollux-vc-jwt",
+    name := "credentials-vc-jwt",
     libraryDependencies ++= D_Pollux_VC_JWT.polluxVcJwtDependencies
   )
-  .dependsOn(castorCore, sharedJson)
+  .dependsOn(didCore, sharedJson)
 
-lazy val polluxCore = project
+lazy val credentialsCore = project
   .in(file("modules/credentials/core"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "pollux-core",
+    name := "credentials-core",
     libraryDependencies ++= D_Pollux.coreDependencies
   )
   .dependsOn(
     shared,
-    castorCore % "compile->compile;test->test", // Test is for MockDIDService
-    walletManagementApi % "compile->compile;test->test", // Phase 5: was cloudAgentWalletAPI; test is for MockManagedDIDService
-    vc,
-    resolver,
-    agentDidcommx,
-    eventNotification,
-    polluxAnoncreds,
-    polluxVcJWT,
-    polluxSDJWT,
-    polluxPreX % "compile->compile;test->test", // Test is for example resources
+    didCore % "compile->compile;test->test", // Test is for MockDIDService
+    walletManagementApi % "compile->compile;test->test", // test is for MockManagedDIDService
+    didcommVC,
+    didcommResolver,
+    didcommAgentDidcommx,
+    notifications,
+    credentialsAnoncreds,
+    credentialsVcJWT,
+    credentialsSDJWT,
+    credentialsPreX % "compile->compile;test->test", // Test is for example resources
   )
 
 lazy val credentialsApi = project
@@ -793,35 +793,35 @@ lazy val credentialsApi = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "credentials-api")
-  .dependsOn(shared, polluxCore, didcommApi, didApi)
+  .dependsOn(shared, credentialsCore, didcommApi, didApi)
 
-lazy val polluxDoobie = project
+lazy val credentialsPersistenceDoobie = project
   .in(file("modules/credentials/persistence-doobie"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "pollux-sql-doobie",
+    name := "credentials-persistence-doobie",
     libraryDependencies ++= D_Pollux.sqlDoobieDependencies
   )
-  .dependsOn(polluxCore % "compile->compile;test->test")
+  .dependsOn(credentialsCore % "compile->compile;test->test")
   .dependsOn(shared)
   .dependsOn(sharedTest % "test->test")
 
-lazy val polluxPreX = project
+lazy val credentialsPreX = project
   .in(file("modules/credentials/prex"))
   .settings(commonSetttings)
-  .settings(name := "pollux-prex")
-  .dependsOn(shared, sharedJson, polluxVcJWT)
+  .settings(name := "credentials-prex")
+  .dependsOn(shared, sharedJson, credentialsVcJWT)
 
-// ########################
-// ### Pollux Anoncreds ###
-// ########################
+// ###############################
+// ### Credentials Anoncreds  ###
+// ###############################
 
-lazy val polluxAnoncreds = project
+lazy val credentialsAnoncreds = project
   .in(file("modules/credentials/anoncreds"))
   .configure(commonConfigure)
   .settings(
-    name := "pollux-anoncreds",
+    name := "credentials-anoncreds",
     Compile / unmanagedJars += baseDirectory.value / "anoncreds-jvm-1.0-SNAPSHOT.jar",
     Compile / unmanagedResourceDirectories ++= Seq(
       baseDirectory.value / "native-lib" / "NATIVE"
@@ -829,66 +829,66 @@ lazy val polluxAnoncreds = project
     libraryDependencies ++= D_Pollux_AnonCreds.baseDependencies
   )
 
-lazy val polluxAnoncredsTest = project
+lazy val credentialsAnoncredsTest = project
   .in(file("modules/credentials/anoncredsTest"))
   .configure(commonConfigure)
   .settings(libraryDependencies += D.scalaTest)
-  .dependsOn(polluxAnoncreds % "compile->test")
+  .dependsOn(credentialsAnoncreds % "compile->test")
 
-lazy val polluxSDJWT = project
+lazy val credentialsSDJWT = project
   .in(file("modules/credentials/sd-jwt"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "pollux-sd-jwt",
+    name := "credentials-sd-jwt",
     libraryDependencies += "io.iohk.atala" % "sd-jwt-kmp-jvm" % "0.1.2"
   )
   .dependsOn(sharedCrypto)
 
 // #####################
-// #####  connect  #####
+// ### Connections  ####
 // #####################
 
-lazy val connectCore = project
+lazy val connectionsCore = project
   .in(file("modules/connections/core"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "connect-core",
+    name := "connections-core",
     libraryDependencies ++= D_Connect.coreDependencies,
     Test / publishArtifact := true
   )
   .dependsOn(shared)
-  .dependsOn(protocolConnection, protocolReportProblem, eventNotification)
+  .dependsOn(protocolConnection, protocolReportProblem, notifications)
 
-lazy val connectDoobie = project
+lazy val connectionsPersistenceDoobie = project
   .in(file("modules/connections/persistence-doobie"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "connect-sql-doobie",
+    name := "connections-persistence-doobie",
     libraryDependencies ++= D_Connect.sqlDoobieDependencies
   )
   .dependsOn(shared)
   .dependsOn(sharedTest % "test->test")
-  .dependsOn(connectCore % "compile->compile;test->test")
+  .dependsOn(connectionsCore % "compile->compile;test->test")
 
 lazy val connectionsApi = project
   .in(file("modules/connections/api"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "connections-api")
-  .dependsOn(shared, connectCore, didcommApi)
+  .dependsOn(shared, connectionsCore, didcommApi)
 
-// ############################
-// #### Event Notification ####
-// ############################
+// #####################
+// ### Notifications ###
+// #####################
 
-lazy val eventNotification = project
+lazy val notifications = project
   .in(file("modules/notifications/core"))
   .configure(commonConfigure)
   .settings(
-    name := "event-notification",
+    name := "notifications",
     libraryDependencies ++= D_EventNotification.baseDependencies
   )
   .dependsOn(shared)
@@ -898,18 +898,18 @@ lazy val notificationsApi = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "notifications-api")
-  .dependsOn(shared, eventNotification)
+  .dependsOn(shared, notifications)
 
-// #####################
-// #### Cloud Agent ####
-// #####################
+// ##########################
+// ### Wallet Management ###
+// ##########################
 
-lazy val cloudAgentWalletAPI = project
+lazy val walletManagement = project
   .in(file("modules/wallet-management/core"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "cloud-agent-wallet-api",
+    name := "wallet-management",
     libraryDependencies ++=
       D_CloudAgent.keyManagementDependencies ++
         D_CloudAgent.iamDependencies ++
@@ -917,9 +917,9 @@ lazy val cloudAgentWalletAPI = project
         Seq(D.zioMock)
   )
   .dependsOn(
-    agentDidcommx,
-    castorCore,
-    eventNotification
+    didcommAgentDidcommx,
+    didCore,
+    notifications
   )
   .dependsOn(sharedTest % "test->test")
   .dependsOn(sharedCrypto % "compile->compile;test->test")
@@ -929,28 +929,28 @@ lazy val walletManagementApi = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "wallet-management-api")
-  .dependsOn(shared, cloudAgentWalletAPI % "compile->compile;test->test")
+  .dependsOn(shared, walletManagement % "compile->compile;test->test")
 
 lazy val walletPersistenceDoobie = project
   .in(file("modules/wallet-management/persistence-doobie"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "wallet-management-persistence-doobie")
-  .dependsOn(cloudAgentWalletAPI)
+  .dependsOn(walletManagement)
 
 lazy val walletSecretsVault = project
   .in(file("modules/wallet-management/secrets-vault"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "wallet-management-secrets-vault")
-  .dependsOn(cloudAgentWalletAPI)
+  .dependsOn(walletManagement)
 
-lazy val cloudAgentVdr = project
+lazy val vdrService = project
   .in(file("modules/vdr/service"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(
-    name := "cloud-agent-vdr",
+    name := "vdr-service",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
   .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrDatabase, vdrMemory, vdrProxy)
@@ -1028,7 +1028,7 @@ lazy val vdrProxy = project
   )
   .dependsOn(vdrCore, vdrPrismNode, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
-lazy val cloudAgentServer = project
+lazy val apiServer = project
   .in(file("modules/api-server/core"))
   .configure(commonConfigure)
   .settings(commonSetttings)
@@ -1053,18 +1053,18 @@ lazy val cloudAgentServer = project
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
   .enablePlugins(BuildInfoPlugin)
-  .dependsOn(cloudAgentWalletAPI % "compile->compile;test->test")
+  .dependsOn(walletManagement % "compile->compile;test->test")
   .dependsOn(
     sharedTest % "test->test",
-    agent,
-    polluxCore % "compile->compile;test->test",
-    polluxDoobie,
-    polluxAnoncreds,
-    connectCore % "compile->compile;test->test", // Test is for MockConnectionService
-    connectDoobie,
-    castorCore,
-    eventNotification,
-    cloudAgentVdr,
+    didcommAgent,
+    credentialsCore % "compile->compile;test->test",
+    credentialsPersistenceDoobie,
+    credentialsAnoncreds,
+    connectionsCore % "compile->compile;test->test", // Test is for MockConnectionService
+    connectionsPersistenceDoobie,
+    didCore,
+    notifications,
+    vdrService,
   )
 
 // ############################
@@ -1077,24 +1077,13 @@ releaseProcess := Seq[ReleaseStep](
   runClean,
   runTest,
   setReleaseVersion,
-  ReleaseStep(releaseStepTask(cloudAgentServer / Docker / stage)),
+  ReleaseStep(releaseStepTask(apiServer / Docker / stage)),
   setNextVersion
 )
 
 // ################################
-// ### Domain-first SBT aliases ###
+// ### Server sub-modules       ###
 // ################################
-// These aliases map codename-based modules to domain-first names.
-// See docs/adr/0001-domain-first-module-naming.md and docs/architecture/domain-glossary.md
-
-lazy val didCore = castorCore
-lazy val didcommModels = models
-lazy val didcommAgent = agent
-lazy val connectionsCore = connectCore
-lazy val credentialsCore = polluxCore
-lazy val notifications = eventNotification
-lazy val walletManagement = cloudAgentWalletAPI
-lazy val apiServer = cloudAgentServer
 
 // Server sub-module aliases (Phase 4)
 lazy val apiServerJobs = project
@@ -1102,17 +1091,17 @@ lazy val apiServerJobs = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "api-server-jobs")
-  .dependsOn(cloudAgentServer)
+  .dependsOn(apiServer)
 
 lazy val apiServerIam = project
   .in(file("modules/api-server/iam"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "api-server-iam")
-  .dependsOn(cloudAgentServer)
+  .dependsOn(apiServer)
 
 // Server controller grouping aliases (Phase 4)
-// These document the domain groupings within cloudAgentServer:
+// These document the domain groupings within apiServer:
 // - DID controllers: castor/controller/
 // - Connection controllers: connect/controller/
 // - Credential issuance controllers: issue/controller/
@@ -1127,81 +1116,70 @@ lazy val apiServerIam = project
 // - VDR controllers: vdr/controller/
 // - Verification controllers: verification/controller/
 
-// Phase 6: Now simple aliases — polluxDoobie/connectDoobie physically live at modules/ paths
-lazy val credentialsPersistenceDoobie = polluxDoobie
-lazy val connectionsPersistenceDoobie = connectDoobie
-
-// DIDComm protocol aliases (Phase 3)
-lazy val didcommProtocolConnection = protocolConnection
-lazy val didcommProtocolMediation = protocolCoordinateMediation
-lazy val didcommProtocolDidExchange = protocolDidExchange
-lazy val didcommProtocolInvitation = protocolInvitation
-lazy val didcommProtocolLogin = protocolLogin
-lazy val didcommProtocolReportProblem = protocolReportProblem
-lazy val didcommProtocolRouting = protocolRouting
-lazy val didcommProtocolIssueCredential = protocolIssueCredential
-lazy val didcommProtocolRevocationNotification = protocolRevocationNotification
-lazy val didcommProtocolPresentProof = protocolPresentProof
-lazy val didcommProtocolTrustPing = protocolTrustPing
-lazy val didcommVC = vc
 
 lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
+  // Shared
   shared,
   sharedJson,
   sharedCrypto,
   sharedTest,
-  // Domain-first API modules
+  // DID
   didApi,
+  didCore,
+  // DIDComm
   didcommApi,
-  connectionsApi,
-  notificationsApi,
-  walletManagementApi,
-  walletPersistenceDoobie,
-  walletSecretsVault,
-  credentialsApi,
-  vdrApi,
-  // Legacy modules
-  models,
+  didcommModels,
+  didcommResolver,
+  didcommAgent,
+  didcommAgentDidcommx,
+  didcommVC,
   protocolConnection,
   protocolCoordinateMediation,
   protocolDidExchange,
   protocolInvitation,
-  // protocolMercuryMailbox,
   protocolLogin,
   protocolReportProblem,
   protocolRouting,
   protocolIssueCredential,
   protocolRevocationNotification,
   protocolPresentProof,
-  vc,
   protocolTrustPing,
-  resolver,
-  agent,
-  agentDidcommx,
-  castorCore,
-  polluxVcJWT,
-  polluxCore,
-  polluxDoobie,
-  polluxAnoncreds,
-  polluxAnoncredsTest,
-  polluxSDJWT,
-  polluxPreX,
-  connectCore,
-  connectDoobie,
+  // Credentials
+  credentialsApi,
+  credentialsCore,
+  credentialsPersistenceDoobie,
+  credentialsVcJWT,
+  credentialsSDJWT,
+  credentialsAnoncreds,
+  credentialsAnoncredsTest,
+  credentialsPreX,
+  // Connections
+  connectionsApi,
+  connectionsCore,
+  connectionsPersistenceDoobie,
+  // Notifications
+  notificationsApi,
+  notifications,
+  // Wallet Management
+  walletManagementApi,
+  walletManagement,
+  walletPersistenceDoobie,
+  walletSecretsVault,
+  // VDR
+  vdrApi,
   vdrCore,
-  vdrBlockfrost,
-  vdrMemory,
+  vdrService,
   vdrPrismNode,
   vdrDatabase,
+  vdrMemory,
+  vdrBlockfrost,
   vdrProxy,
-  cloudAgentVdr,
-  cloudAgentWalletAPI,
-  cloudAgentServer,
-  eventNotification,
-  // Phase 4: Server sub-modules
+  // Prism Node
+  prismNodeClient,
+  // API Server
+  apiServer,
   apiServerJobs,
   apiServerIam,
-  // Phase 5 persistence aliases removed from aggregation in Phase 6 (now aliases to polluxDoobie/connectDoobie)
 )
 
 lazy val root = project
