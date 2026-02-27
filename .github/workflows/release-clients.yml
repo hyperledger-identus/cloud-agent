@@ -92,8 +92,10 @@ jobs:
 
       - name: Download release OAS
         if: ${{ inputs.release }}
+        env:
+          REVISION: ${{ inputs.revision }}
         run: |
-          curl -fSL "https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/refs/tags/v${{ inputs.revision }}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" \
+          curl -fSL "https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/refs/tags/v${REVISION}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" \
             -o ./cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml
 
       - name: Download OpenAPI specification
