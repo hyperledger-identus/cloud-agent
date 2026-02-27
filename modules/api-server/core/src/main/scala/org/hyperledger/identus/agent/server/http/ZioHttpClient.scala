@@ -1,6 +1,6 @@
 package org.hyperledger.identus.agent.server.http
 
-import org.hyperledger.identus.mercury.*
+import org.hyperledger.identus.didcomm.*
 import zio.*
 import zio.http.{Header as _, *}
 

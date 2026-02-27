@@ -11,7 +11,7 @@ import org.hyperledger.identus.agent.walletapi.model.{
 import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-import org.hyperledger.identus.castor.core.model.did.*
+import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.shared.crypto.{Apollo, Secp256k1KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletId}
 import zio.*
@@ -46,7 +46,7 @@ object PrismNodeVdrOperationSignerSpec extends ZIOSpecDefault {
       ZIO.dieMessage("unused")
     override def deactivateManagedDID(did: CanonicalPrismDID) = ZIO.dieMessage("unused")
     override def createAndStorePeerDID(serviceEndpoint: java.net.URL) = ZIO.dieMessage("unused")
-    override def getPeerDID(didId: org.hyperledger.identus.mercury.model.DidId) =
+    override def getPeerDID(didId: org.hyperledger.identus.didcomm.model.DidId) =
       ZIO.dieMessage("unused")
   }
 
@@ -96,7 +96,7 @@ object PrismNodeVdrOperationSignerSpec extends ZIOSpecDefault {
             Map(KeyId("vdr-1") -> Some(keyPair)),
             deactivated = Left(
               GetManagedDIDError.OperationError(
-                org.hyperledger.identus.castor.core.model.error.DIDOperationError.DLTProxyError(
+                org.hyperledger.identus.did.core.model.error.DIDOperationError.DLTProxyError(
                   "boom",
                   new RuntimeException("boom")
                 )

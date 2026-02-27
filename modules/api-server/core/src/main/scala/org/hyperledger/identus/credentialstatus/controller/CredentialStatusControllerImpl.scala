@@ -2,8 +2,8 @@ package org.hyperledger.identus.credentialstatus.controller
 
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.credentialstatus.controller.http.StatusListCredential
-import org.hyperledger.identus.pollux.core.model.DidCommID
-import org.hyperledger.identus.pollux.core.service.CredentialStatusListService
+import org.hyperledger.identus.credentials.core.model.DidCommID
+import org.hyperledger.identus.credentials.core.service.CredentialStatusListService
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import zio.*
 

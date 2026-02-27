@@ -10,7 +10,7 @@ import org.hyperledger.identus.agent.walletapi.model.{
 }
 import org.hyperledger.identus.agent.walletapi.service.WalletManagementService
 import org.hyperledger.identus.agent.walletapi.util.OperationFactory
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   EllipticCurve,
   PrismDID,
   PrismDIDOperation,

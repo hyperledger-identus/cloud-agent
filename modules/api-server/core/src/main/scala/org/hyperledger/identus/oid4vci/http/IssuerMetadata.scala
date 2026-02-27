@@ -1,6 +1,6 @@
 package org.hyperledger.identus.oid4vci.http
 
-import org.hyperledger.identus.pollux.core.model.oid4vci as pollux
+import org.hyperledger.identus.credentials.core.model.oid4vci as pollux
 import sttp.tapir.Schema
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 

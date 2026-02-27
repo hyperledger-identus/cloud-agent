@@ -6,7 +6,7 @@ import doobie.postgres.implicits.*
 import doobie.util.invariant.InvalidEnum
 import io.iohk.atala.prism.protos.node_models
 import org.hyperledger.identus.agent.walletapi.model.{KeyManagementMode, ManagedDIDState, PublicationState}
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   EllipticCurve,
   InternalKeyPurpose,
   PrismDID,
@@ -14,7 +14,7 @@ import org.hyperledger.identus.castor.core.model.did.{
   ScheduledDIDOperationStatus,
   VerificationRelationship
 }
-import org.hyperledger.identus.castor.core.model.ProtoModelHelper.*
+import org.hyperledger.identus.did.core.model.ProtoModelHelper.*
 import org.hyperledger.identus.shared.crypto.jwk.JWK
 import org.hyperledger.identus.shared.models.WalletId
 import zio.json.*

@@ -1,8 +1,8 @@
 package org.hyperledger.identus.agent.walletapi.storage
 
 import org.hyperledger.identus.agent.walletapi.model.*
-import org.hyperledger.identus.castor.core.model.did.{PrismDID, ScheduledDIDOperationStatus}
-import org.hyperledger.identus.mercury.model.DidId
+import org.hyperledger.identus.did.core.model.did.{PrismDID, ScheduledDIDOperationStatus}
+import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletId}
 import zio.*
 

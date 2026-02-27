@@ -10,7 +10,7 @@ import org.hyperledger.identus.agent.walletapi.model.{
 import org.hyperledger.identus.agent.walletapi.model.error.CreateManagedDIDError
 import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, DIDSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.agent.walletapi.util.OperationFactory
-import org.hyperledger.identus.castor.core.model.did.PrismDIDOperation
+import org.hyperledger.identus.did.core.model.did.PrismDIDOperation
 import org.hyperledger.identus.shared.crypto.{Apollo, Ed25519KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import zio.*

@@ -6,7 +6,7 @@ import org.hyperledger.identus.agent.walletapi.model.{
   ManagedInternalDIDKeyTemplate
 }
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   EllipticCurve,
   InternalKeyPurpose,
   Service,
@@ -14,7 +14,7 @@ import org.hyperledger.identus.castor.core.model.did.{
   ServiceType,
   VerificationRelationship
 }
-import org.hyperledger.identus.castor.core.model.did.ServiceEndpoint.{UriOrJsonEndpoint, UriValue}
+import org.hyperledger.identus.did.core.model.did.ServiceEndpoint.{UriOrJsonEndpoint, UriValue}
 import zio.*
 import zio.test.*
 import zio.test.Assertion.*

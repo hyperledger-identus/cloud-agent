@@ -3,9 +3,9 @@ package org.hyperledger.identus.agent.walletapi.service
 import org.hyperledger.identus.agent.walletapi.model.*
 import org.hyperledger.identus.agent.walletapi.model.error.*
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-import org.hyperledger.identus.castor.core.model.did.*
-import org.hyperledger.identus.mercury.model.*
-import org.hyperledger.identus.mercury.PeerDID
+import org.hyperledger.identus.did.core.model.did.*
+import org.hyperledger.identus.didcomm.model.*
+import org.hyperledger.identus.didcomm.PeerDID
 import org.hyperledger.identus.shared.crypto.{Ed25519KeyPair, Secp256k1KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import zio.*

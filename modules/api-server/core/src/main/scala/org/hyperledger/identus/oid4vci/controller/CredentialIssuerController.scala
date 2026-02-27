@@ -4,14 +4,14 @@ import org.hyperledger.identus.agent.server.config.AppConfig
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.ErrorResponse.{badRequest, internalServerError}
 import org.hyperledger.identus.api.util.PaginationUtils
-import org.hyperledger.identus.castor.core.model.did.PrismDID
+import org.hyperledger.identus.did.core.model.did.PrismDID
 import org.hyperledger.identus.oid4vci.domain.Openid4VCIProofJwtOps
 import org.hyperledger.identus.oid4vci.http.*
 import org.hyperledger.identus.oid4vci.http.CredentialErrorCode.*
 import org.hyperledger.identus.oid4vci.service.OIDCCredentialIssuerService
-import org.hyperledger.identus.pollux.core.model.oid4vci.CredentialIssuer as PolluxCredentialIssuer
-import org.hyperledger.identus.pollux.core.service.OID4VCIIssuerMetadataService
-import org.hyperledger.identus.pollux.vc.jwt.JWT
+import org.hyperledger.identus.credentials.core.model.oid4vci.CredentialIssuer as PolluxCredentialIssuer
+import org.hyperledger.identus.credentials.core.service.OID4VCIIssuerMetadataService
+import org.hyperledger.identus.credentials.vc.jwt.JWT
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import zio.{IO, URLayer, ZIO, ZLayer}
 

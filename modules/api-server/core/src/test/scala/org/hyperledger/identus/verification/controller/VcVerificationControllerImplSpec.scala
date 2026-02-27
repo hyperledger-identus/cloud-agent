@@ -2,9 +2,9 @@ package org.hyperledger.identus.verification.controller
 
 import org.hyperledger.identus.agent.walletapi.model.BaseEntity
 import org.hyperledger.identus.agent.walletapi.service.MockManagedDIDService
-import org.hyperledger.identus.castor.core.service.MockDIDService
+import org.hyperledger.identus.did.core.service.MockDIDService
 import org.hyperledger.identus.iam.authentication.AuthenticatorWithAuthZ
-import org.hyperledger.identus.pollux.vc.jwt.*
+import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.verification.controller.http.*
 import sttp.client3.{basicRequest, DeserializationException, Response, UriContext}
 import sttp.client3.ziojson.*

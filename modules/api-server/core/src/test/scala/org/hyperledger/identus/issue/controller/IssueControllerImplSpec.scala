@@ -4,10 +4,10 @@ import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemo
 import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, ManagedDIDState, PublicationState}
 import org.hyperledger.identus.agent.walletapi.service.{ManagedDIDService, MockManagedDIDService}
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.castor.core.model.did.{DIDData, DIDMetadata, PrismDIDOperation, VerificationRelationship}
-import org.hyperledger.identus.castor.core.service.MockDIDService
-import org.hyperledger.identus.connect.core.model.ConnectionRecord
-import org.hyperledger.identus.connect.core.service.MockConnectionService
+import org.hyperledger.identus.did.core.model.did.{DIDData, DIDMetadata, PrismDIDOperation, VerificationRelationship}
+import org.hyperledger.identus.did.core.service.MockDIDService
+import org.hyperledger.identus.connections.core.model.ConnectionRecord
+import org.hyperledger.identus.connections.core.service.MockConnectionService
 import org.hyperledger.identus.container.util.MigrationAspects.migrate
 import org.hyperledger.identus.iam.authentication.AuthenticatorWithAuthZ
 import org.hyperledger.identus.issue.controller.http.{
@@ -15,13 +15,13 @@ import org.hyperledger.identus.issue.controller.http.{
   CreateIssueCredentialRecordRequest,
   IssueCredentialRecordPage
 }
-import org.hyperledger.identus.mercury.model.DidId
-import org.hyperledger.identus.mercury.protocol.connection.ConnectionResponse
-import org.hyperledger.identus.mercury.protocol.invitation.v2.Invitation
-import org.hyperledger.identus.pollux.core.model.{CredentialFormat, DidCommID, IssueCredentialRecord}
-import org.hyperledger.identus.pollux.core.repository.CredentialDefinitionRepositoryInMemory
-import org.hyperledger.identus.pollux.core.service.{CredentialDefinitionServiceImpl, MockCredentialService}
-import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResolver
+import org.hyperledger.identus.didcomm.model.DidId
+import org.hyperledger.identus.didcomm.protocol.connection.ConnectionResponse
+import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
+import org.hyperledger.identus.credentials.core.model.{CredentialFormat, DidCommID, IssueCredentialRecord}
+import org.hyperledger.identus.credentials.core.repository.CredentialDefinitionRepositoryInMemory
+import org.hyperledger.identus.credentials.core.service.{CredentialDefinitionServiceImpl, MockCredentialService}
+import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver
 import org.hyperledger.identus.shared.models.{KeyId, WalletId}
 import sttp.client3.{basicRequest, UriContext}
 import sttp.client3.ziojson.*

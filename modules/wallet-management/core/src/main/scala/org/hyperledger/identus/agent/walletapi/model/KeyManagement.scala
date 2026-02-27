@@ -1,6 +1,6 @@
 package org.hyperledger.identus.agent.walletapi.model
 
-import org.hyperledger.identus.castor.core.model.did.{EllipticCurve, InternalKeyPurpose, VerificationRelationship}
+import org.hyperledger.identus.did.core.model.did.{EllipticCurve, InternalKeyPurpose, VerificationRelationship}
 import org.hyperledger.identus.shared.crypto.{DerivationPath, Ed25519KeyPair, Sha256Hash, X25519KeyPair}
 
 import scala.collection.immutable.ArraySeq

@@ -1,7 +1,7 @@
 package org.hyperledger.identus.resolvers
 
 import org.didcommx.didcomm.diddoc.*
-import org.hyperledger.identus.mercury.model.DidId
+import org.hyperledger.identus.didcomm.model.DidId
 import zio.*
 
 import java.util.Optional

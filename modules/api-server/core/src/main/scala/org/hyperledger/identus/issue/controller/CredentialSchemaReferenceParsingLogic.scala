@@ -2,8 +2,8 @@ package org.hyperledger.identus.issue.controller
 
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.issue.controller.http.CredentialSchemaRef as HTTPCredentialSchemaRef
-import org.hyperledger.identus.pollux.core.model.primitives.UriString
-import org.hyperledger.identus.pollux.core.model.schema.{
+import org.hyperledger.identus.credentials.core.model.primitives.UriString
+import org.hyperledger.identus.credentials.core.model.schema.{
   CredentialSchemaRef as DomainCredentialSchemaRef,
   CredentialSchemaRefType
 }

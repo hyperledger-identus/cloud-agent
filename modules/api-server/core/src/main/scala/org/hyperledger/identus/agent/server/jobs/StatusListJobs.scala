@@ -2,13 +2,13 @@ package org.hyperledger.identus.agent.server.jobs
 
 import org.hyperledger.identus.agent.server.config.AppConfig
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-import org.hyperledger.identus.castor.core.model.did.VerificationRelationship
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.mercury.*
-import org.hyperledger.identus.mercury.protocol.revocationnotificaiton.RevocationNotification
-import org.hyperledger.identus.pollux.core.model.{CredInStatusList, CredentialStatusListWithCreds}
-import org.hyperledger.identus.pollux.core.service.{CredentialService, CredentialStatusListService}
-import org.hyperledger.identus.pollux.vc.jwt.revocation.{BitString, VCStatusList2021, VCStatusList2021Error}
+import org.hyperledger.identus.did.core.model.did.VerificationRelationship
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.didcomm.*
+import org.hyperledger.identus.didcomm.protocol.revocationnotificaiton.RevocationNotification
+import org.hyperledger.identus.credentials.core.model.{CredInStatusList, CredentialStatusListWithCreds}
+import org.hyperledger.identus.credentials.core.service.{CredentialService, CredentialStatusListService}
+import org.hyperledger.identus.credentials.vc.jwt.revocation.{BitString, VCStatusList2021, VCStatusList2021Error}
 import org.hyperledger.identus.resolvers.DIDResolver
 import org.hyperledger.identus.shared.messaging
 import org.hyperledger.identus.shared.messaging.{Message, Producer, WalletIdAndRecordId}

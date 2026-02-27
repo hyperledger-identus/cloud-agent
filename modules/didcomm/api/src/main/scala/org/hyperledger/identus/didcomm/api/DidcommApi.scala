@@ -8,38 +8,38 @@ package org.hyperledger.identus.didcomm.api
   */
 
 // Core identity type
-type DidId = org.hyperledger.identus.mercury.model.DidId
-val DidId = org.hyperledger.identus.mercury.model.DidId
+type DidId = org.hyperledger.identus.didcomm.model.DidId
+val DidId = org.hyperledger.identus.didcomm.model.DidId
 
 // Protocol URI type
-type PIURI = org.hyperledger.identus.mercury.model.PIURI
+type PIURI = org.hyperledger.identus.didcomm.model.PIURI
 
 // Core message types
-type Message = org.hyperledger.identus.mercury.model.Message
-val Message = org.hyperledger.identus.mercury.model.Message
+type Message = org.hyperledger.identus.didcomm.model.Message
+val Message = org.hyperledger.identus.didcomm.model.Message
 
-type AttachmentDescriptor = org.hyperledger.identus.mercury.model.AttachmentDescriptor
-val AttachmentDescriptor = org.hyperledger.identus.mercury.model.AttachmentDescriptor
+type AttachmentDescriptor = org.hyperledger.identus.didcomm.model.AttachmentDescriptor
+val AttachmentDescriptor = org.hyperledger.identus.didcomm.model.AttachmentDescriptor
 
 // Attachment data variants
-type AttachmentData = org.hyperledger.identus.mercury.model.AttachmentData
-type Base64 = org.hyperledger.identus.mercury.model.Base64
-val Base64 = org.hyperledger.identus.mercury.model.Base64
-type JsonData = org.hyperledger.identus.mercury.model.JsonData
-val JsonData = org.hyperledger.identus.mercury.model.JsonData
-type LinkData = org.hyperledger.identus.mercury.model.LinkData
-val LinkData = org.hyperledger.identus.mercury.model.LinkData
-type JwsData = org.hyperledger.identus.mercury.model.JwsData
-val JwsData = org.hyperledger.identus.mercury.model.JwsData
+type AttachmentData = org.hyperledger.identus.didcomm.model.AttachmentData
+type Base64 = org.hyperledger.identus.didcomm.model.Base64
+val Base64 = org.hyperledger.identus.didcomm.model.Base64
+type JsonData = org.hyperledger.identus.didcomm.model.JsonData
+val JsonData = org.hyperledger.identus.didcomm.model.JsonData
+type LinkData = org.hyperledger.identus.didcomm.model.LinkData
+val LinkData = org.hyperledger.identus.didcomm.model.LinkData
+type JwsData = org.hyperledger.identus.didcomm.model.JwsData
+val JwsData = org.hyperledger.identus.didcomm.model.JwsData
 
 // Agent types
-type DidAgent = org.hyperledger.identus.mercury.DidAgent
-type SignedMesage = org.hyperledger.identus.mercury.model.SignedMesage
-type EncryptedMessage = org.hyperledger.identus.mercury.model.EncryptedMessage
-type UnpackMessage = org.hyperledger.identus.mercury.model.UnpackMessage
+type DidAgent = org.hyperledger.identus.didcomm.DidAgent
+type SignedMesage = org.hyperledger.identus.didcomm.model.SignedMesage
+type EncryptedMessage = org.hyperledger.identus.didcomm.model.EncryptedMessage
+type UnpackMessage = org.hyperledger.identus.didcomm.model.UnpackMessage
 
 // Operations trait
-type DidOps = org.hyperledger.identus.mercury.DidOps
+type DidOps = org.hyperledger.identus.didcomm.DidOps
 
 // Media types
-val MediaTypes = org.hyperledger.identus.mercury.MediaTypes
+val MediaTypes = org.hyperledger.identus.didcomm.MediaTypes

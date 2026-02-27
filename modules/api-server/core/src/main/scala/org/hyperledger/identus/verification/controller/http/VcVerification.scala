@@ -1,8 +1,8 @@
 package org.hyperledger.identus.verification.controller.http
 
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.pollux.core.service
-import org.hyperledger.identus.pollux.core.service.verification.VcVerification as ServiceVcVerification
+import org.hyperledger.identus.credentials.core.service
+import org.hyperledger.identus.credentials.core.service.verification.VcVerification as ServiceVcVerification
 import sttp.tapir.Schema
 import sttp.tapir.Schema.annotations.description
 import zio.*

@@ -1,18 +1,18 @@
 package org.hyperledger.identus.oid4vci.service
 
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-import org.hyperledger.identus.castor.core.model.did.{DID, DIDUrl, PrismDID, VerificationRelationship}
+import org.hyperledger.identus.did.core.model.did.{DID, DIDUrl, PrismDID, VerificationRelationship}
 import org.hyperledger.identus.oid4vci.domain.{IssuanceSession, Openid4VCIProofJwtOps}
 import org.hyperledger.identus.oid4vci.http.*
 import org.hyperledger.identus.oid4vci.storage.IssuanceSessionStorage
-import org.hyperledger.identus.pollux.core.model.primitives.UriString.toUriString
-import org.hyperledger.identus.pollux.core.model.schema.CredentialSchema
-import org.hyperledger.identus.pollux.core.service.{
+import org.hyperledger.identus.credentials.core.model.primitives.UriString.toUriString
+import org.hyperledger.identus.credentials.core.model.schema.CredentialSchema
+import org.hyperledger.identus.credentials.core.service.{
   CredentialService,
   OID4VCIIssuerMetadataService,
   OID4VCIIssuerMetadataServiceError
 }
-import org.hyperledger.identus.pollux.vc.jwt.{
+import org.hyperledger.identus.credentials.vc.jwt.{
   DidResolver,
   Issuer,
   JWT,
@@ -93,7 +93,7 @@ object OIDCCredentialIssuerService {
         s"Issuance session with issuerState $issuerState is already issued"
     }
 
-    case class CredentialSchemaError(cause: org.hyperledger.identus.pollux.core.model.error.CredentialSchemaError)
+    case class CredentialSchemaError(cause: org.hyperledger.identus.credentials.core.model.error.CredentialSchemaError)
         extends Error {
       override def userFacingMessage: String = cause.userFacingMessage
     }

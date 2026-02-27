@@ -12,12 +12,12 @@ import org.hyperledger.identus.agent.walletapi.model.error.*
 import org.hyperledger.identus.agent.walletapi.model.error.given
 import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, DIDSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.agent.walletapi.util.OperationFactory
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   PrismDIDOperation,
   ScheduledDIDOperationStatus,
   SignedPrismDIDOperation
 }
-import org.hyperledger.identus.castor.core.model.did.PrismDIDOperation.Update
+import org.hyperledger.identus.did.core.model.did.PrismDIDOperation.Update
 import org.hyperledger.identus.shared.crypto.{Apollo, Ed25519KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import zio.*

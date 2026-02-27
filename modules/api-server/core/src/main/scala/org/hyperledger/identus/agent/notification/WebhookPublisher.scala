@@ -5,14 +5,14 @@ import org.hyperledger.identus.agent.notification.WebhookPublisherError.Unexpect
 import org.hyperledger.identus.agent.server.config.AppConfig
 import org.hyperledger.identus.agent.walletapi.model.ManagedDIDDetail
 import org.hyperledger.identus.agent.walletapi.service.WalletManagementService
-import org.hyperledger.identus.connect.core.model.ConnectionRecord
+import org.hyperledger.identus.connections.core.model.ConnectionRecord
 import org.hyperledger.identus.event.notification.{
   Event,
   EventConsumer,
   EventNotificationConfig,
   EventNotificationService
 }
-import org.hyperledger.identus.pollux.core.model.{IssueCredentialRecord, PresentationRecord}
+import org.hyperledger.identus.credentials.core.model.{IssueCredentialRecord, PresentationRecord}
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import zio.*
 import zio.http.*

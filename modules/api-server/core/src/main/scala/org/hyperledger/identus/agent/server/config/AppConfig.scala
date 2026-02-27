@@ -1,8 +1,8 @@
 package org.hyperledger.identus.agent.server.config
 
-import org.hyperledger.identus.castor.core.model.did.VerificationRelationship
+import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.iam.authentication.AuthenticationConfig
-import org.hyperledger.identus.pollux.vc.jwt.*
+import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.shared.db.DbConfig
 import org.hyperledger.identus.shared.messaging.MessagingServiceConfig
 import org.hyperledger.identus.shared.models.HexString

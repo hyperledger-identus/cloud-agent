@@ -1,6 +1,6 @@
 package org.hyperledger.identus.vc.anoncreds
 
-import org.hyperledger.identus.mercury.protocol.presentproof.PresentCredentialRequestFormat
+import org.hyperledger.identus.didcomm.protocol.presentproof.PresentCredentialRequestFormat
 
 /** @see
   *   https://github.com/hyperledger/aries-rfcs/blob/main/features/0771-anoncreds-attachments/README.md#proof-request-format

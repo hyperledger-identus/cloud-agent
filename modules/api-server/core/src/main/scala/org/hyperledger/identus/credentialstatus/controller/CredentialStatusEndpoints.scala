@@ -8,7 +8,7 @@ import org.hyperledger.identus.iam.authentication.apikey.ApiKeyCredentials
 import org.hyperledger.identus.iam.authentication.apikey.ApiKeyEndpointSecurityLogic.apiKeyHeader
 import org.hyperledger.identus.iam.authentication.oidc.JwtCredentials
 import org.hyperledger.identus.iam.authentication.oidc.JwtSecurityLogic.jwtAuthHeader
-import org.hyperledger.identus.pollux.core.model.DidCommID
+import org.hyperledger.identus.credentials.core.model.DidCommID
 import sttp.tapir.*
 import sttp.tapir.json.zio.jsonBody
 

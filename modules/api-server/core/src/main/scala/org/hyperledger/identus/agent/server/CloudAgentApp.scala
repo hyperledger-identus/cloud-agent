@@ -6,8 +6,8 @@ import org.hyperledger.identus.agent.server.http.{ZHttp4sBlazeServer, ZHttpEndpo
 import org.hyperledger.identus.agent.server.jobs.*
 import org.hyperledger.identus.agent.walletapi.model.{Entity, Wallet, WalletSeed}
 import org.hyperledger.identus.agent.walletapi.service.{EntityService, WalletManagementService}
-import org.hyperledger.identus.castor.controller.{DIDRegistrarServerEndpoints, DIDServerEndpoints}
-import org.hyperledger.identus.connect.controller.ConnectionServerEndpoints
+import org.hyperledger.identus.did.controller.{DIDRegistrarServerEndpoints, DIDServerEndpoints}
+import org.hyperledger.identus.connections.controller.ConnectionServerEndpoints
 import org.hyperledger.identus.credentialstatus.controller.CredentialStatusServiceEndpoints
 import org.hyperledger.identus.event.controller.EventServerEndpoints
 import org.hyperledger.identus.event.notification.EventNotificationConfig
@@ -16,12 +16,12 @@ import org.hyperledger.identus.iam.entity.http.EntityServerEndpoints
 import org.hyperledger.identus.iam.wallet.http.WalletManagementServerEndpoints
 import org.hyperledger.identus.issue.controller.IssueServerEndpoints
 import org.hyperledger.identus.oid4vci.CredentialIssuerServerEndpoints
-import org.hyperledger.identus.pollux.credentialdefinition.CredentialDefinitionRegistryServerEndpoints
-import org.hyperledger.identus.pollux.credentialschema.{
+import org.hyperledger.identus.credentials.credentialdefinition.CredentialDefinitionRegistryServerEndpoints
+import org.hyperledger.identus.credentials.credentialschema.{
   SchemaRegistryServerEndpoints,
   VerificationPolicyServerEndpoints
 }
-import org.hyperledger.identus.pollux.prex.PresentationExchangeServerEndpoints
+import org.hyperledger.identus.credentials.prex.PresentationExchangeServerEndpoints
 import org.hyperledger.identus.presentproof.controller.PresentProofServerEndpoints
 import org.hyperledger.identus.shared.models.*
 import org.hyperledger.identus.system.controller.SystemServerEndpoints

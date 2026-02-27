@@ -2,7 +2,7 @@ package org.hyperledger.identus.agent.walletapi.util
 
 import org.hyperledger.identus.agent.walletapi.model.ManagedDIDTemplate
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   EllipticCurve,
   InternalKeyPurpose,
   Service as DidDocumentService,

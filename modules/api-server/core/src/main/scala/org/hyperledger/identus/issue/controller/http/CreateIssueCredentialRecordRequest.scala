@@ -2,7 +2,7 @@ package org.hyperledger.identus.issue.controller.http
 
 import org.hyperledger.identus.api.http.Annotation
 import org.hyperledger.identus.issue.controller.http.CreateIssueCredentialRecordRequest.annotations
-import org.hyperledger.identus.pollux.core.model.primitives.UriString
+import org.hyperledger.identus.credentials.core.model.primitives.UriString
 import org.hyperledger.identus.shared.models.KeyId
 import sttp.tapir.{Schema, Validator}
 import sttp.tapir.json.zio.schemaForZioJsonValue
@@ -110,7 +110,7 @@ object CredentialSchemaRef {
           example = "JsonSchema"
         )
   }
-  import org.hyperledger.identus.pollux.core.model.schema as domain
+  import org.hyperledger.identus.credentials.core.model.schema as domain
 
   def toDomain(ref: CredentialSchemaRef): Either[String, domain.CredentialSchemaRef] = {
     domain.CredentialSchemaRefType.values

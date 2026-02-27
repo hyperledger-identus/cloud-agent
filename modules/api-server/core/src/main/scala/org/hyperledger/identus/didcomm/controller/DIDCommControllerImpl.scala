@@ -5,19 +5,19 @@ import org.hyperledger.identus.agent.server.DidCommHttpServerError.DIDCommMessag
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
-import org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
-import org.hyperledger.identus.connect.core.service.ConnectionService
+import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
+import org.hyperledger.identus.connections.core.service.ConnectionService
 import org.hyperledger.identus.didcomm.controller.http.DIDCommMessage
 import org.hyperledger.identus.didcomm.controller.DIDCommControllerError.*
-import org.hyperledger.identus.mercury.*
-import org.hyperledger.identus.mercury.model.*
-import org.hyperledger.identus.mercury.protocol.connection.{ConnectionRequest, ConnectionResponse}
-import org.hyperledger.identus.mercury.protocol.issuecredential.*
-import org.hyperledger.identus.mercury.protocol.presentproof.*
-import org.hyperledger.identus.mercury.protocol.revocationnotificaiton.RevocationNotification
-import org.hyperledger.identus.mercury.DidOps.*
-import org.hyperledger.identus.pollux.core.model.error.{CredentialServiceError, PresentationError}
-import org.hyperledger.identus.pollux.core.service.{CredentialService, PresentationService}
+import org.hyperledger.identus.didcomm.*
+import org.hyperledger.identus.didcomm.model.*
+import org.hyperledger.identus.didcomm.protocol.connection.{ConnectionRequest, ConnectionResponse}
+import org.hyperledger.identus.didcomm.protocol.issuecredential.*
+import org.hyperledger.identus.didcomm.protocol.presentproof.*
+import org.hyperledger.identus.didcomm.protocol.revocationnotificaiton.RevocationNotification
+import org.hyperledger.identus.didcomm.DidOps.*
+import org.hyperledger.identus.credentials.core.model.error.{CredentialServiceError, PresentationError}
+import org.hyperledger.identus.credentials.core.service.{CredentialService, PresentationService}
 import org.hyperledger.identus.shared.models.{Failure, StatusCode, WalletAccessContext}
 import zio.*
 import zio.json.*

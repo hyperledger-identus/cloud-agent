@@ -15,11 +15,11 @@ import org.hyperledger.identus.agent.walletapi.sql.{
   JdbcEntityRepository,
   JdbcWalletNonSecretStorage
 }
-import org.hyperledger.identus.castor.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
-import org.hyperledger.identus.castor.core.util.DIDOperationValidator
-import org.hyperledger.identus.connect.controller.ConnectionControllerImpl
-import org.hyperledger.identus.connect.core.service.{ConnectionServiceImpl, ConnectionServiceNotifier}
-import org.hyperledger.identus.connect.sql.repository.{JdbcConnectionRepository, Migrations as ConnectMigrations}
+import org.hyperledger.identus.did.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
+import org.hyperledger.identus.did.core.util.DIDOperationValidator
+import org.hyperledger.identus.connections.controller.ConnectionControllerImpl
+import org.hyperledger.identus.connections.core.service.{ConnectionServiceImpl, ConnectionServiceNotifier}
+import org.hyperledger.identus.connections.sql.repository.{JdbcConnectionRepository, Migrations as ConnectMigrations}
 import org.hyperledger.identus.credentialstatus.controller.CredentialStatusControllerImpl
 import org.hyperledger.identus.didcomm.controller.DIDCommControllerImpl
 import org.hyperledger.identus.event.controller.EventControllerImpl
@@ -31,20 +31,20 @@ import org.hyperledger.identus.iam.authorization.DefaultPermissionManagementServ
 import org.hyperledger.identus.iam.entity.http.controller.EntityControllerImpl
 import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementControllerImpl
 import org.hyperledger.identus.issue.controller.IssueControllerImpl
-import org.hyperledger.identus.mercury.*
+import org.hyperledger.identus.didcomm.*
 import org.hyperledger.identus.oid4vci.controller.CredentialIssuerControllerImpl
 import org.hyperledger.identus.oid4vci.service.OIDCCredentialIssuerServiceImpl
 import org.hyperledger.identus.oid4vci.storage.InMemoryIssuanceSessionService
-import org.hyperledger.identus.pollux.core.service.*
-import org.hyperledger.identus.pollux.core.service.verification.VcVerificationServiceImpl
-import org.hyperledger.identus.pollux.credentialdefinition.controller.CredentialDefinitionControllerImpl
-import org.hyperledger.identus.pollux.credentialschema.controller.{
+import org.hyperledger.identus.credentials.core.service.*
+import org.hyperledger.identus.credentials.core.service.verification.VcVerificationServiceImpl
+import org.hyperledger.identus.credentials.credentialdefinition.controller.CredentialDefinitionControllerImpl
+import org.hyperledger.identus.credentials.credentialschema.controller.{
   CredentialSchemaControllerImpl,
   VerificationPolicyControllerImpl
 }
-import org.hyperledger.identus.pollux.prex.controller.PresentationExchangeControllerImpl
-import org.hyperledger.identus.pollux.prex.PresentationDefinitionValidatorImpl
-import org.hyperledger.identus.pollux.sql.repository.{
+import org.hyperledger.identus.credentials.prex.controller.PresentationExchangeControllerImpl
+import org.hyperledger.identus.credentials.prex.PresentationDefinitionValidatorImpl
+import org.hyperledger.identus.credentials.sql.repository.{
   JdbcCredentialDefinitionRepository,
   JdbcCredentialRepository,
   JdbcCredentialSchemaRepository,

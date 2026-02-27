@@ -22,14 +22,14 @@ import org.hyperledger.identus.agent.walletapi.sql.{
 }
 import org.hyperledger.identus.agent.walletapi.storage.{DIDSecretStorage, GenericSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.agent.walletapi.vault.*
-import org.hyperledger.identus.castor.core.service.{
+import org.hyperledger.identus.did.core.service.{
   DIDService,
   NeoPrismClientImpl,
   NeoPrismConfig,
   NeoPrismDIDService,
   PrismNodeDIDService
 }
-import org.hyperledger.identus.castor.core.util.DIDOperationValidator
+import org.hyperledger.identus.did.core.util.DIDOperationValidator
 import org.hyperledger.identus.iam.authentication.admin.{
   AdminApiKeyAuthenticator,
   AdminApiKeyAuthenticatorImpl,
@@ -50,7 +50,7 @@ import org.hyperledger.identus.iam.authentication.oidc.{
 }
 import org.hyperledger.identus.iam.authorization.core.PermissionManagementService
 import org.hyperledger.identus.iam.authorization.keycloak.admin.KeycloakPermissionManagementService
-import org.hyperledger.identus.pollux.vc.jwt.{DidResolver as JwtDidResolver, PrismDidResolver}
+import org.hyperledger.identus.credentials.vc.jwt.{DidResolver as JwtDidResolver, PrismDidResolver}
 import org.hyperledger.identus.shared.crypto.Apollo
 import org.hyperledger.identus.shared.db.{ContextAwareTask, DbConfig, TransactorLayer}
 import org.hyperledger.identus.shared.models.KeyId

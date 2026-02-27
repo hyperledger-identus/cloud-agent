@@ -5,16 +5,16 @@ import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
 import org.hyperledger.identus.agent.walletapi.model.PublicationState.Published
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.castor.core.model.did.{LongFormPrismDID, PrismDID}
-import org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
-import org.hyperledger.identus.connect.core.model.error.ConnectionServiceError.{
+import org.hyperledger.identus.did.core.model.did.{LongFormPrismDID, PrismDID}
+import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
+import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError.{
   InvalidStateForOperation,
   RecordIdNotFound
 }
-import org.hyperledger.identus.connect.core.model.ConnectionRecord
-import org.hyperledger.identus.connect.core.model.ConnectionRecord.{ProtocolState, Role}
-import org.hyperledger.identus.connect.core.service.ConnectionService
-import org.hyperledger.identus.mercury.model.*
+import org.hyperledger.identus.connections.core.model.ConnectionRecord
+import org.hyperledger.identus.connections.core.model.ConnectionRecord.{ProtocolState, Role}
+import org.hyperledger.identus.connections.core.service.ConnectionService
+import org.hyperledger.identus.didcomm.model.*
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import zio.*
 
@@ -53,9 +53,9 @@ trait ControllerHelper {
 
   protected def extractDidCommIdFromString(
       maybeDidCommId: String
-  ): IO[ErrorResponse, org.hyperledger.identus.pollux.core.model.DidCommID] =
+  ): IO[ErrorResponse, org.hyperledger.identus.credentials.core.model.DidCommID] =
     ZIO
-      .fromTry(Try(org.hyperledger.identus.pollux.core.model.DidCommID(maybeDidCommId)))
+      .fromTry(Try(org.hyperledger.identus.credentials.core.model.DidCommID(maybeDidCommId)))
       .mapError(e => ErrorResponse.badRequest(detail = Some(s"Error parsing string as DidCommID: ${e.getMessage}")))
 
   protected def extractPrismDIDFromString(maybeDid: String): IO[ErrorResponse, PrismDID] =

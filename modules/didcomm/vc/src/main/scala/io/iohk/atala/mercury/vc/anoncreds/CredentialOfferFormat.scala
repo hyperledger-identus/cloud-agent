@@ -1,6 +1,6 @@
 package org.hyperledger.identus.vc.anoncreds
 
-import org.hyperledger.identus.mercury.protocol.issuecredential.IssueCredentialOfferFormat
+import org.hyperledger.identus.didcomm.protocol.issuecredential.IssueCredentialOfferFormat
 
 /** @see
   *   https://github.com/hyperledger/aries-rfcs/blob/main/features/0771-anoncreds-attachments/README.md#credential-offer-format

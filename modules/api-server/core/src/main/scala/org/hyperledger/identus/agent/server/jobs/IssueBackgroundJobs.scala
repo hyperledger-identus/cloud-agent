@@ -4,10 +4,10 @@ import org.hyperledger.identus.agent.server.config.AppConfig
 import org.hyperledger.identus.agent.server.jobs.BackgroundJobError.ErrorResponseReceivedFromPeerAgent
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-import org.hyperledger.identus.mercury.*
-import org.hyperledger.identus.pollux.core.model.*
-import org.hyperledger.identus.pollux.core.model.error.CredentialServiceError
-import org.hyperledger.identus.pollux.core.service.CredentialService
+import org.hyperledger.identus.didcomm.*
+import org.hyperledger.identus.credentials.core.model.*
+import org.hyperledger.identus.credentials.core.model.error.CredentialServiceError
+import org.hyperledger.identus.credentials.core.service.CredentialService
 import org.hyperledger.identus.resolvers.DIDResolver
 import org.hyperledger.identus.shared.messaging
 import org.hyperledger.identus.shared.messaging.{Message, WalletIdAndRecordId}

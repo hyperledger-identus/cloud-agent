@@ -1,7 +1,7 @@
 package org.hyperledger.identus.presentproof.controller.http
 
 import org.hyperledger.identus.api.http.Annotation
-import org.hyperledger.identus.pollux.core.service.serdes.*
+import org.hyperledger.identus.credentials.core.service.serdes.*
 import org.hyperledger.identus.presentproof.controller.http.RequestPresentationAction.annotations
 import sttp.tapir.{Schema, Validator}
 import sttp.tapir.json.zio.*

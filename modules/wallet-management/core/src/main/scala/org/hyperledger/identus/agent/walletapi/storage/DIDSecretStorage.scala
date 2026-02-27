@@ -1,8 +1,8 @@
 package org.hyperledger.identus.agent.walletapi.storage
 
 import com.nimbusds.jose.jwk.OctetKeyPair
-import org.hyperledger.identus.castor.core.model.did.PrismDID
-import org.hyperledger.identus.mercury.model.DidId
+import org.hyperledger.identus.did.core.model.did.PrismDID
+import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.shared.crypto.jwk.{FromJWK, JWK}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import zio.*

@@ -45,8 +45,8 @@ trait PresentProofController {
 }
 
 object PresentProofController {
-  def toDidCommID(str: String): ZIO[Any, ErrorResponse, org.hyperledger.identus.pollux.core.model.DidCommID] =
+  def toDidCommID(str: String): ZIO[Any, ErrorResponse, org.hyperledger.identus.credentials.core.model.DidCommID] =
     ZIO
-      .fromTry(Try(org.hyperledger.identus.pollux.core.model.DidCommID(str)))
+      .fromTry(Try(org.hyperledger.identus.credentials.core.model.DidCommID(str)))
       .mapError(e => ErrorResponse.badRequest(s"Error parsing string as DidCommID: ${e.getMessage}"))
 }

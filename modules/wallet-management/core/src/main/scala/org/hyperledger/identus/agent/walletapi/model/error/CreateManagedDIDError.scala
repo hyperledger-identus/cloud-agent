@@ -1,7 +1,7 @@
 package org.hyperledger.identus.agent.walletapi.model.error
 
-import org.hyperledger.identus.castor.core.model.error.OperationValidationError
-import org.hyperledger.identus.castor.core.model.error as castor
+import org.hyperledger.identus.did.core.model.error.OperationValidationError
+import org.hyperledger.identus.did.core.model.error as castor
 
 sealed trait CreateManagedDIDError extends Throwable
 

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.agent.walletapi.model.error
 
-import org.hyperledger.identus.castor.core.model.error.{DIDOperationError, DIDResolutionError}
+import org.hyperledger.identus.did.core.model.error.{DIDOperationError, DIDResolutionError}
 
 sealed trait GetManagedDIDError
 

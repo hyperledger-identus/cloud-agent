@@ -1,6 +1,6 @@
 package org.hyperledger.identus.oid4vci.domain
 
-import org.hyperledger.identus.castor.core.model.did.{DID, PrismDID}
+import org.hyperledger.identus.did.core.model.did.{DID, PrismDID}
 
 import java.util.UUID
 

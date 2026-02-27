@@ -10,22 +10,22 @@ import org.hyperledger.identus.agent.server.jobs.BackgroundJobError.{
 import org.hyperledger.identus.agent.walletapi.model.error.{DIDSecretStorageError, GetManagedDIDError}
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-import org.hyperledger.identus.castor.core.model.did.*
-import org.hyperledger.identus.castor.core.model.error.DIDResolutionError as CastorDIDResolutionError
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.mercury.*
-import org.hyperledger.identus.mercury.model.*
-import org.hyperledger.identus.mercury.protocol.invitation.v2.Invitation
-import org.hyperledger.identus.mercury.protocol.presentproof.*
-import org.hyperledger.identus.mercury.protocol.reportproblem.v2.{ProblemCode, ReportProblem}
-import org.hyperledger.identus.pollux.core.model.{presentation, *}
-import org.hyperledger.identus.pollux.core.model.error.{CredentialServiceError, PresentationError}
-import org.hyperledger.identus.pollux.core.model.error.PresentationError.*
-import org.hyperledger.identus.pollux.core.model.presentation.Options
-import org.hyperledger.identus.pollux.core.service.{CredentialService, PresentationService}
-import org.hyperledger.identus.pollux.core.service.serdes.AnoncredCredentialProofsV1
-import org.hyperledger.identus.pollux.sdjwt.{HolderPrivateKey, IssuerPublicKey, PresentationCompact, SDJWT}
-import org.hyperledger.identus.pollux.vc.jwt.{
+import org.hyperledger.identus.did.core.model.did.*
+import org.hyperledger.identus.did.core.model.error.DIDResolutionError as CastorDIDResolutionError
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.didcomm.*
+import org.hyperledger.identus.didcomm.model.*
+import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
+import org.hyperledger.identus.didcomm.protocol.presentproof.*
+import org.hyperledger.identus.didcomm.protocol.reportproblem.v2.{ProblemCode, ReportProblem}
+import org.hyperledger.identus.credentials.core.model.{presentation, *}
+import org.hyperledger.identus.credentials.core.model.error.{CredentialServiceError, PresentationError}
+import org.hyperledger.identus.credentials.core.model.error.PresentationError.*
+import org.hyperledger.identus.credentials.core.model.presentation.Options
+import org.hyperledger.identus.credentials.core.service.{CredentialService, PresentationService}
+import org.hyperledger.identus.credentials.core.service.serdes.AnoncredCredentialProofsV1
+import org.hyperledger.identus.credentials.sdjwt.{HolderPrivateKey, IssuerPublicKey, PresentationCompact, SDJWT}
+import org.hyperledger.identus.credentials.vc.jwt.{
   CredentialSchemaAndTrustedIssuersConstraint,
   DidResolver as JwtDidResolver,
   Issuer as JwtIssuer,
@@ -103,7 +103,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
     .fromConst(1)
 
   private def performPresentProofExchange(record: PresentationRecord): ZIO[RESOURCES, ERROR, Unit] = {
-    import org.hyperledger.identus.pollux.core.model.PresentationRecord.ProtocolState.*
+    import org.hyperledger.identus.credentials.core.model.PresentationRecord.ProtocolState.*
     val exchange = for {
       _ <- ZIO.logDebug(s"Running action with records => $record")
       _ <- record match {
@@ -1142,7 +1142,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
                         .fromJson[JsonData]
                         .leftMap(err => PresentationDecodingError(s"JsonData decoding error: $err"))
                         .flatMap(data =>
-                          org.hyperledger.identus.pollux.core.model.presentation.PresentationAttachment.given_JsonDecoder_PresentationAttachment
+                          org.hyperledger.identus.credentials.core.model.presentation.PresentationAttachment.given_JsonDecoder_PresentationAttachment
                             .decodeJson(data.json.toJson)
                             .map(_.options)
                             .leftMap(err => PresentationDecodingError(s"PresentationAttachment decoding error: $err"))

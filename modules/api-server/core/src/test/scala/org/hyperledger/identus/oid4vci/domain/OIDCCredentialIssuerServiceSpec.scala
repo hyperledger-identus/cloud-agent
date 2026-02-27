@@ -4,20 +4,20 @@ import com.nimbusds.jose.*
 import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
 import org.hyperledger.identus.agent.walletapi.service.{ManagedDIDService, MockManagedDIDService}
 import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, MockDIDNonSecretStorage}
-import org.hyperledger.identus.castor.core.model.did.{DID, PrismDID, VerificationRelationship}
-import org.hyperledger.identus.castor.core.service.{DIDService, MockDIDService}
+import org.hyperledger.identus.did.core.model.did.{DID, PrismDID, VerificationRelationship}
+import org.hyperledger.identus.did.core.service.{DIDService, MockDIDService}
 import org.hyperledger.identus.oid4vci.http.{ClaimDescriptor, CredentialDefinition, Localization}
 import org.hyperledger.identus.oid4vci.service.{OIDCCredentialIssuerService, OIDCCredentialIssuerServiceImpl}
 import org.hyperledger.identus.oid4vci.storage.InMemoryIssuanceSessionService
-import org.hyperledger.identus.pollux.core.model.oid4vci.CredentialConfiguration
-import org.hyperledger.identus.pollux.core.model.CredentialFormat
-import org.hyperledger.identus.pollux.core.repository.{
+import org.hyperledger.identus.credentials.core.model.oid4vci.CredentialConfiguration
+import org.hyperledger.identus.credentials.core.model.CredentialFormat
+import org.hyperledger.identus.credentials.core.repository.{
   CredentialRepositoryInMemory,
   CredentialStatusListRepositoryInMemory
 }
-import org.hyperledger.identus.pollux.core.service.*
-import org.hyperledger.identus.pollux.core.service.uriResolvers.ResourceUrlResolver
-import org.hyperledger.identus.pollux.vc.jwt.PrismDidResolver
+import org.hyperledger.identus.credentials.core.service.*
+import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver
+import org.hyperledger.identus.credentials.vc.jwt.PrismDidResolver
 import org.hyperledger.identus.shared.messaging.{MessagingService, MessagingServiceConfig, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import zio.{Clock, Random, URLayer, ZIO, ZLayer}

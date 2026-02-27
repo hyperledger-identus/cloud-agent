@@ -5,17 +5,17 @@ import org.hyperledger.identus.agent.server.ControllerHelper
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
-import org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
-import org.hyperledger.identus.connect.core.service.ConnectionService
-import org.hyperledger.identus.mercury.model.DidId
-import org.hyperledger.identus.mercury.protocol.presentproof.{PresentCredentialRequestFormat, ProofType}
-import org.hyperledger.identus.pollux.core.model.{CredentialFormat, DidCommID, PresentationRecord}
-import org.hyperledger.identus.pollux.core.model.error.PresentationError
-import org.hyperledger.identus.pollux.core.model.error.PresentationError.UnsupportedCredentialFormatBecauseDisabled
-import org.hyperledger.identus.pollux.core.model.presentation.Options
-import org.hyperledger.identus.pollux.core.model.CredentialFormat.{AnonCreds, JWT, SDJWT}
-import org.hyperledger.identus.pollux.core.service.serdes.AnoncredPresentationRequestV1
-import org.hyperledger.identus.pollux.core.service.PresentationService
+import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
+import org.hyperledger.identus.connections.core.service.ConnectionService
+import org.hyperledger.identus.didcomm.model.DidId
+import org.hyperledger.identus.didcomm.protocol.presentproof.{PresentCredentialRequestFormat, ProofType}
+import org.hyperledger.identus.credentials.core.model.{CredentialFormat, DidCommID, PresentationRecord}
+import org.hyperledger.identus.credentials.core.model.error.PresentationError
+import org.hyperledger.identus.credentials.core.model.error.PresentationError.UnsupportedCredentialFormatBecauseDisabled
+import org.hyperledger.identus.credentials.core.model.presentation.Options
+import org.hyperledger.identus.credentials.core.model.CredentialFormat.{AnonCreds, JWT, SDJWT}
+import org.hyperledger.identus.credentials.core.service.serdes.AnoncredPresentationRequestV1
+import org.hyperledger.identus.credentials.core.service.PresentationService
 import org.hyperledger.identus.presentproof.controller.http.*
 import org.hyperledger.identus.presentproof.controller.PresentProofController.toDidCommID
 import org.hyperledger.identus.shared.models.WalletAccessContext

@@ -5,21 +5,21 @@ import org.hyperledger.identus.agent.walletapi.model.error.DIDSecretStorageError
 import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   EllipticCurve,
   LongFormPrismDID,
   PrismDID,
   VerificationRelationship
 }
-import org.hyperledger.identus.castor.core.model.error.DIDResolutionError
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.mercury.{AgentPeerService, DidAgent}
-import org.hyperledger.identus.mercury.model.DidId
-import org.hyperledger.identus.mercury.protocol.invitation.v2.Invitation
-import org.hyperledger.identus.pollux.core.model.error.{CredentialServiceError, PresentationError}
-import org.hyperledger.identus.pollux.core.model.DidCommID
-import org.hyperledger.identus.pollux.core.service.CredentialService
-import org.hyperledger.identus.pollux.vc.jwt.{
+import org.hyperledger.identus.did.core.model.error.DIDResolutionError
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.didcomm.{AgentPeerService, DidAgent}
+import org.hyperledger.identus.didcomm.model.DidId
+import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
+import org.hyperledger.identus.credentials.core.model.error.{CredentialServiceError, PresentationError}
+import org.hyperledger.identus.credentials.core.model.DidCommID
+import org.hyperledger.identus.credentials.core.service.CredentialService
+import org.hyperledger.identus.credentials.vc.jwt.{
   DIDResolutionFailed,
   DIDResolutionSucceeded,
   DidResolver as JwtDidResolver,
@@ -105,7 +105,7 @@ trait BackgroundJobsHelper {
             ZIO.succeed(
               JwtIssuer(
                 jwtIssuerDID.did,
-                // org.hyperledger.identus.castor.core.model.did.DID.fromStringUnsafe(jwtIssuerDID.toString),
+                // org.hyperledger.identus.did.core.model.did.DID.fromStringUnsafe(jwtIssuerDID.toString),
                 EdSigner(Ed25519KeyPair(publicKey, privateKey), Some(issuingKeyId)),
                 publicKey.toJava
               )

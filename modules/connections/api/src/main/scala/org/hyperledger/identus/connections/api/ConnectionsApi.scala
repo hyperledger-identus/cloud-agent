@@ -8,17 +8,17 @@ package org.hyperledger.identus.connections.api
   */
 
 // Service trait
-type ConnectionService = org.hyperledger.identus.connect.core.service.ConnectionService
+type ConnectionService = org.hyperledger.identus.connections.core.service.ConnectionService
 
 // Repository trait
-type ConnectionRepository = org.hyperledger.identus.connect.core.repository.ConnectionRepository
+type ConnectionRepository = org.hyperledger.identus.connections.core.repository.ConnectionRepository
 
 // Core model types
-type ConnectionRecord = org.hyperledger.identus.connect.core.model.ConnectionRecord
-val ConnectionRecord = org.hyperledger.identus.connect.core.model.ConnectionRecord
+type ConnectionRecord = org.hyperledger.identus.connections.core.model.ConnectionRecord
+val ConnectionRecord = org.hyperledger.identus.connections.core.model.ConnectionRecord
 
-type ConnectionRecordBeforeStored = org.hyperledger.identus.connect.core.model.ConnectionRecordBeforeStored
+type ConnectionRecordBeforeStored = org.hyperledger.identus.connections.core.model.ConnectionRecordBeforeStored
 
 // Error types
-type ConnectionServiceError = org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
-val ConnectionServiceError = org.hyperledger.identus.connect.core.model.error.ConnectionServiceError
+type ConnectionServiceError = org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
+val ConnectionServiceError = org.hyperledger.identus.connections.core.model.error.ConnectionServiceError

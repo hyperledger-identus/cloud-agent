@@ -6,14 +6,14 @@ import org.hyperledger.identus.agent.walletapi.service.handler.{DIDCreateHandler
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService.DEFAULT_MASTER_KEY_ID
 import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, DIDSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.agent.walletapi.util.*
-import org.hyperledger.identus.castor.core.model.did.*
-import org.hyperledger.identus.castor.core.model.did.InternalKeyPurpose
-import org.hyperledger.identus.castor.core.model.did.Service as DidDocumentService
-import org.hyperledger.identus.castor.core.model.error.DIDOperationError
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.castor.core.util.DIDOperationValidator
-import org.hyperledger.identus.mercury.model.DidId
-import org.hyperledger.identus.mercury.PeerDID
+import org.hyperledger.identus.did.core.model.did.*
+import org.hyperledger.identus.did.core.model.did.InternalKeyPurpose
+import org.hyperledger.identus.did.core.model.did.Service as DidDocumentService
+import org.hyperledger.identus.did.core.model.error.DIDOperationError
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.did.core.util.DIDOperationValidator
+import org.hyperledger.identus.didcomm.model.DidId
+import org.hyperledger.identus.didcomm.PeerDID
 import org.hyperledger.identus.shared.crypto.{Apollo, Ed25519KeyPair, Secp256k1KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import zio.*

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.resolvers
 
-import org.hyperledger.identus.mercury.model.DidId
+import org.hyperledger.identus.didcomm.model.DidId
 
 object DidValidator extends DidValidator
 trait DidValidator {

@@ -7,24 +7,24 @@ package org.hyperledger.identus.did.api
   */
 
 // Service trait
-type DIDService = org.hyperledger.identus.castor.core.service.DIDService
+type DIDService = org.hyperledger.identus.did.core.service.DIDService
 
 // Error types
-type DIDOperationError = org.hyperledger.identus.castor.core.model.error.DIDOperationError
-val DIDOperationError = org.hyperledger.identus.castor.core.model.error.DIDOperationError
+type DIDOperationError = org.hyperledger.identus.did.core.model.error.DIDOperationError
+val DIDOperationError = org.hyperledger.identus.did.core.model.error.DIDOperationError
 
-type DIDResolutionError = org.hyperledger.identus.castor.core.model.error.DIDResolutionError
-val DIDResolutionError = org.hyperledger.identus.castor.core.model.error.DIDResolutionError
+type DIDResolutionError = org.hyperledger.identus.did.core.model.error.DIDResolutionError
+val DIDResolutionError = org.hyperledger.identus.did.core.model.error.DIDResolutionError
 
-type OperationValidationError = org.hyperledger.identus.castor.core.model.error.OperationValidationError
-val OperationValidationError = org.hyperledger.identus.castor.core.model.error.OperationValidationError
+type OperationValidationError = org.hyperledger.identus.did.core.model.error.OperationValidationError
+val OperationValidationError = org.hyperledger.identus.did.core.model.error.OperationValidationError
 
 // Core model types
-type PrismDID = org.hyperledger.identus.castor.core.model.did.PrismDID
-type CanonicalPrismDID = org.hyperledger.identus.castor.core.model.did.CanonicalPrismDID
-type LongFormPrismDID = org.hyperledger.identus.castor.core.model.did.LongFormPrismDID
-type DIDData = org.hyperledger.identus.castor.core.model.did.DIDData
-type DIDMetadata = org.hyperledger.identus.castor.core.model.did.DIDMetadata
-type ScheduleDIDOperationOutcome = org.hyperledger.identus.castor.core.model.did.ScheduleDIDOperationOutcome
-type ScheduledDIDOperationDetail = org.hyperledger.identus.castor.core.model.did.ScheduledDIDOperationDetail
-type SignedPrismDIDOperation = org.hyperledger.identus.castor.core.model.did.SignedPrismDIDOperation
+type PrismDID = org.hyperledger.identus.did.core.model.did.PrismDID
+type CanonicalPrismDID = org.hyperledger.identus.did.core.model.did.CanonicalPrismDID
+type LongFormPrismDID = org.hyperledger.identus.did.core.model.did.LongFormPrismDID
+type DIDData = org.hyperledger.identus.did.core.model.did.DIDData
+type DIDMetadata = org.hyperledger.identus.did.core.model.did.DIDMetadata
+type ScheduleDIDOperationOutcome = org.hyperledger.identus.did.core.model.did.ScheduleDIDOperationOutcome
+type ScheduledDIDOperationDetail = org.hyperledger.identus.did.core.model.did.ScheduledDIDOperationDetail
+type SignedPrismDIDOperation = org.hyperledger.identus.did.core.model.did.SignedPrismDIDOperation

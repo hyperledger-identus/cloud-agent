@@ -10,15 +10,15 @@ import org.hyperledger.identus.agent.walletapi.model.error.{
 import org.hyperledger.identus.agent.walletapi.sql.*
 import org.hyperledger.identus.agent.walletapi.storage.*
 import org.hyperledger.identus.agent.walletapi.vault.{VaultDIDSecretStorage, VaultWalletSecretStorage}
-import org.hyperledger.identus.castor.core.model.did.*
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.*
+import org.hyperledger.identus.did.core.model.did.{
   Service as DidDocumentService,
   ServiceEndpoint as DidDocumentServiceEndpoint,
   ServiceType as DidDocumentServiceType
 }
-import org.hyperledger.identus.castor.core.model.error
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.castor.core.util.DIDOperationValidator
+import org.hyperledger.identus.did.core.model.error
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.did.core.util.DIDOperationValidator
 import org.hyperledger.identus.shared.crypto.{ApolloSpecHelper, Ed25519KeyPair, Secp256k1KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletAdministrationContext}
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport

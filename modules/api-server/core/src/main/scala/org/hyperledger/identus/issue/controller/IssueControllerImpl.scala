@@ -8,15 +8,15 @@ import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.{CollectionStats, PaginationInput}
 import org.hyperledger.identus.api.util.PaginationUtils
-import org.hyperledger.identus.castor.core.model.did.{DIDUrl, PrismDID, VerificationRelationship}
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.connect.core.service.ConnectionService
+import org.hyperledger.identus.did.core.model.did.{DIDUrl, PrismDID, VerificationRelationship}
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.connections.core.service.ConnectionService
 import org.hyperledger.identus.issue.controller.http.*
-import org.hyperledger.identus.mercury.model.DidId
-import org.hyperledger.identus.pollux.core.model.{CredentialFormat, DidCommID, ResourceResolutionMethod}
-import org.hyperledger.identus.pollux.core.model.CredentialFormat.{AnonCreds, JWT, SDJWT}
-import org.hyperledger.identus.pollux.core.model.IssueCredentialRecord.Role
-import org.hyperledger.identus.pollux.core.service.{CredentialDefinitionService, CredentialService}
+import org.hyperledger.identus.didcomm.model.DidId
+import org.hyperledger.identus.credentials.core.model.{CredentialFormat, DidCommID, ResourceResolutionMethod}
+import org.hyperledger.identus.credentials.core.model.CredentialFormat.{AnonCreds, JWT, SDJWT}
+import org.hyperledger.identus.credentials.core.model.IssueCredentialRecord.Role
+import org.hyperledger.identus.credentials.core.service.{CredentialDefinitionService, CredentialService}
 import org.hyperledger.identus.shared.crypto.Sha256Hash
 import org.hyperledger.identus.shared.json.Json as JsonUtils
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}

@@ -1,13 +1,13 @@
 package org.hyperledger.identus.agent.notification
 
 import org.hyperledger.identus.agent.walletapi.model.ManagedDIDDetail
-import org.hyperledger.identus.castor.controller.http.ManagedDID
-import org.hyperledger.identus.castor.controller.http.ManagedDID.*
-import org.hyperledger.identus.connect.controller.http.Connection
-import org.hyperledger.identus.connect.core.model.ConnectionRecord
+import org.hyperledger.identus.did.controller.http.ManagedDID
+import org.hyperledger.identus.did.controller.http.ManagedDID.*
+import org.hyperledger.identus.connections.controller.http.Connection
+import org.hyperledger.identus.connections.core.model.ConnectionRecord
 import org.hyperledger.identus.event.notification.Event
 import org.hyperledger.identus.issue.controller.http.IssueCredentialRecord
-import org.hyperledger.identus.pollux.core.model.{
+import org.hyperledger.identus.credentials.core.model.{
   IssueCredentialRecord as PolluxIssueCredentialRecord,
   PresentationRecord as PolluxPresentationRecord
 }

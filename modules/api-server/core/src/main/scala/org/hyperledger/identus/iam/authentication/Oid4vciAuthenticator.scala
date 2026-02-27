@@ -9,7 +9,7 @@ import org.hyperledger.identus.iam.authentication.oidc.{
   RemoteOauth2TokenIntrospector
 }
 import org.hyperledger.identus.oid4vci.service.OIDCCredentialIssuerService
-import org.hyperledger.identus.pollux.core.service.OID4VCIIssuerMetadataService
+import org.hyperledger.identus.credentials.core.service.OID4VCIIssuerMetadataService
 import zio.*
 import zio.http.Client
 

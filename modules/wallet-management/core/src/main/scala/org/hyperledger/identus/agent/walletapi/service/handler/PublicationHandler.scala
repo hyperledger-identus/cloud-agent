@@ -3,13 +3,13 @@ package org.hyperledger.identus.agent.walletapi.service.handler
 import org.hyperledger.identus.agent.walletapi.model.error.{CommonCryptographyError, CommonWalletStorageError}
 import org.hyperledger.identus.agent.walletapi.model.ManagedDIDState
 import org.hyperledger.identus.agent.walletapi.util.KeyResolver
-import org.hyperledger.identus.castor.core.model.did.{
+import org.hyperledger.identus.did.core.model.did.{
   PrismDIDOperation,
   ScheduleDIDOperationOutcome,
   SignedPrismDIDOperation
 }
-import org.hyperledger.identus.castor.core.model.error.DIDOperationError
-import org.hyperledger.identus.castor.core.service.DIDService
+import org.hyperledger.identus.did.core.model.error.DIDOperationError
+import org.hyperledger.identus.did.core.service.DIDService
 import org.hyperledger.identus.shared.crypto.Secp256k1KeyPair
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import zio.*

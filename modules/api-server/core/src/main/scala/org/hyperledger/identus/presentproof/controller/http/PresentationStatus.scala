@@ -1,9 +1,9 @@
 package org.hyperledger.identus.presentproof.controller.http
 
 import org.hyperledger.identus.api.http.{Annotation, ErrorResponse}
-import org.hyperledger.identus.mercury.model.{AttachmentDescriptor, Base64, JsonData}
-import org.hyperledger.identus.mercury.protocol.presentproof.{Presentation, RequestPresentation}
-import org.hyperledger.identus.pollux.core.model.PresentationRecord
+import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, Base64, JsonData}
+import org.hyperledger.identus.didcomm.protocol.presentproof.{Presentation, RequestPresentation}
+import org.hyperledger.identus.credentials.core.model.PresentationRecord
 import org.hyperledger.identus.presentproof.controller.http.PresentationStatus.annotations
 import sttp.tapir.{Schema, Validator}
 import sttp.tapir.json.zio.schemaForZioJsonValue

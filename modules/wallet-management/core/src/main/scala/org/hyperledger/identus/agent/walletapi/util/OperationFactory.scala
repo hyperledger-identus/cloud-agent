@@ -2,7 +2,7 @@ package org.hyperledger.identus.agent.walletapi.util
 
 import org.hyperledger.identus.agent.walletapi.model.*
 import org.hyperledger.identus.agent.walletapi.model.error.{CreateManagedDIDError, UpdateManagedDIDError}
-import org.hyperledger.identus.castor.core.model.did.*
+import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.shared.crypto.{
   Apollo,
   Ed25519PublicKey,

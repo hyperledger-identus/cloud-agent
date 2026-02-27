@@ -1,6 +1,6 @@
 package org.hyperledger.identus.vc.anoncreds
 
-import org.hyperledger.identus.mercury.protocol.issuecredential.IssueCredentialRequestFormat
+import org.hyperledger.identus.didcomm.protocol.issuecredential.IssueCredentialRequestFormat
 
 type TODO = Any
 

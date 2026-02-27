@@ -1,6 +1,6 @@
 package org.hyperledger.identus.agent.walletapi.model
 
-import org.hyperledger.identus.castor.core.model.error.{DIDOperationError, DIDResolutionError}
+import org.hyperledger.identus.did.core.model.error.{DIDOperationError, DIDResolutionError}
 
 package object error {
   final case class CommonWalletStorageError(cause: Throwable)

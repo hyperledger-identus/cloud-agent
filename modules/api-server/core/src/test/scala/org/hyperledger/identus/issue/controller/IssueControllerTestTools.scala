@@ -7,13 +7,13 @@ import org.hyperledger.identus.agent.server.http.CustomServerInterceptors
 import org.hyperledger.identus.agent.walletapi.model.BaseEntity
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.castor.core.service.DIDService
-import org.hyperledger.identus.connect.core.service.ConnectionService
+import org.hyperledger.identus.did.core.service.DIDService
+import org.hyperledger.identus.connections.core.service.ConnectionService
 import org.hyperledger.identus.iam.authentication.{AuthenticatorWithAuthZ, DefaultEntityAuthenticator}
 import org.hyperledger.identus.issue.controller.http.IssueCredentialRecordPage
-import org.hyperledger.identus.pollux.core.model.IssueCredentialRecord
-import org.hyperledger.identus.pollux.core.service.*
-import org.hyperledger.identus.pollux.vc.jwt.*
+import org.hyperledger.identus.credentials.core.model.IssueCredentialRecord
+import org.hyperledger.identus.credentials.core.service.*
+import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport
 import sttp.client3.{DeserializationException, Response, UriContext}
 import sttp.client3.testing.SttpBackendStub

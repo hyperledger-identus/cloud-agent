@@ -1,6 +1,6 @@
 package org.hyperledger.identus.agent.walletapi.model.error
 
-import org.hyperledger.identus.mercury.model.DidId
+import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.shared.models.*
 
 sealed trait DIDSecretStorageError(
