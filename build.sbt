@@ -88,8 +88,8 @@ lazy val V = new {
   val apollo = "1.3.5"
 
   val jsonSchemaValidator = "1.3.2" // scala-steward:off //TODO 1.3.2 need to fix:
-  // [error] 	org.hyperledger.identus.pollux.core.model.schema.AnoncredSchemaTypeSpec
-  // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
+  // [error] 	org.hyperledger.identus.credentials.core.model.schema.AnoncredSchemaTypeSpec
+  // [error] 	org.hyperledger.identus.credentials.core.model.schema.CredentialSchemaSpec
 
   val commonsLogging = "1.3.5"
   val vaultDriver = "6.2.0"
@@ -252,7 +252,7 @@ lazy val D_SharedTest = new {
     )
 }
 
-lazy val D_Connect = new {
+lazy val D_Connections = new {
 
   private lazy val logback = "ch.qos.logback" % "logback-classic" % V.logback % Test
 
@@ -267,7 +267,7 @@ lazy val D_Connect = new {
     baseDependencies ++ D.doobieDependencies ++ Seq(D.zioCatsInterop)
 }
 
-lazy val D_Castor = new {
+lazy val D_DID = new {
   // Dependency Modules
   val baseDependencies: Seq[ModuleID] =
     Seq(
@@ -283,7 +283,7 @@ lazy val D_Castor = new {
   val coreDependencies: Seq[ModuleID] = baseDependencies
 }
 
-lazy val D_Pollux = new {
+lazy val D_Credentials = new {
   val logback = "ch.qos.logback" % "logback-classic" % V.logback % Test
   val slf4jApi = "org.slf4j" % "slf4j-api" % V.slf4j % Test
   val slf4jSimple = "org.slf4j" % "slf4j-simple" % V.slf4j % Test
@@ -331,7 +331,7 @@ lazy val D_Pollux = new {
   val sqlDoobieDependencies: Seq[ModuleID] = baseDependencies ++ doobieDependencies
 }
 
-lazy val D_Pollux_VC_JWT = new {
+lazy val D_Credentials_VC_JWT = new {
 
   val zio = "dev.zio" %% "zio" % V.zio
   val zioPrelude = "dev.zio" %% "zio-prelude" % V.zioPreludeVersion
@@ -346,10 +346,10 @@ lazy val D_Pollux_VC_JWT = new {
     zioDependencies :+ D.jwtZio :+ D.networkntJsonSchemaValidator :+ D.nimbusJwt :+ D.scalaTest
 
   // Project Dependencies
-  lazy val polluxVcJwtDependencies: Seq[ModuleID] = baseDependencies
+  lazy val credentialsVcJwtDependencies: Seq[ModuleID] = baseDependencies
 }
 
-lazy val D_EventNotification = new {
+lazy val D_Notifications = new {
   val zio = "dev.zio" %% "zio" % V.zio
   val zioTest = "dev.zio" %% "zio-test" % V.zio % Test
   val zioTestSbt = "dev.zio" %% "zio-test-sbt" % V.zio % Test
@@ -359,11 +359,11 @@ lazy val D_EventNotification = new {
   val baseDependencies: Seq[ModuleID] = zioDependencies
 }
 
-lazy val D_Pollux_AnonCreds = new {
+lazy val D_Credentials_AnonCreds = new {
   val baseDependencies: Seq[ModuleID] = Seq(D.zio, D.zioJson)
 }
 
-lazy val D_CloudAgent = new {
+lazy val D_Server = new {
   val logback = "ch.qos.logback" % "logback-classic" % V.logback
 
   val tapirSwaggerUiBundle = "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % V.tapir
@@ -747,7 +747,7 @@ lazy val didCore = project
   .settings(commonSetttings)
   .settings(
     name := "did-core",
-    libraryDependencies ++= D_Castor.coreDependencies
+    libraryDependencies ++= D_DID.coreDependencies
   )
   .dependsOn(shared, prismNodeClient)
   .dependsOn(sharedCrypto % "compile->compile;test->test")
@@ -762,7 +762,7 @@ lazy val credentialsVcJWT = project
   .settings(commonSetttings)
   .settings(
     name := "credentials-vc-jwt",
-    libraryDependencies ++= D_Pollux_VC_JWT.polluxVcJwtDependencies
+    libraryDependencies ++= D_Credentials_VC_JWT.credentialsVcJwtDependencies
   )
   .dependsOn(didCore, sharedJson)
 
@@ -772,7 +772,7 @@ lazy val credentialsCore = project
   .settings(commonSetttings)
   .settings(
     name := "credentials-core",
-    libraryDependencies ++= D_Pollux.coreDependencies
+    libraryDependencies ++= D_Credentials.coreDependencies
   )
   .dependsOn(
     shared,
@@ -801,7 +801,7 @@ lazy val credentialsPersistenceDoobie = project
   .settings(commonSetttings)
   .settings(
     name := "credentials-persistence-doobie",
-    libraryDependencies ++= D_Pollux.sqlDoobieDependencies
+    libraryDependencies ++= D_Credentials.sqlDoobieDependencies
   )
   .dependsOn(credentialsCore % "compile->compile;test->test")
   .dependsOn(shared)
@@ -826,7 +826,7 @@ lazy val credentialsAnoncreds = project
     Compile / unmanagedResourceDirectories ++= Seq(
       baseDirectory.value / "native-lib" / "NATIVE"
     ),
-    libraryDependencies ++= D_Pollux_AnonCreds.baseDependencies
+    libraryDependencies ++= D_Credentials_AnonCreds.baseDependencies
   )
 
 lazy val credentialsAnoncredsTest = project
@@ -855,7 +855,7 @@ lazy val connectionsCore = project
   .settings(commonSetttings)
   .settings(
     name := "connections-core",
-    libraryDependencies ++= D_Connect.coreDependencies,
+    libraryDependencies ++= D_Connections.coreDependencies,
     Test / publishArtifact := true
   )
   .dependsOn(shared)
@@ -867,7 +867,7 @@ lazy val connectionsPersistenceDoobie = project
   .settings(commonSetttings)
   .settings(
     name := "connections-persistence-doobie",
-    libraryDependencies ++= D_Connect.sqlDoobieDependencies
+    libraryDependencies ++= D_Connections.sqlDoobieDependencies
   )
   .dependsOn(shared)
   .dependsOn(sharedTest % "test->test")
@@ -889,7 +889,7 @@ lazy val notifications = project
   .configure(commonConfigure)
   .settings(
     name := "notifications",
-    libraryDependencies ++= D_EventNotification.baseDependencies
+    libraryDependencies ++= D_Notifications.baseDependencies
   )
   .dependsOn(shared)
 
@@ -911,9 +911,9 @@ lazy val walletManagement = project
   .settings(
     name := "wallet-management",
     libraryDependencies ++=
-      D_CloudAgent.keyManagementDependencies ++
-        D_CloudAgent.iamDependencies ++
-        D_CloudAgent.postgresDependencies ++
+      D_Server.keyManagementDependencies ++
+        D_Server.iamDependencies ++
+        D_Server.postgresDependencies ++
         Seq(D.zioMock)
   )
   .dependsOn(
@@ -951,7 +951,7 @@ lazy val vdrService = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-service",
-    libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
+    libraryDependencies ++= D_Server.baseDependencies ++ D_Server.vdrDependencies,
   )
   .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrDatabase, vdrMemory, vdrProxy)
 
@@ -961,7 +961,7 @@ lazy val vdrCore = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-core",
-    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+    libraryDependencies ++= D_Server.vdrDependencies,
   )
   .dependsOn(shared, prismNodeClient)
 
@@ -978,7 +978,7 @@ lazy val vdrMemory = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-memory",
-    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+    libraryDependencies ++= D_Server.vdrDependencies,
   )
   .dependsOn(vdrCore)
 
@@ -988,7 +988,7 @@ lazy val vdrPrismNode = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-prism-node",
-    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+    libraryDependencies ++= D_Server.vdrDependencies,
   )
   .dependsOn(vdrCore, prismNodeClient, shared % "compile->compile;test->test")
 
@@ -998,7 +998,7 @@ lazy val vdrDatabase = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-database",
-    libraryDependencies ++= D_CloudAgent.vdrDependencies ++ D_CloudAgent.postgresDependencies,
+    libraryDependencies ++= D_Server.vdrDependencies ++ D_Server.postgresDependencies,
     Test / libraryDependencies ++= Seq(
       "com.dimafeng" %% "testcontainers-scala-postgresql" % V.testContainersScala % Test
     ),
@@ -1011,7 +1011,7 @@ lazy val vdrBlockfrost = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-blockfrost",
-    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+    libraryDependencies ++= D_Server.vdrDependencies,
   )
   .dependsOn(vdrCore, shared)
 
@@ -1021,7 +1021,7 @@ lazy val vdrProxy = project
   .settings(commonSetttings)
   .settings(
     name := "vdr-proxy",
-    libraryDependencies ++= D_CloudAgent.vdrDependencies ++ Seq(
+    libraryDependencies ++= D_Server.vdrDependencies ++ Seq(
       "com.h2database" % "h2" % "2.2.224"
     ),
     Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
@@ -1035,7 +1035,7 @@ lazy val apiServer = project
   .settings(
     name := "identus-cloud-agent",
     fork := true,
-    libraryDependencies ++= D_CloudAgent.serverDependencies,
+    libraryDependencies ++= D_Server.serverDependencies,
     excludeDependencies ++= Seq(
       // Exclude `protobuf-javalite` from all dependencies since we're using scalapbRuntime which already include `protobuf-java`
       // Having both may introduce conflict on some api https://github.com/protocolbuffers/protobuf/issues/8104
@@ -1100,13 +1100,12 @@ lazy val apiServerIam = project
   .settings(name := "api-server-iam")
   .dependsOn(apiServer)
 
-// Server controller grouping aliases (Phase 4)
-// These document the domain groupings within apiServer:
-// - DID controllers: castor/controller/
-// - Connection controllers: connect/controller/
+// Server controller grouping (by domain):
+// - DID controllers: did/controller/
+// - Connections controllers: connections/controller/
 // - Credential issuance controllers: issue/controller/
 // - Credential presentation controllers: presentproof/controller/
-// - Credential schema/definition controllers: pollux/credentialschema/, pollux/credentialdefinition/
+// - Credential schema/definition controllers: credentials/credentialschema/, credentials/credentialdefinition/
 // - Credential status controllers: credentialstatus/controller/
 // - DIDComm controllers: didcomm/controller/
 // - Event controllers: event/controller/
