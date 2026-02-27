@@ -1058,6 +1058,15 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   eventNotification,
 )
 
+// Project Aliases for Domain-First Names
+lazy val did = castorCore
+lazy val credentials = polluxCore
+lazy val didcomm = agentDidcommx
+lazy val connections = connectCore
+lazy val notifications = eventNotification
+lazy val walletManagement = cloudAgentWalletAPI
+lazy val apiServer = cloudAgentServer
+
 lazy val root = project
   .in(file("."))
   .aggregate(aggregatedProjects: _*)
