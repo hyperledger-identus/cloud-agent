@@ -99,7 +99,11 @@ jobs:
       contents: read
       id-token: write
     uses: ./.github/workflows/release-clients.yml
-    secrets: inherit
+    secrets:
+      HYP_BOT_GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
+      HYP_BOT_GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
     with:
       release: true
       revision: ${{ needs.release.outputs.RELEASE_VERSION }}

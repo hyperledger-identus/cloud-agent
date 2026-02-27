@@ -146,7 +146,11 @@ jobs:
       id-token: write
     if: needs.build.outputs.OAS_PUBLISHED == 'true'
     uses: ./.github/workflows/release-clients.yml
-    secrets: inherit
+    secrets:
+      HYP_BOT_GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
+      HYP_BOT_GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
     with:
       release: false
       revision: ${{ needs.build.outputs.REVISION_VERSION }}

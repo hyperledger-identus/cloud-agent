@@ -18,6 +18,15 @@ on:
         description: "Checksum of the OAS specification"
         required: false
         type: string
+    secrets:
+      HYP_BOT_GPG_PRIVATE:
+        required: true
+      HYP_BOT_GPG_PASSWORD:
+        required: true
+      OSSRH_USERNAME:
+        required: true
+      OSSRH_PASSWORD:
+        required: true
   workflow_dispatch:
     inputs:
       release:
