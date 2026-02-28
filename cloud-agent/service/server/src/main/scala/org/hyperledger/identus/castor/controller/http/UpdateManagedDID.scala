@@ -22,6 +22,8 @@ object UpdateManagedDIDRequest {
 
 enum ActionType {
   case ADD_KEY extends ActionType
+  case ADD_INTERNAL_KEY extends ActionType
+  case REMOVE_INTERNAL_KEY extends ActionType
   case REMOVE_KEY extends ActionType
   case ADD_SERVICE extends ActionType
   case REMOVE_SERVICE extends ActionType
@@ -41,6 +43,8 @@ object ActionType {
 final case class UpdateManagedDIDRequestAction(
     actionType: ActionType,
     addKey: Option[ManagedDIDKeyTemplate] = None,
+    addInternalKey: Option[ManagedDIDInternalKeyTemplate] = None,
+    removeInternalKey: Option[RemoveEntryById] = None,
     removeKey: Option[RemoveEntryById] = None,
     addService: Option[Service] = None,
     removeService: Option[RemoveEntryById] = None,
@@ -68,6 +72,15 @@ object UpdateManagedDIDRequestAction {
           action.addKey
             .toRight("addKey property is missing from action type ADD_KEY")
             .map(template => AddKey(template))
+        case ActionType.ADD_INTERNAL_KEY =>
+          action.addInternalKey
+            .toRight("addInternalKey property is missing from action type ADD_INTERNAL_KEY")
+            .flatMap(_.toDomain)
+            .map(template => AddInternalKey(template))
+        case ActionType.REMOVE_INTERNAL_KEY =>
+          action.removeInternalKey
+            .toRight("removeInternalKey property is missing from action type REMOVE_INTERNAL_KEY")
+            .map(i => RemoveInternalKey(i.id))
         case ActionType.REMOVE_KEY =>
           action.removeKey
             .toRight("removeKey property is missing from action type REMOVE_KEY")
