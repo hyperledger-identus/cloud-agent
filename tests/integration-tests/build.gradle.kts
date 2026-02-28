@@ -33,6 +33,9 @@ repositories {
     maven {
         url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
     }
+    maven {
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    }
 }
 
 dependencies {
@@ -40,14 +43,16 @@ dependencies {
     testImplementation("io.ktor:ktor-server-netty:2.3.0")
     testImplementation("io.ktor:ktor-client-apache:2.3.0")
     // RestAPI client
-    testImplementation("org.hyperledger.identus:cloud-agent-client:1.40.1-31e679e")
+    // locally published from cloud-agent/client/kotlin
+    //testImplementation("org.hyperledger.identus:cloud-agent-client:0.0.1-SNAPSHOT")
+    testImplementation("org.hyperledger.identus:cloud-agent-client:2.1.1-0dfbcd7-SNAPSHOT")
     // Test helpers library
     testImplementation("io.iohk.atala:atala-automation:0.4.0")
     // Hoplite for configuration
     testImplementation("com.sksamuel.hoplite:hoplite-core:2.7.5")
     testImplementation("com.sksamuel.hoplite:hoplite-hocon:2.7.5")
-    // Kotlin compose
-    testImplementation("org.testcontainers:testcontainers:1.19.1")
+    // Testcontainers (align all TC modules)
+    testImplementation("org.testcontainers:testcontainers:2.0.3")
     // Crypto
     testImplementation("com.nimbusds:nimbus-jose-jwt:9.40")
     testImplementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
@@ -70,6 +75,7 @@ tasks.register<Delete>("cleanTarget") {
 tasks.test {
     dependsOn("cleanTarget")
     finalizedBy("aggregate", "reports")
+    jvmArgs("-Dlog4j2.disable.jmx=true")
     testLogging.showStandardStreams = true
     systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
     // Since the test runs on host and system-unter-test runs in containers,
@@ -88,6 +94,13 @@ configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     version.set("1.2.1")
 }
 
+configurations.all {
+    resolutionStrategy {
+        // Keep any transitive TC artifacts aligned to 2.0.3
+        force("org.testcontainers:testcontainers:2.0.3")
+    }
+}
+
 /**
  * Creates a new entry in verification group for each conf file
  */
@@ -103,8 +116,12 @@ afterEvaluate {
         tasks.register<Test>("test_$fileName") {
             group = "verification"
             testLogging.showStandardStreams = true
+            jvmArgs("-Dlog4j2.disable.jmx=true")
             systemProperty("context", fileName)
-            systemProperty("TESTS_CONFIG", "/configs/$fileName.conf")
+            val mounted = file("/configs/$fileName.conf")
+            val local = project.layout.projectDirectory.file("src/test/resources/configs/$fileName.conf").asFile
+            val chosenConfig = if (mounted.exists()) mounted.absolutePath else local.absolutePath
+            systemProperty("TESTS_CONFIG", chosenConfig)
             systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "")
             systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
             systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")
