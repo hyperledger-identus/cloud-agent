@@ -7,7 +7,7 @@ import org.hyperledger.identus.did.core.model.did.CanonicalPrismDID
 import org.hyperledger.identus.did.core.model.error.DIDOperationError
 import org.hyperledger.identus.did.core.service.DIDService
 import org.hyperledger.identus.did.core.util.DIDOperationValidator
-import org.hyperledger.identus.event.notification.{Event, EventNotificationService}
+import org.hyperledger.identus.notifications.{Event, EventNotificationService}
 import org.hyperledger.identus.shared.crypto.Apollo
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import zio.*

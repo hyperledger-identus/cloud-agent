@@ -4,7 +4,7 @@ import org.hyperledger.identus.connections.core.model.error.ConnectionServiceErr
 import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError.*
 import org.hyperledger.identus.connections.core.model.ConnectionRecord
 import org.hyperledger.identus.connections.core.repository.ConnectionRepository
-import org.hyperledger.identus.event.notification.{Event, EventNotificationService}
+import org.hyperledger.identus.notifications.{Event, EventNotificationService}
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.connection.{ConnectionRequest, ConnectionResponse}
 import org.hyperledger.identus.shared.models.*

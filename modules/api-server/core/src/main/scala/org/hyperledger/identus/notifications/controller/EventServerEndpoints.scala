@@ -1,4 +1,4 @@
-package org.hyperledger.identus.event.controller
+package org.hyperledger.identus.notifications.controller
 
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}

@@ -7,7 +7,7 @@ import org.hyperledger.identus.server.AgentHttpServer
 import org.hyperledger.identus.did.controller.{DIDController, DIDRegistrarController}
 import org.hyperledger.identus.connections.controller.ConnectionController
 import org.hyperledger.identus.credentialstatus.controller.CredentialStatusController
-import org.hyperledger.identus.event.controller.EventController
+import org.hyperledger.identus.notifications.controller.EventController
 import org.hyperledger.identus.iam.authentication.{DefaultAuthenticator, Oid4vciAuthenticatorFactory}
 import org.hyperledger.identus.iam.entity.http.controller.EntityController
 import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementController

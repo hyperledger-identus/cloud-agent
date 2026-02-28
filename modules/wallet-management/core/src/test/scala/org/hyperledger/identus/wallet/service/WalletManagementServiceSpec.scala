@@ -9,7 +9,7 @@ import org.hyperledger.identus.wallet.service.WalletManagementServiceError.{
 import org.hyperledger.identus.wallet.sql.{JdbcWalletNonSecretStorage, JdbcWalletSecretStorage}
 import org.hyperledger.identus.wallet.storage.WalletSecretStorage
 import org.hyperledger.identus.wallet.vault.VaultWalletSecretStorage
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.shared.crypto.ApolloSpecHelper
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletAdministrationContext, WalletId}
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport

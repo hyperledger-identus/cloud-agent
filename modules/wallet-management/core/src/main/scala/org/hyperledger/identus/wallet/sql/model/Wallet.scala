@@ -4,7 +4,7 @@ import io.getquill.*
 import io.getquill.context.json.PostgresJsonExtensions
 import io.getquill.doobie.DoobieContext
 import org.hyperledger.identus.wallet.model
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.shared.models.WalletId
 
 import java.net.URL

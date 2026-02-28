@@ -6,7 +6,7 @@ import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.wallet.model.ManagedDIDDetail
 import org.hyperledger.identus.wallet.service.WalletManagementService
 import org.hyperledger.identus.connections.core.model.ConnectionRecord
-import org.hyperledger.identus.event.notification.{
+import org.hyperledger.identus.notifications.{
   Event,
   EventConsumer,
   EventNotificationConfig,

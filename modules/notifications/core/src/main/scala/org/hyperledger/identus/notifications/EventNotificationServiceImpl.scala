@@ -1,6 +1,6 @@
-package org.hyperledger.identus.event.notification
+package org.hyperledger.identus.notifications
 
-import org.hyperledger.identus.event.notification.EventNotificationServiceError.EventSendingFailed
+import org.hyperledger.identus.notifications.EventNotificationServiceError.EventSendingFailed
 import zio.{IO, Queue, URLayer, ZIO, ZLayer}
 import zio.concurrent.ConcurrentMap
 

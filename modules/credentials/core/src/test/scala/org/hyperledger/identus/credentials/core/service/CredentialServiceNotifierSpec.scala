@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.event.notification.{EventNotificationService, EventNotificationServiceImpl}
+import org.hyperledger.identus.notifications.{EventNotificationService, EventNotificationServiceImpl}
 import org.hyperledger.identus.didcomm.protocol.issuecredential.*
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.error.CredentialServiceError

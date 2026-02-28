@@ -1,7 +1,7 @@
 package org.hyperledger.identus.wallet.storage
 
 import org.hyperledger.identus.wallet.model.Wallet
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import zio.*
 

@@ -1,4 +1,4 @@
-package org.hyperledger.identus.event.notification
+package org.hyperledger.identus.notifications
 
 import org.hyperledger.identus.shared.models.WalletId
 import zio.*

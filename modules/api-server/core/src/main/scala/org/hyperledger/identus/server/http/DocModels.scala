@@ -2,7 +2,7 @@ package org.hyperledger.identus.server.http
 
 import org.hyperledger.identus.did.controller.{DIDEndpoints, DIDRegistrarEndpoints}
 import org.hyperledger.identus.connections.controller.ConnectionEndpoints
-import org.hyperledger.identus.event.controller.EventEndpoints
+import org.hyperledger.identus.notifications.controller.EventEndpoints
 import org.hyperledger.identus.iam.entity.http.EntityEndpoints
 import org.hyperledger.identus.iam.wallet.http.WalletManagementEndpoints
 import org.hyperledger.identus.issue.controller.IssueEndpoints

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.event.notification.{Event, EventNotificationService}
+import org.hyperledger.identus.notifications.{Event, EventNotificationService}
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
 import org.hyperledger.identus.credentials.anoncreds.AnoncredPresentation

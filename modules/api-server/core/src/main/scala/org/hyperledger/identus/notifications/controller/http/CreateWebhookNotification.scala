@@ -1,4 +1,4 @@
-package org.hyperledger.identus.event.controller.http
+package org.hyperledger.identus.notifications.controller.http
 
 import org.hyperledger.identus.api.http.Annotation
 import sttp.tapir.Schema

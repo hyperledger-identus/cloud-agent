@@ -9,8 +9,8 @@ import org.hyperledger.identus.wallet.service.{EntityService, WalletManagementSe
 import org.hyperledger.identus.did.controller.{DIDRegistrarServerEndpoints, DIDServerEndpoints}
 import org.hyperledger.identus.connections.controller.ConnectionServerEndpoints
 import org.hyperledger.identus.credentialstatus.controller.CredentialStatusServiceEndpoints
-import org.hyperledger.identus.event.controller.EventServerEndpoints
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.controller.EventServerEndpoints
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.iam.authentication.apikey.ApiKeyAuthenticator
 import org.hyperledger.identus.iam.entity.http.EntityServerEndpoints
 import org.hyperledger.identus.iam.wallet.http.WalletManagementServerEndpoints

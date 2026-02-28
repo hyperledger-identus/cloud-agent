@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.core.service
 
 import org.hyperledger.identus.did.core.model.did.{CanonicalPrismDID, PrismDID, VerificationRelationship}
-import org.hyperledger.identus.event.notification.*
+import org.hyperledger.identus.notifications.*
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.issuecredential.{IssueCredential, OfferCredential, RequestCredential}
 import org.hyperledger.identus.credentials.core.model.{DidCommID, IssueCredentialRecord}

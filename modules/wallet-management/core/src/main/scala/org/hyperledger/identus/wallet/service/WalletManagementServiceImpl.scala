@@ -9,7 +9,7 @@ import org.hyperledger.identus.wallet.service.WalletManagementServiceError.{
 }
 import org.hyperledger.identus.wallet.service.WalletManagementServiceImpl.MAX_WEBHOOK_PER_WALLET
 import org.hyperledger.identus.wallet.storage.{WalletNonSecretStorage, WalletSecretStorage}
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.shared.crypto.Apollo
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletAdministrationContext, WalletId}
 import zio.*

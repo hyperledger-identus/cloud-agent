@@ -5,7 +5,7 @@ import org.hyperledger.identus.did.controller.http.ManagedDID
 import org.hyperledger.identus.did.controller.http.ManagedDID.*
 import org.hyperledger.identus.connections.controller.http.Connection
 import org.hyperledger.identus.connections.core.model.ConnectionRecord
-import org.hyperledger.identus.event.notification.Event
+import org.hyperledger.identus.notifications.Event
 import org.hyperledger.identus.issue.controller.http.IssueCredentialRecord
 import org.hyperledger.identus.credentials.core.model.{
   IssueCredentialRecord as PolluxIssueCredentialRecord,

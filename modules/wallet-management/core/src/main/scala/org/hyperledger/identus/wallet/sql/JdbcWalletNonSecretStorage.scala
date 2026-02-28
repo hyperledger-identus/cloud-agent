@@ -6,7 +6,7 @@ import org.hyperledger.identus.wallet.model.Wallet
 import org.hyperledger.identus.wallet.sql.model.{WalletNotificationSql, WalletSql}
 import org.hyperledger.identus.wallet.sql.model as db
 import org.hyperledger.identus.wallet.storage.WalletNonSecretStorage
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.shared.db.ContextAwareTask
 import org.hyperledger.identus.shared.db.Implicits.*
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}

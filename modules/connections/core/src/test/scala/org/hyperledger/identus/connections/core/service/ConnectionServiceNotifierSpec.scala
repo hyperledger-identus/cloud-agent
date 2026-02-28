@@ -3,7 +3,7 @@ package org.hyperledger.identus.connections.core.service
 import org.hyperledger.identus.connections.core.model.ConnectionRecord
 import org.hyperledger.identus.connections.core.model.ConnectionRecord.ProtocolState
 import org.hyperledger.identus.connections.core.repository.ConnectionRepositoryInMemory
-import org.hyperledger.identus.event.notification.*
+import org.hyperledger.identus.notifications.*
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.connection.{ConnectionRequest, ConnectionResponse}
 import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation

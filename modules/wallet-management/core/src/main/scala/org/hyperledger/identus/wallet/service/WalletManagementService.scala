@@ -7,7 +7,7 @@ import org.hyperledger.identus.wallet.service.WalletManagementServiceError.{
   TooManyPermittedWallet,
   TooManyWebhookError
 }
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.shared.models.*
 import zio.*
 

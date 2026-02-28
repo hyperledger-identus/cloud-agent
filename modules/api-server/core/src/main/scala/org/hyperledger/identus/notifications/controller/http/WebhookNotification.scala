@@ -1,7 +1,7 @@
-package org.hyperledger.identus.event.controller.http
+package org.hyperledger.identus.notifications.controller.http
 
 import org.hyperledger.identus.api.http.Annotation
-import org.hyperledger.identus.event.notification.EventNotificationConfig
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import sttp.tapir.Schema
 import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.*
