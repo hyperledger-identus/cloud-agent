@@ -204,14 +204,15 @@ class ConnectionRepositoryInMemory(walletRefs: Ref[Map[WalletId, Ref[Map[UUID, C
 
   override def create(record: ConnectionRecordBeforeStored): URIO[WalletAccessContext, Unit] = {
     for {
-      _ <- for {
-        storeRef <- walletStoreRef
-        store <- storeRef.get
-        maybeRecord <- ZIO.succeed(store.values.find(_.thid == record.thid))
-        _ <- maybeRecord match
-          case Some(value) => throw RuntimeException("Unique constraint violation on 'thid'")
-          case None        => ZIO.unit
-      } yield ()
+      _ <-
+        for {
+          storeRef <- walletStoreRef
+          store <- storeRef.get
+          maybeRecord <- ZIO.succeed(store.values.find(_.thid == record.thid))
+          _ <- maybeRecord match
+            case Some(value) => throw RuntimeException("Unique constraint violation on 'thid'")
+            case None        => ZIO.unit
+        } yield ()
       storeRef <- walletStoreRef
       walletId <- ZIO.service[WalletAccessContext].map(_.walletId)
       _ <- storeRef.update(r => r + (record.id -> record.withWalletId(walletId)))

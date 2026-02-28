@@ -8,7 +8,8 @@ import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 final case class UpdateVdrEntryResponse(
     @description(UpdateVdrEntryResponse.annotations.url.description)
     @encodedExample(UpdateVdrEntryResponse.annotations.url.example)
-    url: Option[String]
+    url: Option[String],
+    operationId: Option[String] = None
 )
 
 object UpdateVdrEntryResponse {
