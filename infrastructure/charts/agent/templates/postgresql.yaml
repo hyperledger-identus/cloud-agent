@@ -17,15 +17,15 @@ spec:
   resources:
     {{- toYaml .Values.database.postgres.resources | nindent 4 }}
   users:
-    pollux-admin:
+    credentials-admin:
       - superuser
       - createdb
-    pollux-application-user:
+    credentials-application-user:
       - login
-    connect-admin:
+    connections-admin:
       - superuser
       - createdb
-    connect-application-user:
+    connections-application-user:
       - login
     agent-admin:
       - superuser
@@ -33,8 +33,8 @@ spec:
     agent-application-user:
       - login
   databases:
-    pollux: pollux-admin
-    connect: connect-admin
+    credentials: credentials-admin
+    connections: connections-admin
     agent: agent-admin
   postgresql:
     version: "14"

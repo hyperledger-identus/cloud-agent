@@ -128,7 +128,7 @@ in
           "%{hosts.db}" =
             _db.makeDbService {
               version = V.postgres,
-              databases = "pollux,connect,agent",
+              databases = "credentials,connections,agent",
               volumeName = pgDockerVolumeName
             },
           "%{hosts.node}" =
@@ -145,8 +145,8 @@ in
             _agent.makeAgentService (
               {
                 version = V.agent,
-                polluxDb = makeSharedDbConfig "pollux",
-                connectDb = makeSharedDbConfig "connect",
+                credentialsDb = makeSharedDbConfig "credentials",
+                connectionsDb = makeSharedDbConfig "connections",
                 agentDb = makeSharedDbConfig "agent",
                 node = { host = "node" },
                 didcommServiceUrl = "http://%{hosts.caddy}:%{std.to_string args.port}/didcomm",

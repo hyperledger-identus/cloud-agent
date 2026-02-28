@@ -28,18 +28,18 @@ services:
       AGENT_DB_PORT: '5432'
       AGENT_DB_USER: postgres
       API_KEY_ENABLED: 'false'
-      CONNECT_DB_HOST: db-issuer
-      CONNECT_DB_NAME: connect
-      CONNECT_DB_PASSWORD: postgres
-      CONNECT_DB_PORT: '5432'
-      CONNECT_DB_USER: postgres
+      CONNECTIONS_DB_HOST: db-issuer
+      CONNECTIONS_DB_NAME: connections
+      CONNECTIONS_DB_PASSWORD: postgres
+      CONNECTIONS_DB_PORT: '5432'
+      CONNECTIONS_DB_USER: postgres
       DIDCOMM_SERVICE_URL: http://caddy-issuer:8080/didcomm
-      POLLUX_DB_HOST: db-issuer
-      POLLUX_DB_NAME: pollux
-      POLLUX_DB_PASSWORD: postgres
-      POLLUX_DB_PORT: '5432'
-      POLLUX_DB_USER: postgres
-      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://caddy-issuer:8080/cloud-agent
+      CREDENTIALS_DB_HOST: db-issuer
+      CREDENTIALS_DB_NAME: credentials
+      CREDENTIALS_DB_PASSWORD: postgres
+      CREDENTIALS_DB_PORT: '5432'
+      CREDENTIALS_DB_USER: postgres
+      CREDENTIALS_STATUS_LIST_REGISTRY_PUBLIC_URL: http://caddy-issuer:8080/cloud-agent
       PRISM_NODE_HOST: node
       PRISM_NODE_PORT: '50053'
       REST_SERVICE_URL: http://caddy-issuer:8080/cloud-agent
@@ -58,7 +58,7 @@ services:
     restart: always
   db-issuer:
     environment:
-      POSTGRES_MULTIPLE_DATABASES: pollux,connect,agent
+      POSTGRES_MULTIPLE_DATABASES: credentials,connections,agent
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
     healthcheck:

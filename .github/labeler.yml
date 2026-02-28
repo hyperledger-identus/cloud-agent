@@ -1,36 +1,48 @@
 ---
-castor:
+did:
   - changed-files:
       - any-glob-to-any-file:
-          - castor/**/*
-mercury:
+          - modules/did/**/*
+didcomm:
   - changed-files:
       - any-glob-to-any-file:
-          - mercury/**/*
-connect:
+          - modules/didcomm/**/*
+connections:
   - changed-files:
       - any-glob-to-any-file:
-          - connect/**/*
-pollux:
+          - modules/connections/**/*
+credentials:
   - changed-files:
       - any-glob-to-any-file:
-          - pollux/**/*
+          - modules/credentials/**/*
 cloud-agent:
   - changed-files:
       - any-glob-to-any-file:
           - cloud-agent/**/*
+api-server:
+  - changed-files:
+      - any-glob-to-any-file:
+          - modules/api-server/**/*
+wallet-management:
+  - changed-files:
+      - any-glob-to-any-file:
+          - modules/wallet-management/**/*
+notifications:
+  - changed-files:
+      - any-glob-to-any-file:
+          - modules/notifications/**/*
+vdr:
+  - changed-files:
+      - any-glob-to-any-file:
+          - modules/vdr/**/*
+shared:
+  - changed-files:
+      - any-glob-to-any-file:
+          - modules/shared/**/*
 prism-node:
   - changed-files:
       - any-glob-to-any-file:
           - prism-node/**/*
-shared:
-  - changed-files:
-      - any-glob-to-any-file:
-          - shared/**/*
-event-notification:
-  - changed-files:
-      - any-glob-to-any-file:
-          - event-notification/**/*
 infra:
   - changed-files:
       - any-glob-to-any-file:

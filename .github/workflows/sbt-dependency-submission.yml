@@ -45,38 +45,5 @@ jobs:
           modules-ignore:
             root_3
             shared-test
-            polluxanoncredstest_3
-            # predef_3
-            # mercury-agent-didcommx_3
-            # identus-cloud-agent_3
-            # mercury-protocol-coordinate-mediation_3
-            # pollux-sql-doobie_3
-            # mercury-protocol-outofband-login_3
-            # connect-sql-doobie_3
-            # shared
-            # pollux-core_3
-            # pollux-sd-jwt_3
-            # shared-json
-            # pollux-vc-jwt_3
-            # mercury-agent-core_3
-            # mercury-protocol-connection_3
-            # mercury-protocol-present-proof_3
-            # castor-core_3
-            # connect-core_3
-            # mercury-protocol-trust-ping_3
-            # shared-crypto
-            # mercury-protocol-report-problem_3
-            # pollux-prex_3
-            # mercury-data-models_3
-            # mercury-resolver_3
-            # mercury-protocol-issue-credential_3
-            # pollux-anoncreds_3
-            # mercury-protocol-routing-2-0_3
-            # mercury-verifiable-credentials_3
-            # mercury-protocol-did-exchange_3
-            # mercury-protocol-revocation-notification_3
-            # mercury-protocol-invitation_3
-            # event-notification_3
-            # prism-node-client_3
-            # cloud-agent-wallet-api_3
+            credentialsanoncredstest_3
           configs-ignore: test scala-tool scala-doc-tool

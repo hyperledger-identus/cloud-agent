@@ -4,7 +4,7 @@ services:
     image: postgres:13
     pull_policy: if_not_present
     environment:
-      POSTGRES_MULTIPLE_DATABASES: "castor,pollux,connect,agent"
+      POSTGRES_MULTIPLE_DATABASES: "credentials,connections,agent"
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -31,9 +31,9 @@ services:
       PRISM_NODE_PORT: ${PRISM_NODE_PORT:-50053}
       PRISM_NODE_USE_PLAINTEXT: "true"
       NEOPRISM_BASE_URL:
-      CASTOR_DB_HOST: postgres
-      POLLUX_DB_HOST: postgres
-      CONNECT_DB_HOST: postgres
+      DID_DB_HOST: postgres
+      CREDENTIALS_DB_HOST: postgres
+      CONNECTIONS_DB_HOST: postgres
       AGENT_DB_HOST: postgres
       VAULT_TOKEN: null
       VAULT_APPROLE_ROLE_ID: null
@@ -45,7 +45,7 @@ services:
       AGENT_HTTP_PORT:
       DIDCOMM_SERVICE_URL:
       REST_SERVICE_URL:
-      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL:
+      CREDENTIALS_STATUS_LIST_REGISTRY_PUBLIC_URL:
       STATUS_LIST_SYNC_TRIGGER_RECURRENCE_DELAY: 5 seconds
       DID_STATE_SYNC_TRIGGER_RECURRENCE_DELAY: 5 seconds
       # Secret storage configuration

@@ -74,64 +74,64 @@ spec:
                 name: agent-api-key-salt
                 key: salt
                 optional: false
-          - name: POLLUX_DB_HOST
+          - name: CREDENTIALS_DB_HOST
             value: "{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.{{ .Release.Namespace }}"
-          - name: POLLUX_DB_PORT
+          - name: CREDENTIALS_DB_PORT
             value: "5432"
-          - name: POLLUX_DB_NAME
-            value: pollux
-          - name: POLLUX_DB_USER
+          - name: CREDENTIALS_DB_NAME
+            value: credentials
+          - name: CREDENTIALS_DB_USER
             valueFrom:
               secretKeyRef:
-                name: pollux-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: credentials-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: username
                 optional: false
-          - name: POLLUX_DB_PASSWORD
+          - name: CREDENTIALS_DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: pollux-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: credentials-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: password
                 optional: false
-          - name: POLLUX_DB_APP_USER
+          - name: CREDENTIALS_DB_APP_USER
             valueFrom:
               secretKeyRef:
-                name: pollux-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: credentials-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: username
                 optional: false
-          - name: POLLUX_DB_APP_PASSWORD
+          - name: CREDENTIALS_DB_APP_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: pollux-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: credentials-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: password
                 optional: false
-          - name: CONNECT_DB_HOST
+          - name: CONNECTIONS_DB_HOST
             value: "{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.{{ .Release.Namespace }}"
-          - name: CONNECT_DB_PORT
+          - name: CONNECTIONS_DB_PORT
             value: "5432"
-          - name: CONNECT_DB_NAME
-            value: connect
-          - name: CONNECT_DB_USER
+          - name: CONNECTIONS_DB_NAME
+            value: connections
+          - name: CONNECTIONS_DB_USER
             valueFrom:
               secretKeyRef:
-                name: connect-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: connections-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: username
                 optional: false
-          - name: CONNECT_DB_PASSWORD
+          - name: CONNECTIONS_DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: connect-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: connections-admin.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: password
                 optional: false
-          - name: CONNECT_DB_APP_USER
+          - name: CONNECTIONS_DB_APP_USER
             valueFrom:
               secretKeyRef:
-                name: connect-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: connections-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: username
                 optional: false
-          - name: CONNECT_DB_APP_PASSWORD
+          - name: CONNECTIONS_DB_APP_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: connect-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
+                name: connections-application-user.{{ .Values.database.postgres.managingTeam }}-{{ include "cloud-agent.name" . }}-postgres-cluster.credentials.postgresql.acid.zalan.do
                 key: password
                 optional: false
           - name: AGENT_DB_HOST

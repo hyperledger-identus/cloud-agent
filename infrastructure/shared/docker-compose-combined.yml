@@ -26,7 +26,7 @@ services:
   issuer-db:
     image: postgres:13
     environment:
-      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent"
+      POSTGRES_MULTIPLE_DATABASES: "credentials,connections,agent"
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -44,7 +44,7 @@ services:
   holder-db:
     image: postgres:13
     environment:
-      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent"
+      POSTGRES_MULTIPLE_DATABASES: "credentials,connections,agent"
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -62,7 +62,7 @@ services:
   verifier-db:
     image: postgres:13
     environment:
-      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent"
+      POSTGRES_MULTIPLE_DATABASES: "credentials,connections,agent"
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -127,22 +127,22 @@ services:
   cloud-agent-issuer:
     image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
-      POLLUX_DB_HOST: issuer-db
-      POLLUX_DB_PORT: 5432
-      POLLUX_DB_NAME: pollux
-      POLLUX_DB_USER: postgres
-      POLLUX_DB_PASSWORD: postgres
-      CONNECT_DB_HOST: issuer-db
-      CONNECT_DB_PORT: 5432
-      CONNECT_DB_NAME: connect
-      CONNECT_DB_USER: postgres
-      CONNECT_DB_PASSWORD: postgres
+      CREDENTIALS_DB_HOST: issuer-db
+      CREDENTIALS_DB_PORT: 5432
+      CREDENTIALS_DB_NAME: credentials
+      CREDENTIALS_DB_USER: postgres
+      CREDENTIALS_DB_PASSWORD: postgres
+      CONNECTIONS_DB_HOST: issuer-db
+      CONNECTIONS_DB_PORT: 5432
+      CONNECTIONS_DB_NAME: connections
+      CONNECTIONS_DB_USER: postgres
+      CONNECTIONS_DB_PASSWORD: postgres
       AGENT_DB_HOST: issuer-db
       AGENT_DB_PORT: 5432
       AGENT_DB_NAME: agent
       AGENT_DB_USER: postgres
       AGENT_DB_PASSWORD: postgres
-      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${ISSUER_PORT}/cloud-agent
+      CREDENTIALS_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${ISSUER_PORT}/cloud-agent
       DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${ISSUER_PORT}/didcomm
       REST_SERVICE_URL: http://${DOCKERHOST}:${ISSUER_PORT}/cloud-agent
       PRISM_NODE_HOST: prism-node
@@ -201,22 +201,22 @@ services:
   cloud-agent-holder:
     image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
-      POLLUX_DB_HOST: holder-db
-      POLLUX_DB_PORT: 5432
-      POLLUX_DB_NAME: pollux
-      POLLUX_DB_USER: postgres
-      POLLUX_DB_PASSWORD: postgres
-      CONNECT_DB_HOST: holder-db
-      CONNECT_DB_PORT: 5432
-      CONNECT_DB_NAME: connect
-      CONNECT_DB_USER: postgres
-      CONNECT_DB_PASSWORD: postgres
+      CREDENTIALS_DB_HOST: holder-db
+      CREDENTIALS_DB_PORT: 5432
+      CREDENTIALS_DB_NAME: credentials
+      CREDENTIALS_DB_USER: postgres
+      CREDENTIALS_DB_PASSWORD: postgres
+      CONNECTIONS_DB_HOST: holder-db
+      CONNECTIONS_DB_PORT: 5432
+      CONNECTIONS_DB_NAME: connections
+      CONNECTIONS_DB_USER: postgres
+      CONNECTIONS_DB_PASSWORD: postgres
       AGENT_DB_HOST: holder-db
       AGENT_DB_PORT: 5432
       AGENT_DB_NAME: agent
       AGENT_DB_USER: postgres
       AGENT_DB_PASSWORD: postgres
-      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${HOLDER_PORT}/cloud-agent
+      CREDENTIALS_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${HOLDER_PORT}/cloud-agent
       DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${HOLDER_PORT}/didcomm
       REST_SERVICE_URL: http://${DOCKERHOST}:${HOLDER_PORT}/cloud-agent
       PRISM_NODE_HOST: prism-node
@@ -275,22 +275,22 @@ services:
   cloud-agent-verifier:
     image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
-      POLLUX_DB_HOST: verifier-db
-      POLLUX_DB_PORT: 5432
-      POLLUX_DB_NAME: pollux
-      POLLUX_DB_USER: postgres
-      POLLUX_DB_PASSWORD: postgres
-      CONNECT_DB_HOST: verifier-db
-      CONNECT_DB_PORT: 5432
-      CONNECT_DB_NAME: connect
-      CONNECT_DB_USER: postgres
-      CONNECT_DB_PASSWORD: postgres
+      CREDENTIALS_DB_HOST: verifier-db
+      CREDENTIALS_DB_PORT: 5432
+      CREDENTIALS_DB_NAME: credentials
+      CREDENTIALS_DB_USER: postgres
+      CREDENTIALS_DB_PASSWORD: postgres
+      CONNECTIONS_DB_HOST: verifier-db
+      CONNECTIONS_DB_PORT: 5432
+      CONNECTIONS_DB_NAME: connections
+      CONNECTIONS_DB_USER: postgres
+      CONNECTIONS_DB_PASSWORD: postgres
       AGENT_DB_HOST: verifier-db
       AGENT_DB_PORT: 5432
       AGENT_DB_NAME: agent
       AGENT_DB_USER: postgres
       AGENT_DB_PASSWORD: postgres
-      POLLUX_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/cloud-agent
+      CREDENTIALS_STATUS_LIST_REGISTRY_PUBLIC_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/cloud-agent
       DIDCOMM_SERVICE_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/didcomm
       REST_SERVICE_URL: http://${DOCKERHOST}:${VERIFIER_PORT}/cloud-agent
       PRISM_NODE_HOST: prism-node

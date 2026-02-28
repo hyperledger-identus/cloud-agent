@@ -45,7 +45,7 @@ let AgentServiceArgs = {
     | String,
   polluxDb
     | DbConfig,
-  connectDb
+  connectionsDb
     | DbConfig,
   agentDb
     | DbConfig,
@@ -76,16 +76,16 @@ in
       restart = "always",
       environment =
         {
-          POLLUX_DB_HOST = args.polluxDb.host,
-          POLLUX_DB_PORT = std.to_string args.polluxDb.port,
-          POLLUX_DB_NAME = args.polluxDb.dbName,
-          POLLUX_DB_USER = args.polluxDb.user,
-          POLLUX_DB_PASSWORD = args.polluxDb.password,
-          CONNECT_DB_HOST = args.connectDb.host,
-          CONNECT_DB_PORT = std.to_string args.connectDb.port,
-          CONNECT_DB_NAME = args.connectDb.dbName,
-          CONNECT_DB_USER = args.connectDb.user,
-          CONNECT_DB_PASSWORD = args.connectDb.password,
+          CREDENTIALS_DB_HOST = args.polluxDb.host,
+          CREDENTIALS_DB_PORT = std.to_string args.polluxDb.port,
+          CREDENTIALS_DB_NAME = args.polluxDb.dbName,
+          CREDENTIALS_DB_USER = args.polluxDb.user,
+          CREDENTIALS_DB_PASSWORD = args.polluxDb.password,
+          CONNECTIONS_DB_HOST = args.connectionsDb.host,
+          CONNECTIONS_DB_PORT = std.to_string args.connectionsDb.port,
+          CONNECTIONS_DB_NAME = args.connectionsDb.dbName,
+          CONNECTIONS_DB_USER = args.connectionsDb.user,
+          CONNECTIONS_DB_PASSWORD = args.connectionsDb.password,
           AGENT_DB_HOST = args.agentDb.host,
           AGENT_DB_PORT = std.to_string args.agentDb.port,
           AGENT_DB_NAME = args.agentDb.dbName,

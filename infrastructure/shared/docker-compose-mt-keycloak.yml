@@ -10,7 +10,7 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_MULTIPLE_DATABASES: "pollux,connect,agent,node_db"
+      POSTGRES_MULTIPLE_DATABASES: "credentials,connections,agent,node_db"
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
@@ -72,16 +72,16 @@ services:
   cloud-agent:
     image: docker.io/hyperledgeridentus/identus-cloud-agent:${AGENT_VERSION}
     environment:
-      POLLUX_DB_HOST: db
-      POLLUX_DB_PORT: 5432
-      POLLUX_DB_NAME: pollux
-      POLLUX_DB_USER: postgres
-      POLLUX_DB_PASSWORD: postgres
-      CONNECT_DB_HOST: db
-      CONNECT_DB_PORT: 5432
-      CONNECT_DB_NAME: connect
-      CONNECT_DB_USER: postgres
-      CONNECT_DB_PASSWORD: postgres
+      CREDENTIALS_DB_HOST: db
+      CREDENTIALS_DB_PORT: 5432
+      CREDENTIALS_DB_NAME: credentials
+      CREDENTIALS_DB_USER: postgres
+      CREDENTIALS_DB_PASSWORD: postgres
+      CONNECTIONS_DB_HOST: db
+      CONNECTIONS_DB_PORT: 5432
+      CONNECTIONS_DB_NAME: connections
+      CONNECTIONS_DB_USER: postgres
+      CONNECTIONS_DB_PASSWORD: postgres
       AGENT_DB_HOST: db
       AGENT_DB_PORT: 5432
       AGENT_DB_NAME: agent
