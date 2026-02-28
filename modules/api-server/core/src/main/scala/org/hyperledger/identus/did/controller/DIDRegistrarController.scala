@@ -1,13 +1,13 @@
 package org.hyperledger.identus.did.controller
 
-import org.hyperledger.identus.agent.walletapi.model.error.{
+import org.hyperledger.identus.wallet.model.error.{
   CreateManagedDIDError,
   GetManagedDIDError,
   PublishManagedDIDError,
   UpdateManagedDIDError
 }
-import org.hyperledger.identus.agent.walletapi.model.ManagedDIDDetail
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.wallet.model.ManagedDIDDetail
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.{CollectionStats, PaginationInput}
 import org.hyperledger.identus.api.util.PaginationUtils

@@ -1,14 +1,14 @@
 package org.hyperledger.identus.iam.authentication.apikey
 
 import com.dimafeng.testcontainers.PostgreSQLContainer
-import org.hyperledger.identus.agent.walletapi.model.{Entity, Wallet}
-import org.hyperledger.identus.agent.walletapi.service.{
+import org.hyperledger.identus.wallet.model.{Entity, Wallet}
+import org.hyperledger.identus.wallet.service.{
   EntityService,
   EntityServiceImpl,
   WalletManagementService,
   WalletManagementServiceImpl
 }
-import org.hyperledger.identus.agent.walletapi.sql.{
+import org.hyperledger.identus.wallet.sql.{
   JdbcEntityRepository,
   JdbcWalletNonSecretStorage,
   JdbcWalletSecretStorage

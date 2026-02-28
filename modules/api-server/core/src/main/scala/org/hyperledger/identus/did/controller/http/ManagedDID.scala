@@ -1,7 +1,7 @@
 package org.hyperledger.identus.did.controller.http
 
-import org.hyperledger.identus.agent.walletapi.model.{DIDPublicKeyTemplate, ManagedDIDDetail, PublicationState}
-import org.hyperledger.identus.agent.walletapi.model as walletDomain
+import org.hyperledger.identus.wallet.model.{DIDPublicKeyTemplate, ManagedDIDDetail, PublicationState}
+import org.hyperledger.identus.wallet.model as walletDomain
 import org.hyperledger.identus.api.http.Annotation
 import org.hyperledger.identus.did.core.model.did.{
   EllipticCurve,

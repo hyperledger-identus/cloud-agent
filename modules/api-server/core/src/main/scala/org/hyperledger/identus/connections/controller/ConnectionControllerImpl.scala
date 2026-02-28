@@ -1,7 +1,7 @@
 package org.hyperledger.identus.connections.controller
 
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
 import org.hyperledger.identus.connections.controller.http.{

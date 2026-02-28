@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
+import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.schema.CredentialDefinition
 import org.hyperledger.identus.credentials.core.repository.CredentialDefinitionRepositoryInMemory

@@ -1,7 +1,7 @@
 package org.hyperledger.identus.system.controller
 
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
-import org.hyperledger.identus.agent.server.buildinfo.BuildInfo
+import org.hyperledger.identus.server.buildinfo.BuildInfo
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.system.controller.http.HealthInfo
 import zio.*

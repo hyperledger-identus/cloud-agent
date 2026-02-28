@@ -1,8 +1,8 @@
 package org.hyperledger.identus.issue.controller
 
-import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, ManagedDIDState, PublicationState}
-import org.hyperledger.identus.agent.walletapi.service.{ManagedDIDService, MockManagedDIDService}
+import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
+import org.hyperledger.identus.wallet.model.{BaseEntity, ManagedDIDState, PublicationState}
+import org.hyperledger.identus.wallet.service.{ManagedDIDService, MockManagedDIDService}
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.did.core.model.did.{DIDData, DIDMetadata, PrismDIDOperation, VerificationRelationship}
 import org.hyperledger.identus.did.core.service.MockDIDService

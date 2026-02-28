@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.wallet.http
 
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
+import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
 import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementController

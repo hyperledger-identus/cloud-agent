@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.agent.walletapi.storage
-import org.hyperledger.identus.agent.walletapi.storage.GenericSecretStorage
+import org.hyperledger.identus.wallet.storage
+import org.hyperledger.identus.wallet.storage.GenericSecretStorage
 import org.hyperledger.identus.credentials.anoncreds.{AnoncredLib, AnoncredSchemaDef}
 import org.hyperledger.identus.credentials.core.model.error.{
   CredentialDefinitionCreationError,

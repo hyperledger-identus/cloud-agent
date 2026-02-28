@@ -1,9 +1,9 @@
 package org.hyperledger.identus.credentials.core.service
 
 import cats.implicits.*
-import org.hyperledger.identus.agent.walletapi.model.{ManagedDIDState, PublicationState}
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-import org.hyperledger.identus.agent.walletapi.storage.GenericSecretStorage
+import org.hyperledger.identus.wallet.model.{ManagedDIDState, PublicationState}
+import org.hyperledger.identus.wallet.service.ManagedDIDService
+import org.hyperledger.identus.wallet.storage.GenericSecretStorage
 import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.did.core.service.DIDService
 import org.hyperledger.identus.didcomm.model.*

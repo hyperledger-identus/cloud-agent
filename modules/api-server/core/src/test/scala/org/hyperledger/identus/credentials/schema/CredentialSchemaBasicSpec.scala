@@ -1,9 +1,9 @@
 package org.hyperledger.identus.credentials.schema
 
 import com.dimafeng.testcontainers.PostgreSQLContainer
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.wallet.model.BaseEntity
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.container.util.MigrationAspects.*
 import org.hyperledger.identus.iam.authentication.AuthenticatorWithAuthZ

@@ -2,10 +2,10 @@ package org.hyperledger.identus.issue.controller
 
 import com.dimafeng.testcontainers.PostgreSQLContainer
 import com.typesafe.config.ConfigFactory
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.server.http.CustomServerInterceptors
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.server.http.CustomServerInterceptors
+import org.hyperledger.identus.wallet.model.BaseEntity
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.did.core.service.DIDService
 import org.hyperledger.identus.connections.core.service.ConnectionService

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authentication
 
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, Entity, EntityRole}
+import org.hyperledger.identus.wallet.model.{BaseEntity, Entity, EntityRole}
 import org.hyperledger.identus.shared.models.*
 import zio.{IO, ZIO, ZLayer}
 

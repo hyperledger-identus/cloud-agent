@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authentication.oidc
 
-import org.hyperledger.identus.agent.walletapi.model.EntityRole
+import org.hyperledger.identus.wallet.model.EntityRole
 import org.hyperledger.identus.iam.authentication.AuthenticationError
 import org.hyperledger.identus.iam.authentication.AuthenticationError.AuthenticationMethodNotEnabled
 import org.hyperledger.identus.iam.authorization.core.PermissionManagementService

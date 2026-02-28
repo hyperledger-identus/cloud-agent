@@ -1,7 +1,7 @@
 package org.hyperledger.identus.verification.controller
 
-import org.hyperledger.identus.agent.server.http.CustomServerInterceptors
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
+import org.hyperledger.identus.server.http.CustomServerInterceptors
+import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.did.core.service.MockDIDService
 import org.hyperledger.identus.iam.authentication.{AuthenticatorWithAuthZ, DefaultEntityAuthenticator}

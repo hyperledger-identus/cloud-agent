@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authorization
 
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, Entity}
+import org.hyperledger.identus.wallet.model.{BaseEntity, Entity}
 import org.hyperledger.identus.iam.authentication.oidc.KeycloakEntity
 import org.hyperledger.identus.iam.authorization.core.{PermissionManagementService, PermissionManagementServiceError}
 import org.hyperledger.identus.shared.models.{WalletAdministrationContext, WalletId}

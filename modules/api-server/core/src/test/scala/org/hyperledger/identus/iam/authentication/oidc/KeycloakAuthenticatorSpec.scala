@@ -1,8 +1,8 @@
 package org.hyperledger.identus.iam.authentication.oidc
 
-import org.hyperledger.identus.agent.walletapi.model.{EntityRole, Wallet}
-import org.hyperledger.identus.agent.walletapi.service.{WalletManagementService, WalletManagementServiceImpl}
-import org.hyperledger.identus.agent.walletapi.sql.{JdbcWalletNonSecretStorage, JdbcWalletSecretStorage}
+import org.hyperledger.identus.wallet.model.{EntityRole, Wallet}
+import org.hyperledger.identus.wallet.service.{WalletManagementService, WalletManagementServiceImpl}
+import org.hyperledger.identus.wallet.sql.{JdbcWalletNonSecretStorage, JdbcWalletSecretStorage}
 import org.hyperledger.identus.iam.authentication.AuthenticationError
 import org.hyperledger.identus.iam.authorization.keycloak.admin.KeycloakPermissionManagementService
 import org.hyperledger.identus.shared.crypto.ApolloSpecHelper

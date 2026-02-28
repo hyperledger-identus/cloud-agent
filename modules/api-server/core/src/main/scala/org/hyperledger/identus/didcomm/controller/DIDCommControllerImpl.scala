@@ -1,9 +1,9 @@
 package org.hyperledger.identus.didcomm.controller
 
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.server.DidCommHttpServerError.DIDCommMessageParsingError
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.server.DidCommHttpServerError.DIDCommMessageParsingError
+import org.hyperledger.identus.wallet.service.ManagedDIDService
+import org.hyperledger.identus.wallet.storage.DIDNonSecretStorage
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
 import org.hyperledger.identus.connections.core.service.ConnectionService

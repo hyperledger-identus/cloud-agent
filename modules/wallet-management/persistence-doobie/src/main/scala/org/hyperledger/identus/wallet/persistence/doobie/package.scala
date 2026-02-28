@@ -6,11 +6,11 @@ package org.hyperledger.identus.wallet.persistence
   * implementations will be moved here.
   */
 package object doobie {
-  type JdbcDIDNonSecretStorage = org.hyperledger.identus.agent.walletapi.sql.JdbcDIDNonSecretStorage
-  type JdbcDIDSecretStorage = org.hyperledger.identus.agent.walletapi.sql.JdbcDIDSecretStorage
-  type JdbcWalletNonSecretStorage = org.hyperledger.identus.agent.walletapi.sql.JdbcWalletNonSecretStorage
-  type JdbcWalletSecretStorage = org.hyperledger.identus.agent.walletapi.sql.JdbcWalletSecretStorage
-  type JdbcGenericSecretStorage = org.hyperledger.identus.agent.walletapi.sql.JdbcGenericSecretStorage
-  type JdbcEntityRepository = org.hyperledger.identus.agent.walletapi.sql.JdbcEntityRepository
-  type EntityRepository = org.hyperledger.identus.agent.walletapi.sql.EntityRepository
+  type JdbcDIDNonSecretStorage = org.hyperledger.identus.wallet.sql.JdbcDIDNonSecretStorage
+  type JdbcDIDSecretStorage = org.hyperledger.identus.wallet.sql.JdbcDIDSecretStorage
+  type JdbcWalletNonSecretStorage = org.hyperledger.identus.wallet.sql.JdbcWalletNonSecretStorage
+  type JdbcWalletSecretStorage = org.hyperledger.identus.wallet.sql.JdbcWalletSecretStorage
+  type JdbcGenericSecretStorage = org.hyperledger.identus.wallet.sql.JdbcGenericSecretStorage
+  type JdbcEntityRepository = org.hyperledger.identus.wallet.sql.JdbcEntityRepository
+  type EntityRepository = org.hyperledger.identus.wallet.sql.EntityRepository
 }

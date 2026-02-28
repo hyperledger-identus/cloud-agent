@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.prex
 
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
+import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
 import org.hyperledger.identus.credentials.prex.controller.PresentationExchangeController
 import org.hyperledger.identus.LogUtils.*

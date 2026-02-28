@@ -1041,14 +1041,14 @@ lazy val apiServer = project
       // Having both may introduce conflict on some api https://github.com/protocolbuffers/protobuf/issues/8104
       ExclusionRule("com.google.protobuf", "protobuf-javalite")
     ),
-    Compile / mainClass := Some("org.hyperledger.identus.agent.server.MainApp"),
+    Compile / mainClass := Some("org.hyperledger.identus.server.MainApp"),
     Docker / maintainer := "atala-coredid@iohk.io", // TODO: clarify the contact emale of the project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
     dockerBaseImage := "eclipse-temurin:22-jdk-ubi9-minimal",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "org.hyperledger.identus.agent.server.buildinfo",
+    buildInfoPackage := "org.hyperledger.identus.server.buildinfo",
     Compile / packageDoc / publishArtifact := false
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)

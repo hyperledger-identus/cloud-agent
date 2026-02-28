@@ -1,8 +1,8 @@
 package org.hyperledger.identus.credentials.credentialdefinition.controller
 
 import cats.implicits.*
-import org.hyperledger.identus.agent.walletapi.model.{ManagedDIDState, PublicationState}
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.wallet.model.{ManagedDIDState, PublicationState}
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.api.http.*
 import org.hyperledger.identus.api.http.model.{CollectionStats, Order, Pagination}
 import org.hyperledger.identus.did.core.model.did.{LongFormPrismDID, PrismDID}

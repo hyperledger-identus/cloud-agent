@@ -1,6 +1,6 @@
 package org.hyperledger.identus.vdr.controller
 
-import org.hyperledger.identus.agent.vdr.VdrService
+import org.hyperledger.identus.vdr.VdrService
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.vdr.controller.http.{

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.agent.walletapi.storage.GenericSecretStorage
+import org.hyperledger.identus.wallet.storage.GenericSecretStorage
 import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, Base64, DidId}
 import org.hyperledger.identus.didcomm.protocol.issuecredential.{IssueCredential, IssueCredentialIssuedFormat}
 import org.hyperledger.identus.didcomm.protocol.presentproof.*

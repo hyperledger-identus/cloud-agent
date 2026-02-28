@@ -6,8 +6,8 @@ package org.hyperledger.identus.wallet.secrets
   * actual implementations will be moved here.
   */
 package object vault {
-  type VaultKVClient = org.hyperledger.identus.agent.walletapi.vault.VaultKVClient
-  type VaultDIDSecretStorage = org.hyperledger.identus.agent.walletapi.vault.VaultDIDSecretStorage
-  type VaultGenericSecretStorage = org.hyperledger.identus.agent.walletapi.vault.VaultGenericSecretStorage
-  type VaultWalletSecretStorage = org.hyperledger.identus.agent.walletapi.vault.VaultWalletSecretStorage
+  type VaultKVClient = org.hyperledger.identus.wallet.vault.VaultKVClient
+  type VaultDIDSecretStorage = org.hyperledger.identus.wallet.vault.VaultDIDSecretStorage
+  type VaultGenericSecretStorage = org.hyperledger.identus.wallet.vault.VaultGenericSecretStorage
+  type VaultWalletSecretStorage = org.hyperledger.identus.wallet.vault.VaultWalletSecretStorage
 }

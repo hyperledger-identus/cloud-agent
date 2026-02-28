@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.entity.http
 
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, EntityRole}
+import org.hyperledger.identus.wallet.model.{BaseEntity, EntityRole}
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
 import org.hyperledger.identus.iam.authentication.{Authenticator, DefaultAuthenticator, SecurityLogic}

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.wallet.http.model
 
-import org.hyperledger.identus.agent.walletapi.model.Wallet
+import org.hyperledger.identus.wallet.model.Wallet
 import org.hyperledger.identus.api.http.Annotation
 import sttp.tapir.*
 import sttp.tapir.Schema.annotations.{description, encodedExample}

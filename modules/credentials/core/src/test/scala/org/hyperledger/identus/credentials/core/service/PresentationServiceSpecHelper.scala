@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
+import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
 import org.hyperledger.identus.did.core.model.did.DID
 import org.hyperledger.identus.didcomm.{AgentPeerService, PeerDID}
 import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, DidId}

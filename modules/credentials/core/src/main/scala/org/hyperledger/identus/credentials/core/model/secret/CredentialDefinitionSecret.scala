@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.model.secret
 
-import org.hyperledger.identus.agent.walletapi.storage.GenericSecret
+import org.hyperledger.identus.wallet.storage.GenericSecret
 import zio.json.ast.Json
 
 import java.util.UUID

@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
-import org.hyperledger.identus.agent.walletapi.storage.GenericSecretStorage
+import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
+import org.hyperledger.identus.wallet.storage.GenericSecretStorage
 import org.hyperledger.identus.credentials.anoncreds.AnoncredLinkSecret
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import zio.*

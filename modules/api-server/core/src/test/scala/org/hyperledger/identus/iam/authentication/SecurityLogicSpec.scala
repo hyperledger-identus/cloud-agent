@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authentication
 
-import org.hyperledger.identus.agent.walletapi.model.{Entity, EntityRole}
+import org.hyperledger.identus.wallet.model.{Entity, EntityRole}
 import org.hyperledger.identus.iam.authentication.apikey.ApiKeyCredentials
 import org.hyperledger.identus.iam.authentication.AuthenticationError.InvalidCredentials
 import zio.*

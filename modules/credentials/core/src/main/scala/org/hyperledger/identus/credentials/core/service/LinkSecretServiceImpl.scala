@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.agent.walletapi.storage.{GenericSecret, GenericSecretStorage}
+import org.hyperledger.identus.wallet.storage.{GenericSecret, GenericSecretStorage}
 import org.hyperledger.identus.credentials.anoncreds.{AnoncredLinkSecret, AnoncredLinkSecretWithId}
 import org.hyperledger.identus.credentials.core.model.error.LinkSecretError
 import org.hyperledger.identus.shared.models.WalletAccessContext

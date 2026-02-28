@@ -1,6 +1,6 @@
 package org.hyperledger.identus.oid4vci.service
 
-import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
+import org.hyperledger.identus.wallet.storage.DIDNonSecretStorage
 import org.hyperledger.identus.did.core.model.did.{DID, DIDUrl, PrismDID, VerificationRelationship}
 import org.hyperledger.identus.oid4vci.domain.{IssuanceSession, Openid4VCIProofJwtOps}
 import org.hyperledger.identus.oid4vci.http.*

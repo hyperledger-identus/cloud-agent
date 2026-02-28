@@ -1,7 +1,7 @@
 package org.hyperledger.identus.iam.entity.http.controller
 
-import org.hyperledger.identus.agent.walletapi.model.Entity
-import org.hyperledger.identus.agent.walletapi.service.EntityService
+import org.hyperledger.identus.wallet.model.Entity
+import org.hyperledger.identus.wallet.service.EntityService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
 import org.hyperledger.identus.iam.authentication.apikey.ApiKeyAuthenticator

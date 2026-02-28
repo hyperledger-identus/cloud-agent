@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.core.service
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.hyperledger.identus.agent.walletapi.service.MockManagedDIDService
+import org.hyperledger.identus.wallet.service.MockManagedDIDService
 import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.did.core.service.MockDIDService
 import org.hyperledger.identus.didcomm.model.{Base64 as MyBase64, *}

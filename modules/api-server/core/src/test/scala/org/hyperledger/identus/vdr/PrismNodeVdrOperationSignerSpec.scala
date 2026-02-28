@@ -1,16 +1,16 @@
 package org.hyperledger.identus.vdr
 
-import org.hyperledger.identus.agent.vdr.VdrServiceError.{DeactivatedDid, MissingVdrKey}
-import org.hyperledger.identus.agent.walletapi.model.{
+import org.hyperledger.identus.vdr.VdrServiceError.{DeactivatedDid, MissingVdrKey}
+import org.hyperledger.identus.wallet.model.{
   ManagedDIDDetail,
   ManagedDIDState,
   ManagedDIDTemplate,
   PublicationState,
   UpdateManagedDIDAction
 }
-import org.hyperledger.identus.agent.walletapi.model.error.GetManagedDIDError
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-import org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
+import org.hyperledger.identus.wallet.model.error.GetManagedDIDError
+import org.hyperledger.identus.wallet.service.ManagedDIDService
+import org.hyperledger.identus.wallet.storage.DIDNonSecretStorage
 import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.shared.crypto.{Apollo, Secp256k1KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletId}

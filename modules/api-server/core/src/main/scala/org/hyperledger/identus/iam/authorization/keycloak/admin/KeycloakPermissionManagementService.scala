@@ -1,7 +1,7 @@
 package org.hyperledger.identus.iam.authorization.keycloak.admin
 
-import org.hyperledger.identus.agent.walletapi.model.Wallet
-import org.hyperledger.identus.agent.walletapi.service.WalletManagementService
+import org.hyperledger.identus.wallet.model.Wallet
+import org.hyperledger.identus.wallet.service.WalletManagementService
 import org.hyperledger.identus.iam.authentication.oidc.{KeycloakClient, KeycloakEntity}
 import org.hyperledger.identus.iam.authorization.core.{PermissionManagementService, PermissionManagementServiceError}
 import org.hyperledger.identus.iam.authorization.core.PermissionManagementServiceError.*

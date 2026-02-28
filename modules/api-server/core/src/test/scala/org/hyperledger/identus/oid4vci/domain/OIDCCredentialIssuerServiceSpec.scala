@@ -1,9 +1,9 @@
 package org.hyperledger.identus.oid4vci.domain
 
 import com.nimbusds.jose.*
-import org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
-import org.hyperledger.identus.agent.walletapi.service.{ManagedDIDService, MockManagedDIDService}
-import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, MockDIDNonSecretStorage}
+import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
+import org.hyperledger.identus.wallet.service.{ManagedDIDService, MockManagedDIDService}
+import org.hyperledger.identus.wallet.storage.{DIDNonSecretStorage, MockDIDNonSecretStorage}
 import org.hyperledger.identus.did.core.model.did.{DID, PrismDID, VerificationRelationship}
 import org.hyperledger.identus.did.core.service.{DIDService, MockDIDService}
 import org.hyperledger.identus.oid4vci.http.{ClaimDescriptor, CredentialDefinition, Localization}

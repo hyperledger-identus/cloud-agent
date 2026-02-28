@@ -1,10 +1,10 @@
 package org.hyperledger.identus.issue.controller
 
-import org.hyperledger.identus.agent.server.config.{AppConfig, FeatureFlagConfig}
-import org.hyperledger.identus.agent.server.ControllerHelper
-import org.hyperledger.identus.agent.walletapi.model.PublicationState
-import org.hyperledger.identus.agent.walletapi.model.PublicationState.{Created, PublicationPending, Published}
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.server.config.{AppConfig, FeatureFlagConfig}
+import org.hyperledger.identus.server.ControllerHelper
+import org.hyperledger.identus.wallet.model.PublicationState
+import org.hyperledger.identus.wallet.model.PublicationState.{Created, PublicationPending, Published}
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.{CollectionStats, PaginationInput}
 import org.hyperledger.identus.api.util.PaginationUtils

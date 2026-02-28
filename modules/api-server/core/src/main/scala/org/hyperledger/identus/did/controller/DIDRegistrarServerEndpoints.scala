@@ -1,6 +1,6 @@
 package org.hyperledger.identus.did.controller
 
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
+import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.LogUtils.*

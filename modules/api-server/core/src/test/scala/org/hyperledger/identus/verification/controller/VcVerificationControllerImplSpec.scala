@@ -1,7 +1,7 @@
 package org.hyperledger.identus.verification.controller
 
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
-import org.hyperledger.identus.agent.walletapi.service.MockManagedDIDService
+import org.hyperledger.identus.wallet.model.BaseEntity
+import org.hyperledger.identus.wallet.service.MockManagedDIDService
 import org.hyperledger.identus.did.core.service.MockDIDService
 import org.hyperledger.identus.iam.authentication.AuthenticatorWithAuthZ
 import org.hyperledger.identus.credentials.vc.jwt.*

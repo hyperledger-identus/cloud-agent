@@ -1,7 +1,7 @@
 package org.hyperledger.identus.iam.authentication.apikey
 
-import org.hyperledger.identus.agent.walletapi.model.{Entity, Wallet}
-import org.hyperledger.identus.agent.walletapi.service.{EntityService, WalletManagementService}
+import org.hyperledger.identus.wallet.model.{Entity, Wallet}
+import org.hyperledger.identus.wallet.service.{EntityService, WalletManagementService}
 import org.hyperledger.identus.iam.authentication.AuthenticationError
 import org.hyperledger.identus.iam.authentication.AuthenticationError.*
 import org.hyperledger.identus.shared.crypto.Sha256Hash

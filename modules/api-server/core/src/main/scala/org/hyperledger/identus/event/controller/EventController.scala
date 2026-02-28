@@ -1,6 +1,6 @@
 package org.hyperledger.identus.event.controller
 
-import org.hyperledger.identus.agent.walletapi.service.WalletManagementService
+import org.hyperledger.identus.wallet.service.WalletManagementService
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.{CollectionStats, PaginationInput}
 import org.hyperledger.identus.api.util.PaginationUtils

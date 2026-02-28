@@ -7,8 +7,8 @@ package org.hyperledger.identus.wallet.api
   */
 
 // In-memory test implementations
-type GenericSecretStorageInMemory = org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
-val GenericSecretStorageInMemory = org.hyperledger.identus.agent.walletapi.memory.GenericSecretStorageInMemory
+type GenericSecretStorageInMemory = org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
+val GenericSecretStorageInMemory = org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
 
 // Mock implementations (zio-mock)
-val MockManagedDIDService = org.hyperledger.identus.agent.walletapi.service.MockManagedDIDService
+val MockManagedDIDService = org.hyperledger.identus.wallet.service.MockManagedDIDService

@@ -2,10 +2,10 @@ package org.hyperledger.identus.credentials.schema
 
 import com.dimafeng.testcontainers.PostgreSQLContainer
 import com.typesafe.config.ConfigFactory
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.server.http.CustomServerInterceptors
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, ManagedDIDState, PublicationState}
-import org.hyperledger.identus.agent.walletapi.service.{ManagedDIDService, MockManagedDIDService}
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.server.http.CustomServerInterceptors
+import org.hyperledger.identus.wallet.model.{BaseEntity, ManagedDIDState, PublicationState}
+import org.hyperledger.identus.wallet.service.{ManagedDIDService, MockManagedDIDService}
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.did.core.model.did.PrismDIDOperation
 import org.hyperledger.identus.iam.authentication.{AuthenticatorWithAuthZ, DefaultEntityAuthenticator}

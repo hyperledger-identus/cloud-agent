@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authentication
 
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, EntityRole}
+import org.hyperledger.identus.wallet.model.{BaseEntity, EntityRole}
 import org.hyperledger.identus.iam.authentication.oidc.{
   AccessToken,
   JwtAuthenticationError,

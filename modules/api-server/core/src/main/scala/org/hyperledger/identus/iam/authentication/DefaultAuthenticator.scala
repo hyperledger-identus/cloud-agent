@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authentication
 
-import org.hyperledger.identus.agent.walletapi.model.{BaseEntity, Entity}
+import org.hyperledger.identus.wallet.model.{BaseEntity, Entity}
 import org.hyperledger.identus.iam.authentication.admin.{AdminApiKeyAuthenticator, AdminApiKeyCredentials}
 import org.hyperledger.identus.iam.authentication.apikey.{ApiKeyAuthenticator, ApiKeyCredentials}
 import org.hyperledger.identus.iam.authentication.oidc.{JwtCredentials, KeycloakAuthenticator, KeycloakEntity}

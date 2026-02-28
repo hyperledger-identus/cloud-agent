@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.schema
 
 import com.dimafeng.testcontainers.PostgreSQLContainer
-import org.hyperledger.identus.agent.walletapi.model.Entity
+import org.hyperledger.identus.wallet.model.Entity
 import org.hyperledger.identus.container.util.MigrationAspects.*
 import org.hyperledger.identus.credentials.core.model.error.CredentialSchemaUpdateError
 import org.hyperledger.identus.credentials.core.model.schema.`type`.CredentialJsonSchemaType

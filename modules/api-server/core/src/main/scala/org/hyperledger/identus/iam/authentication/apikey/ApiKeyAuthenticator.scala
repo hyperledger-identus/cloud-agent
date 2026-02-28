@@ -1,6 +1,6 @@
 package org.hyperledger.identus.iam.authentication.apikey
 
-import org.hyperledger.identus.agent.walletapi.model.Entity
+import org.hyperledger.identus.wallet.model.Entity
 import org.hyperledger.identus.iam.authentication.{
   AuthenticationError,
   AuthenticatorWithAuthZ,

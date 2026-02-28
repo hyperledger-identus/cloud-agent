@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.credentialdefinition
 
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.{Order, PaginationInput}
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}

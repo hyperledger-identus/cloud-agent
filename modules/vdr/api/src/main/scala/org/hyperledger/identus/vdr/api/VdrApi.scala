@@ -7,18 +7,18 @@ package org.hyperledger.identus.vdr.api
   */
 
 // Service trait
-type VdrService = org.hyperledger.identus.agent.vdr.VdrService
+type VdrService = org.hyperledger.identus.vdr.VdrService
 
 // Core types
-type VdrOperationResult = org.hyperledger.identus.agent.vdr.VdrOperationResult
-val VdrOperationResult = org.hyperledger.identus.agent.vdr.VdrOperationResult
+type VdrOperationResult = org.hyperledger.identus.vdr.VdrOperationResult
+val VdrOperationResult = org.hyperledger.identus.vdr.VdrOperationResult
 
-type VdrOperationStatus = org.hyperledger.identus.agent.vdr.VdrOperationStatus
-val VdrOperationStatus = org.hyperledger.identus.agent.vdr.VdrOperationStatus
+type VdrOperationStatus = org.hyperledger.identus.vdr.VdrOperationStatus
+val VdrOperationStatus = org.hyperledger.identus.vdr.VdrOperationStatus
 
-type VdrUrl = org.hyperledger.identus.agent.vdr.VdrUrl
-type VdrOptions = org.hyperledger.identus.agent.vdr.VdrOptions
+type VdrUrl = org.hyperledger.identus.vdr.VdrUrl
+type VdrOptions = org.hyperledger.identus.vdr.VdrOptions
 
 // Error types
-type VdrServiceError = org.hyperledger.identus.agent.vdr.VdrServiceError
-val VdrServiceError = org.hyperledger.identus.agent.vdr.VdrServiceError
+type VdrServiceError = org.hyperledger.identus.vdr.VdrServiceError
+val VdrServiceError = org.hyperledger.identus.vdr.VdrServiceError

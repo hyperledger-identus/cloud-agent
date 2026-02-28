@@ -1,8 +1,8 @@
 package org.hyperledger.identus.credentials.credentialdefinition
 
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
-import org.hyperledger.identus.agent.walletapi.service.MockManagedDIDService
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.wallet.model.BaseEntity
+import org.hyperledger.identus.wallet.service.MockManagedDIDService
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.container.util.MigrationAspects.migrate
 import org.hyperledger.identus.iam.authentication.AuthenticatorWithAuthZ

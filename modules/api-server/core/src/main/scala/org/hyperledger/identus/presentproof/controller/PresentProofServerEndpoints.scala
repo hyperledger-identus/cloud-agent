@@ -1,6 +1,6 @@
 package org.hyperledger.identus.presentproof.controller
 
-import org.hyperledger.identus.agent.walletapi.model.BaseEntity
+import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.api.http.model.PaginationInput
 import org.hyperledger.identus.api.http.RequestContext
 import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}

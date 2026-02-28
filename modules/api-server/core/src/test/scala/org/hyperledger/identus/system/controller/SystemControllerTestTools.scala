@@ -1,8 +1,8 @@
 package org.hyperledger.identus.system.controller
 
 import io.micrometer.prometheusmetrics.{PrometheusConfig, PrometheusMeterRegistry}
-import org.hyperledger.identus.agent.server.http.CustomServerInterceptors
-import org.hyperledger.identus.agent.server.SystemModule.configLayer
+import org.hyperledger.identus.server.http.CustomServerInterceptors
+import org.hyperledger.identus.server.SystemModule.configLayer
 import org.hyperledger.identus.system.controller.http.HealthInfo
 import sttp.client3.{DeserializationException, Response, UriContext}
 import sttp.client3.testing.SttpBackendStub

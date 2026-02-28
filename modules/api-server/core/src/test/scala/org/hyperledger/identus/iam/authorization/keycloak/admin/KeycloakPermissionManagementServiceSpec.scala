@@ -1,8 +1,8 @@
 package org.hyperledger.identus.iam.authorization.keycloak.admin
 
-import org.hyperledger.identus.agent.walletapi.model.Wallet
-import org.hyperledger.identus.agent.walletapi.service.{WalletManagementService, WalletManagementServiceImpl}
-import org.hyperledger.identus.agent.walletapi.sql.{JdbcWalletNonSecretStorage, JdbcWalletSecretStorage}
+import org.hyperledger.identus.wallet.model.Wallet
+import org.hyperledger.identus.wallet.service.{WalletManagementService, WalletManagementServiceImpl}
+import org.hyperledger.identus.wallet.sql.{JdbcWalletNonSecretStorage, JdbcWalletSecretStorage}
 import org.hyperledger.identus.iam.authentication.oidc.*
 import org.hyperledger.identus.iam.authentication.AuthenticationError.ResourceNotPermitted
 import org.hyperledger.identus.iam.authorization.core.PermissionManagementService

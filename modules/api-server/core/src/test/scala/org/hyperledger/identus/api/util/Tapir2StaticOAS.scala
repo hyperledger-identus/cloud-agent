@@ -1,9 +1,9 @@
 package org.hyperledger.identus.api.util
 
 import com.typesafe.config.ConfigFactory
-import org.hyperledger.identus.agent.server.config.AppConfig
-import org.hyperledger.identus.agent.server.http.DocModels
-import org.hyperledger.identus.agent.server.AgentHttpServer
+import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.server.http.DocModels
+import org.hyperledger.identus.server.AgentHttpServer
 import org.hyperledger.identus.did.controller.{DIDController, DIDRegistrarController}
 import org.hyperledger.identus.connections.controller.ConnectionController
 import org.hyperledger.identus.credentialstatus.controller.CredentialStatusController

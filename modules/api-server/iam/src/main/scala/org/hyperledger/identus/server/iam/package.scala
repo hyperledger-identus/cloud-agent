@@ -12,7 +12,7 @@ package org.hyperledger.identus.server
   */
 package object iam {
   // Authentication
-  type Authenticator[E <: org.hyperledger.identus.agent.walletapi.model.BaseEntity] =
+  type Authenticator[E <: org.hyperledger.identus.wallet.model.BaseEntity] =
     org.hyperledger.identus.iam.authentication.Authenticator[E]
   type DefaultAuthenticator = org.hyperledger.identus.iam.authentication.DefaultAuthenticator
   val DefaultAuthenticator = org.hyperledger.identus.iam.authentication.DefaultAuthenticator
@@ -20,7 +20,7 @@ package object iam {
   type KeycloakAuthenticator = org.hyperledger.identus.iam.authentication.oidc.KeycloakAuthenticator
 
   // Authorization
-  type PermissionManagementService[E <: org.hyperledger.identus.agent.walletapi.model.BaseEntity] =
+  type PermissionManagementService[E <: org.hyperledger.identus.wallet.model.BaseEntity] =
     org.hyperledger.identus.iam.authorization.core.PermissionManagementService[E]
   type EntityPermissionManagementService =
     org.hyperledger.identus.iam.authorization.core.EntityPermissionManagementService

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service.verification
 
-import org.hyperledger.identus.agent.walletapi.service.{ManagedDIDService, MockManagedDIDService}
+import org.hyperledger.identus.wallet.service.{ManagedDIDService, MockManagedDIDService}
 import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.did.core.service.{DIDService, MockDIDService}
 import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver

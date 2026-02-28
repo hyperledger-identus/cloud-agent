@@ -2,8 +2,7 @@ package org.hyperledger.identus.vdr
 
 import com.google.protobuf.ByteString
 import io.iohk.atala.prism.protos.node_models
-import org.hyperledger.identus.agent.vdr.{VdrOperationSigner, VdrServiceError}
-import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.did.core.model.did.{CanonicalPrismDID, PrismDID}
 import org.hyperledger.identus.shared.crypto.Secp256k1KeyPair
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}

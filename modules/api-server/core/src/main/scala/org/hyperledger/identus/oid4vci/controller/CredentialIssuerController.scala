@@ -1,6 +1,6 @@
 package org.hyperledger.identus.oid4vci.controller
 
-import org.hyperledger.identus.agent.server.config.AppConfig
+import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.ErrorResponse.{badRequest, internalServerError}
 import org.hyperledger.identus.api.util.PaginationUtils

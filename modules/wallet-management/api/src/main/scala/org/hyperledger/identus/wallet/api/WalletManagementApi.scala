@@ -10,36 +10,36 @@ package org.hyperledger.identus.wallet.api
   */
 
 // Service traits
-type ManagedDIDService = org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
-val ManagedDIDService = org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
+type ManagedDIDService = org.hyperledger.identus.wallet.service.ManagedDIDService
+val ManagedDIDService = org.hyperledger.identus.wallet.service.ManagedDIDService
 
-type WalletManagementService = org.hyperledger.identus.agent.walletapi.service.WalletManagementService
+type WalletManagementService = org.hyperledger.identus.wallet.service.WalletManagementService
 
-type EntityService = org.hyperledger.identus.agent.walletapi.service.EntityService
+type EntityService = org.hyperledger.identus.wallet.service.EntityService
 
 // Storage port traits
-type GenericSecretStorage = org.hyperledger.identus.agent.walletapi.storage.GenericSecretStorage
-type GenericSecret[K, V] = org.hyperledger.identus.agent.walletapi.storage.GenericSecret[K, V]
-type DIDNonSecretStorage = org.hyperledger.identus.agent.walletapi.storage.DIDNonSecretStorage
-type DIDSecretStorage = org.hyperledger.identus.agent.walletapi.storage.DIDSecretStorage
-type WalletNonSecretStorage = org.hyperledger.identus.agent.walletapi.storage.WalletNonSecretStorage
-type WalletSecretStorage = org.hyperledger.identus.agent.walletapi.storage.WalletSecretStorage
+type GenericSecretStorage = org.hyperledger.identus.wallet.storage.GenericSecretStorage
+type GenericSecret[K, V] = org.hyperledger.identus.wallet.storage.GenericSecret[K, V]
+type DIDNonSecretStorage = org.hyperledger.identus.wallet.storage.DIDNonSecretStorage
+type DIDSecretStorage = org.hyperledger.identus.wallet.storage.DIDSecretStorage
+type WalletNonSecretStorage = org.hyperledger.identus.wallet.storage.WalletNonSecretStorage
+type WalletSecretStorage = org.hyperledger.identus.wallet.storage.WalletSecretStorage
 
 // Core model types
-type ManagedDIDState = org.hyperledger.identus.agent.walletapi.model.ManagedDIDState
-type ManagedDIDDetail = org.hyperledger.identus.agent.walletapi.model.ManagedDIDDetail
-type PublicationState = org.hyperledger.identus.agent.walletapi.model.PublicationState
-val PublicationState = org.hyperledger.identus.agent.walletapi.model.PublicationState
+type ManagedDIDState = org.hyperledger.identus.wallet.model.ManagedDIDState
+type ManagedDIDDetail = org.hyperledger.identus.wallet.model.ManagedDIDDetail
+type PublicationState = org.hyperledger.identus.wallet.model.PublicationState
+val PublicationState = org.hyperledger.identus.wallet.model.PublicationState
 
-type Wallet = org.hyperledger.identus.agent.walletapi.model.Wallet
-val Wallet = org.hyperledger.identus.agent.walletapi.model.Wallet
+type Wallet = org.hyperledger.identus.wallet.model.Wallet
+val Wallet = org.hyperledger.identus.wallet.model.Wallet
 
-type Entity = org.hyperledger.identus.agent.walletapi.model.Entity
-val Entity = org.hyperledger.identus.agent.walletapi.model.Entity
+type Entity = org.hyperledger.identus.wallet.model.Entity
+val Entity = org.hyperledger.identus.wallet.model.Entity
 
-type WalletSeed = org.hyperledger.identus.agent.walletapi.model.WalletSeed
-val WalletSeed = org.hyperledger.identus.agent.walletapi.model.WalletSeed
+type WalletSeed = org.hyperledger.identus.wallet.model.WalletSeed
+val WalletSeed = org.hyperledger.identus.wallet.model.WalletSeed
 
 // Error types
-type WalletManagementServiceError = org.hyperledger.identus.agent.walletapi.service.WalletManagementServiceError
-val WalletManagementServiceError = org.hyperledger.identus.agent.walletapi.service.WalletManagementServiceError
+type WalletManagementServiceError = org.hyperledger.identus.wallet.service.WalletManagementServiceError
+val WalletManagementServiceError = org.hyperledger.identus.wallet.service.WalletManagementServiceError

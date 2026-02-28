@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.model.error
 
-import org.hyperledger.identus.agent.walletapi.model.PublicationState
+import org.hyperledger.identus.wallet.model.PublicationState
 import org.hyperledger.identus.did.core.model.did.{PrismDID, VerificationRelationship}
 import org.hyperledger.identus.credentials.core.model.DidCommID
 import org.hyperledger.identus.credentials.core.model.IssueCredentialRecord.ProtocolState
