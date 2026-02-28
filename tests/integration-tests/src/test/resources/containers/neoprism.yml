@@ -1,9 +1,7 @@
----
-version: "3.8"
-
 services:
   neoprism:
     image: hyperledgeridentus/identus-neoprism:${NEOPRISM_VERSION}
+    pull_policy: if_not_present
     command:
       - dev
     ports:

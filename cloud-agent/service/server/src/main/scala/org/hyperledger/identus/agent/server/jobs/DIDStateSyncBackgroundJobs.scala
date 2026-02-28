@@ -16,12 +16,13 @@ object DIDStateSyncBackgroundJobs extends BackgroundJobsHelper {
     (for {
       config <- ZIO.service[AppConfig]
       producer <- ZIO.service[Producer[WalletId, WalletId]]
-      trigger = for {
-        walletManagementService <- ZIO.service[WalletManagementService]
-        wallets <- walletManagementService.listWallets().map(_._1)
-        _ <- ZIO.logInfo(s"Triggering DID state sync for '${wallets.size}' wallets")
-        _ <- ZIO.foreach(wallets)(w => producer.produce(TOPIC_NAME, w.id, w.id))
-      } yield ()
+      trigger =
+        for {
+          walletManagementService <- ZIO.service[WalletManagementService]
+          wallets <- walletManagementService.listWallets().map(_._1)
+          _ <- ZIO.logInfo(s"Triggering DID state sync for '${wallets.size}' wallets")
+          _ <- ZIO.foreach(wallets)(w => producer.produce(TOPIC_NAME, w.id, w.id))
+        } yield ()
       _ <- trigger
         .catchAll(e => ZIO.logError(s"error while syncing DID publication state: $e"))
         .provideSomeLayer(ZLayer.succeed(WalletAdministrationContext.Admin()))

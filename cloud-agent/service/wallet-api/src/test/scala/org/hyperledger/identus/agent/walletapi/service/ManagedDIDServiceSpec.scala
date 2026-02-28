@@ -124,7 +124,11 @@ object ManagedDIDServiceSpec
       publicKeys: Seq[DIDPublicKeyTemplate] = Nil,
       services: Seq[Service] = Nil,
       context: Seq[String] = Nil
-  ): ManagedDIDTemplate = ManagedDIDTemplate(publicKeys, services, context)
+  ): ManagedDIDTemplate = ManagedDIDTemplate(
+    publicKeys = publicKeys,
+    services = services,
+    contexts = context
+  )
 
   private def resolutionResult(
       deactivated: Boolean = false,
@@ -293,7 +297,7 @@ object ManagedDIDServiceSpec
       val template = generateDIDTemplate(
         publicKeys = Seq(
           DIDPublicKeyTemplate("key1", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
-          DIDPublicKeyTemplate("key2", VerificationRelationship.KeyAgreement, EllipticCurve.SECP256K1),
+          DIDPublicKeyTemplate("key2", VerificationRelationship.KeyAgreement, EllipticCurve.X25519),
           DIDPublicKeyTemplate("key3", VerificationRelationship.AssertionMethod, EllipticCurve.SECP256K1)
         )
       )
