@@ -884,6 +884,13 @@ lazy val connectionsApi = project
 // ### Notifications ###
 // #####################
 
+lazy val notificationsApi = project
+  .in(file("modules/notifications/api"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "notifications-api")
+  .dependsOn(shared)
+
 lazy val notifications = project
   .in(file("modules/notifications/core"))
   .configure(commonConfigure)
@@ -891,14 +898,7 @@ lazy val notifications = project
     name := "notifications",
     libraryDependencies ++= D_Notifications.baseDependencies
   )
-  .dependsOn(shared)
-
-lazy val notificationsApi = project
-  .in(file("modules/notifications/api"))
-  .configure(commonConfigure)
-  .settings(commonSetttings)
-  .settings(name := "notifications-api")
-  .dependsOn(shared, notifications)
+  .dependsOn(notificationsApi)
 
 // ##########################
 // ### Wallet Management ###
