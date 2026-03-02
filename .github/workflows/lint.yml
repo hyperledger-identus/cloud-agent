@@ -43,11 +43,11 @@ jobs:
 
       - name: MegaLinter
         id: ml
-        uses: oxsecurity/megalinter@42bb470545e359597e7f12156947c436e4e3fb9a # v9.3.0
+        uses: oxsecurity/megalinter@8fbdead70d1409964ab3d5afa885e18ee85388bb # v9.4.0
 
       - name: Archive production artifacts
         if: success() || failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: Mega-Linter reports
           path: |
@@ -55,7 +55,7 @@ jobs:
             mega-linter.log
           overwrite: true
 
-      - uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6.3.0
+      - uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
         if: failure() && steps.ml.outputs.has_updated_sources == 1
         id: import_gpg
         with:
