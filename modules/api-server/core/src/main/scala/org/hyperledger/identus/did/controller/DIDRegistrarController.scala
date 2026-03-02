@@ -14,17 +14,9 @@ import org.hyperledger.identus.did.controller.http.{
 import org.hyperledger.identus.did.core.model.did.PrismDID
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.shared.utils.Traverse.*
-import org.hyperledger.identus.wallet.model.error.{
-  CreateManagedDIDError,
-  GetManagedDIDError,
-  PublishManagedDIDError,
-  UpdateManagedDIDError
-}
 import org.hyperledger.identus.wallet.model.ManagedDIDDetail
 import org.hyperledger.identus.wallet.service.ManagedDIDService
 import zio.*
-
-import scala.language.implicitConversions
 
 trait DIDRegistrarController {
   def listManagedDid(paginationInput: PaginationInput)(using
@@ -50,54 +42,9 @@ trait DIDRegistrarController {
   ): ZIO[WalletAccessContext, ErrorResponse, DIDOperationResponse]
 }
 
-object DIDRegistrarController {
-  given Conversion[GetManagedDIDError, ErrorResponse] = {
-    case GetManagedDIDError.OperationError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.toString))
-    case GetManagedDIDError.ResolutionError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.toString))
-    case GetManagedDIDError.WalletStorageError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.getMessage))
-  }
-
-  given Conversion[CreateManagedDIDError, ErrorResponse] = {
-    case CreateManagedDIDError.InvalidArgument(msg) =>
-      ErrorResponse.unprocessableEntity(detail = Some(msg))
-    case CreateManagedDIDError.WalletStorageError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.getMessage))
-    case CreateManagedDIDError.InvalidOperation(e) =>
-      ErrorResponse.unprocessableEntity(detail = Some(e.toString))
-  }
-
-  given Conversion[PublishManagedDIDError, ErrorResponse] = {
-    case PublishManagedDIDError.DIDNotFound(did) =>
-      ErrorResponse.notFound(detail = Some(s"DID not found: $did"))
-    case PublishManagedDIDError.WalletStorageError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.getMessage))
-    case PublishManagedDIDError.OperationError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.toString))
-    case PublishManagedDIDError.CryptographyError(e) =>
-      ErrorResponse.internalServerError(detail = Some(e.toString))
-  }
-
-  given Conversion[UpdateManagedDIDError, ErrorResponse] = {
-    case UpdateManagedDIDError.DIDNotFound(did) =>
-      ErrorResponse.notFound(detail = Some(s"DID not found: $did"))
-    case UpdateManagedDIDError.DIDNotPublished(did) =>
-      ErrorResponse.conflict(detail = Some(s"DID not published: $did"))
-    case UpdateManagedDIDError.DIDAlreadyDeactivated(did) =>
-      ErrorResponse.conflict(detail = Some(s"DID already deactivated: $did"))
-    case UpdateManagedDIDError.InvalidArgument(msg) =>
-      ErrorResponse.badRequest(detail = Some(msg))
-    case UpdateManagedDIDError.MultipleInflightUpdateNotAllowed(did) =>
-      ErrorResponse.conflict(detail = Some(s"Multiple in-flight update operations are not allowed: $did"))
-    case e => ErrorResponse.internalServerError(detail = Some(e.toString))
-  }
-}
-
 class DIDRegistrarControllerImpl(service: ManagedDIDService) extends DIDRegistrarController {
 
-  import DIDRegistrarController.given
+  import scala.language.implicitConversions
 
   override def listManagedDid(
       paginationInput: PaginationInput

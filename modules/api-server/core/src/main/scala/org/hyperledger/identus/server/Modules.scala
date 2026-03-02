@@ -7,6 +7,7 @@ import io.grpc.ManagedChannelBuilder
 import io.iohk.atala.prism.protos.node_api.NodeServiceGrpc
 import javax.sql.DataSource
 import org.hyperledger.identus.credentials.vc.jwt.{DidResolver as JwtDidResolver, PrismDidResolver}
+import org.hyperledger.identus.did.api.DIDKeySigner
 import org.hyperledger.identus.did.core.service.{
   DIDService,
   NeoPrismClientImpl,
@@ -39,10 +40,14 @@ import org.hyperledger.identus.server.config.{AppConfig, DIDNodeBackend, SecretS
 import org.hyperledger.identus.shared.crypto.Apollo
 import org.hyperledger.identus.shared.db.{ContextAwareTask, DbConfig, TransactorLayer}
 import org.hyperledger.identus.shared.models.KeyId
-import org.hyperledger.identus.vdr.{VdrOperationSigner, VdrService, VdrServiceImpl}
-import org.hyperledger.identus.vdr.PrismNodeVdrOperationSigner
+import org.hyperledger.identus.vdr.{PrismNodeVdrOperationSigner, VdrOperationSigner, VdrService, VdrServiceImpl}
 import org.hyperledger.identus.vdr.VdrConfigs
-import org.hyperledger.identus.wallet.service.{EntityService, ManagedDIDService, WalletManagementService}
+import org.hyperledger.identus.wallet.service.{
+  DIDKeySignerImpl,
+  EntityService,
+  ManagedDIDService,
+  WalletManagementService
+}
 import org.hyperledger.identus.wallet.sql.{JdbcDIDSecretStorage, JdbcGenericSecretStorage, JdbcWalletSecretStorage}
 import org.hyperledger.identus.wallet.storage.{DIDSecretStorage, GenericSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.wallet.vault.*
@@ -174,10 +179,12 @@ object AppModule {
         prismNodeDriver = prismNodeDriverOpt.filter(_ => appConfig.agent.vdr.prismNodeDriverEnabled)
       )
     })
-    val signerLayer: RLayer[AppConfig & ManagedDIDService, VdrOperationSigner] =
-      ZLayer.fromFunction((cfg: AppConfig, managed: ManagedDIDService) =>
+    val didKeySignerLayer: URLayer[ManagedDIDService, DIDKeySigner] = DIDKeySignerImpl.layer
+
+    val signerLayer: RLayer[AppConfig & DIDKeySigner, VdrOperationSigner] =
+      ZLayer.fromFunction((cfg: AppConfig, signer: DIDKeySigner) =>
         new PrismNodeVdrOperationSigner(
-          managed,
+          signer,
           KeyId(cfg.agent.vdr.defaultVdrKeyId),
           cfg.agent.vdr.maxDidScan
         )
@@ -186,6 +193,7 @@ object AppModule {
     ZLayer.makeSome[AppConfig & ManagedDIDService, VdrService](
       vdrConfigLayer,
       RepoModule.agentDataSourceLayer,
+      didKeySignerLayer,
       signerLayer,
       GrpcModule.prismNodeBlockingStubLayer,
       VdrServiceImpl.layer

@@ -1,7 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
 import org.hyperledger.identus.credentials.core.model.*
-import org.hyperledger.identus.credentials.core.model.error.CredentialServiceError
 import org.hyperledger.identus.credentials.core.model.IssueCredentialRecord.ProtocolState
 import org.hyperledger.identus.credentials.core.repository.CredentialRepositoryInMemory
 import org.hyperledger.identus.didcomm.protocol.issuecredential.*

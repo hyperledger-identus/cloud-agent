@@ -1,6 +1,6 @@
 package org.hyperledger.identus.notifications.controller
 
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.LogUtils.*
@@ -56,9 +56,9 @@ class EventServerEndpoints(
 }
 
 object EventServerEndpoints {
-  def all: URIO[EventController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[EventController & AuthenticatorWithAuthZ[BaseEntity], List[ZServerEndpoint[Any, Any]]] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       eventController <- ZIO.service[EventController]
       eventEndpoints = new EventServerEndpoints(eventController, authenticator, authenticator)
     } yield eventEndpoints.all

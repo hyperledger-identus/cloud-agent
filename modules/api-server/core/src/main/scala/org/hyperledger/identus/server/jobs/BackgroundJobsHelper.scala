@@ -20,10 +20,9 @@ import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
 import org.hyperledger.identus.shared.crypto.*
 import org.hyperledger.identus.shared.messaging.ConsumerJobConfig
 import org.hyperledger.identus.shared.messaging.MessagingService.RetryStep
-import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
+import org.hyperledger.identus.shared.models.{Failure, KeyId, WalletAccessContext}
 import org.hyperledger.identus.wallet.model.{ManagedDIDState, PublicationState}
 import org.hyperledger.identus.wallet.model.error.DIDSecretStorageError.{KeyNotFoundError, WalletNotFoundError}
-import org.hyperledger.identus.wallet.model.error.GetManagedDIDError
 import org.hyperledger.identus.wallet.service.ManagedDIDService
 import org.hyperledger.identus.wallet.storage.DIDNonSecretStorage
 import zio.{durationInt, Duration, ZIO, ZLayer}
@@ -37,7 +36,7 @@ trait BackgroundJobsHelper {
   def getLongForm(
       did: PrismDID,
       allowUnpublishedIssuingDID: Boolean = false
-  ): ZIO[ManagedDIDService & WalletAccessContext, BackgroundJobError | GetManagedDIDError, LongFormPrismDID] = {
+  ): ZIO[ManagedDIDService & WalletAccessContext, Failure, LongFormPrismDID] = {
     for {
       managedDIDService <- ZIO.service[ManagedDIDService]
       didState <- managedDIDService
@@ -62,7 +61,7 @@ trait BackgroundJobsHelper {
       kidIssuer: Option[KeyId],
   ): ZIO[
     DIDService & ManagedDIDService & WalletAccessContext,
-    BackgroundJobError | GetManagedDIDError | DIDResolutionError,
+    DIDResolutionError | Failure,
     JwtIssuer
   ] = {
     for {

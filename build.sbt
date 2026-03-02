@@ -900,6 +900,22 @@ lazy val notifications = project
   )
   .dependsOn(notificationsApi)
 
+lazy val notificationsHttp = project
+  .in(file("modules/notifications/http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "notifications-http",
+    libraryDependencies ++= Seq(
+      D_Server.tapirJsonZio,
+      D_Server.tapirZioHttpServer,
+      D_Server.tapirSwaggerUiBundle,
+      D.zio,
+      D.zioJson
+    )
+  )
+  .dependsOn(apiServerHttpCore, notifications, walletManagement)
+
 // ##########################
 // ### Wallet Management ###
 // ##########################
@@ -919,6 +935,7 @@ lazy val walletManagement = project
   .dependsOn(
     didcommAgentDidcommx,
     didCore,
+    didApi,
     notifications
   )
   .dependsOn(sharedTest % "test->test")
@@ -990,7 +1007,7 @@ lazy val vdrPrismNode = project
     name := "vdr-prism-node",
     libraryDependencies ++= D_Server.vdrDependencies,
   )
-  .dependsOn(vdrCore, prismNodeClient, shared % "compile->compile;test->test")
+  .dependsOn(vdrCore, prismNodeClient, didApi, shared % "compile->compile;test->test")
 
 lazy val vdrDatabase = project
   .in(file("modules/vdr/database"))
@@ -1055,6 +1072,8 @@ lazy val apiServer = project
   .enablePlugins(BuildInfoPlugin)
   .dependsOn(walletManagement % "compile->compile;test->test")
   .dependsOn(
+    apiServerHttpCore,
+    notificationsHttp,
     sharedTest % "test->test",
     didcommAgent,
     credentialsCore % "compile->compile;test->test",
@@ -1063,7 +1082,6 @@ lazy val apiServer = project
     connectionsCore % "compile->compile;test->test", // Test is for MockConnectionService
     connectionsPersistenceDoobie,
     didCore,
-    notifications,
     vdrService,
   )
 
@@ -1084,6 +1102,21 @@ releaseProcess := Seq[ReleaseStep](
 // ################################
 // ### Server sub-modules       ###
 // ################################
+
+lazy val apiServerHttpCore = project
+  .in(file("modules/api-server/http-core"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "api-server-http-core",
+    libraryDependencies ++= Seq(
+      D_Server.tapirJsonZio,
+      D_Server.tapirZioHttpServer,
+      D.zio,
+      D.zioJson
+    )
+  )
+  .dependsOn(shared, walletManagementApi)
 
 // Server sub-module aliases (Phase 4)
 lazy val apiServerJobs = project
@@ -1159,6 +1192,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   // Notifications
   notificationsApi,
   notifications,
+  notificationsHttp,
   // Wallet Management
   walletManagementApi,
   walletManagement,
@@ -1176,6 +1210,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   // Prism Node
   prismNodeClient,
   // API Server
+  apiServerHttpCore,
   apiServer,
   apiServerJobs,
   apiServerIam,
