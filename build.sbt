@@ -1079,6 +1079,15 @@ lazy val apiServer = project
     vdrHttp,
     connectionsHttp,
     didHttp,
+    systemHttp,
+    didcommHttp,
+    credentialSchemaHttp,
+    credentialDefinitionHttp,
+    prexHttp,
+    apiServerControllerCommons,
+    issueHttp,
+    presentProofHttp,
+    oid4vciHttp,
     oid4vciCore,
     sharedTest % "test->test",
     didcommAgent,
@@ -1184,6 +1193,93 @@ lazy val didHttp = project
   )
   .dependsOn(apiServerHttpCore, didCore, walletManagement)
 
+lazy val systemHttp = project
+  .in(file("modules/api-server/system-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "system-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson, D.micrometer)
+  )
+  .dependsOn(apiServerHttpCore)
+
+lazy val didcommHttp = project
+  .in(file("modules/didcomm/http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "didcomm-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, didcommAgent, connectionsCore, credentialsCore, walletManagement)
+
+lazy val credentialSchemaHttp = project
+  .in(file("modules/credentials/credential-schema-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "credential-schema-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, credentialsCore, walletManagement)
+
+lazy val credentialDefinitionHttp = project
+  .in(file("modules/credentials/credential-definition-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "credential-definition-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, credentialsCore, credentialSchemaHttp, walletManagement)
+
+lazy val prexHttp = project
+  .in(file("modules/credentials/prex-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "prex-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, credentialsPreX, credentialsCore)
+
+lazy val oid4vciHttp = project
+  .in(file("modules/oid4vci/http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "oid4vci-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson, D.nimbusJwt)
+  )
+  .dependsOn(apiServerHttpCore, oid4vciCore, credentialsCore, walletManagement)
+
+lazy val apiServerControllerCommons = project
+  .in(file("modules/api-server/controller-commons"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-controller-commons")
+  .dependsOn(apiServerHttpCore, connectionsCore, credentialsCore, didCore, didcommModels, walletManagement)
+
+lazy val issueHttp = project
+  .in(file("modules/credentials/issue-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "issue-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerControllerCommons, credentialsCore)
+
+lazy val presentProofHttp = project
+  .in(file("modules/credentials/presentproof-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "presentproof-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerControllerCommons, credentialsCore)
+
 // Server sub-module aliases (Phase 4)
 lazy val apiServerJobs = project
   .in(file("modules/api-server/jobs"))
@@ -1278,10 +1374,23 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   vdrBlockfrost,
   vdrProxy,
   vdrHttp,
+  // DIDComm HTTP
+  didcommHttp,
+  // System HTTP
+  systemHttp,
+  // Credential Schema/Definition/PreX HTTP
+  credentialSchemaHttp,
+  credentialDefinitionHttp,
+  prexHttp,
+  // Controller commons + Issue/PresentProof HTTP
+  apiServerControllerCommons,
+  issueHttp,
+  presentProofHttp,
   // Prism Node
   prismNodeClient,
   // OID4VCI
   oid4vciCore,
+  oid4vciHttp,
   // API Server
   apiServerHttpCore,
   apiServer,

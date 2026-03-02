@@ -29,20 +29,20 @@ import org.hyperledger.identus.credentialstatus.controller.CredentialStatusContr
 import org.hyperledger.identus.did.controller.{DIDControllerImpl, DIDRegistrarControllerImpl}
 import org.hyperledger.identus.did.core.util.DIDOperationValidator
 import org.hyperledger.identus.didcomm.*
-import org.hyperledger.identus.didcomm.controller.DIDCommControllerImpl
+import org.hyperledger.identus.didcomm.controller.{DIDCommControllerConfig, DIDCommControllerImpl}
 import org.hyperledger.identus.iam.authentication.{DefaultAuthenticator, Oid4vciAuthenticatorFactory}
 import org.hyperledger.identus.iam.authentication.apikey.JdbcAuthenticationRepository
 import org.hyperledger.identus.iam.authorization.core.EntityPermissionManagementService
 import org.hyperledger.identus.iam.authorization.DefaultPermissionManagementService
 import org.hyperledger.identus.iam.entity.http.controller.EntityControllerImpl
 import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementControllerImpl
-import org.hyperledger.identus.issue.controller.IssueControllerImpl
+import org.hyperledger.identus.issue.controller.{IssueControllerConfig, IssueControllerImpl}
 import org.hyperledger.identus.notifications.controller.EventControllerImpl
 import org.hyperledger.identus.notifications.EventNotificationServiceImpl
-import org.hyperledger.identus.oid4vci.controller.CredentialIssuerControllerImpl
+import org.hyperledger.identus.oid4vci.controller.{CredentialIssuerControllerConfig, CredentialIssuerControllerImpl}
 import org.hyperledger.identus.oid4vci.service.OIDCCredentialIssuerServiceImpl
 import org.hyperledger.identus.oid4vci.storage.InMemoryIssuanceSessionService
-import org.hyperledger.identus.presentproof.controller.PresentProofControllerImpl
+import org.hyperledger.identus.presentproof.controller.{PresentProofControllerConfig, PresentProofControllerImpl}
 import org.hyperledger.identus.resolvers.DIDResolver
 import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.server.http.ZioHttpClient
@@ -137,7 +137,7 @@ object MainApp extends ZIOAppDefault {
           ZioHttpClient.layer,
           // observability
           DefaultJvmMetrics.live.unit,
-          SystemControllerImpl.layer,
+          SystemControllerImpl.layer(buildinfo.BuildInfo.version),
           ZLayer.succeed(PrometheusMeterRegistry(PrometheusConfig.DEFAULT)),
           ZLayer.succeed(MicrometerConfig.default),
           micrometer.micrometerLayer,
@@ -150,14 +150,34 @@ object MainApp extends ZIOAppDefault {
           CredentialDefinitionControllerImpl.layer,
           DIDControllerImpl.layer,
           DIDRegistrarControllerImpl.layer,
+          ZLayer.fromFunction((cfg: org.hyperledger.identus.server.config.AppConfig) =>
+            IssueControllerConfig(
+              defaultJwtVCOfferDomain = cfg.credentials.defaultJwtVCOfferDomain,
+              httpEndpointServiceName = cfg.agent.httpEndpoint.serviceName,
+              httpEndpointPublicUrl = cfg.agent.httpEndpoint.publicEndpointUrl,
+              issuanceInvitationExpiry = cfg.credentials.issuanceInvitationExpiry,
+              didCommEndpointUrl = cfg.agent.didCommEndpoint.publicEndpointUrl,
+              featureFlag = cfg.featureFlag,
+            )
+          ),
           IssueControllerImpl.layer,
           CredentialStatusControllerImpl.layer,
+          ZLayer.fromFunction((cfg: org.hyperledger.identus.server.config.AppConfig) =>
+            PresentProofControllerConfig(
+              didCommEndpointUrl = cfg.agent.didCommEndpoint.publicEndpointUrl,
+              presentationInvitationExpiry = cfg.credentials.presentationInvitationExpiry,
+              featureFlag = cfg.featureFlag,
+            )
+          ),
           PresentProofControllerImpl.layer,
           VcVerificationControllerImpl.layer,
           VerificationPolicyControllerImpl.layer,
           EntityControllerImpl.layer,
           WalletManagementControllerImpl.layer,
           EventControllerImpl.layer,
+          ZLayer.fromFunction((cfg: org.hyperledger.identus.server.config.AppConfig) =>
+            DIDCommControllerConfig(cfg.connections.connectionsInvitationExpiry)
+          ),
           DIDCommControllerImpl.layer,
           PresentationExchangeControllerImpl.layer,
           VdrControllerImpl.layer,
@@ -207,6 +227,9 @@ object MainApp extends ZIOAppDefault {
           RepoModule.credentialsContextAwareTransactorLayer ++ RepoModule.credentialsTransactorLayer >>> JdbcPresentationExchangeRepository.layer,
           RepoModule.credentialsContextAwareTransactorLayer >>> JdbcVerificationPolicyRepository.layer,
           // oidc
+          ZLayer.fromFunction((cfg: org.hyperledger.identus.server.config.AppConfig) =>
+            CredentialIssuerControllerConfig(cfg.agent.httpEndpoint.publicEndpointUrl)
+          ),
           CredentialIssuerControllerImpl.layer,
           InMemoryIssuanceSessionService.layer,
           OID4VCIIssuerMetadataServiceImpl.layer,
