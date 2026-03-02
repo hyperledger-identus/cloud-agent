@@ -157,7 +157,7 @@ jobs:
 
       - name: Upload serenity report (neoprism)
         if: github.ref_name == 'main' || failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: integration-tests-result
           path: ${{ env.REPORTS_DIR }}
@@ -165,7 +165,7 @@ jobs:
 
       - name: Upload logs (neoprism)
         if: github.ref_name == 'main' || failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: docker-logs
           path: ${{ env.LOGS_DIR }}
@@ -297,7 +297,7 @@ jobs:
 
       - name: Upload serenity report (prism-node)
         if: github.ref_name == 'main' || failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: integration-tests-result-prism-node
           path: ${{ env.REPORTS_DIR }}
@@ -305,7 +305,7 @@ jobs:
 
       - name: Upload logs (prism-node)
         if: github.ref_name == 'main' || failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: docker-logs-prism-node
           path: ${{ env.LOGS_DIR }}
