@@ -5,7 +5,7 @@ import org.hyperledger.identus.api.http.model.{Order, PaginationInput}
 import org.hyperledger.identus.credentials.credentialschema.controller.VerificationPolicyController
 import org.hyperledger.identus.credentials.credentialschema.http.{VerificationPolicyInput, VerificationPolicyResponse}
 import org.hyperledger.identus.credentials.credentialschema.VerificationPolicyEndpoints.*
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.LogUtils.*
@@ -112,9 +112,9 @@ class VerificationPolicyServerEndpoints(
 }
 
 object VerificationPolicyServerEndpoints {
-  def all: URIO[VerificationPolicyController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[VerificationPolicyController & AuthenticatorWithAuthZ[BaseEntity], List[ZServerEndpoint[Any, Any]]] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       controller <- ZIO.service[VerificationPolicyController]
       endpoints = new VerificationPolicyServerEndpoints(controller, authenticator, authenticator)
     } yield endpoints.all

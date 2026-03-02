@@ -2,7 +2,7 @@ package org.hyperledger.identus.presentproof.controller
 
 import org.hyperledger.identus.api.http.model.PaginationInput
 import org.hyperledger.identus.api.http.RequestContext
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.presentproof.controller.http.{
   AcceptRequestPresentationInvitation,
   RequestPresentationAction,
@@ -112,9 +112,9 @@ class PresentProofServerEndpoints(
 }
 
 object PresentProofServerEndpoints {
-  def all: URIO[PresentProofController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[PresentProofController & AuthenticatorWithAuthZ[BaseEntity], List[ZServerEndpoint[Any, Any]]] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       presentProofController <- ZIO.service[PresentProofController]
       presentProofEndpoints = new PresentProofServerEndpoints(presentProofController, authenticator, authenticator)
     } yield presentProofEndpoints.all

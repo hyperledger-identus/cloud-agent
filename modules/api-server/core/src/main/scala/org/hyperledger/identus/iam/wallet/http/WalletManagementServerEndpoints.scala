@@ -1,7 +1,7 @@
 package org.hyperledger.identus.iam.wallet.http
 
 import org.hyperledger.identus.api.http.ErrorResponse
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.iam.wallet.http.controller.WalletManagementController
 import org.hyperledger.identus.shared.models.WalletAdministrationContext
 import org.hyperledger.identus.wallet.model.BaseEntity
@@ -87,10 +87,10 @@ class WalletManagementServerEndpoints(
 }
 
 object WalletManagementServerEndpoints {
-  def all: URIO[WalletManagementController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[WalletManagementController & AuthenticatorWithAuthZ[BaseEntity], List[ZServerEndpoint[Any, Any]]] = {
     for {
       walletManagementController <- ZIO.service[WalletManagementController]
-      auth <- ZIO.service[DefaultAuthenticator]
+      auth <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       walletManagementServerEndpoints = WalletManagementServerEndpoints(walletManagementController, auth, auth)
     } yield walletManagementServerEndpoints.all
   }

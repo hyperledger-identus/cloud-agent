@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.prex
 
 import org.hyperledger.identus.credentials.prex.controller.PresentationExchangeController
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.LogUtils.*
 import sttp.tapir.ztapir.*
@@ -51,10 +51,11 @@ class PresentationExchangeServerEndpoints(
 }
 
 object PresentationExchangeServerEndpoints {
-  def all: URIO[DefaultAuthenticator & PresentationExchangeController, List[ZServerEndpoint[Any, Any]]] = {
+  def all
+      : URIO[AuthenticatorWithAuthZ[BaseEntity] & PresentationExchangeController, List[ZServerEndpoint[Any, Any]]] = {
     for {
       controller <- ZIO.service[PresentationExchangeController]
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       endpoints = PresentationExchangeServerEndpoints(controller, authenticator, authenticator)
     } yield endpoints.all
   }

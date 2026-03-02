@@ -142,6 +142,9 @@ object MainApp extends ZIOAppDefault {
           ZLayer.succeed(MicrometerConfig.default),
           micrometer.micrometerLayer,
           // controller
+          ZLayer.fromFunction((cfg: org.hyperledger.identus.server.config.AppConfig) =>
+            cfg.agent.didCommEndpoint.publicEndpointUrl
+          ),
           ConnectionControllerImpl.layer,
           CredentialSchemaControllerImpl.layer,
           CredentialDefinitionControllerImpl.layer,

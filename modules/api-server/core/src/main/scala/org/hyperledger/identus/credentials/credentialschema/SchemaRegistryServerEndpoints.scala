@@ -5,7 +5,7 @@ import org.hyperledger.identus.api.http.RequestContext
 import org.hyperledger.identus.credentials.credentialschema.controller.CredentialSchemaController
 import org.hyperledger.identus.credentials.credentialschema.http.{CredentialSchemaInput, FilterInput}
 import org.hyperledger.identus.credentials.credentialschema.SchemaRegistryEndpoints.*
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.wallet.model.BaseEntity
@@ -145,9 +145,11 @@ class SchemaRegistryServerEndpoints(
 }
 
 object SchemaRegistryServerEndpoints {
-  def all: URIO[CredentialSchemaController & DefaultAuthenticator & AppConfig, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[CredentialSchemaController & AuthenticatorWithAuthZ[BaseEntity] & AppConfig, List[
+    ZServerEndpoint[Any, Any]
+  ]] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       config <- ZIO.service[AppConfig]
       schemaRegistryService <- ZIO.service[CredentialSchemaController]
       schemaRegistryEndpoints = new SchemaRegistryServerEndpoints(

@@ -2,7 +2,7 @@ package org.hyperledger.identus.iam.entity.http
 
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
-import org.hyperledger.identus.iam.authentication.{Authenticator, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, SecurityLogic}
 import org.hyperledger.identus.iam.authentication.admin.AdminApiKeyCredentials
 import org.hyperledger.identus.iam.authentication.oidc.JwtCredentials
 import org.hyperledger.identus.iam.entity.http.controller.EntityController
@@ -121,10 +121,10 @@ class EntityServerEndpoints(entityController: EntityController, authenticator: A
 }
 
 object EntityServerEndpoints {
-  def all: URIO[EntityController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[EntityController & AuthenticatorWithAuthZ[BaseEntity], List[ZServerEndpoint[Any, Any]]] = {
     for {
       entityController <- ZIO.service[EntityController]
-      auth <- ZIO.service[DefaultAuthenticator]
+      auth <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       entityEndpoints = new EntityServerEndpoints(entityController, auth)
     } yield entityEndpoints.all
   }

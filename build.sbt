@@ -1074,6 +1074,12 @@ lazy val apiServer = project
   .dependsOn(
     apiServerHttpCore,
     notificationsHttp,
+    credentialStatusHttp,
+    verificationHttp,
+    vdrHttp,
+    connectionsHttp,
+    didHttp,
+    oid4vciCore,
     sharedTest % "test->test",
     didcommAgent,
     credentialsCore % "compile->compile;test->test",
@@ -1081,7 +1087,6 @@ lazy val apiServer = project
     credentialsAnoncreds,
     connectionsCore % "compile->compile;test->test", // Test is for MockConnectionService
     connectionsPersistenceDoobie,
-    didCore,
     vdrService,
   )
 
@@ -1117,6 +1122,67 @@ lazy val apiServerHttpCore = project
     )
   )
   .dependsOn(shared, walletManagementApi)
+
+// Domain HTTP modules
+lazy val credentialStatusHttp = project
+  .in(file("modules/credentials/credential-status-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "credential-status-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, credentialsCore)
+
+lazy val verificationHttp = project
+  .in(file("modules/credentials/verification-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "verification-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, credentialsCore)
+
+lazy val vdrHttp = project
+  .in(file("modules/vdr/http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, vdrCore)
+
+lazy val oid4vciCore = project
+  .in(file("modules/oid4vci/core"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "oid4vci-core",
+    libraryDependencies ++= Seq(D.zio, D.nimbusJwt)
+  )
+  .dependsOn(credentialsVcJWT, didCore, sharedCrypto)
+
+lazy val connectionsHttp = project
+  .in(file("modules/connections/http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "connections-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, connectionsCore, walletManagement)
+
+lazy val didHttp = project
+  .in(file("modules/did/http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "did-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, didCore, walletManagement)
 
 // Server sub-module aliases (Phase 4)
 lazy val apiServerJobs = project
@@ -1158,6 +1224,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   // DID
   didApi,
   didCore,
+  didHttp,
   // DIDComm
   didcommApi,
   didcommModels,
@@ -1185,9 +1252,12 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   credentialsAnoncreds,
   credentialsAnoncredsTest,
   credentialsPreX,
+  credentialStatusHttp,
+  verificationHttp,
   // Connections
   connectionsApi,
   connectionsCore,
+  connectionsHttp,
   connectionsPersistenceDoobie,
   // Notifications
   notificationsApi,
@@ -1207,8 +1277,11 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   vdrMemory,
   vdrBlockfrost,
   vdrProxy,
+  vdrHttp,
   // Prism Node
   prismNodeClient,
+  // OID4VCI
+  oid4vciCore,
   // API Server
   apiServerHttpCore,
   apiServer,

@@ -2,7 +2,7 @@ package org.hyperledger.identus.issue.controller
 
 import org.hyperledger.identus.api.http.model.PaginationInput
 import org.hyperledger.identus.api.http.RequestContext
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.issue.controller.http.{
   AcceptCredentialOfferInvitation,
   AcceptCredentialOfferRequest,
@@ -117,9 +117,9 @@ class IssueServerEndpoints(
 }
 
 object IssueServerEndpoints {
-  def all: URIO[IssueController & DefaultAuthenticator, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[IssueController & AuthenticatorWithAuthZ[BaseEntity], List[ZServerEndpoint[Any, Any]]] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       issueController <- ZIO.service[IssueController]
       issueEndpoints = new IssueServerEndpoints(issueController, authenticator, authenticator)
     } yield issueEndpoints.all

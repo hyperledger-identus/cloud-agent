@@ -6,7 +6,7 @@ import org.hyperledger.identus.credentials.credentialdefinition
 import org.hyperledger.identus.credentials.credentialdefinition.controller.CredentialDefinitionController
 import org.hyperledger.identus.credentials.credentialdefinition.http.{CredentialDefinitionInput, FilterInput}
 import org.hyperledger.identus.credentials.credentialdefinition.CredentialDefinitionRegistryEndpoints.*
-import org.hyperledger.identus.iam.authentication.{Authenticator, Authorizer, DefaultAuthenticator, SecurityLogic}
+import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
 import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.LogUtils.*
@@ -125,10 +125,12 @@ class CredentialDefinitionRegistryServerEndpoints(
 }
 
 object CredentialDefinitionRegistryServerEndpoints {
-  def all: URIO[CredentialDefinitionController & DefaultAuthenticator & AppConfig, List[ZServerEndpoint[Any, Any]]] = {
+  def all: URIO[CredentialDefinitionController & AuthenticatorWithAuthZ[BaseEntity] & AppConfig, List[
+    ZServerEndpoint[Any, Any]
+  ]] = {
     for {
       credentialDefinitionRegistryService <- ZIO.service[CredentialDefinitionController]
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       config <- ZIO.service[AppConfig]
       credentialDefinitionRegistryEndpoints = new CredentialDefinitionRegistryServerEndpoints(
         config,

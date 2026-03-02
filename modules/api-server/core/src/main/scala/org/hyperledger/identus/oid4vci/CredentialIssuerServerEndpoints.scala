@@ -169,11 +169,11 @@ case class CredentialIssuerServerEndpoints(
 
 object CredentialIssuerServerEndpoints {
   def all: URIO[
-    DefaultAuthenticator & Oid4vciAuthenticatorFactory & CredentialIssuerController,
+    AuthenticatorWithAuthZ[BaseEntity] & Oid4vciAuthenticatorFactory & CredentialIssuerController,
     List[ZServerEndpoint[Any, Any]]
   ] = {
     for {
-      authenticator <- ZIO.service[DefaultAuthenticator]
+      authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
       credentialIssuerController <- ZIO.service[CredentialIssuerController]
       oid4vciAuthenticatorFactory <- ZIO.service[Oid4vciAuthenticatorFactory]
       oidcEndpoints = CredentialIssuerServerEndpoints(
