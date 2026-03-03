@@ -1138,6 +1138,8 @@ lazy val apiServerHttpCore = project
     libraryDependencies ++= Seq(
       D_Server.tapirJsonZio,
       D_Server.tapirZioHttpServer,
+      D_Server.tapirSwaggerUiBundle,
+      D_Server.tapirRedocBundle,
       D.zio,
       D.zioJson
     )

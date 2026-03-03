@@ -118,7 +118,7 @@ class ZHttp4sBlazeServer(micrometerRegistry: PrometheusMeterRegistry, metricsNam
         ZIO.executor.flatMap(executor =>
           BlazeServerBuilder[Task]
             .withExecutionContext(executor.asExecutionContext)
-            .withServiceErrorHandler(CustomServerInterceptors.http4sServiceErrorHandler)
+            .withServiceErrorHandler(Http4sErrorHandler.http4sServiceErrorHandler)
             .bindHttp(port, "0.0.0.0")
             .withHttpApp(Router("/" -> http4sEndpoints).orNotFound)
             .serve

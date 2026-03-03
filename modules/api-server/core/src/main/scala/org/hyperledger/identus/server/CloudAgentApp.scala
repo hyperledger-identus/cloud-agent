@@ -18,7 +18,7 @@ import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.oid4vci.CredentialIssuerServerEndpoints
 import org.hyperledger.identus.presentproof.controller.PresentProofServerEndpoints
 import org.hyperledger.identus.server.config.AppConfig
-import org.hyperledger.identus.server.http.{ZHttp4sBlazeServer, ZHttpEndpoints}
+import org.hyperledger.identus.server.http.{DocModels, ZHttp4sBlazeServer, ZHttpEndpoints}
 import org.hyperledger.identus.server.jobs.*
 import org.hyperledger.identus.server.notification.WebhookPublisher
 import org.hyperledger.identus.shared.models.*
@@ -89,7 +89,12 @@ object AgentHttpServer {
   def run =
     for {
       allEndpoints <- agentRESTServiceEndpoints
-      allEndpointsWithDocumentation = ZHttpEndpoints.withDocumentations[Task](allEndpoints)
+      allEndpointsWithDocumentation = ZHttpEndpoints.withDocumentations[Task](
+        allEndpoints,
+        "Identus Cloud Agent",
+        org.hyperledger.identus.server.buildinfo.BuildInfo.version,
+        DocModels.customiseDocsModel
+      )
       server <- ZHttp4sBlazeServer.make("rest_api")
       appConfig <- ZIO.service[AppConfig]
       _ <- server.start(allEndpointsWithDocumentation, port = appConfig.agent.httpEndpoint.http.port).debug

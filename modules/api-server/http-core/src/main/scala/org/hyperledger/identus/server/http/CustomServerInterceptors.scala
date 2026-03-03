@@ -1,11 +1,8 @@
 package org.hyperledger.identus.server.http
 
-import org.http4s.{MediaType, Request, Response, Status}
-import org.http4s.headers.`Content-Type`
-import org.http4s.server.ServiceErrorHandler
 import org.hyperledger.identus.api.http.ErrorResponse
 import org.hyperledger.identus.shared.models.{Failure, StatusCode, UnmanagedFailureException}
-import org.log4s.*
+import org.slf4j.LoggerFactory
 import sttp.tapir.json.zio.jsonBody
 import sttp.tapir.server.interceptor.*
 import sttp.tapir.server.interceptor.decodefailure.{DecodeFailureHandler, DefaultDecodeFailureHandler}
@@ -13,22 +10,21 @@ import sttp.tapir.server.interceptor.decodefailure.DefaultDecodeFailureHandler.F
 import sttp.tapir.server.interceptor.exception.ExceptionHandler
 import sttp.tapir.server.interceptor.reject.RejectHandler
 import sttp.tapir.server.model.ValuedEndpointOutput
-import zio.{Task, ZIO}
 
 import scala.language.implicitConversions
 
 object CustomServerInterceptors {
 
-  private val logger: Logger = getLogger
-  private val endpointOutput = jsonBody[ErrorResponse]
+  private val logger = LoggerFactory.getLogger(getClass)
+  val endpointOutput = jsonBody[ErrorResponse]
 
-  private def tapirDefectHandler(response: ErrorResponse, maybeCause: Option[Throwable] = None) = {
+  def tapirDefectHandler(response: ErrorResponse, maybeCause: Option[Throwable] = None) = {
     val statusCode = sttp.model.StatusCode(response.status)
     // Log defect as 'error' when status code matches a server error (5xx). Log other defects as 'debug'.
     (statusCode, maybeCause) match
-      case (sc, Some(cause)) if sc.isServerError => logger.error(cause)(endpointOutput.codec.encode(response))
+      case (sc, Some(cause)) if sc.isServerError => logger.error(endpointOutput.codec.encode(response), cause)
       case (sc, None) if sc.isServerError        => logger.error(endpointOutput.codec.encode(response))
-      case (_, Some(cause))                      => logger.debug(cause)(endpointOutput.codec.encode(response))
+      case (_, Some(cause))                      => logger.debug(endpointOutput.codec.encode(response), cause)
       case (_, None)                             => logger.debug(endpointOutput.codec.encode(response))
     ValuedEndpointOutput(endpointOutput, response).prepend(sttp.tapir.statusCode, statusCode)
   }
@@ -70,9 +66,9 @@ object CustomServerInterceptors {
 
     /** As per the Tapir Decode Failures documentation:
       *
-      * <pre> an “endpoint doesn’t match” result is returned if the request method or path doesn’t match. The http
-      * library should attempt to serve this request with the next endpoint. The path doesn’t match if a path segment is
-      * missing, there’s a constant value mismatch or a decoding error (e.g. parsing a segment to an Int fails).</pre>
+      * <pre> an "endpoint doesn't match" result is returned if the request method or path doesn't match. The http
+      * library should attempt to serve this request with the next endpoint. The path doesn't match if a path segment is
+      * missing, there's a constant value mismatch or a decoding error (e.g. parsing a segment to an Int fails).</pre>
       *
       * This means that in some failure cases, the handler should instruct Tapir to try processing the request with the
       * next endpoint, and not return an error response straight to the caller. This is achieved by returning Some (stop
@@ -101,24 +97,4 @@ object CustomServerInterceptors {
         )
       case None => None
   })
-
-  def http4sServiceErrorHandler: ServiceErrorHandler[Task] = (req: Request[Task]) => { case t: Throwable =>
-    val res = tapirDefectHandler(
-      ErrorResponse(
-        StatusCode.InternalServerError.code,
-        s"error:InternalServerError",
-        "Internal Server Error",
-        Some(
-          s"An unexpected error occurred when servicing the request: " +
-            s"path=['${req.method.name} ${req.uri.copy(scheme = None, authority = None, fragment = None).toString}']"
-        )
-      ),
-      Some(t)
-    )
-    ZIO.succeed(
-      Response(Status.InternalServerError)
-        .withEntity(endpointOutput.codec.encode(res.value._2))
-        .withContentType(`Content-Type`(MediaType.application.json))
-    )
-  }
 }
