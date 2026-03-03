@@ -787,7 +787,7 @@ lazy val credentialsCore = project
     credentialsAnoncreds,
     credentialsVcJWT,
     credentialsSDJWT,
-    credentialsPreX % "compile->compile;test->test", // Test is for example resources
+    sharedJson, // for PresentationDefinition (JsonPath, JsonSchema)
   )
 
 lazy val credentialsApi = project
@@ -813,7 +813,7 @@ lazy val credentialsPreX = project
   .in(file("modules/credentials/prex"))
   .settings(commonSetttings)
   .settings(name := "credentials-prex")
-  .dependsOn(shared, sharedJson, credentialsVcJWT)
+  .dependsOn(credentialsCore, shared, sharedJson, credentialsVcJWT)
 
 // ###############################
 // ### Credentials Anoncreds  ###
