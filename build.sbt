@@ -1072,7 +1072,9 @@ lazy val apiServer = project
   .enablePlugins(BuildInfoPlugin)
   .dependsOn(walletManagement % "compile->compile;test->test")
   .dependsOn(
+    apiServerConfig,
     apiServerHttpCore,
+    apiServerJobs,
     notificationsHttp,
     credentialStatusHttp,
     verificationHttp,
@@ -1119,6 +1121,13 @@ releaseProcess := Seq[ReleaseStep](
 // ################################
 // ### Server sub-modules       ###
 // ################################
+
+lazy val apiServerConfig = project
+  .in(file("modules/api-server/config"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-config")
+  .dependsOn(apiServerHttpCore, iamCore)
 
 lazy val apiServerHttpCore = project
   .in(file("modules/api-server/http-core"))
@@ -1283,13 +1292,23 @@ lazy val presentProofHttp = project
   )
   .dependsOn(apiServerControllerCommons, credentialsCore)
 
-// Server sub-module aliases (Phase 4)
 lazy val apiServerJobs = project
   .in(file("modules/api-server/jobs"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "api-server-jobs")
-  .dependsOn(apiServer)
+  .dependsOn(
+    apiServerConfig,
+    connectionsCore,
+    credentialsCore,
+    credentialsVcJWT,
+    credentialsSDJWT,
+    credentialsAnoncreds,
+    didCore,
+    didcommAgent,
+    walletManagement,
+    shared
+  )
 
 lazy val iamCore = project
   .in(file("modules/iam/core"))
@@ -1415,6 +1434,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   oid4vciCore,
   oid4vciHttp,
   // API Server
+  apiServerConfig,
   apiServerHttpCore,
   apiServer,
   apiServerJobs,

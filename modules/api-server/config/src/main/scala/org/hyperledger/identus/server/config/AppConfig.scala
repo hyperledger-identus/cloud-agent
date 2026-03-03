@@ -1,7 +1,5 @@
 package org.hyperledger.identus.server.config
 
-import org.hyperledger.identus.credentials.vc.jwt.*
-import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.iam.authentication.AuthenticationConfig
 import org.hyperledger.identus.shared.db.DbConfig
 import org.hyperledger.identus.shared.messaging.MessagingServiceConfig
@@ -137,25 +135,7 @@ final case class CredentialVerificationConfig(
 
 final case class Options(credential: CredentialVerificationConfig, presentation: PresentationVerificationConfig)
 
-final case class VerificationConfig(options: Options) {
-  def toPresentationVerificationOptions(): JwtPresentation.PresentationVerificationOptions = {
-    JwtPresentation.PresentationVerificationOptions(
-      maybeProofPurpose = Some(VerificationRelationship.Authentication),
-      verifySignature = options.presentation.verifySignature,
-      verifyDates = options.presentation.verifyDates,
-      verifyHoldersBinding = options.presentation.verifyHoldersBinding,
-      leeway = options.presentation.leeway,
-      maybeCredentialOptions = Some(
-        CredentialVerification.CredentialVerificationOptions(
-          verifySignature = options.credential.verifySignature,
-          verifyDates = options.credential.verifyDates,
-          leeway = options.credential.leeway,
-          maybeProofPurpose = Some(VerificationRelationship.AssertionMethod)
-        )
-      )
-    )
-  }
-}
+final case class VerificationConfig(options: Options)
 
 final case class WebhookPublisherConfig(
     url: Option[URL],

@@ -10,6 +10,7 @@ import org.hyperledger.identus.credentials.core.service.serdes.AnoncredCredentia
 import org.hyperledger.identus.credentials.sdjwt.{HolderPrivateKey, IssuerPublicKey, PresentationCompact, SDJWT}
 import org.hyperledger.identus.credentials.vc.jwt.{
   CredentialSchemaAndTrustedIssuersConstraint,
+  CredentialVerification,
   DidResolver as JwtDidResolver,
   Issuer as JwtIssuer,
   JWT,
@@ -25,6 +26,7 @@ import org.hyperledger.identus.didcomm.protocol.presentproof.*
 import org.hyperledger.identus.didcomm.protocol.reportproblem.v2.{ProblemCode, ReportProblem}
 import org.hyperledger.identus.resolvers.DIDResolver
 import org.hyperledger.identus.server.config.AppConfig
+import org.hyperledger.identus.server.config.VerificationConfig
 import org.hyperledger.identus.server.jobs.BackgroundJobError.{
   ErrorResponseReceivedFromPeerAgent,
   InvalidState,
@@ -49,6 +51,26 @@ import java.time.{Instant, ZoneId}
 import java.util.UUID
 
 object PresentBackgroundJobs extends BackgroundJobsHelper {
+
+  private def toPresentationVerificationOptions(
+      config: VerificationConfig
+  ): JwtPresentation.PresentationVerificationOptions = {
+    JwtPresentation.PresentationVerificationOptions(
+      maybeProofPurpose = Some(VerificationRelationship.Authentication),
+      verifySignature = config.options.presentation.verifySignature,
+      verifyDates = config.options.presentation.verifyDates,
+      verifyHoldersBinding = config.options.presentation.verifyHoldersBinding,
+      leeway = config.options.presentation.leeway,
+      maybeCredentialOptions = Some(
+        CredentialVerification.CredentialVerificationOptions(
+          verifySignature = config.options.credential.verifySignature,
+          verifyDates = config.options.credential.verifyDates,
+          leeway = config.options.credential.leeway,
+          maybeProofPurpose = Some(VerificationRelationship.AssertionMethod)
+        )
+      )
+    )
+  }
 
   private type ERROR =
     /*DIDSecretStorageError | PresentationError | CredentialServiceError | BackgroundJobError | TransportError | */
@@ -1186,7 +1208,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
                   result: Validation[String, Unit] <- JwtPresentation
                     .verify(
                       JWT(base64Decoded),
-                      verificationConfig.toPresentationVerificationOptions()
+                      toPresentationVerificationOptions(verificationConfig)
                     )(didResolverService, uriResolver)(clock)
                     .mapError(error => PresentationError.PresentationVerificationError(error.mkString))
 

@@ -59,11 +59,28 @@ trait IssueControllerTestTools extends PostgresTestContainerSupport {
       })
   }
 
+  private val issueControllerConfigLayer = ZLayer.fromFunction((cfg: AppConfig) =>
+    IssueControllerConfig(
+      defaultJwtVCOfferDomain = cfg.credentials.defaultJwtVCOfferDomain,
+      httpEndpointServiceName = cfg.agent.httpEndpoint.serviceName,
+      httpEndpointPublicUrl = cfg.agent.httpEndpoint.publicEndpointUrl,
+      issuanceInvitationExpiry = cfg.credentials.issuanceInvitationExpiry,
+      didCommEndpointUrl = cfg.agent.didCommEndpoint.publicEndpointUrl,
+      featureFlag = cfg.featureFlag,
+    )
+  )
+
   lazy val testEnvironmentLayer =
     ZLayer.makeSome[
       ManagedDIDService & DIDService & CredentialService & CredentialDefinitionService & ConnectionService,
       IssueController & AppConfig & PostgreSQLContainer & AuthenticatorWithAuthZ[BaseEntity]
-    ](IssueControllerImpl.layer, configLayer, pgContainerLayer, DefaultEntityAuthenticator.layer)
+    ](
+      IssueControllerImpl.layer,
+      issueControllerConfigLayer,
+      configLayer,
+      pgContainerLayer,
+      DefaultEntityAuthenticator.layer
+    )
 
   val issueUriBase = uri"http://test.com/issue-credentials/"
 

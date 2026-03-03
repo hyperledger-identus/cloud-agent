@@ -1,6 +1,7 @@
 package org.hyperledger.identus.system.controller
 
 import io.micrometer.prometheusmetrics.{PrometheusConfig, PrometheusMeterRegistry}
+import org.hyperledger.identus.server.buildinfo.BuildInfo
 import org.hyperledger.identus.server.http.CustomServerInterceptors
 import org.hyperledger.identus.server.SystemModule.configLayer
 import org.hyperledger.identus.system.controller.http.HealthInfo
@@ -31,7 +32,7 @@ trait SystemControllerTestTools {
     ZLayer.succeed(MicrometerConfig.default) >+>
     DefaultJvmMetrics.live.unit >+>
     micrometer.micrometerLayer >+>
-    SystemControllerImpl.layer
+    SystemControllerImpl.layer(BuildInfo.version)
 
   val testEnvironmentLayer = zio.test.testEnvironment ++
     controllerLayer

@@ -109,7 +109,12 @@ trait CredentialDefinitionTestTools extends PostgresTestContainerSupport {
   ) = {
 
     val credentialDefinitionRegistryEndpoints =
-      CredentialDefinitionRegistryServerEndpoints(config, controller, authenticator, authenticator)
+      CredentialDefinitionRegistryServerEndpoints(
+        config.agent.httpEndpoint.serviceName,
+        controller,
+        authenticator,
+        authenticator
+      )
 
     val backend =
       TapirStubInterpreter(
