@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.credentialdefinition.http
 
 import org.hyperledger.identus.api.http.Annotation
-import org.hyperledger.identus.credentials.credentialschema.http.CredentialSchemaResponsePage.annotations
+import org.hyperledger.identus.credentials.credentialdefinition.http.CredentialDefinitionResponsePage.annotations
 import sttp.tapir.Schema
 import sttp.tapir.Schema.annotations.{description, encodedExample}
 import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}

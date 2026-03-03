@@ -1266,7 +1266,7 @@ lazy val credentialDefinitionHttp = project
     name := "credential-definition-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
   )
-  .dependsOn(apiServerHttpCore, credentialsCore, credentialSchemaHttp, walletManagement)
+  .dependsOn(apiServerHttpCore, credentialsCore, walletManagement)
 
 lazy val prexHttp = project
   .in(file("modules/credentials/prex-http"))
