@@ -16,22 +16,16 @@ import org.hyperledger.identus.did.core.service.{
   PrismNodeDIDService
 }
 import org.hyperledger.identus.did.core.util.DIDOperationValidator
-import org.hyperledger.identus.iam.authentication.admin.{
-  AdminApiKeyAuthenticator,
-  AdminApiKeyAuthenticatorImpl,
-  AdminConfig
-}
+import org.hyperledger.identus.iam.authentication.admin.{AdminApiKeyAuthenticator, AdminApiKeyAuthenticatorImpl}
 import org.hyperledger.identus.iam.authentication.apikey.{
   ApiKeyAuthenticator,
   ApiKeyAuthenticatorImpl,
-  ApiKeyConfig,
   AuthenticationRepository
 }
 import org.hyperledger.identus.iam.authentication.oidc.{
   KeycloakAuthenticator,
   KeycloakAuthenticatorImpl,
   KeycloakClientImpl,
-  KeycloakConfig,
   KeycloakEntity
 }
 import org.hyperledger.identus.iam.authorization.core.PermissionManagementService
@@ -101,8 +95,8 @@ object AppModule {
       AppConfig & AuthenticationRepository & EntityService & WalletManagementService,
       ApiKeyAuthenticator & AdminApiKeyAuthenticator
     ](
-      AdminConfig.layer,
-      ApiKeyConfig.layer,
+      ZLayer.fromFunction((conf: AppConfig) => conf.agent.authentication.admin),
+      ZLayer.fromFunction((conf: AppConfig) => conf.agent.authentication.apiKey),
       AdminApiKeyAuthenticatorImpl.layer,
       ApiKeyAuthenticatorImpl.layer,
     )
@@ -122,7 +116,7 @@ object AppModule {
                 AppConfig & Client & PermissionManagementService[KeycloakEntity],
                 KeycloakAuthenticator
               ](
-                KeycloakConfig.layer,
+                ZLayer.fromFunction((conf: AppConfig) => conf.agent.authentication.keycloak),
                 KeycloakAuthenticatorImpl.layer,
                 KeycloakClientImpl.authzClientLayer,
                 KeycloakClientImpl.layer
@@ -142,7 +136,7 @@ object AppModule {
             ZLayer.makeSome[AppConfig & WalletManagementService & Client, PermissionManagementService[KeycloakEntity]](
               KeycloakClientImpl.authzClientLayer,
               KeycloakClientImpl.layer,
-              KeycloakConfig.layer,
+              ZLayer.fromFunction((conf: AppConfig) => conf.agent.authentication.keycloak),
               KeycloakPermissionManagementService.layer
             )
         }

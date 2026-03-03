@@ -7,7 +7,6 @@ import org.hyperledger.identus.credentials.credentialdefinition.controller.Crede
 import org.hyperledger.identus.credentials.credentialdefinition.http.{CredentialDefinitionInput, FilterInput}
 import org.hyperledger.identus.credentials.credentialdefinition.CredentialDefinitionRegistryEndpoints.*
 import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
-import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.LogUtils.*
 import sttp.tapir.ztapir.*
@@ -16,7 +15,7 @@ import zio.*
 import java.util.UUID
 
 class CredentialDefinitionRegistryServerEndpoints(
-    config: AppConfig,
+    serviceName: String,
     credentialDefinitionController: CredentialDefinitionController,
     authenticator: Authenticator[BaseEntity],
     authorizer: Authorizer[BaseEntity]
@@ -57,7 +56,7 @@ class CredentialDefinitionRegistryServerEndpoints(
     val did: ZServerEndpoint[Any, Any] = getCredentialDefinitionByIdDidUrlEndpoint.zServerLogic {
       case (ctx: RequestContext, guid: UUID) =>
         credentialDefinitionController
-          .getCredentialDefinitionByGuidDidUrl(config.agent.httpEndpoint.serviceName, guid)(ctx)
+          .getCredentialDefinitionByGuidDidUrl(serviceName, guid)(ctx)
           .logTrace(ctx)
     }
 
@@ -88,7 +87,7 @@ class CredentialDefinitionRegistryServerEndpoints(
           case (ctx: RequestContext, filter: FilterInput, paginationInput: PaginationInput, order: Option[Order]) =>
             credentialDefinitionController
               .lookupCredentialDefinitionsDidUrl(
-                config.agent.httpEndpoint.serviceName,
+                serviceName,
                 filter,
                 paginationInput.toPagination,
                 order
@@ -112,7 +111,7 @@ class CredentialDefinitionRegistryServerEndpoints(
     val did: ZServerEndpoint[Any, Any] = getCredentialDefinitionInnerDefinitionByIdDidUrlEndpoint.zServerLogic {
       case (ctx: RequestContext, guid: UUID) =>
         credentialDefinitionController
-          .getCredentialDefinitionInnerDefinitionByGuidDidUrl(config.agent.httpEndpoint.serviceName, guid)(ctx)
+          .getCredentialDefinitionInnerDefinitionByGuidDidUrl(serviceName, guid)(ctx)
           .logTrace(ctx)
     }
 
@@ -125,15 +124,16 @@ class CredentialDefinitionRegistryServerEndpoints(
 }
 
 object CredentialDefinitionRegistryServerEndpoints {
-  def all: URIO[CredentialDefinitionController & AuthenticatorWithAuthZ[BaseEntity] & AppConfig, List[
+  def all(
+      serviceName: String
+  ): URIO[CredentialDefinitionController & AuthenticatorWithAuthZ[BaseEntity], List[
     ZServerEndpoint[Any, Any]
   ]] = {
     for {
       credentialDefinitionRegistryService <- ZIO.service[CredentialDefinitionController]
       authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
-      config <- ZIO.service[AppConfig]
       credentialDefinitionRegistryEndpoints = new CredentialDefinitionRegistryServerEndpoints(
-        config,
+        serviceName,
         credentialDefinitionRegistryService,
         authenticator,
         authenticator

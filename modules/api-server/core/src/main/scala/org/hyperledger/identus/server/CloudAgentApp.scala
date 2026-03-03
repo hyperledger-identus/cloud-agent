@@ -49,8 +49,10 @@ object CloudAgentApp {
 
 object AgentHttpServer {
   val agentRESTServiceEndpoints = for {
-    allCredentialDefinitionRegistryEndpoints <- CredentialDefinitionRegistryServerEndpoints.all
-    allSchemaRegistryEndpoints <- SchemaRegistryServerEndpoints.all
+    appConfig <- ZIO.service[AppConfig]
+    serviceName = appConfig.agent.httpEndpoint.serviceName
+    allCredentialDefinitionRegistryEndpoints <- CredentialDefinitionRegistryServerEndpoints.all(serviceName)
+    allSchemaRegistryEndpoints <- SchemaRegistryServerEndpoints.all(serviceName)
     allVerificationPolicyEndpoints <- VerificationPolicyServerEndpoints.all
     allConnectionEndpoints <- ConnectionServerEndpoints.all
     allIssueEndpoints <- IssueServerEndpoints.all

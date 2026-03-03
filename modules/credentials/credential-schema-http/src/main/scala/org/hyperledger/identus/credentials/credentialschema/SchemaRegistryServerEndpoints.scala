@@ -6,7 +6,6 @@ import org.hyperledger.identus.credentials.credentialschema.controller.Credentia
 import org.hyperledger.identus.credentials.credentialschema.http.{CredentialSchemaInput, FilterInput}
 import org.hyperledger.identus.credentials.credentialschema.SchemaRegistryEndpoints.*
 import org.hyperledger.identus.iam.authentication.{Authenticator, AuthenticatorWithAuthZ, Authorizer, SecurityLogic}
-import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.wallet.model.BaseEntity
 import org.hyperledger.identus.LogUtils.*
@@ -16,7 +15,7 @@ import zio.*
 import java.util.UUID
 
 class SchemaRegistryServerEndpoints(
-    config: AppConfig,
+    serviceName: String,
     credentialSchemaController: CredentialSchemaController,
     authenticator: Authenticator[BaseEntity],
     authorizer: Authorizer[BaseEntity]
@@ -38,7 +37,7 @@ class SchemaRegistryServerEndpoints(
       .serverLogic { wac =>
         { case (ctx: RequestContext, schemaInput: CredentialSchemaInput) =>
           credentialSchemaController
-            .createSchemaDidUrl(config.agent.httpEndpoint.serviceName, schemaInput)(ctx)
+            .createSchemaDidUrl(serviceName, schemaInput)(ctx)
             .provideSomeLayer(ZLayer.succeed(wac))
             .logTrace(ctx)
         }
@@ -64,7 +63,7 @@ class SchemaRegistryServerEndpoints(
       .serverLogic { wac =>
         { case (ctx: RequestContext, id: UUID, schemaInput: CredentialSchemaInput) =>
           credentialSchemaController
-            .updateSchemaDidUrl(config.agent.httpEndpoint.serviceName, id, schemaInput)(ctx)
+            .updateSchemaDidUrl(serviceName, id, schemaInput)(ctx)
             .provideSomeLayer(ZLayer.succeed(wac))
             .logTrace(ctx)
         }
@@ -83,7 +82,7 @@ class SchemaRegistryServerEndpoints(
     val did: ZServerEndpoint[Any, Any] = getSchemaByIdDidUrlEndpoint
       .zServerLogic { case (ctx: RequestContext, guid: UUID) =>
         credentialSchemaController
-          .getSchemaByGuidDidUrl(config.agent.httpEndpoint.serviceName, guid)(ctx)
+          .getSchemaByGuidDidUrl(serviceName, guid)(ctx)
           .logTrace(ctx)
       }
     val all = List(http, did)
@@ -97,7 +96,7 @@ class SchemaRegistryServerEndpoints(
       }
     val did: ZServerEndpoint[Any, Any] = getRawSchemaByIdDidUrlEndpoint
       .zServerLogic { case (ctx: RequestContext, guid: UUID) =>
-        credentialSchemaController.getSchemaJsonByGuidDidUrl(config.agent.httpEndpoint.serviceName, guid)(ctx)
+        credentialSchemaController.getSchemaJsonByGuidDidUrl(serviceName, guid)(ctx)
       }
     val all = List(http, did)
 
@@ -127,7 +126,7 @@ class SchemaRegistryServerEndpoints(
           { case (ctx: RequestContext, filter: FilterInput, paginationInput: PaginationInput, order: Option[Order]) =>
             credentialSchemaController
               .lookupSchemasDidUrl(
-                config.agent.httpEndpoint.serviceName,
+                serviceName,
                 filter,
                 paginationInput.toPagination,
                 order,
@@ -145,15 +144,16 @@ class SchemaRegistryServerEndpoints(
 }
 
 object SchemaRegistryServerEndpoints {
-  def all: URIO[CredentialSchemaController & AuthenticatorWithAuthZ[BaseEntity] & AppConfig, List[
+  def all(
+      serviceName: String
+  ): URIO[CredentialSchemaController & AuthenticatorWithAuthZ[BaseEntity], List[
     ZServerEndpoint[Any, Any]
   ]] = {
     for {
       authenticator <- ZIO.service[AuthenticatorWithAuthZ[BaseEntity]]
-      config <- ZIO.service[AppConfig]
       schemaRegistryService <- ZIO.service[CredentialSchemaController]
       schemaRegistryEndpoints = new SchemaRegistryServerEndpoints(
-        config,
+        serviceName,
         schemaRegistryService,
         authenticator,
         authenticator

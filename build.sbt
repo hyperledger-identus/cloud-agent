@@ -1089,6 +1089,9 @@ lazy val apiServer = project
     presentProofHttp,
     oid4vciHttp,
     oid4vciCore,
+    iamCore,
+    iamEntityHttp,
+    iamWalletHttp,
     sharedTest % "test->test",
     didcommAgent,
     credentialsCore % "compile->compile;test->test",
@@ -1251,7 +1254,7 @@ lazy val oid4vciHttp = project
     name := "oid4vci-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson, D.nimbusJwt)
   )
-  .dependsOn(apiServerHttpCore, oid4vciCore, credentialsCore, walletManagement)
+  .dependsOn(apiServerHttpCore, iamCore, oid4vciCore, credentialsCore, walletManagement)
 
 lazy val apiServerControllerCommons = project
   .in(file("modules/api-server/controller-commons"))
@@ -1288,12 +1291,32 @@ lazy val apiServerJobs = project
   .settings(name := "api-server-jobs")
   .dependsOn(apiServer)
 
-lazy val apiServerIam = project
-  .in(file("modules/api-server/iam"))
+lazy val iamCore = project
+  .in(file("modules/iam/core"))
   .configure(commonConfigure)
   .settings(commonSetttings)
-  .settings(name := "api-server-iam")
-  .dependsOn(apiServer)
+  .settings(name := "iam-core")
+  .dependsOn(apiServerHttpCore, walletManagement)
+
+lazy val iamEntityHttp = project
+  .in(file("modules/iam/entity-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "iam-entity-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, iamCore, walletManagement)
+
+lazy val iamWalletHttp = project
+  .in(file("modules/iam/wallet-http"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "iam-wallet-http",
+    libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
+  )
+  .dependsOn(apiServerHttpCore, iamCore, walletManagement)
 
 // Server controller grouping (by domain):
 // - DID controllers: did/controller/
@@ -1395,7 +1418,9 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   apiServerHttpCore,
   apiServer,
   apiServerJobs,
-  apiServerIam,
+  iamCore,
+  iamEntityHttp,
+  iamWalletHttp,
 )
 
 lazy val root = project

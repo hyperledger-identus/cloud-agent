@@ -1,8 +1,5 @@
 package org.hyperledger.identus.iam.authentication.oidc
 
-import org.hyperledger.identus.server.config.AppConfig
-import zio.*
-
 import java.net.URL
 
 final case class KeycloakConfig(
@@ -15,9 +12,4 @@ final case class KeycloakConfig(
     rolesClaimPath: String,
 ) {
   val rolesClaimPathSegments: Seq[String] = rolesClaimPath.split('.').toSeq
-}
-
-object KeycloakConfig {
-  val layer: URLayer[AppConfig, KeycloakConfig] =
-    ZLayer.fromFunction((conf: AppConfig) => conf.agent.authentication.keycloak)
 }
