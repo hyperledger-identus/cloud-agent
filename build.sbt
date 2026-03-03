@@ -1193,7 +1193,7 @@ lazy val connectionsHttp = project
     name := "connections-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
   )
-  .dependsOn(apiServerHttpCore, connectionsCore, walletManagement)
+  .dependsOn(apiServerHttpCore, connectionsApi, walletManagement)
 
 lazy val didHttp = project
   .in(file("modules/did/http"))
@@ -1223,7 +1223,7 @@ lazy val didcommHttp = project
     name := "didcomm-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D.zio, D.zioJson)
   )
-  .dependsOn(apiServerHttpCore, didcommAgent, connectionsCore, credentialsCore, walletManagement)
+  .dependsOn(apiServerHttpCore, didcommAgent, connectionsApi, credentialsApi, walletManagement)
 
 lazy val credentialSchemaHttp = project
   .in(file("modules/credentials/credential-schema-http"))

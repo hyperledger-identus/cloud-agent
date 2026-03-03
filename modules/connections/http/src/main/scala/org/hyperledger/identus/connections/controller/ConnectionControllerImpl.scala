@@ -2,15 +2,14 @@ package org.hyperledger.identus.connections.controller
 
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
 import org.hyperledger.identus.api.http.model.PaginationInput
+import org.hyperledger.identus.connections.api.{ConnectionRecord, ConnectionService, ConnectionServiceError}
+import org.hyperledger.identus.connections.api.ConnectionRecord.ProtocolState
 import org.hyperledger.identus.connections.controller.http.{
   AcceptConnectionInvitationRequest,
   Connection,
   ConnectionsPage,
   CreateConnectionRequest
 }
-import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
-import org.hyperledger.identus.connections.core.model.ConnectionRecord.ProtocolState
-import org.hyperledger.identus.connections.core.service.ConnectionService
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.wallet.service.ManagedDIDService
 import zio.*

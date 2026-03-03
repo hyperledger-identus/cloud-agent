@@ -127,6 +127,10 @@ object ArchConstraints {
       "didCore should not depend on connectionsPersistenceDoobie (persistence adapter)",
       Transitive
     ),
+    // HTTP modules should not directly depend on domain core modules (use API modules instead)
+    ("didcommHttp", "connectionsCore", "didcommHttp should not directly depend on connectionsCore", Direct),
+    ("didcommHttp", "credentialsCore", "didcommHttp should not directly depend on credentialsCore", Direct),
+    ("connectionsHttp", "connectionsCore", "connectionsHttp should not directly depend on connectionsCore", Direct),
     // HTTP modules should not depend on each other (prevents cross-domain coupling)
     ("connectionsHttp", "didHttp", "connectionsHttp should not depend on didHttp", Transitive),
     ("connectionsHttp", "issueHttp", "connectionsHttp should not depend on issueHttp", Transitive),

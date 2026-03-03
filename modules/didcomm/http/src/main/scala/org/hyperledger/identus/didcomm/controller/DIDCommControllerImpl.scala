@@ -1,10 +1,13 @@
 package org.hyperledger.identus.didcomm.controller
 
 import org.hyperledger.identus.api.http.{ErrorResponse, RequestContext}
-import org.hyperledger.identus.connections.core.model.error.ConnectionServiceError
-import org.hyperledger.identus.connections.core.service.ConnectionService
-import org.hyperledger.identus.credentials.core.model.error.{CredentialServiceError, PresentationError}
-import org.hyperledger.identus.credentials.core.service.{CredentialService, PresentationService}
+import org.hyperledger.identus.connections.api.{ConnectionService, ConnectionServiceError}
+import org.hyperledger.identus.credentials.api.{
+  CredentialService,
+  CredentialServiceError,
+  PresentationError,
+  PresentationService
+}
 import org.hyperledger.identus.didcomm.*
 import org.hyperledger.identus.didcomm.controller.http.DIDCommMessage
 import org.hyperledger.identus.didcomm.controller.DIDCommControllerError.*

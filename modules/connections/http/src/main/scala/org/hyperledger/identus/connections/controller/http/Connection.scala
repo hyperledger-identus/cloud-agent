@@ -1,9 +1,9 @@
 package org.hyperledger.identus.connections.controller.http
 
 import org.hyperledger.identus.api.http.{Annotation, ErrorResponse}
+import org.hyperledger.identus.connections.api.ConnectionRecord
+import org.hyperledger.identus.connections.api.ConnectionRecord.Role
 import org.hyperledger.identus.connections.controller.http.Connection.annotations
-import org.hyperledger.identus.connections.core.model
-import org.hyperledger.identus.connections.core.model.ConnectionRecord.Role
 import sttp.model.Uri
 import sttp.tapir.{Schema, Validator}
 import sttp.tapir.Schema.annotations.{description, encodedExample, validate}
@@ -69,7 +69,7 @@ case class Connection(
 
 object Connection {
 
-  def fromDomain(domain: model.ConnectionRecord): Connection =
+  def fromDomain(domain: ConnectionRecord): Connection =
     Connection(
       connectionId = domain.id,
       thid = domain.thid,
@@ -99,7 +99,7 @@ object Connection {
       kind = "Connection",
     )
 
-  given Conversion[model.ConnectionRecord, Connection] = fromDomain
+  given Conversion[ConnectionRecord, Connection] = fromDomain
 
   object annotations {
     object connectionId
