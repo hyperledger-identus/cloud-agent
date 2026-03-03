@@ -1,7 +1,7 @@
 package org.hyperledger.identus.wallet.storage
 
 import org.hyperledger.identus.did.core.model.did.PrismDIDOperation
-import org.hyperledger.identus.didcomm.PeerDID
+import org.hyperledger.identus.didcomm.{PeerDID, PeerDIDCreation}
 import org.hyperledger.identus.shared.crypto.{Apollo, ApolloSpecHelper, Ed25519KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletAdministrationContext}
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport
@@ -88,7 +88,7 @@ object DIDSecretStorageSpec
       for {
         nonSecretStorage <- ZIO.service[DIDNonSecretStorage]
         secretStorage <- ZIO.service[DIDSecretStorage]
-        peerDID = PeerDID.makePeerDid()
+        peerDID = PeerDIDCreation.makePeerDid()
         _ <- nonSecretStorage.createPeerDIDRecord(peerDID.did)
         n1 <- secretStorage.insertKey(peerDID.did, KeyId("agreement"), peerDID.jwkForKeyAgreement)
         n2 <- secretStorage.insertKey(peerDID.did, KeyId("authentication"), peerDID.jwkForKeyAuthentication)
@@ -103,7 +103,7 @@ object DIDSecretStorageSpec
       for {
         nonSecretStorage <- ZIO.service[DIDNonSecretStorage]
         secretStorage <- ZIO.service[DIDSecretStorage]
-        peerDID = PeerDID.makePeerDid()
+        peerDID = PeerDIDCreation.makePeerDid()
         _ <- nonSecretStorage.createPeerDIDRecord(peerDID.did)
         n1 <- secretStorage.insertKey(peerDID.did, KeyId("agreement"), peerDID.jwkForKeyAgreement)
         exit <- secretStorage
@@ -117,7 +117,7 @@ object DIDSecretStorageSpec
     test("get non-exist key return none") {
       for {
         secretStorage <- ZIO.service[DIDSecretStorage]
-        peerDID = PeerDID.makePeerDid()
+        peerDID = PeerDIDCreation.makePeerDid()
         key1 <- secretStorage.getKey(peerDID.did, KeyId("agreement"))
       } yield assert(key1)(isNone)
     },
@@ -125,7 +125,7 @@ object DIDSecretStorageSpec
       for {
         nonSecretStorage <- ZIO.service[DIDNonSecretStorage]
         secretStorage <- ZIO.service[DIDSecretStorage]
-        peerDID = PeerDID.makePeerDid(serviceEndpoint = Some("http://localhost/" + ("a" * 100)))
+        peerDID = PeerDIDCreation.makePeerDid(serviceEndpoint = Some("http://localhost/" + ("a" * 100)))
         _ <- nonSecretStorage.createPeerDIDRecord(peerDID.did)
         _ <- secretStorage.insertKey(peerDID.did, KeyId("agreement"), peerDID.jwkForKeyAgreement)
         _ <- secretStorage.insertKey(peerDID.did, KeyId("authentication"), peerDID.jwkForKeyAuthentication)
@@ -191,7 +191,7 @@ object DIDSecretStorageSpec
         nonSecretStorage <- ZIO.service[DIDNonSecretStorage]
         secretStorage <- ZIO.service[DIDSecretStorage]
         // wallet1 setup
-        peerDID1 = PeerDID.makePeerDid()
+        peerDID1 = PeerDIDCreation.makePeerDid()
         _ <- nonSecretStorage
           .createPeerDIDRecord(peerDID1.did)
           .provide(ZLayer.succeed(WalletAccessContext(walletId1)))
@@ -199,7 +199,7 @@ object DIDSecretStorageSpec
           .insertKey(peerDID1.did, KeyId("key-1"), peerDID1.jwkForKeyAgreement)
           .provide(ZLayer.succeed(WalletAccessContext(walletId1)))
         // wallet2 setup
-        peerDID2 = PeerDID.makePeerDid()
+        peerDID2 = PeerDIDCreation.makePeerDid()
         _ <- nonSecretStorage
           .createPeerDIDRecord(peerDID2.did)
           .provide(ZLayer.succeed(WalletAccessContext(walletId2)))

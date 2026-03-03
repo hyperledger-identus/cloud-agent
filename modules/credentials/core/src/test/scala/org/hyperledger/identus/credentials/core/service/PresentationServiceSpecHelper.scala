@@ -7,7 +7,7 @@ import org.hyperledger.identus.credentials.core.service.serdes.*
 import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver
 import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.did.core.model.did.DID
-import org.hyperledger.identus.didcomm.{AgentPeerService, PeerDID}
+import org.hyperledger.identus.didcomm.{AgentPeerService, PeerDIDCreation}
 import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, DidId}
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
 import org.hyperledger.identus.shared.crypto.KmpSecp256k1KeyOps
@@ -25,7 +25,7 @@ trait PresentationServiceSpecHelper {
   protected val defaultWalletLayer = ZLayer.succeed(WalletAccessContext(WalletId.default))
 
   val peerDidAgentLayer =
-    AgentPeerService.makeLayer(PeerDID.makePeerDid(serviceEndpoint = Some("http://localhost:9099")))
+    AgentPeerService.makeLayer(PeerDIDCreation.makePeerDid(serviceEndpoint = Some("http://localhost:9099")))
 
   val genericSecretStorageLayer = GenericSecretStorageInMemory.layer
   val uriResolverLayer = ResourceUrlResolver.layer

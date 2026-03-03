@@ -147,6 +147,8 @@ object ArchConstraints {
     ("apiServerConfig", "didCore", "apiServerConfig should not depend on didCore", Transitive),
     // walletManagement should not depend on didCore (only didApi)
     ("walletManagement", "didCore", "walletManagement should depend on didApi, not didCore", Transitive),
+    // walletManagement should not depend on didcommAgentDidcommx (uses didcommResolver for PeerDID)
+    ("walletManagement", "didcommAgentDidcommx", "walletManagement should not depend on didcommAgentDidcommx", Direct),
     // walletManagementApi should not depend on walletManagement (dependency was inverted)
     ("walletManagementApi", "walletManagement", "walletManagementApi should not depend on walletManagement", Direct),
     // apiServerJobsCore should not depend on HTTP modules

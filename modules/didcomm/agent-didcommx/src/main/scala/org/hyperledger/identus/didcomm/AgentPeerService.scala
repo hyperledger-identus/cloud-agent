@@ -25,8 +25,9 @@ object AgentPeerService {
   )
 
   def getSecretResolverInMemory(agent: DidAgent): SecretResolverInMemory = {
-    val keyAgreement = PeerDID.keyAgreemenFromPublicJWK(agent.jwkForKeyAgreement.head) // TODO Fix head
-    val keyAuthentication = PeerDID.keyAuthenticationFromPublicJWK(agent.jwkForKeyAuthentication.head) // TODO Fix head
+    val keyAgreement = PeerDIDCreation.keyAgreemenFromPublicJWK(agent.jwkForKeyAgreement.head) // TODO Fix head
+    val keyAuthentication =
+      PeerDIDCreation.keyAuthenticationFromPublicJWK(agent.jwkForKeyAuthentication.head) // TODO Fix head
 
     val keyIdAgreement = PeerDIDUtils.createMultibaseEncnumbasis(keyAgreement).drop(1)
     val keyIdAuthentication = PeerDIDUtils.createMultibaseEncnumbasis(keyAuthentication).drop(1)

@@ -8,7 +8,7 @@ class PeerDIDSpec extends ZSuite {
 
   test("Make and parse PeerDID") {
     val peer =
-      org.hyperledger.identus.didcomm.PeerDID.makePeerDid(serviceEndpoint = Some("http://localhost:8654/myendpoint"))
+      PeerDIDCreation.makePeerDid(serviceEndpoint = Some("http://localhost:8654/myendpoint"))
 
     val did = peer.did.value
     // Exemple {"kty":"OKP","d":"XwaryH2em2iRwqPjxInIHrhvKJqLZ_iejheA5cVM2ZY","crv":"X25519","x":"w1tZHpAuQ6TD6q5cMGWu6q2K1eL3gvEbE1gwkMzLnQI"}

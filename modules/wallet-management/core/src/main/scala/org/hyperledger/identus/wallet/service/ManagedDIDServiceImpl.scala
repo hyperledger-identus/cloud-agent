@@ -6,8 +6,8 @@ import org.hyperledger.identus.did.core.model.did.Service as DidDocumentService
 import org.hyperledger.identus.did.core.model.error.DIDOperationError
 import org.hyperledger.identus.did.core.service.DIDService
 import org.hyperledger.identus.did.core.util.DIDOperationValidator
+import org.hyperledger.identus.didcomm.{PeerDID, PeerDIDCreation}
 import org.hyperledger.identus.didcomm.model.DidId
-import org.hyperledger.identus.didcomm.PeerDID
 import org.hyperledger.identus.shared.crypto.{Apollo, Ed25519KeyPair, Secp256k1KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext}
 import org.hyperledger.identus.wallet.model.*
@@ -367,7 +367,7 @@ class ManagedDIDServiceImpl private[wallet] (
     */
   def createAndStorePeerDID(serviceEndpoint: java.net.URL): URIO[WalletAccessContext, PeerDID] =
     for {
-      peerDID <- ZIO.succeed(PeerDID.makePeerDid(serviceEndpoint = Some(serviceEndpoint.toExternalForm())))
+      peerDID <- ZIO.succeed(PeerDIDCreation.makePeerDid(serviceEndpoint = Some(serviceEndpoint.toExternalForm())))
       _ <- nonSecretStorage.createPeerDIDRecord(peerDID.did).orDie
       _ <- secretStorage.insertKey(peerDID.did, AGREEMENT_KEY_ID, peerDID.jwkForKeyAgreement).orDie
       _ <- secretStorage.insertKey(peerDID.did, AUTHENTICATION_KEY_ID, peerDID.jwkForKeyAuthentication).orDie

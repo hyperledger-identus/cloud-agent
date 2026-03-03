@@ -953,7 +953,7 @@ lazy val walletManagement = project
   )
   .dependsOn(
     walletManagementApi,
-    didcommAgentDidcommx,
+    didcommResolver,
     didApi,
     notifications
   )
@@ -1248,7 +1248,7 @@ lazy val didcommHttp = project
     name := "didcomm-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D.zio, D.zioJson)
   )
-  .dependsOn(apiServerHttpCore, didcommAgent, connectionsApi, credentialsApi, walletManagement)
+  .dependsOn(apiServerHttpCore, didcommAgent, didcommAgentDidcommx, connectionsApi, credentialsApi, walletManagement)
 
 lazy val credentialSchemaHttp = project
   .in(file("modules/credentials/credential-schema-http"))
@@ -1328,6 +1328,7 @@ lazy val apiServerJobsCore = project
     credentialsVcJWT,
     didApi,
     didcommAgent,
+    didcommAgentDidcommx,
     walletManagement,
     shared
   )
