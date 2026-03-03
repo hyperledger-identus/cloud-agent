@@ -917,6 +917,27 @@ lazy val notificationsHttp = project
   )
   .dependsOn(apiServerHttpCore, notifications, walletManagement)
 
+lazy val notificationsWebhook = project
+  .in(file("modules/notifications/webhook"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "notifications-webhook",
+    libraryDependencies ++= Seq(D.zioHttp)
+  )
+  .dependsOn(
+    apiServerConfig,
+    notificationsApi,
+    connectionsCore,
+    credentialsCore,
+    walletManagement,
+    shared,
+    connectionsHttp,
+    didHttp,
+    issueHttp,
+    presentProofHttp,
+  )
+
 // ##########################
 // ### Wallet Management ###
 // ##########################
@@ -1081,6 +1102,7 @@ lazy val apiServer = project
     apiServerJobsDidSync,
     didCore,
     notificationsHttp,
+    notificationsWebhook,
     credentialStatusHttp,
     verificationHttp,
     vdrHttp,
@@ -1438,6 +1460,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   notificationsApi,
   notifications,
   notificationsHttp,
+  notificationsWebhook,
   // Wallet Management
   walletManagementApi,
   walletManagement,
