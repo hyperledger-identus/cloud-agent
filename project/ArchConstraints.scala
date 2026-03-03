@@ -56,20 +56,20 @@ object ArchConstraints {
     // Background jobs and IAM should not be depended on by domain core modules
     (
       "didCore",
-      "apiServerJobs",
-      "didCore should not depend on apiServerJobs",
+      "apiServerJobsCore",
+      "didCore should not depend on apiServerJobsCore",
       Transitive
     ),
     (
       "credentialsCore",
-      "apiServerJobs",
-      "credentialsCore should not depend on apiServerJobs",
+      "apiServerJobsCore",
+      "credentialsCore should not depend on apiServerJobsCore",
       Transitive
     ),
     (
       "connectionsCore",
-      "apiServerJobs",
-      "connectionsCore should not depend on apiServerJobs",
+      "apiServerJobsCore",
+      "connectionsCore should not depend on apiServerJobsCore",
       Transitive
     ),
     (
@@ -92,8 +92,8 @@ object ArchConstraints {
     ),
     (
       "notifications",
-      "apiServerJobs",
-      "notifications should not depend on apiServerJobs",
+      "apiServerJobsCore",
+      "notifications should not depend on apiServerJobsCore",
       Transitive
     ),
     (
@@ -155,10 +155,10 @@ object ArchConstraints {
     ("apiServerConfig", "didCore", "apiServerConfig should not depend on didCore", Transitive),
     // walletManagement should not depend on didCore (only didApi)
     ("walletManagement", "didCore", "walletManagement should depend on didApi, not didCore", Transitive),
-    // apiServerJobs should not depend on HTTP modules
-    ("apiServerJobs", "issueHttp", "apiServerJobs should not depend on issueHttp", Transitive),
-    ("apiServerJobs", "connectionsHttp", "apiServerJobs should not depend on connectionsHttp", Transitive),
-    ("apiServerJobs", "didHttp", "apiServerJobs should not depend on didHttp", Transitive),
+    // apiServerJobsCore should not depend on HTTP modules
+    ("apiServerJobsCore", "issueHttp", "apiServerJobsCore should not depend on issueHttp", Transitive),
+    ("apiServerJobsCore", "connectionsHttp", "apiServerJobsCore should not depend on connectionsHttp", Transitive),
+    ("apiServerJobsCore", "didHttp", "apiServerJobsCore should not depend on didHttp", Transitive),
     // Persistence modules should not depend on HTTP modules
     (
       "credentialsPersistenceDoobie",
@@ -172,6 +172,12 @@ object ArchConstraints {
       "connectionsPersistenceDoobie should not depend on connectionsHttp",
       Transitive
     ),
+    // Domain job modules should not depend on each other
+    ("apiServerJobsConnect", "apiServerJobsIssue", "job modules should not depend on each other", Transitive),
+    ("apiServerJobsIssue", "apiServerJobsConnect", "job modules should not depend on each other", Transitive),
+    ("apiServerJobsPresent", "apiServerJobsConnect", "job modules should not depend on each other", Transitive),
+    // apiServerJobsDidSync should not directly depend on credentialsCore
+    ("apiServerJobsDidSync", "credentialsCore", "apiServerJobsDidSync should not directly depend on credentialsCore", Direct),
   )
 
   val settings: Seq[Setting[_]] = Seq(

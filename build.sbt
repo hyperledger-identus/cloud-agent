@@ -1074,7 +1074,11 @@ lazy val apiServer = project
   .dependsOn(
     apiServerConfig,
     apiServerHttpCore,
-    apiServerJobs,
+    apiServerJobsConnect,
+    apiServerJobsIssue,
+    apiServerJobsPresent,
+    apiServerJobsStatusList,
+    apiServerJobsDidSync,
     didCore,
     notificationsHttp,
     credentialStatusHttp,
@@ -1293,23 +1297,55 @@ lazy val presentProofHttp = project
   )
   .dependsOn(apiServerControllerCommons, credentialsCore)
 
-lazy val apiServerJobs = project
+lazy val apiServerJobsCore = project
   .in(file("modules/api-server/jobs"))
   .configure(commonConfigure)
   .settings(commonSetttings)
-  .settings(name := "api-server-jobs")
+  .settings(name := "api-server-jobs-core")
   .dependsOn(
     apiServerConfig,
-    connectionsCore,
     credentialsCore,
     credentialsVcJWT,
-    credentialsSDJWT,
-    credentialsAnoncreds,
     didApi,
     didcommAgent,
     walletManagement,
     shared
   )
+
+lazy val apiServerJobsConnect = project
+  .in(file("modules/api-server/jobs-connect"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-jobs-connect")
+  .dependsOn(apiServerJobsCore, connectionsCore)
+
+lazy val apiServerJobsIssue = project
+  .in(file("modules/api-server/jobs-issue"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-jobs-issue")
+  .dependsOn(apiServerJobsCore, credentialsCore, credentialsVcJWT, credentialsSDJWT, credentialsAnoncreds)
+
+lazy val apiServerJobsPresent = project
+  .in(file("modules/api-server/jobs-present"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-jobs-present")
+  .dependsOn(apiServerJobsCore, credentialsCore, credentialsVcJWT, credentialsSDJWT, credentialsAnoncreds, didApi)
+
+lazy val apiServerJobsStatusList = project
+  .in(file("modules/api-server/jobs-status-list"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-jobs-status-list")
+  .dependsOn(apiServerJobsCore, credentialsCore, credentialsVcJWT)
+
+lazy val apiServerJobsDidSync = project
+  .in(file("modules/api-server/jobs-did-sync"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(name := "api-server-jobs-did-sync")
+  .dependsOn(apiServerJobsCore)
 
 lazy val iamCore = project
   .in(file("modules/iam/core"))
@@ -1438,7 +1474,12 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   apiServerConfig,
   apiServerHttpCore,
   apiServer,
-  apiServerJobs,
+  apiServerJobsCore,
+  apiServerJobsConnect,
+  apiServerJobsIssue,
+  apiServerJobsPresent,
+  apiServerJobsStatusList,
+  apiServerJobsDidSync,
   iamCore,
   iamEntityHttp,
   iamWalletHttp,
