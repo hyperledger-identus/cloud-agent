@@ -1095,10 +1095,8 @@ lazy val apiServer = project
     iamEntityHttp,
     iamWalletHttp,
     sharedTest % "test->test",
-    didcommAgent,
     credentialsCore % "compile->compile;test->test",
     credentialsPersistenceDoobie,
-    credentialsAnoncreds,
     connectionsCore % "compile->compile;test->test", // Test is for MockConnectionService
     connectionsPersistenceDoobie,
     vdrService,

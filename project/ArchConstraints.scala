@@ -127,6 +127,41 @@ object ArchConstraints {
       "didCore should not depend on connectionsPersistenceDoobie (persistence adapter)",
       Transitive
     ),
+    // HTTP modules should not depend on each other (prevents cross-domain coupling)
+    ("connectionsHttp", "didHttp", "connectionsHttp should not depend on didHttp", Transitive),
+    ("connectionsHttp", "issueHttp", "connectionsHttp should not depend on issueHttp", Transitive),
+    ("didHttp", "connectionsHttp", "didHttp should not depend on connectionsHttp", Transitive),
+    ("didHttp", "issueHttp", "didHttp should not depend on issueHttp", Transitive),
+    ("issueHttp", "connectionsHttp", "issueHttp should not depend on connectionsHttp", Transitive),
+    (
+      "credentialSchemaHttp",
+      "credentialDefinitionHttp",
+      "credentialSchemaHttp should not depend on credentialDefinitionHttp",
+      Transitive
+    ),
+    // apiServerHttpCore should not depend on domain modules (except didCore via walletManagement)
+    ("apiServerHttpCore", "credentialsCore", "apiServerHttpCore should not depend on credentialsCore", Transitive),
+    ("apiServerHttpCore", "connectionsCore", "apiServerHttpCore should not depend on connectionsCore", Transitive),
+    // apiServerConfig should not depend on domain core modules (except didCore via walletManagement)
+    ("apiServerConfig", "credentialsCore", "apiServerConfig should not depend on credentialsCore", Transitive),
+    ("apiServerConfig", "connectionsCore", "apiServerConfig should not depend on connectionsCore", Transitive),
+    // apiServerJobs should not depend on HTTP modules
+    ("apiServerJobs", "issueHttp", "apiServerJobs should not depend on issueHttp", Transitive),
+    ("apiServerJobs", "connectionsHttp", "apiServerJobs should not depend on connectionsHttp", Transitive),
+    ("apiServerJobs", "didHttp", "apiServerJobs should not depend on didHttp", Transitive),
+    // Persistence modules should not depend on HTTP modules
+    (
+      "credentialsPersistenceDoobie",
+      "issueHttp",
+      "credentialsPersistenceDoobie should not depend on issueHttp",
+      Transitive
+    ),
+    (
+      "connectionsPersistenceDoobie",
+      "connectionsHttp",
+      "connectionsPersistenceDoobie should not depend on connectionsHttp",
+      Transitive
+    ),
   )
 
   val settings: Seq[Setting[_]] = Seq(
