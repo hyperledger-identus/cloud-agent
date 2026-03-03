@@ -932,10 +932,6 @@ lazy val notificationsWebhook = project
     credentialsCore,
     walletManagement,
     shared,
-    connectionsHttp,
-    didHttp,
-    issueHttp,
-    presentProofHttp,
   )
 
 // ##########################

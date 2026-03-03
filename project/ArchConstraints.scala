@@ -178,6 +178,11 @@ object ArchConstraints {
     ("apiServerJobsPresent", "apiServerJobsConnect", "job modules should not depend on each other", Transitive),
     // apiServerJobsDidSync should not directly depend on credentialsCore
     ("apiServerJobsDidSync", "credentialsCore", "apiServerJobsDidSync should not directly depend on credentialsCore", Direct),
+    // notificationsWebhook should not depend on HTTP controller modules (uses local DTOs instead)
+    ("notificationsWebhook", "connectionsHttp", "notificationsWebhook should not depend on connectionsHttp", Direct),
+    ("notificationsWebhook", "didHttp", "notificationsWebhook should not depend on didHttp", Direct),
+    ("notificationsWebhook", "issueHttp", "notificationsWebhook should not depend on issueHttp", Direct),
+    ("notificationsWebhook", "presentProofHttp", "notificationsWebhook should not depend on presentProofHttp", Direct),
   )
 
   val settings: Seq[Setting[_]] = Seq(
