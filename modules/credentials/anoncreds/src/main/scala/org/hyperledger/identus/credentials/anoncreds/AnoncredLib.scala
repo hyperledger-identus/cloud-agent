@@ -1,5 +1,7 @@
 package org.hyperledger.identus.credentials.anoncreds
 
+import AnoncredConversions.given
+
 import scala.jdk.CollectionConverters.*
 import scala.language.implicitConversions
 

@@ -5,6 +5,7 @@ import io.micrometer.prometheusmetrics.{PrometheusConfig, PrometheusMeterRegistr
 import org.hyperledger.identus.connections.controller.ConnectionControllerImpl
 import org.hyperledger.identus.connections.core.service.{ConnectionServiceImpl, ConnectionServiceNotifier}
 import org.hyperledger.identus.connections.sql.repository.{JdbcConnectionRepository, Migrations as ConnectMigrations}
+import org.hyperledger.identus.credentials.anoncreds.AnoncredServiceLive
 import org.hyperledger.identus.credentials.core.service.*
 import org.hyperledger.identus.credentials.core.service.verification.VcVerificationServiceImpl
 import org.hyperledger.identus.credentials.credentialdefinition.controller.CredentialDefinitionControllerImpl
@@ -197,6 +198,7 @@ object MainApp extends ZIOAppDefault {
           CredentialDefinitionServiceImpl.layer,
           CredentialStatusListServiceImpl.layer,
           SDJwtServiceLive.layer,
+          AnoncredServiceLive.layer,
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
           EntityServiceImpl.layer,
           ManagedDIDServiceWithEventNotificationImpl.layer,

@@ -1,5 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
+import org.hyperledger.identus.credentials.anoncreds.AnoncredServiceStub
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.error.PresentationError
 import org.hyperledger.identus.credentials.core.repository.*
@@ -45,6 +46,7 @@ trait PresentationServiceSpecHelper {
     PresentationRepositoryInMemory.layer,
     CredentialRepositoryInMemory.layer,
     SDJwtServiceStub.layer,
+    AnoncredServiceStub.layer,
     (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
       (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,
   ) ++ defaultWalletLayer

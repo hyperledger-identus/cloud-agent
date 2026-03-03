@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.credentials.anoncreds.{AnoncredLib, AnoncredSchemaDef}
+import org.hyperledger.identus.credentials.anoncreds.{AnoncredSchemaDef, AnoncredService}
 import org.hyperledger.identus.credentials.core.model.error.{
   CredentialDefinitionCreationError,
   CredentialDefinitionGuidNotFoundError,
@@ -36,7 +36,8 @@ import scala.util.Try
 class CredentialDefinitionServiceImpl(
     genericSecretStorage: GenericSecretStorage,
     credentialDefinitionRepository: CredentialDefinitionRepository,
-    uriResolver: UriResolver
+    uriResolver: UriResolver,
+    anoncredService: AnoncredService,
 ) extends CredentialDefinitionService {
 
   override def create(
@@ -60,7 +61,7 @@ class CredentialDefinitionServiceImpl(
         ZIO
           .fromEither(
             Try(
-              AnoncredLib.createCredDefinition(
+              anoncredService.createCredDefinition(
                 in.author,
                 anoncredLibSchema,
                 in.tag,
@@ -125,8 +126,8 @@ class CredentialDefinitionServiceImpl(
 
 object CredentialDefinitionServiceImpl {
   val layer: URLayer[
-    GenericSecretStorage & CredentialDefinitionRepository & UriResolver,
+    GenericSecretStorage & CredentialDefinitionRepository & UriResolver & AnoncredService,
     CredentialDefinitionService
   ] =
-    ZLayer.fromFunction(CredentialDefinitionServiceImpl(_, _, _))
+    ZLayer.fromFunction(CredentialDefinitionServiceImpl(_, _, _, _))
 }

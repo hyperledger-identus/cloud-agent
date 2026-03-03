@@ -784,7 +784,6 @@ lazy val credentialsCore = project
     protocolPresentProof,
     didcommAgentDidcommx % "test->compile", // Test is for PeerDID/AgentPeerService
     notifications,
-    credentialsAnoncreds,
     credentialsVcJWT,
     sharedJson, // for PresentationDefinition (JsonPath, JsonSchema)
   )
@@ -829,6 +828,7 @@ lazy val credentialsAnoncreds = project
     ),
     libraryDependencies ++= D_Credentials_AnonCreds.baseDependencies
   )
+  .dependsOn(credentialsCore)
 
 lazy val credentialsAnoncredsTest = project
   .in(file("modules/credentials/anoncredsTest"))

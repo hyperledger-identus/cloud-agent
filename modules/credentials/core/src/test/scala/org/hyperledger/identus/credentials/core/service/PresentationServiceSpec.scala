@@ -822,11 +822,12 @@ object PresentationServiceSpec extends ZIOSpecDefault with PresentationServiceSp
       )
       file = createTempJsonFile(credentialDefinition.cd.data, "anoncred-presentation-credential-definition-example")
       credentialDefinitionId = "resource:///" + file.getFileName
-      credentialOffer = AnoncredLib.createOffer(credentialDefinition, credentialDefinitionId)
-      credentialRequest = AnoncredLib.createCredentialRequest(linkSecret, credentialDefinition.cd, credentialOffer)
+      anoncredService <- ZIO.service[AnoncredService]
+      credentialOffer = anoncredService.createOffer(credentialDefinition, credentialDefinitionId)
+      credentialRequest = anoncredService.createCredentialRequest(linkSecret, credentialDefinition.cd, credentialOffer)
       processedCredential =
-        AnoncredLib.processCredential(
-          AnoncredLib
+        anoncredService.processCredential(
+          anoncredService
             .createCredential(
               credentialDefinition.cd,
               credentialDefinition.cdPrivate,

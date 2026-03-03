@@ -40,13 +40,12 @@ import zio.prelude.ZValidation
 
 import java.time.{Instant, ZoneId}
 import java.util.UUID
-import scala.language.implicitConversions
 
 object CredentialServiceImpl {
   val layer: URLayer[
     CredentialRepository & CredentialStatusListRepository & DidResolver & UriResolver & GenericSecretStorage &
       CredentialDefinitionService & LinkSecretService & DIDService & ManagedDIDService &
-      Producer[UUID, WalletIdAndRecordId] & SDJwtService,
+      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService,
     CredentialService
   ] = {
     ZLayer.fromZIO {
@@ -62,6 +61,7 @@ object CredentialServiceImpl {
         manageDidService <- ZIO.service[ManagedDIDService]
         messageProducer <- ZIO.service[Producer[UUID, WalletIdAndRecordId]]
         sdJwtService <- ZIO.service[SDJwtService]
+        anoncredService <- ZIO.service[AnoncredService]
       } yield CredentialServiceImpl(
         credentialRepo,
         credentialStatusListRepo,
@@ -74,7 +74,8 @@ object CredentialServiceImpl {
         manageDidService,
         5,
         messageProducer,
-        sdJwtService
+        sdJwtService,
+        anoncredService
       )
     }
   }
@@ -96,6 +97,7 @@ class CredentialServiceImpl(
     maxRetries: Int = 5, // TODO move to config
     messageProducer: Producer[UUID, WalletIdAndRecordId],
     sdJwtService: SDJwtService,
+    anoncredService: AnoncredService,
 ) extends CredentialService {
 
   import CredentialServiceImpl.*
@@ -784,11 +786,15 @@ class CredentialServiceImpl(
         .orDieWith(_ => RuntimeException(s"No AnonCreds attachment found in the offer"))
       credentialOffer = anoncreds.AnoncredCredentialOffer(attachmentData)
       credDefContent <- uriResolver
-        .resolve(credentialOffer.getCredDefId)
+        .resolve(anoncredService.getCredDefIdFromOffer(credentialOffer))
         .orDieAsUnmanagedFailure
       credentialDefinition = anoncreds.AnoncredCredentialDefinition(credDefContent)
       linkSecret <- linkSecretService.fetchOrCreate()
-      createCredentialRequest = AnoncredLib.createCredentialRequest(linkSecret, credentialDefinition, credentialOffer)
+      createCredentialRequest = anoncredService.createCredentialRequest(
+        linkSecret,
+        credentialDefinition,
+        credentialOffer
+      )
     } yield createCredentialRequest
   }
 
@@ -880,8 +886,8 @@ class CredentialServiceImpl(
                   processedIssuedCredential,
                   record,
                   attachment,
-                  Some(List(processedCredential.getSchemaId)),
-                  Some(processedCredential.getCredDefId)
+                  Some(List(anoncredService.getSchemaIdFromCredential(processedCredential))),
+                  Some(anoncredService.getCredDefIdFromCredential(processedCredential))
                 )
             } yield result
           case attachment =>
@@ -917,7 +923,7 @@ class CredentialServiceImpl(
     for {
       credential <- ZIO.succeed(anoncreds.AnoncredCredential(new String(credentialBytes)))
       credDefContent <- uriResolver
-        .resolve(credential.getCredDefId)
+        .resolve(anoncredService.getCredDefIdFromCredential(credential))
         .orDieAsUnmanagedFailure
       credentialDefinition = anoncreds.AnoncredCredentialDefinition(credDefContent)
       metadata <- ZIO
@@ -926,7 +932,7 @@ class CredentialServiceImpl(
       linkSecret <- linkSecretService.fetchOrCreate()
       credential <- ZIO
         .attempt(
-          AnoncredLib.processCredential(
+          anoncredService.processCredential(
             anoncreds.AnoncredCredential(new String(credentialBytes)),
             metadata,
             linkSecret,
@@ -1114,7 +1120,7 @@ class CredentialServiceImpl(
       credentialDefinitionSecret <- getCredentialDefinitionPrivatePart(credentialDefinition.guid)
       cdp = anoncreds.AnoncredCredentialDefinitionPrivate(credentialDefinitionSecret.json.toString)
       createCredentialDefinition = AnoncredCreateCredentialDefinition(cd, cdp, kcp)
-      offer = AnoncredLib.createOffer(createCredentialDefinition, credentialDefinitionId)
+      offer = anoncredService.createOffer(createCredentialDefinition, credentialDefinitionId)
     } yield offer
 
   private[this] def createDidCommRequestCredential(
@@ -1442,7 +1448,7 @@ class CredentialServiceImpl(
       credentialDefinitionSecret <- getCredentialDefinitionPrivatePart(credentialDefinition.guid)
       cdp = anoncreds.AnoncredCredentialDefinitionPrivate(credentialDefinitionSecret.json.toString)
       credential =
-        AnoncredLib.createCredential(
+        anoncredService.createCredential(
           cd,
           cdp,
           credentialOffer,

@@ -1,5 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
+import org.hyperledger.identus.credentials.anoncreds.AnoncredServiceStub
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.presentation.Options
 import org.hyperledger.identus.credentials.core.model.schema.CredentialSchemaRef
@@ -47,6 +48,7 @@ trait CredentialServiceSpecHelper {
       (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
         (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,
       SDJwtServiceStub.layer,
+      AnoncredServiceStub.layer,
       CredentialServiceImpl.layer
     )
 

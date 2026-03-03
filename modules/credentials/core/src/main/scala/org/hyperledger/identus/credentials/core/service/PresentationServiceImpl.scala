@@ -36,6 +36,7 @@ private class PresentationServiceImpl(
     credentialRepository: CredentialRepository,
     messageProducer: Producer[UUID, WalletIdAndRecordId],
     sdJwtService: SDJwtService,
+    anoncredService: AnoncredService,
     maxRetries: Int = 5, // TODO move to config,
 ) extends PresentationService {
 
@@ -766,7 +767,7 @@ private class PresentationServiceImpl(
       presentation <-
         ZIO
           .fromEither(
-            AnoncredLib.createPresentation(
+            anoncredService.createPresentation(
               AnoncredPresentationRequest(presentationRequestData),
               credentialRequest,
               Map.empty, // TO FIX
@@ -1191,7 +1192,7 @@ private class PresentationServiceImpl(
         ZIO
           .fromTry(
             Try(
-              AnoncredLib.verifyPresentation(
+              anoncredService.verifyPresentation(
                 serializedPresentation,
                 serializedPresentationRequest,
                 schemaMap,
@@ -1361,8 +1362,8 @@ private class PresentationServiceImpl(
 object PresentationServiceImpl {
   val layer: URLayer[
     UriResolver & LinkSecretService & PresentationRepository & CredentialRepository &
-      Producer[UUID, WalletIdAndRecordId] & SDJwtService,
+      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService,
     PresentationService
   ] =
-    ZLayer.fromFunction(PresentationServiceImpl(_, _, _, _, _, _))
+    ZLayer.fromFunction(PresentationServiceImpl(_, _, _, _, _, _, _))
 }

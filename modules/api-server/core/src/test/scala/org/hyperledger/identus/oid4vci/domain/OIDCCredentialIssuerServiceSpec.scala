@@ -1,6 +1,7 @@
 package org.hyperledger.identus.oid4vci.domain
 
 import com.nimbusds.jose.*
+import org.hyperledger.identus.credentials.anoncreds.AnoncredServiceLive
 import org.hyperledger.identus.credentials.core.model.oid4vci.CredentialConfiguration
 import org.hyperledger.identus.credentials.core.model.CredentialFormat
 import org.hyperledger.identus.credentials.core.repository.{
@@ -54,6 +55,7 @@ object OIDCCredentialIssuerServiceSpec
       GenericSecretStorageInMemory.layer,
       LinkSecretServiceImpl.layer,
       SDJwtServiceLive.layer,
+      AnoncredServiceLive.layer,
       CredentialServiceImpl.layer,
       (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
         (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,

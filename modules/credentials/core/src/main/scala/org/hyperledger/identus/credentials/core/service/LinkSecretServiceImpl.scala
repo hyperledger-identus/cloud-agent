@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.credentials.anoncreds.{AnoncredLinkSecret, AnoncredLinkSecretWithId}
+import org.hyperledger.identus.credentials.anoncreds.{AnoncredLinkSecret, AnoncredLinkSecretWithId, AnoncredService}
 import org.hyperledger.identus.credentials.core.model.error.LinkSecretError
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import org.hyperledger.identus.wallet.storage.{GenericSecret, GenericSecretStorage}
@@ -9,7 +9,8 @@ import zio.json.ast.Json
 
 import scala.util.Try
 
-class LinkSecretServiceImpl(genericSecretStorage: GenericSecretStorage) extends LinkSecretService {
+class LinkSecretServiceImpl(genericSecretStorage: GenericSecretStorage, anoncredService: AnoncredService)
+    extends LinkSecretService {
 
   import LinkSecretServiceImpl.given
 
@@ -21,7 +22,7 @@ class LinkSecretServiceImpl(genericSecretStorage: GenericSecretStorage) extends 
       .flatMap {
         case Some(secret) => ZIO.succeed(secret)
         case None         =>
-          val linkSecret = AnoncredLinkSecret()
+          val linkSecret = anoncredService.createLinkSecret()
           genericSecretStorage
             .set[String, AnoncredLinkSecret](LinkSecretServiceImpl.defaultLinkSecretId, linkSecret)
             .as(linkSecret)
@@ -35,10 +36,10 @@ object LinkSecretServiceImpl {
   val defaultLinkSecretId = "default-link-secret-id"
 
   val layer: URLayer[
-    GenericSecretStorage,
+    GenericSecretStorage & AnoncredService,
     LinkSecretService
   ] =
-    ZLayer.fromFunction(LinkSecretServiceImpl(_))
+    ZLayer.fromFunction(LinkSecretServiceImpl(_, _))
 
   given GenericSecret[String, AnoncredLinkSecret] = new {
     override def keyPath(id: String): String = s"link-secret/${id.toString}"

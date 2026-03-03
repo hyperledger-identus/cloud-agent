@@ -1,6 +1,7 @@
 package org.hyperledger.identus.credentials.anoncreds
 
 import org.scalatest.flatspec.AnyFlatSpec
+import AnoncredConversions.given
 
 import scala.jdk.CollectionConverters.*
 
@@ -19,7 +20,7 @@ class PoCNewLib extends AnyFlatSpec {
     val ls1p = ls1: uniffi.anoncreds_wrapper.LinkSecret
     assert(ls1p.getValue() == "65965334953670062552662719679603258895632947953618378932199361160021795698890")
 
-    val ls0 = AnoncredLinkSecret()
+    val ls0 = AnoncredLinkSecretFactory.create()
     val ls0p = ls0: uniffi.anoncreds_wrapper.LinkSecret
     val ls0_ = ls0p: AnoncredLinkSecret
     assert(ls0.data == ls0_.data)
