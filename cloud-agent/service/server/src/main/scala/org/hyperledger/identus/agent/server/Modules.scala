@@ -213,7 +213,7 @@ object AppModule {
     )
   }
 
-  val neoPrismConfigLayer: RLayer[AppConfig, NeoPrismConfig] =
+  lazy val neoPrismConfigLayer: RLayer[AppConfig, NeoPrismConfig] =
     ZLayer.fromZIO {
       ZIO.serviceWith[AppConfig](_.didNode.neoprism.baseUrl).flatMap { javaUrl =>
         zio.http.URL.fromURI(javaUrl.toURI()) match {
