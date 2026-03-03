@@ -14,6 +14,19 @@ import scala.util.Try
 
 case class NeoPrismConfig(baseUrl: URL)
 
+/** Result of submitting signed operations to neoprism REST API. */
+final case class NeoPrismSubmissionResult(
+    txId: String,
+    operationIds: Seq[String]
+)
+
+/** Metadata about a VDR entry from neoprism. */
+final case class NeoPrismVdrEntryMetadata(
+    entryHash: String,
+    latestEventHash: String,
+    status: String
+)
+
 trait NeoPrismClient {
 
   /** Get resolution metadata for a DID.
@@ -43,6 +56,31 @@ trait NeoPrismClient {
     *   true if operation found (200), false if not found (404), throws on errors (400/500)
     */
   def isOperationIndexed(operationId: String): Task[Boolean]
+
+  /** Submit hex-encoded signed operations for VDR entries.
+    * @param hexEncodedOps
+    *   Sequence of hex-encoded SignedAtalaOperation protobuf bytes
+    * @return
+    *   Submission result with txId and operationIds
+    */
+  def submitVdrOperation(hexEncodedOps: Seq[String]): Task[NeoPrismSubmissionResult]
+
+  /** Get raw VDR blob data by entry hash.
+    * @param entryHash
+    *   Hex string of the entry hash
+    * @return
+    *   None if not found (404), Some(bytes) if found
+    */
+  def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]]
+
+  /** Get VDR entry metadata (latest event hash, status) by entry hash.
+    * Requires neoprism endpoint: GET /api/vdr-entries/{entry_hash}
+    * @param entryHash
+    *   Hex string of the entry hash
+    * @return
+    *   None if not found (404), Some(metadata) if found
+    */
+  def getVdrEntryMetadata(entryHash: String): Task[Option[NeoPrismVdrEntryMetadata]]
 }
 
 private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends NeoPrismClient {
@@ -138,6 +176,79 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
           }
     yield found
 
+  override def submitVdrOperation(hexEncodedOps: Seq[String]): Task[NeoPrismSubmissionResult] =
+    val requestBody = SignedOperationSubmissionRequest(hexEncodedOps)
+    for
+      resp <- baseClient.batched
+        .request(
+          Request(
+            method = Method.POST,
+            url = URL.root / "api" / "signed-operation-submissions",
+            headers = Headers(Header.ContentType(MediaType.application.json)),
+            body = Body.fromString(requestBody.toJson)
+          )
+        )
+      result <- resp.status match
+        case Status.Ok =>
+          resp.body.asString
+            .flatMap { body =>
+              ZIO
+                .fromEither(body.fromJson[SignedOperationSubmissionResponse])
+                .mapError(e => new RuntimeException(s"Failed to decode JSON response: $e"))
+                .map(r => NeoPrismSubmissionResult(r.tx_id, r.operation_ids))
+            }
+        case Status.BadRequest =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Bad request submitting VDR operation: $body"))
+          }
+        case status =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} submitting VDR operation: $body"))
+          }
+    yield result
+
+  override def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]] =
+    for
+      resp <- baseClient.batched.get(s"api/vdr-data/$entryHash")
+      dataOpt <- resp.status match
+        case Status.Ok =>
+          resp.body.asString.flatMap { hexStr =>
+            ZIO.fromTry(HexString.fromString(hexStr)).map(h => Some(h.toByteArray))
+          }
+        case Status.NotFound =>
+          ZIO.succeed(None)
+        case status =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} from vdr-data: $body"))
+          }
+    yield dataOpt
+
+  override def getVdrEntryMetadata(entryHash: String): Task[Option[NeoPrismVdrEntryMetadata]] =
+    for
+      resp <- baseClient.batched.get(s"api/vdr-entries/$entryHash")
+      metadataOpt <- resp.status match
+        case Status.Ok =>
+          resp.body.asString
+            .flatMap { body =>
+              ZIO
+                .fromEither(body.fromJson[VdrEntryMetadataResponse])
+                .mapError(e => new RuntimeException(s"Failed to decode VDR entry metadata: $e"))
+                .map(r =>
+                  Some(NeoPrismVdrEntryMetadata(
+                    entryHash = r.entry_hash,
+                    latestEventHash = r.latest_event_hash,
+                    status = r.status
+                  ))
+                )
+            }
+        case Status.NotFound =>
+          ZIO.succeed(None)
+        case status =>
+          resp.body.asString.flatMap { body =>
+            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} from vdr-entries: $body"))
+          }
+    yield metadataOpt
+
   private def convertToMetadata(documentMetadata: NeoPrismDocumentMetadata): DIDMetadata = {
     val lastOperationHash = documentMetadata.versionId
       .flatMap(v => HexString.fromString(v).toOption)
@@ -231,5 +342,15 @@ object NeoPrismClientImpl {
 
   private object SignedOperationSubmissionResponse {
     given decoder: JsonDecoder[SignedOperationSubmissionResponse] = DeriveJsonDecoder.gen
+  }
+
+  private case class VdrEntryMetadataResponse(
+      entry_hash: String,
+      latest_event_hash: String,
+      status: String
+  )
+
+  private object VdrEntryMetadataResponse {
+    given decoder: JsonDecoder[VdrEntryMetadataResponse] = DeriveJsonDecoder.gen
   }
 }
