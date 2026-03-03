@@ -9,12 +9,13 @@ import org.hyperledger.identus.credentials.core.model.presentation.*
 import org.hyperledger.identus.credentials.core.model.schema.`type`.anoncred.AnoncredSchemaSerDesV1
 import org.hyperledger.identus.credentials.core.repository.{CredentialRepository, PresentationRepository}
 import org.hyperledger.identus.credentials.core.service.serdes.*
-import org.hyperledger.identus.credentials.sdjwt.{CredentialCompact, HolderPrivateKey, PresentationCompact, SDJWT}
+import org.hyperledger.identus.credentials.sdjwt.{CredentialCompact, PresentationCompact, SDJwtService}
 import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.didcomm.model.*
 import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
 import org.hyperledger.identus.didcomm.protocol.issuecredential.IssueCredentialIssuedFormat
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
+import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
 import org.hyperledger.identus.shared.http.UriResolver
 import org.hyperledger.identus.shared.messaging.{Producer, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.*
@@ -34,6 +35,7 @@ private class PresentationServiceImpl(
     presentationRepository: PresentationRepository,
     credentialRepository: CredentialRepository,
     messageProducer: Producer[UUID, WalletIdAndRecordId],
+    sdJwtService: SDJwtService,
     maxRetries: Int = 5, // TODO move to config,
 ) extends PresentationService {
 
@@ -100,7 +102,7 @@ private class PresentationServiceImpl(
 
   private def createSDJwtPresentationFromRecord(
       recordId: DidCommID,
-      optionalHolderPrivateKey: Option[HolderPrivateKey]
+      optionalHolderPrivateKey: Option[Ed25519PrivateKey]
   ): ZIO[WalletAccessContext, PresentationError, PresentationCompact] = {
 
     for {
@@ -182,7 +184,7 @@ private class PresentationServiceImpl(
   override def createSDJwtPresentation(
       recordId: DidCommID,
       requestPresentation: RequestPresentation,
-      optionalHolderPrivateKey: Option[HolderPrivateKey],
+      optionalHolderPrivateKey: Option[Ed25519PrivateKey],
   ): ZIO[WalletAccessContext, PresentationError, Presentation] = {
     for {
       presentationPayload <- createSDJwtPresentationFromRecord(recordId, optionalHolderPrivateKey)
@@ -551,7 +553,7 @@ private class PresentationServiceImpl(
       issuedCredentials: Seq[String],
       claimsToDisclose: SdJwtCredentialToDisclose,
       requestPresentation: RequestPresentation,
-      optionalHolderPrivateKey: Option[HolderPrivateKey],
+      optionalHolderPrivateKey: Option[Ed25519PrivateKey],
   ): IO[PresentationError, PresentationCompact] = {
 
     val verifiableCredentials: Either[
@@ -603,14 +605,14 @@ private class PresentationServiceImpl(
         .add("exp", ast.Json.Num(exp))
       presentationPayload = (sdJwtPresentation.options, optionalHolderPrivateKey) match {
         case (Some(options), Some(holderPrivateKey)) =>
-          SDJWT.createPresentation(
+          sdJwtService.createPresentation(
             vc,
             sdJwtClaimsToDisclose.toJson,
             options.challenge,
             options.domain,
             holderPrivateKey
           )
-        case _ => SDJWT.createPresentation(vc, sdJwtClaimsToDisclose.toJson)
+        case _ => sdJwtService.createPresentation(vc, sdJwtClaimsToDisclose.toJson)
       }
     } yield presentationPayload
   }
@@ -1359,8 +1361,8 @@ private class PresentationServiceImpl(
 object PresentationServiceImpl {
   val layer: URLayer[
     UriResolver & LinkSecretService & PresentationRepository & CredentialRepository &
-      Producer[UUID, WalletIdAndRecordId],
+      Producer[UUID, WalletIdAndRecordId] & SDJwtService,
     PresentationService
   ] =
-    ZLayer.fromFunction(PresentationServiceImpl(_, _, _, _, _))
+    ZLayer.fromFunction(PresentationServiceImpl(_, _, _, _, _, _))
 }

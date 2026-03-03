@@ -786,7 +786,6 @@ lazy val credentialsCore = project
     notifications,
     credentialsAnoncreds,
     credentialsVcJWT,
-    credentialsSDJWT,
     sharedJson, // for PresentationDefinition (JsonPath, JsonSchema)
   )
 
@@ -845,7 +844,7 @@ lazy val credentialsSDJWT = project
     name := "credentials-sd-jwt",
     libraryDependencies += "io.iohk.atala" % "sd-jwt-kmp-jvm" % "0.1.2"
   )
-  .dependsOn(sharedCrypto)
+  .dependsOn(sharedCrypto, credentialsCore)
 
 // #####################
 // ### Connections  ####

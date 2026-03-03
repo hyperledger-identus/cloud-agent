@@ -9,6 +9,7 @@ import org.hyperledger.identus.credentials.core.repository.{
 }
 import org.hyperledger.identus.credentials.core.service.*
 import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver
+import org.hyperledger.identus.credentials.sdjwt.SDJwtServiceLive
 import org.hyperledger.identus.credentials.vc.jwt.PrismDidResolver
 import org.hyperledger.identus.did.core.model.did.{DID, PrismDID, VerificationRelationship}
 import org.hyperledger.identus.did.core.service.{DIDService, MockDIDService}
@@ -52,6 +53,7 @@ object OIDCCredentialIssuerServiceSpec
       credentialDefinitionServiceLayer,
       GenericSecretStorageInMemory.layer,
       LinkSecretServiceImpl.layer,
+      SDJwtServiceLive.layer,
       CredentialServiceImpl.layer,
       (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
         (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,

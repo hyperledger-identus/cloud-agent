@@ -98,6 +98,8 @@ object ArchConstraints {
     ("credentialsCore", "didcommVC", "credentialsCore should not directly depend on didcommVC", Direct),
     // credentialsCore should not depend on credentialsPreX (dependency was inverted)
     ("credentialsCore", "credentialsPreX", "credentialsCore should not depend on credentialsPreX", Direct),
+    // credentialsCore should not depend on credentialsSDJWT (dependency was inverted)
+    ("credentialsCore", "credentialsSDJWT", "credentialsCore should not depend on credentialsSDJWT", Direct),
     // Adapter direction constraints — core modules should not depend on persistence adapters
     (
       "credentialsCore",

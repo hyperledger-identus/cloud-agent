@@ -7,7 +7,7 @@ import org.hyperledger.identus.credentials.core.model.error.PresentationError.*
 import org.hyperledger.identus.credentials.core.model.presentation.Options
 import org.hyperledger.identus.credentials.core.service.{CredentialService, PresentationService}
 import org.hyperledger.identus.credentials.core.service.serdes.AnoncredCredentialProofsV1
-import org.hyperledger.identus.credentials.sdjwt.{HolderPrivateKey, IssuerPublicKey, PresentationCompact, SDJWT}
+import org.hyperledger.identus.credentials.sdjwt.{IssuerPublicKey, PresentationCompact, SDJWT}
 import org.hyperledger.identus.credentials.vc.jwt.{
   CredentialSchemaAndTrustedIssuersConstraint,
   CredentialVerification,
@@ -32,6 +32,7 @@ import org.hyperledger.identus.server.jobs.BackgroundJobError.{
   InvalidState,
   NotImplemented
 }
+import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
 import org.hyperledger.identus.shared.http.*
 import org.hyperledger.identus.shared.messaging
 import org.hyperledger.identus.shared.messaging.{Message, WalletIdAndRecordId}
@@ -894,7 +895,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
       ): ZIO[
         CredentialService & DIDService & ManagedDIDService & DIDNonSecretStorage & WalletAccessContext,
         ERROR,
-        Option[HolderPrivateKey]
+        Option[Ed25519PrivateKey]
       ] = {
         for {
           credentialService <- ZIO.service[CredentialService]
@@ -924,7 +925,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
                 longFormPrismDID,
                 VerificationRelationship.Authentication,
                 keyId
-              ).map(ed25519keyPair => Option(HolderPrivateKey(ed25519keyPair.privateKey)))
+              ).map(ed25519keyPair => Option(ed25519keyPair.privateKey))
             case None => ZIO.succeed(None)
 
         } yield optionalHolderPrivateKey

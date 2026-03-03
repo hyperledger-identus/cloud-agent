@@ -5,6 +5,7 @@ import org.hyperledger.identus.credentials.core.model.error.PresentationError
 import org.hyperledger.identus.credentials.core.repository.*
 import org.hyperledger.identus.credentials.core.service.serdes.*
 import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver
+import org.hyperledger.identus.credentials.sdjwt.SDJwtServiceStub
 import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.did.core.model.did.DID
 import org.hyperledger.identus.didcomm.{AgentPeerService, PeerDIDCreation}
@@ -43,6 +44,7 @@ trait PresentationServiceSpecHelper {
     linkSecretLayer,
     PresentationRepositoryInMemory.layer,
     CredentialRepositoryInMemory.layer,
+    SDJwtServiceStub.layer,
     (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
       (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,
   ) ++ defaultWalletLayer

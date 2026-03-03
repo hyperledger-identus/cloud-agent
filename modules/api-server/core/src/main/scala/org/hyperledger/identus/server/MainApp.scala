@@ -14,6 +14,7 @@ import org.hyperledger.identus.credentials.credentialschema.controller.{
 }
 import org.hyperledger.identus.credentials.prex.controller.PresentationExchangeControllerImpl
 import org.hyperledger.identus.credentials.prex.PresentationDefinitionValidatorImpl
+import org.hyperledger.identus.credentials.sdjwt.SDJwtServiceLive
 import org.hyperledger.identus.credentials.sql.repository.{
   JdbcCredentialDefinitionRepository,
   JdbcCredentialRepository,
@@ -195,6 +196,7 @@ object MainApp extends ZIOAppDefault {
           CredentialSchemaServiceImpl.layer,
           CredentialDefinitionServiceImpl.layer,
           CredentialStatusListServiceImpl.layer,
+          SDJwtServiceLive.layer,
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
           EntityServiceImpl.layer,
           ManagedDIDServiceWithEventNotificationImpl.layer,

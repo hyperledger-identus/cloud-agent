@@ -16,7 +16,7 @@ import org.hyperledger.identus.credentials.core.model.schema.{
 import org.hyperledger.identus.credentials.core.model.secret.CredentialDefinitionSecret
 import org.hyperledger.identus.credentials.core.repository.{CredentialRepository, CredentialStatusListRepository}
 import org.hyperledger.identus.credentials.prex.{ClaimFormat, Jwt, PresentationDefinition}
-import org.hyperledger.identus.credentials.sdjwt.*
+import org.hyperledger.identus.credentials.sdjwt.SDJwtService
 import org.hyperledger.identus.credentials.vc.jwt.{Issuer as JwtIssuer, *}
 import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.did.core.service.DIDService
@@ -46,7 +46,7 @@ object CredentialServiceImpl {
   val layer: URLayer[
     CredentialRepository & CredentialStatusListRepository & DidResolver & UriResolver & GenericSecretStorage &
       CredentialDefinitionService & LinkSecretService & DIDService & ManagedDIDService &
-      Producer[UUID, WalletIdAndRecordId],
+      Producer[UUID, WalletIdAndRecordId] & SDJwtService,
     CredentialService
   ] = {
     ZLayer.fromZIO {
@@ -61,6 +61,7 @@ object CredentialServiceImpl {
         didService <- ZIO.service[DIDService]
         manageDidService <- ZIO.service[ManagedDIDService]
         messageProducer <- ZIO.service[Producer[UUID, WalletIdAndRecordId]]
+        sdJwtService <- ZIO.service[SDJwtService]
       } yield CredentialServiceImpl(
         credentialRepo,
         credentialStatusListRepo,
@@ -72,7 +73,8 @@ object CredentialServiceImpl {
         didService,
         manageDidService,
         5,
-        messageProducer
+        messageProducer,
+        sdJwtService
       )
     }
   }
@@ -93,6 +95,7 @@ class CredentialServiceImpl(
     managedDIDService: ManagedDIDService,
     maxRetries: Int = 5, // TODO move to config
     messageProducer: Producer[UUID, WalletIdAndRecordId],
+    sdJwtService: SDJwtService,
 ) extends CredentialService {
 
   import CredentialServiceImpl.*
@@ -1282,7 +1285,6 @@ class CredentialServiceImpl(
         VerificationRelationship.AssertionMethod,
         record.keyId
       )
-      sdJwtPrivateKey = sdjwt.IssuerPrivateKey(ed25519KeyPair.privateKey)
       jsonWebKey <- didResolver.resolve(jwtPresentation.iss) flatMap {
         case failed: DIDResolutionFailed =>
           ZIO.dieMessage(s"Error occurred while resolving the DID: ${failed.error.toString}")
@@ -1318,14 +1320,14 @@ class CredentialServiceImpl(
       credential = {
         jsonWebKey match {
           case Some(jwk) =>
-            SDJWT.issueCredential(
-              sdJwtPrivateKey,
+            sdJwtService.issueCredential(
+              ed25519KeyPair.privateKey,
               claimsUpdated.toJson,
-              sdjwt.HolderPublicKey.fromJWT(jwk.toJson)
+              jwk.toJson
             )
           case None =>
-            SDJWT.issueCredential(
-              sdJwtPrivateKey,
+            sdJwtService.issueCredential(
+              ed25519KeyPair.privateKey,
               claimsUpdated.toJson,
             )
         }

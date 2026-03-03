@@ -9,11 +9,12 @@ import org.hyperledger.identus.credentials.core.service.serdes.{
   AnoncredCredentialProofsV1,
   AnoncredPresentationRequestV1
 }
-import org.hyperledger.identus.credentials.sdjwt.{HolderPrivateKey, PresentationCompact}
+import org.hyperledger.identus.credentials.sdjwt.PresentationCompact
 import org.hyperledger.identus.credentials.vc.jwt.{Issuer, PresentationPayload, W3cCredentialPayload}
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
 import org.hyperledger.identus.notifications.{Event, EventNotificationService}
+import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
 import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.json.*
@@ -244,7 +245,7 @@ class PresentationServiceNotifier(
   override def createSDJwtPresentation(
       record: DidCommID,
       requestPresentation: RequestPresentation,
-      optionalHolderPrivateKey: Option[HolderPrivateKey],
+      optionalHolderPrivateKey: Option[Ed25519PrivateKey],
   ): ZIO[WalletAccessContext, PresentationError, Presentation] =
     svc.createSDJwtPresentation(record, requestPresentation, optionalHolderPrivateKey)
 

@@ -9,6 +9,7 @@ import org.hyperledger.identus.credentials.core.repository.{
   CredentialStatusListRepositoryInMemory
 }
 import org.hyperledger.identus.credentials.prex.{ClaimFormat, Ldp, PresentationDefinition}
+import org.hyperledger.identus.credentials.sdjwt.SDJwtServiceStub
 import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.did.core.model.did.PrismDID
 import org.hyperledger.identus.did.core.service.DIDService
@@ -45,6 +46,7 @@ trait CredentialServiceSpecHelper {
       LinkSecretServiceImpl.layer,
       (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
         (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,
+      SDJwtServiceStub.layer,
       CredentialServiceImpl.layer
     )
 

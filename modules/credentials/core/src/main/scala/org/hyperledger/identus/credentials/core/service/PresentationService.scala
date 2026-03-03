@@ -7,10 +7,11 @@ import org.hyperledger.identus.credentials.core.service.serdes.{
   AnoncredCredentialProofsV1,
   AnoncredPresentationRequestV1
 }
-import org.hyperledger.identus.credentials.sdjwt.{HolderPrivateKey, PresentationCompact}
+import org.hyperledger.identus.credentials.sdjwt.PresentationCompact
 import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.didcomm.model.*
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
+import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
 import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.json.ast
@@ -77,7 +78,7 @@ trait PresentationService {
   def createSDJwtPresentation(
       recordId: DidCommID,
       requestPresentation: RequestPresentation,
-      optionalHolderPrivateKey: Option[HolderPrivateKey],
+      optionalHolderPrivateKey: Option[Ed25519PrivateKey],
   ): ZIO[WalletAccessContext, PresentationError, Presentation]
 
   def createAnoncredPresentationPayloadFromRecord(
