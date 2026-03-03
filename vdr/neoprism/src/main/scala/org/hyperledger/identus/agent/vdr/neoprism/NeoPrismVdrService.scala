@@ -140,7 +140,7 @@ class NeoPrismVdrService(
     (for {
       _ <- logRequest("getOperationStatus", s"operationId=$operationId")
       indexed <- client.isOperationIndexed(operationId)
-      status = if indexed then "CONFIRMED" else "AWAITING_CONFIRMATION"
+      status = if indexed then "CONFIRMED_AND_APPLIED" else "AWAIT_CONFIRMATION"
       _ <- logResponse("getOperationStatus", s"status=$status")
     } yield VdrOperationStatus(status, None, None)).mapError(e => DriverNotFound(e))
 }
