@@ -14,14 +14,6 @@ object ArchConstraints {
     * - Transitive: checks the full transitive closure
     */
   val forbiddenDeps: Seq[(String, String, String, DepScope)] = Seq(
-    // credentialsCore should not directly depend on walletManagement
-    // (transitive dep via walletManagementApi is acceptable)
-    (
-      "credentialsCore",
-      "walletManagement",
-      "credentialsCore should not directly depend on walletManagement; use walletManagementApi instead",
-      Direct
-    ),
     // Core modules should not depend on the server
     (
       "didCore",
@@ -155,6 +147,8 @@ object ArchConstraints {
     ("apiServerConfig", "didCore", "apiServerConfig should not depend on didCore", Transitive),
     // walletManagement should not depend on didCore (only didApi)
     ("walletManagement", "didCore", "walletManagement should depend on didApi, not didCore", Transitive),
+    // walletManagementApi should not depend on walletManagement (dependency was inverted)
+    ("walletManagementApi", "walletManagement", "walletManagementApi should not depend on walletManagement", Direct),
     // apiServerJobsCore should not depend on HTTP modules
     ("apiServerJobsCore", "issueHttp", "apiServerJobsCore should not depend on issueHttp", Transitive),
     ("apiServerJobsCore", "connectionsHttp", "apiServerJobsCore should not depend on connectionsHttp", Transitive),

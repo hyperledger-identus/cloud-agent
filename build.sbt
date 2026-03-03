@@ -777,7 +777,8 @@ lazy val credentialsCore = project
   .dependsOn(
     shared,
     didApi % "compile->compile;test->test", // Test is for MockDIDService
-    walletManagementApi % "compile->compile;test->test", // test is for MockManagedDIDService
+    walletManagementApi % "compile->compile;test->test", // lightweight types (Entity, GenericSecretStorage)
+    walletManagement % "compile->compile;test->test", // test is for MockManagedDIDService
     didcommResolver,
     protocolIssueCredential,
     protocolPresentProof,
@@ -951,6 +952,7 @@ lazy val walletManagement = project
         Seq(D.zioMock)
   )
   .dependsOn(
+    walletManagementApi,
     didcommAgentDidcommx,
     didApi,
     notifications
@@ -963,7 +965,7 @@ lazy val walletManagementApi = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "wallet-management-api")
-  .dependsOn(shared, walletManagement % "compile->compile;test->test")
+  .dependsOn(shared)
 
 lazy val walletPersistenceDoobie = project
   .in(file("modules/wallet-management/persistence-doobie"))
