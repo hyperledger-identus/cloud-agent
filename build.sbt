@@ -778,9 +778,10 @@ lazy val credentialsCore = project
     shared,
     didApi % "compile->compile;test->test", // Test is for MockDIDService
     walletManagementApi % "compile->compile;test->test", // test is for MockManagedDIDService
-    didcommVC,
     didcommResolver,
-    didcommAgentDidcommx,
+    protocolIssueCredential,
+    protocolPresentProof,
+    didcommAgentDidcommx % "test->compile", // Test is for PeerDID/AgentPeerService
     notifications,
     credentialsAnoncreds,
     credentialsVcJWT,

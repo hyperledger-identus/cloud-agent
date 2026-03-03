@@ -102,6 +102,8 @@ object ArchConstraints {
       "notifications should not depend on apiServerIam",
       Transitive
     ),
+    // credentialsCore should not directly depend on didcommVC (unused)
+    ("credentialsCore", "didcommVC", "credentialsCore should not directly depend on didcommVC", Direct),
     // Adapter direction constraints — core modules should not depend on persistence adapters
     (
       "credentialsCore",
