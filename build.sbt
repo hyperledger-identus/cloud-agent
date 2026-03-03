@@ -738,8 +738,9 @@ lazy val didApi = project
   .in(file("modules/did/api"))
   .configure(commonConfigure)
   .settings(commonSetttings)
-  .settings(name := "did-api")
-  .dependsOn(shared, didCore)
+  .settings(name := "did-api", libraryDependencies ++= Seq(D.zioMock))
+  .dependsOn(shared, prismNodeClient)
+  .dependsOn(sharedCrypto % "compile->compile;test->test")
 
 lazy val didCore = project
   .in(file("modules/did/core"))
@@ -749,8 +750,7 @@ lazy val didCore = project
     name := "did-core",
     libraryDependencies ++= D_DID.coreDependencies
   )
-  .dependsOn(shared, prismNodeClient)
-  .dependsOn(sharedCrypto % "compile->compile;test->test")
+  .dependsOn(didApi, prismNodeClient)
 
 // #####################
 // ### Credentials  ####
@@ -764,7 +764,7 @@ lazy val credentialsVcJWT = project
     name := "credentials-vc-jwt",
     libraryDependencies ++= D_Credentials_VC_JWT.credentialsVcJwtDependencies
   )
-  .dependsOn(didCore, sharedJson)
+  .dependsOn(didApi, sharedJson)
 
 lazy val credentialsCore = project
   .in(file("modules/credentials/core"))
@@ -776,7 +776,7 @@ lazy val credentialsCore = project
   )
   .dependsOn(
     shared,
-    didCore % "compile->compile;test->test", // Test is for MockDIDService
+    didApi % "compile->compile;test->test", // Test is for MockDIDService
     walletManagementApi % "compile->compile;test->test", // test is for MockManagedDIDService
     didcommVC,
     didcommResolver,
@@ -934,7 +934,6 @@ lazy val walletManagement = project
   )
   .dependsOn(
     didcommAgentDidcommx,
-    didCore,
     didApi,
     notifications
   )
@@ -1075,6 +1074,7 @@ lazy val apiServer = project
     apiServerConfig,
     apiServerHttpCore,
     apiServerJobs,
+    didCore,
     notificationsHttp,
     credentialStatusHttp,
     verificationHttp,
@@ -1183,7 +1183,7 @@ lazy val oid4vciCore = project
     name := "oid4vci-core",
     libraryDependencies ++= Seq(D.zio, D.nimbusJwt)
   )
-  .dependsOn(credentialsVcJWT, didCore, sharedCrypto)
+  .dependsOn(credentialsVcJWT, didApi, sharedCrypto)
 
 lazy val connectionsHttp = project
   .in(file("modules/connections/http"))
@@ -1203,7 +1203,7 @@ lazy val didHttp = project
     name := "did-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson)
   )
-  .dependsOn(apiServerHttpCore, didCore, walletManagement)
+  .dependsOn(apiServerHttpCore, didApi, walletManagement)
 
 lazy val systemHttp = project
   .in(file("modules/api-server/system-http"))
@@ -1270,7 +1270,7 @@ lazy val apiServerControllerCommons = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "api-server-controller-commons")
-  .dependsOn(apiServerHttpCore, connectionsCore, credentialsCore, didCore, didcommModels, walletManagement)
+  .dependsOn(apiServerHttpCore, connectionsCore, credentialsCore, didApi, didcommModels, walletManagement)
 
 lazy val issueHttp = project
   .in(file("modules/credentials/issue-http"))
@@ -1304,7 +1304,7 @@ lazy val apiServerJobs = project
     credentialsVcJWT,
     credentialsSDJWT,
     credentialsAnoncreds,
-    didCore,
+    didApi,
     didcommAgent,
     walletManagement,
     shared

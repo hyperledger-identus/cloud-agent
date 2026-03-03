@@ -139,12 +139,16 @@ object ArchConstraints {
       "credentialSchemaHttp should not depend on credentialDefinitionHttp",
       Transitive
     ),
-    // apiServerHttpCore should not depend on domain modules (except didCore via walletManagement)
+    // apiServerHttpCore should not depend on domain core modules
     ("apiServerHttpCore", "credentialsCore", "apiServerHttpCore should not depend on credentialsCore", Transitive),
     ("apiServerHttpCore", "connectionsCore", "apiServerHttpCore should not depend on connectionsCore", Transitive),
-    // apiServerConfig should not depend on domain core modules (except didCore via walletManagement)
+    ("apiServerHttpCore", "didCore", "apiServerHttpCore should not depend on didCore", Transitive),
+    // apiServerConfig should not depend on domain core modules
     ("apiServerConfig", "credentialsCore", "apiServerConfig should not depend on credentialsCore", Transitive),
     ("apiServerConfig", "connectionsCore", "apiServerConfig should not depend on connectionsCore", Transitive),
+    ("apiServerConfig", "didCore", "apiServerConfig should not depend on didCore", Transitive),
+    // walletManagement should not depend on didCore (only didApi)
+    ("walletManagement", "didCore", "walletManagement should depend on didApi, not didCore", Transitive),
     // apiServerJobs should not depend on HTTP modules
     ("apiServerJobs", "issueHttp", "apiServerJobs should not depend on issueHttp", Transitive),
     ("apiServerJobs", "connectionsHttp", "apiServerJobs should not depend on connectionsHttp", Transitive),

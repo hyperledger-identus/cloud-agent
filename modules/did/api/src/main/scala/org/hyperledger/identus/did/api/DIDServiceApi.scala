@@ -1,9 +1,10 @@
 package org.hyperledger.identus.did.api
 
-/** Re-exports from did.core for the DID bounded context API.
+/** Re-exports from did.core model types for convenience.
   *
-  * These type aliases establish the public API surface for the DID bounded context. Consumers should depend on did-api
-  * rather than did-core directly. In a future phase, the actual types will be moved here and the aliases reversed.
+  * The actual model types, service traits, and error types now live in the did-api module (under their original
+  * did.core.* packages for backward compatibility). These aliases provide a convenient shorthand for consumers that
+  * prefer importing from did.api.
   */
 
 // Service trait
