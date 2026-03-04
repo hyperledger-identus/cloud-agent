@@ -196,6 +196,12 @@ object ArchConstraints {
     ("apiServerJobsCore", "credentialsVcJWT", "apiServerJobsCore should not depend on credentialsVcJWT", Direct),
     // oid4vciCore should not depend on credentialsVcJWT (JwtSignerImplicits moved to sharedCrypto)
     ("oid4vciCore", "credentialsVcJWT", "oid4vciCore should not depend on credentialsVcJWT", Direct),
+    // Plugin architecture: shared should only contain contracts, not implementations
+    ("shared", "persistenceSqlite", "shared should not depend on persistenceSqlite", Direct),
+    ("shared", "credentialsVcJWT", "shared should not depend on credentialsVcJWT", Direct),
+    // Plugin architecture: persistence-sqlite should not depend on domain modules
+    ("persistenceSqlite", "credentialsCore", "persistenceSqlite should not depend on credentialsCore", Direct),
+    ("persistenceSqlite", "connectionsCore", "persistenceSqlite should not depend on connectionsCore", Direct),
   )
 
   val settings: Seq[Setting[_]] = Seq(
