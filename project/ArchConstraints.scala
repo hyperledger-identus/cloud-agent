@@ -189,6 +189,10 @@ object ArchConstraints {
     ("notificationsWebhook", "didHttp", "notificationsWebhook should not depend on didHttp", Direct),
     ("notificationsWebhook", "issueHttp", "notificationsWebhook should not depend on issueHttp", Direct),
     ("notificationsWebhook", "presentProofHttp", "notificationsWebhook should not depend on presentProofHttp", Direct),
+    // apiServerJobsCore should not depend on credentialsVcJWT (uses VcJwtService abstraction)
+    ("apiServerJobsCore", "credentialsVcJWT", "apiServerJobsCore should not depend on credentialsVcJWT", Direct),
+    // oid4vciCore should not depend on credentialsVcJWT (JwtSignerImplicits moved to sharedCrypto)
+    ("oid4vciCore", "credentialsVcJWT", "oid4vciCore should not depend on credentialsVcJWT", Direct),
   )
 
   val settings: Seq[Setting[_]] = Seq(

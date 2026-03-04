@@ -2,7 +2,7 @@ package org.hyperledger.identus.oid4vci.domain
 
 import com.nimbusds.jose.{JOSEObjectType, JWSAlgorithm, JWSHeader, JWSObject, JWSSigner, Payload}
 import org.hyperledger.identus.credentials.vc.jwt.JWT
-import org.hyperledger.identus.credentials.vc.jwt.JwtSignerImplicits.*
+import org.hyperledger.identus.shared.crypto.JwtSignerImplicits.*
 import org.hyperledger.identus.did.core.model.did.DIDUrl
 import org.hyperledger.identus.shared.crypto.Secp256k1PrivateKey
 import zio.*

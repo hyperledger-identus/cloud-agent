@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.prex
 
 import org.hyperledger.identus.credentials.prex.PresentationSubmissionError.*
-import org.hyperledger.identus.credentials.vc.jwt.{JWT, JwtCredential, JwtPresentation, JwtPresentationPayload}
+import org.hyperledger.identus.credentials.vc.jwt.{JWT, JwtCredentialPayload, JwtPresentationPayload}
 import org.hyperledger.identus.shared.json.{JsonPathError, JsonSchemaValidatorImpl}
 import org.hyperledger.identus.shared.models.{Failure, StatusCode}
 import zio.*
@@ -74,6 +74,11 @@ case class ClaimFormatVerification(
     jwtVc: JWT => IO[String, Unit],
 )
 
+case class JwtDecoder(
+    decodeCredentialJwt: JWT => IO[String, JwtCredentialPayload],
+    decodePresentationJwt: JWT => IO[String, JwtPresentationPayload],
+)
+
 // Known issues
 // 1. does not respect jwt format alg in presentation_definition
 object PresentationSubmissionVerification {
@@ -82,13 +87,16 @@ object PresentationSubmissionVerification {
       pd: PresentationDefinition,
       ps: PresentationSubmission,
       rootTraversalObject: Json,
-  )(formatVerification: ClaimFormatVerification): IO[PresentationSubmissionError, Unit] = {
+  )(
+      formatVerification: ClaimFormatVerification,
+      jwtDecoder: JwtDecoder
+  ): IO[PresentationSubmissionError, Unit] = {
     for {
       _ <- verifySubmissionId(pd, ps)
       _ <- verifySubmissionRequirement(pd, ps)
       entries <- ZIO
         .foreach(ps.descriptor_map) { descriptor =>
-          extractSubmissionEntry(rootTraversalObject, descriptor)(formatVerification).map(descriptor.id -> _)
+          extractSubmissionEntry(rootTraversalObject, descriptor)(formatVerification, jwtDecoder).map(descriptor.id -> _)
         }
       _ <- verifyInputConstraints(pd, entries)
     } yield ()
@@ -158,7 +166,7 @@ object PresentationSubmissionVerification {
   private def extractSubmissionEntry(
       traversalObject: Json,
       descriptor: InputDescriptorMapping
-  )(formatVerification: ClaimFormatVerification): IO[PresentationSubmissionError, Json] = {
+  )(formatVerification: ClaimFormatVerification, jwtDecoder: JwtDecoder): IO[PresentationSubmissionError, Json] = {
     for {
       path <- ZIO
         .fromEither(descriptor.path.toJsonPath)
@@ -167,13 +175,13 @@ object PresentationSubmissionVerification {
         .fromEither(path.read(traversalObject))
         .mapError(_ => JsonPathNotFound(descriptor.path))
       currentNode <- descriptor.format match {
-        case ClaimFormatValue.jwt_vc => verifyJwtVc(jsonAtPath, descriptor.path)(formatVerification.jwtVc)
-        case ClaimFormatValue.jwt_vp => verifyJwtVp(jsonAtPath, descriptor.path)(formatVerification.jwtVp)
+        case ClaimFormatValue.jwt_vc => verifyJwtVc(jsonAtPath, descriptor.path)(formatVerification.jwtVc, jwtDecoder.decodeCredentialJwt)
+        case ClaimFormatValue.jwt_vp => verifyJwtVp(jsonAtPath, descriptor.path)(formatVerification.jwtVp, jwtDecoder.decodePresentationJwt)
       }
       leafNode <- descriptor.path_nested.fold(ZIO.succeed(currentNode)) { nestedDescriptor =>
         if descriptor.id != nestedDescriptor.id
         then ZIO.fail(InvalidNestedPathDescriptorId(descriptor.id, nestedDescriptor.id))
-        else extractSubmissionEntry(currentNode, nestedDescriptor)(formatVerification)
+        else extractSubmissionEntry(currentNode, nestedDescriptor)(formatVerification, jwtDecoder)
       }
     } yield leafNode
   }
@@ -181,15 +189,14 @@ object PresentationSubmissionVerification {
   private def verifyJwtVc(
       json: Json,
       path: JsonPathValue
-  )(formatVerification: JWT => IO[String, Unit]): IO[PresentationSubmissionError, Json] = {
+  )(formatVerification: JWT => IO[String, Unit], decodeJwt: JWT => IO[String, JwtCredentialPayload]): IO[PresentationSubmissionError, Json] = {
     val format = ClaimFormatValue.jwt_vc
     for {
       jwt <- ZIO
         .fromOption(json.asString)
         .map(JWT(_))
         .mapError(_ => InvalidDataTypeForClaimFormat(format, path, "string"))
-      payload <- JwtCredential
-        .decodeJwt(jwt)
+      payload <- decodeJwt(jwt)
         .mapError(e => ClaimDecodeFailure(format, path, e))
       _ <- formatVerification(jwt)
         .mapError(errors => ClaimFormatVerificationFailure(format, path, errors.mkString))
@@ -199,16 +206,15 @@ object PresentationSubmissionVerification {
   private def verifyJwtVp(
       json: Json,
       path: JsonPathValue
-  )(formatVerification: JWT => IO[String, Unit]): IO[PresentationSubmissionError, Json] = {
+  )(formatVerification: JWT => IO[String, Unit], decodeJwt: JWT => IO[String, JwtPresentationPayload]): IO[PresentationSubmissionError, Json] = {
     val format = ClaimFormatValue.jwt_vp
     for {
       jwt <- ZIO
         .fromOption(json.asString)
         .map(JWT(_))
         .mapError(_ => InvalidDataTypeForClaimFormat(format, path, "string"))
-      payload <- ZIO
-        .fromTry(JwtPresentation.decodeJwt[JwtPresentationPayload](jwt))
-        .mapError(e => ClaimDecodeFailure(format, path, e.getMessage()))
+      payload <- decodeJwt(jwt)
+        .mapError(e => ClaimDecodeFailure(format, path, e))
       _ <- formatVerification(jwt)
         .mapError(errors => ClaimFormatVerificationFailure(format, path, errors.mkString))
     } yield payload.toJsonAST.toOption.get

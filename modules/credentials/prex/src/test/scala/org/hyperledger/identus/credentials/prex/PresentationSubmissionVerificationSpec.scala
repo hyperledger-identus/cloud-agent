@@ -18,6 +18,13 @@ object PresentationSubmissionVerificationSpec extends ZIOSpecDefault {
   private def parseUnsafe(json: String): Json = json.fromJson[Json].toOption.get
 
   private val noopFormatVerification = ClaimFormatVerification(jwtVp = _ => ZIO.unit, jwtVc = _ => ZIO.unit)
+  private val jwtDecoder = JwtDecoder(
+    decodeCredentialJwt = jwt => JwtCredential.decodeJwt(jwt),
+    decodePresentationJwt = jwt =>
+      ZIO
+        .fromTry(JwtPresentation.decodeJwt[JwtPresentationPayload](jwt))
+        .mapError(_.getMessage)
+  )
   private val basePd: PresentationDefinition =
     decodeUnsafe[PresentationDefinition](
       """
@@ -120,7 +127,7 @@ object PresentationSubmissionVerificationSpec extends ZIOSpecDefault {
     val ps = basePs.copy(descriptor_map = descriptorMap)
     for {
       result <- PresentationSubmissionVerification
-        .verify(pd, ps, Json.Str(jwt.value))(formatVerification)
+        .verify(pd, ps, Json.Str(jwt.value))(formatVerification, jwtDecoder)
         .exit
     } yield assert(result)(assertion)
   }
@@ -132,7 +139,7 @@ object PresentationSubmissionVerificationSpec extends ZIOSpecDefault {
       val jwtVc = generateJwtVc(payload)
       for {
         result <- PresentationSubmissionVerification
-          .verify(basePd, ps, Json.Str(jwtVc.value))(noopFormatVerification)
+          .verify(basePd, ps, Json.Str(jwtVc.value))(noopFormatVerification, jwtDecoder)
           .exit
       } yield assert(result)(failsWithA[InvalidSubmissionId])
     },

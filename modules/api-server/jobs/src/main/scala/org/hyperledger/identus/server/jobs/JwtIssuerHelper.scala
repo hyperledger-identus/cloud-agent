@@ -1,6 +1,6 @@
 package org.hyperledger.identus.server.jobs
 
-import org.hyperledger.identus.credentials.vc.jwt.{ES256KSigner, EdSigner, Issuer as JwtIssuer}
+import org.hyperledger.identus.credentials.vc.jwt.{Issuer as JwtIssuer, VcJwtService}
 import org.hyperledger.identus.did.core.model.did.{EllipticCurve, PrismDID, VerificationRelationship}
 import org.hyperledger.identus.did.core.model.error.DIDResolutionError
 import org.hyperledger.identus.did.core.service.DIDService
@@ -16,13 +16,14 @@ trait JwtIssuerHelper {
       verificationRelationship: VerificationRelationship,
       kidIssuer: Option[KeyId],
   ): ZIO[
-    DIDService & ManagedDIDService & WalletAccessContext,
+    DIDService & ManagedDIDService & VcJwtService & WalletAccessContext,
     DIDResolutionError | Failure,
     JwtIssuer
   ] = {
     for {
       managedDIDService <- ZIO.service[ManagedDIDService]
       didService <- ZIO.service[DIDService]
+      vcJwtService <- ZIO.service[VcJwtService]
       issuingKeyId <- didService
         .resolveDID(jwtIssuerDID)
         .someOrFail(BackgroundJobError.InvalidState(s"Issuing DID resolution result is not found"))
@@ -53,7 +54,7 @@ trait JwtIssuerHelper {
             ZIO.succeed(
               JwtIssuer(
                 jwtIssuerDID.did,
-                EdSigner(Ed25519KeyPair(publicKey, privateKey), Some(issuingKeyId)),
+                vcJwtService.createEdSigner(Ed25519KeyPair(publicKey, privateKey), Some(issuingKeyId)),
                 publicKey.toJava
               )
             )
@@ -67,7 +68,7 @@ trait JwtIssuerHelper {
             ZIO.succeed(
               JwtIssuer(
                 jwtIssuerDID.did,
-                ES256KSigner(privateKey.toJavaPrivateKey, Some(issuingKeyId)),
+                vcJwtService.createES256KSigner(privateKey.toJavaPrivateKey, Some(issuingKeyId)),
                 publicKey.toJavaPublicKey
               )
             )

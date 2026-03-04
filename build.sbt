@@ -810,7 +810,7 @@ lazy val credentialsPreX = project
   .in(file("modules/credentials/prex"))
   .settings(commonSetttings)
   .settings(name := "credentials-prex")
-  .dependsOn(credentialsCore, shared, sharedJson, credentialsVcJWT)
+  .dependsOn(credentialsCore, shared, sharedJson, credentialsVcJWT % "test->compile")
 
 // ###############################
 // ### Credentials Anoncreds  ###
@@ -1206,7 +1206,7 @@ lazy val oid4vciCore = project
     name := "oid4vci-core",
     libraryDependencies ++= Seq(D.zio, D.nimbusJwt)
   )
-  .dependsOn(credentialsVcJWT, didApi, sharedCrypto)
+  .dependsOn(credentialsCore, didApi, sharedCrypto)
 
 lazy val connectionsHttp = project
   .in(file("modules/connections/http"))
@@ -1286,7 +1286,7 @@ lazy val oid4vciHttp = project
     name := "oid4vci-http",
     libraryDependencies ++= Seq(D_Server.tapirJsonZio, D_Server.tapirZioHttpServer, D_Server.tapirSwaggerUiBundle, D.zio, D.zioJson, D.nimbusJwt)
   )
-  .dependsOn(apiServerHttpCore, iamCore, oid4vciCore, credentialsCore, walletManagement)
+  .dependsOn(apiServerHttpCore, iamCore, oid4vciCore, credentialsCore, credentialsVcJWT, walletManagement)
 
 lazy val apiServerControllerCommons = project
   .in(file("modules/api-server/controller-commons"))
@@ -1323,7 +1323,6 @@ lazy val apiServerJobsCore = project
   .dependsOn(
     apiServerConfig,
     credentialsCore,
-    credentialsVcJWT,
     didApi,
     didcommAgent,
     didcommAgentDidcommx,

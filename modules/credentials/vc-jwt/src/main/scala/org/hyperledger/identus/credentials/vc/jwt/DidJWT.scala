@@ -5,7 +5,7 @@ import com.nimbusds.jose.crypto.{ECDSASigner, Ed25519Signer}
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton
 import com.nimbusds.jose.jwk.{Curve, ECKey}
 import com.nimbusds.jwt.{JWTClaimsSet, SignedJWT}
-import org.hyperledger.identus.shared.crypto.{Ed25519KeyPair, Secp256k1PrivateKey}
+import org.hyperledger.identus.shared.crypto.Ed25519KeyPair
 import org.hyperledger.identus.shared.models.KeyId
 import zio.*
 import zio.json.EncoderOps
@@ -13,19 +13,6 @@ import zio.json.ast.Json
 
 import java.security.{PrivateKey, PublicKey}
 import java.security.interfaces.ECPublicKey
-
-object JwtSignerImplicits {
-  import com.nimbusds.jose.JWSSigner
-
-  implicit class JwtSignerProviderSecp256k1(secp256k1PrivateKey: Secp256k1PrivateKey) {
-    def asJwtSigner: JWSSigner = {
-      val ecdsaSigner = ECDSASigner(secp256k1PrivateKey.toJavaPrivateKey, Curve.SECP256K1)
-      val bouncyCastleProvider = BouncyCastleProviderSingleton.getInstance
-      ecdsaSigner.getJCAContext.setProvider(bouncyCastleProvider)
-      ecdsaSigner
-    }
-  }
-}
 
 // works with java 7, 8, 11 & bouncycastle provider
 // https://connect2id.com/products/nimbus-jose-jwt/jca-algorithm-support#alg-support-table

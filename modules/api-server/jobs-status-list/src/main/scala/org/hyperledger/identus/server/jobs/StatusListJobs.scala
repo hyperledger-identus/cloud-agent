@@ -2,6 +2,7 @@ package org.hyperledger.identus.server.jobs
 
 import org.hyperledger.identus.credentials.core.model.{CredInStatusList, CredentialStatusListWithCreds}
 import org.hyperledger.identus.credentials.core.service.{CredentialService, CredentialStatusListService}
+import org.hyperledger.identus.credentials.vc.jwt.VcJwtService
 import org.hyperledger.identus.credentials.vc.jwt.revocation.{BitString, VCStatusList2021, VCStatusList2021Error}
 import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.did.core.service.DIDService
@@ -51,7 +52,7 @@ object StatusListJobs extends BackgroundJobsHelper {
   } yield ()
 
   private def handleMessage(message: Message[UUID, WalletIdAndRecordId]): RIO[
-    DIDService & ManagedDIDService & CredentialService & DidOps & DIDResolver & HttpClient &
+    DIDService & ManagedDIDService & VcJwtService & CredentialService & DidOps & DIDResolver & HttpClient &
       CredentialStatusListService,
     Unit
   ] = {

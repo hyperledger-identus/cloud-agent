@@ -14,7 +14,8 @@ import org.hyperledger.identus.credentials.vc.jwt.{
   DidResolver as JwtDidResolver,
   Issuer as JwtIssuer,
   JWT,
-  JwtPresentation
+  JwtPresentation,
+  VcJwtService
 }
 import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.did.core.model.error.DIDResolutionError as CastorDIDResolutionError
@@ -78,7 +79,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
     CastorDIDResolutionError | GetManagedDIDError | Failure
 
   private type RESOURCES = COMMON_RESOURCES & CredentialService & JwtDidResolver & UriResolver & DIDService &
-    AppConfig & MESSAGING_RESOURCES
+    VcJwtService & AppConfig & MESSAGING_RESOURCES
 
   private type COMMON_RESOURCES = PresentationService & DIDNonSecretStorage & ManagedDIDService
 
@@ -686,7 +687,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
           requestPresentation: RequestPresentation,
           credentialFormat: CredentialFormat
       ): ZIO[
-        AppConfig & CredentialService & DIDService & COMMON_RESOURCES,
+        AppConfig & CredentialService & DIDService & VcJwtService & COMMON_RESOURCES,
         ERROR,
         Unit
       ] = {
@@ -710,7 +711,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
           credentialsToUse: Option[List[String]],
           requestPresentation: RequestPresentation
       ): ZIO[
-        CredentialService & DIDService & COMMON_RESOURCES,
+        CredentialService & DIDService & VcJwtService & COMMON_RESOURCES,
         ERROR,
         Unit
       ] = for {
@@ -858,7 +859,7 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
           presentationId: DidCommID,
           credentialsToUse: Seq[String]
       ): ZIO[
-        CredentialService & DIDService & ManagedDIDService & DIDNonSecretStorage & WalletAccessContext,
+        CredentialService & DIDService & ManagedDIDService & VcJwtService & DIDNonSecretStorage & WalletAccessContext,
         ERROR,
         JwtIssuer
       ] = {
