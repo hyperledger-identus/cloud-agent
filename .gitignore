@@ -26,3 +26,11 @@ cloud-agent/client/kotlin/src/main/kotlin/
 !cloud-agent/client/kotlin/src/main/kotlin/org/hyperledger/identus/client/models/CredentialSubject.kt
 !cloud-agent/client/kotlin/src/main/kotlin/org/hyperledger/identus/client/models/Service.kt
 !cloud-agent/client/kotlin/src/main/kotlin/org/hyperledger/identus/client/models/UpdateManagedDIDServiceAction.kt
+.gitmodules
+credo-ts/
+veramo/
+waltid-identity/
+akka-core/
+zio/
+lightbend-config/
+lace-platform/
