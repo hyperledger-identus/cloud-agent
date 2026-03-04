@@ -927,8 +927,6 @@ lazy val notificationsWebhook = project
   .dependsOn(
     apiServerConfig,
     notificationsApi,
-    connectionsCore,
-    credentialsCore,
     walletManagement,
     shared,
   )

@@ -1,21 +1,21 @@
 package org.hyperledger.identus.server.notification
 
-import org.hyperledger.identus.connections.core.model.ConnectionRecord
-import org.hyperledger.identus.credentials.core.model.{IssueCredentialRecord, PresentationRecord}
-import org.hyperledger.identus.notifications.{Event, EventConsumer, EventNotificationConfig, EventNotificationService}
+import org.hyperledger.identus.notifications.{Event, JsonEventConsumer}
 import org.hyperledger.identus.server.config.AppConfig
-import org.hyperledger.identus.server.notification.JsonEventEncoders.*
 import org.hyperledger.identus.server.notification.WebhookPublisherError.UnexpectedError
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
-import org.hyperledger.identus.wallet.model.ManagedDIDDetail
+import org.hyperledger.identus.notifications.EventNotificationConfig
 import org.hyperledger.identus.wallet.service.WalletManagementService
 import zio.*
 import zio.http.*
 import zio.json.*
+import zio.json.ast.Json
+
+import java.util.UUID
 
 class WebhookPublisher(
     appConfig: AppConfig,
-    notificationService: EventNotificationService,
+    consumers: Seq[JsonEventConsumer],
     walletService: WalletManagementService,
     client: Client
 ) {
@@ -30,28 +30,16 @@ class WebhookPublisher(
 
   private val parallelism = config.parallelism.getOrElse(1).max(1).min(10)
 
+  private given JsonEncoder[WalletId] = summon[JsonEncoder[UUID]].contramap(_.toUUID)
+  private given JsonEncoder[Event[Json]] = DeriveJsonEncoder.gen[Event[Json]]
+
   val run: ZIO[Client, WebhookPublisherError, Unit] = {
     for {
-      connectConsumer <- notificationService
-        .consumer[ConnectionRecord]("Connect")
-        .mapError(e => UnexpectedError(e.toString))
-      issueConsumer <- notificationService
-        .consumer[IssueCredentialRecord]("Issue")
-        .mapError(e => UnexpectedError(e.toString))
-      presentationConsumer <- notificationService
-        .consumer[PresentationRecord]("Presentation")
-        .mapError(e => UnexpectedError(e.toString))
-      didStateConsumer <- notificationService
-        .consumer[ManagedDIDDetail]("DIDDetail")
-        .mapError(e => UnexpectedError(e.toString))
-      _ <- pollAndNotify(connectConsumer).forever.debug.forkDaemon
-      _ <- pollAndNotify(issueConsumer).forever.debug.forkDaemon
-      _ <- pollAndNotify(presentationConsumer).forever.debug.forkDaemon
-      _ <- pollAndNotify(didStateConsumer).forever.debug.forkDaemon
+      _ <- ZIO.foreach(consumers)(c => pollAndNotify(c).forever.debug.forkDaemon)
     } yield ()
   }
 
-  private def pollAndNotify[A](consumer: EventConsumer[A])(implicit encoder: JsonEncoder[A]) = {
+  private def pollAndNotify(consumer: JsonEventConsumer) = {
     for {
       _ <- ZIO.logDebug(s"Polling $parallelism event(s)")
       events <- consumer.poll(parallelism).mapError(e => UnexpectedError(e.toString))
@@ -75,10 +63,10 @@ class WebhookPublisher(
     } yield ()
   }
 
-  private def generateNotifyWebhookTasks[A](
-      event: Event[A],
+  private def generateNotifyWebhookTasks(
+      event: Event[Json],
       webhooks: Seq[EventNotificationConfig]
-  )(implicit encoder: JsonEncoder[A]): Seq[ZIO[Client, UnexpectedError, Unit]] = {
+  ): Seq[ZIO[Client, UnexpectedError, Unit]] = {
     val globalWebhookTarget = config.url.map(_ -> globalWebhookBaseHeaders).toSeq
     val walletWebhookTargets = webhooks
       .map(i => i.url -> i.customHeaders)
@@ -89,9 +77,7 @@ class WebhookPublisher(
       .map { case (url, headers) => notifyWebhook(event, url.toString, headers) }
   }
 
-  private def notifyWebhook[A](event: Event[A], url: String, headers: Headers)(implicit
-      encoder: JsonEncoder[A]
-  ): ZIO[Client, UnexpectedError, Unit] = {
+  private def notifyWebhook(event: Event[Json], url: String, headers: Headers): ZIO[Client, UnexpectedError, Unit] = {
     val result = for {
       _ <- ZIO.logDebug(s"Sending event: $event to HTTP webhook URL: $url.")
       url <- ZIO.fromEither(URL.decode(url)).orDie
@@ -111,16 +97,11 @@ class WebhookPublisher(
         else {
           ZIO.fail(
             UnexpectedError(
-              s"Failed - Unsuccessful webhook response: [status: ${response.status}]" // TODO Restore error message in this unexpected error reporting
+              s"Failed - Unsuccessful webhook response: [status: ${response.status}]"
             )
           )
         }
     } yield resp
     result.provide(ZLayer.succeed(client) ++ Scope.default)
   }
-}
-
-object WebhookPublisher {
-  val layer: URLayer[AppConfig & EventNotificationService & WalletManagementService & Client, WebhookPublisher] =
-    ZLayer.fromFunction(WebhookPublisher(_, _, _, _))
 }

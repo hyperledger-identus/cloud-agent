@@ -184,6 +184,9 @@ object ArchConstraints {
     ("apiServerJobsDidSync", "credentialsCore", "apiServerJobsDidSync should not directly depend on credentialsCore", Direct),
     // credentialDefinitionHttp should not depend on credentialSchemaHttp (uses own annotations)
     ("credentialDefinitionHttp", "credentialSchemaHttp", "credentialDefinitionHttp should not depend on credentialSchemaHttp", Direct),
+    // notificationsWebhook should not depend on domain core modules (decoupled via JsonEventConsumer)
+    ("notificationsWebhook", "connectionsCore", "notificationsWebhook should not depend on connectionsCore", Direct),
+    ("notificationsWebhook", "credentialsCore", "notificationsWebhook should not depend on credentialsCore", Direct),
     // notificationsWebhook should not depend on HTTP controller modules (uses local DTOs instead)
     ("notificationsWebhook", "connectionsHttp", "notificationsWebhook should not depend on connectionsHttp", Direct),
     ("notificationsWebhook", "didHttp", "notificationsWebhook should not depend on didHttp", Direct),

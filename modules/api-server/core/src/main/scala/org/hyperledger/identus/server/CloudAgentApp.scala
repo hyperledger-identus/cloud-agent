@@ -20,7 +20,7 @@ import org.hyperledger.identus.presentproof.controller.PresentProofServerEndpoin
 import org.hyperledger.identus.server.config.AppConfig
 import org.hyperledger.identus.server.http.{DocModels, ZHttp4sBlazeServer, ZHttpEndpoints}
 import org.hyperledger.identus.server.jobs.*
-import org.hyperledger.identus.server.notification.WebhookPublisher
+import org.hyperledger.identus.server.notification.WebhookPublisherFactory
 import org.hyperledger.identus.shared.models.*
 import org.hyperledger.identus.system.controller.SystemServerEndpoints
 import org.hyperledger.identus.vdr.controller.VdrServerEndpoints
@@ -41,7 +41,7 @@ object CloudAgentApp {
     _ <- StatusListJobs.statusListSyncHandler
     _ <- AgentHttpServer.run.tapDefect(e => ZIO.logErrorCause("Agent HTTP Server failure", e)).fork
     fiber <- DidCommHttpServer.run.tapDefect(e => ZIO.logErrorCause("DIDComm HTTP Server failure", e)).fork
-    _ <- WebhookPublisher.layer.build.map(_.get[WebhookPublisher]).flatMap(_.run.fork)
+    _ <- WebhookPublisherFactory.run.fork
     _ <- fiber.join *> ZIO.log(s"Server End")
     _ <- ZIO.never
   } yield ()

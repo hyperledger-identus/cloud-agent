@@ -10,10 +10,8 @@ import org.hyperledger.identus.did.core.model.did.PrismDID
 import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, Base64, JsonData}
 import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
 import org.hyperledger.identus.didcomm.protocol.presentproof.{Presentation, RequestPresentation}
-import org.hyperledger.identus.notifications.Event
-import org.hyperledger.identus.shared.models.{Failure, WalletId}
+import org.hyperledger.identus.shared.models.Failure
 import org.hyperledger.identus.wallet.model.{ManagedDIDDetail, PublicationState}
-import zio.*
 import zio.json.*
 import zio.json.ast.Json
 
@@ -177,7 +175,7 @@ object JsonEventEncoders {
       case None => Seq.empty
 
   // ---------------------------------------------------------------------------
-  // Domain → Webhook DTO conversions
+  // Domain -> Webhook DTO conversions
   // ---------------------------------------------------------------------------
 
   private def toWebhookConnection(domain: ConnectionRecord): WebhookConnection =
@@ -304,23 +302,18 @@ object JsonEventEncoders {
   }
 
   // ---------------------------------------------------------------------------
-  // Public encoders (same implicit names as before for binary compatibility)
+  // Public encode functions (domain record -> Json)
   // ---------------------------------------------------------------------------
 
-  implicit val connectionRecordEncoder: JsonEncoder[ConnectionRecord] =
-    summon[JsonEncoder[WebhookConnection]].contramap(toWebhookConnection)
+  def encodeConnectionRecord(record: ConnectionRecord): Json =
+    toWebhookConnection(record).toJsonAST.toOption.get
 
-  implicit val issueCredentialRecordEncoder: JsonEncoder[PolluxIssueCredentialRecord] =
-    summon[JsonEncoder[WebhookIssueCredentialRecord]].contramap(toWebhookIssueCredentialRecord)
+  def encodeIssueCredentialRecord(record: PolluxIssueCredentialRecord): Json =
+    toWebhookIssueCredentialRecord(record).toJsonAST.toOption.get
 
-  implicit val presentationRecordEncoder: JsonEncoder[PolluxPresentationRecord] =
-    summon[JsonEncoder[WebhookPresentationStatus]].contramap(toWebhookPresentationStatus)
+  def encodePresentationRecord(record: PolluxPresentationRecord): Json =
+    toWebhookPresentationStatus(record).toJsonAST.toOption.get
 
-  implicit val managedDIDDetailEncoder: JsonEncoder[ManagedDIDDetail] =
-    summon[JsonEncoder[WebhookManagedDID]].contramap(toWebhookManagedDID)
-
-  implicit val walletIdEncoder: JsonEncoder[WalletId] = summon[JsonEncoder[UUID]].contramap(_.toUUID)
-
-  implicit def eventEncoder[T](implicit jsonEncoder: JsonEncoder[T]): JsonEncoder[Event[T]] =
-    DeriveJsonEncoder.gen[Event[T]]
+  def encodeManagedDIDDetail(detail: ManagedDIDDetail): Json =
+    toWebhookManagedDID(detail).toJsonAST.toOption.get
 }
