@@ -123,42 +123,12 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
     yield protoDIDDataOpt
 
   override def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String] =
-    val signedAtalaOperation = signedOperation.toSignedAtalaOperation
-    val operationBytes = signedAtalaOperation.toByteArray
-    val hexString = HexString.fromByteArray(operationBytes).toString
-    val requestBody = SignedOperationSubmissionRequest(Seq(hexString))
-    for
-      resp <- baseClient.batched
-        .request(
-          Request(
-            method = Method.POST,
-            url = URL.root / "api" / "submissions" / "signed-operations",
-            headers = Headers(Header.ContentType(MediaType.application.json)),
-            body = Body.fromString(requestBody.toJson)
-          )
-        )
-      operationId <- resp.status match
-        case Status.Ok =>
-          resp.body.asString
-            .flatMap { body =>
-              ZIO
-                .fromEither(body.fromJson[SignedOperationSubmissionResponse])
-                .mapError(e => new RuntimeException(s"Failed to decode JSON response: $e"))
-                .flatMap { response =>
-                  response.operation_ids.headOption match
-                    case Some(opId) => ZIO.succeed(opId)
-                    case None       => ZIO.fail(new RuntimeException("No operation_id returned from NeoPRISM"))
-                }
-            }
-        case Status.BadRequest =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Bad request: $body"))
-          }
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
-          }
-    yield operationId
+    val hexString = HexString.fromByteArray(signedOperation.toSignedAtalaOperation.toByteArray).toString
+    submitVdrOperation(Seq(hexString)).flatMap { result =>
+      result.operationIds.headOption match
+        case Some(opId) => ZIO.succeed(opId)
+        case None       => ZIO.fail(new RuntimeException("No operation_id returned from NeoPRISM"))
+    }
 
   override def isOperationIndexed(operationId: String): Task[Boolean] =
     for

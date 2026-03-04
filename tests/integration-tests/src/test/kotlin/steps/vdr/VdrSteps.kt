@@ -93,7 +93,7 @@ class VdrSteps {
         val opId = SerenityRest.lastResponse().jsonPath().getString("operationId")
         saveCtx(actor, c.withOperation(opId))
         waitForPrismOperation(actor)
-        if (c.driver == VdrDriver.PRISM_NODE || c.driver == VdrDriver.NEOPRISM) Thread.sleep(5_000) // small settle wait
+        if (c.driver.isLedgerBacked) Thread.sleep(5_000) // small settle wait
     }
 
     @Then("{actor} shares the VDR URL with {actor}")
@@ -124,7 +124,7 @@ class VdrSteps {
             .withTitle("VDR expected value snapshot")
             .andContents("expectedHex=$expectedHex\nstepArg=$dataHex")
 
-        if (driver == VdrDriver.PRISM_NODE || driver == VdrDriver.NEOPRISM) waitForPrismOperation(actor)
+        if (driver.isLedgerBacked) waitForPrismOperation(actor)
         actor.remember("vdrExpectedValue", expectedHex)
         val client = VdrClient(actor)
         val status = Poll.until(
@@ -151,8 +151,8 @@ class VdrSteps {
         val vdrUrl = c.currentUrl ?: c.entryId ?: recallString(actor, "vdrUrl")
         requireNotNull(vdrUrl) { "VDR URL missing in actor/session context; cannot check unresolved entry" }
         val driver = c.driver
-        val maxAttempts = if (driver == VdrDriver.PRISM_NODE || driver == VdrDriver.NEOPRISM) 24 else 12
-        if (driver == VdrDriver.PRISM_NODE || driver == VdrDriver.NEOPRISM) waitForPrismOperation(actor)
+        val maxAttempts = if (driver.isLedgerBacked) 24 else 12
+        if (driver.isLedgerBacked) waitForPrismOperation(actor)
         val client = VdrClient(actor)
         val status = Poll.until(
             timeout = java.time.Duration.ofSeconds((maxAttempts * 5).toLong()),
@@ -165,7 +165,7 @@ class VdrSteps {
 
     private fun waitForPrismOperation(actor: Actor) {
         val c = ctx(actor)
-        if (c.driver != VdrDriver.PRISM_NODE && c.driver != VdrDriver.NEOPRISM) return
+        if (!c.driver.isLedgerBacked) return
         val opId = c.operationId ?: return
         val client = VdrClient(actor)
         val status = Poll.until(action = { client.getOperationStatus(opId) }) { it == "CONFIRMED_AND_APPLIED" }

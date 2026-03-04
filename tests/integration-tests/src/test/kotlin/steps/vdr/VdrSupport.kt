@@ -12,10 +12,11 @@ enum class VdrDriver(
     val drid: String,
     val drf: String,
     val version: String,
-    val mutable: Boolean = true
+    val mutable: Boolean = true,
+    val isLedgerBacked: Boolean = false
 ) {
-    PRISM_NODE("prism-node", "prism", "1.0.0"),
-    NEOPRISM("neoprism", "prism", "1.0.0"),
+    PRISM_NODE("prism-node", "prism", "1.0.0", isLedgerBacked = true),
+    NEOPRISM("neoprism", "prism", "1.0.0", isLedgerBacked = true),
     SCALA_DID("scala-did", "prism", "1.0.0"),
     MEMORY("memory", "memory", "0.1.0"),
     DATABASE("database", "database", "0.1.0");
