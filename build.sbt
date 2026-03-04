@@ -361,7 +361,7 @@ lazy val D_Notifications = new {
 }
 
 lazy val D_Credentials_AnonCreds = new {
-  val baseDependencies: Seq[ModuleID] = Seq(D.zio, D.zioJson)
+  val baseDependencies: Seq[ModuleID] = Seq(D.zio, D.zioJson, D.zioTest, D.zioTestSbt, D.zioTestMagnolia)
 }
 
 lazy val D_Server = new {

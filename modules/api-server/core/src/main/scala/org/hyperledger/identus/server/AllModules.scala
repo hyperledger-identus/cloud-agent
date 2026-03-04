@@ -1,5 +1,6 @@
 package org.hyperledger.identus.server
 
+import org.hyperledger.identus.credentials.anoncreds.AnonCredsBuilderModule
 import org.hyperledger.identus.credentials.core.codec.Vcdm11CodecModule
 import org.hyperledger.identus.credentials.core.protocol.{DIDCommIssuanceModule, DIDCommPresentationModule}
 import org.hyperledger.identus.credentials.sdjwt.SdJwtBuilderModule
@@ -16,6 +17,7 @@ object AllModules:
     // Credential builders
     JwtBuilderModule,
     SdJwtBuilderModule,
+    AnonCredsBuilderModule,
     // Protocol adapters — DIDComm
     DIDCommIssuanceModule,
     DIDCommPresentationModule,
