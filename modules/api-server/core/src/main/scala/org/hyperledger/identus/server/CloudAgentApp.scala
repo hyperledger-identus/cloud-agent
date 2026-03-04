@@ -30,7 +30,16 @@ import org.hyperledger.identus.wallet.service.{EntityService, WalletManagementSe
 import zio.*
 object CloudAgentApp {
 
+  private def validateModuleRegistry: Task[Unit] =
+    val registry = AllModules.registry()
+    for
+      _ <- ZIO.log(s"Plugin architecture: ${registry.report}")
+      _ <- registry.validateDependencies.mapError(e => new Exception(e.message))
+      _ <- ZIO.log("Module dependency graph validated successfully")
+    yield ()
+
   def run = for {
+    _ <- validateModuleRegistry
     _ <- AgentInitialization.run
     _ <- ConnectBackgroundJobs.connectFlowsHandler
     _ <- IssueBackgroundJobs.issueFlowsHandler

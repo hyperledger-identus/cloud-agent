@@ -27,3 +27,22 @@ class ModuleRegistry(val modules: Seq[Module]):
 
   def resolve(requirement: Capability): Seq[Module] =
     modules.filter(_.implements.exists(_.satisfies(requirement)))
+
+  def report: String =
+    val header = s"ModuleRegistry: ${modules.size} modules loaded"
+    val moduleLines = modules.map { m =>
+      val caps = m.implements.map(c => s"${c.contract}${c.variant.map(v => s"($v)").getOrElse("")}").mkString(", ")
+      s"  [${m.id.value} v${m.version}] provides: $caps"
+    }
+    val providedCaps = allProvided.map(c => s"${c.contract}${c.variant.map(v => s"($v)").getOrElse("")}")
+    val capLine = s"  Capabilities: ${providedCaps.mkString(", ")}"
+    (header +: moduleLines :+ capLine).mkString("\n")
+
+object ModuleRegistry:
+
+  def fromAll(allModules: Seq[Module], disabled: Set[ModuleId] = Set.empty): ModuleRegistry =
+    val enabled = allModules.filter { m =>
+      val isDisabled = disabled.contains(m.id)
+      !isDisabled && m.enabled(m.defaultConfig)
+    }
+    ModuleRegistry(enabled)

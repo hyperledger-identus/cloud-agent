@@ -54,4 +54,38 @@ object ModuleRegistrySpec extends ZIOSpecDefault:
       val es256 = registry.resolve(Capability("Signer", Some("es256")))
       assertTrue(eddsa.size == 1, es256.isEmpty)
     },
+    test("fromAll filters disabled modules") {
+      val registry = ModuleRegistry.fromAll(
+        Seq(ProviderModule, ConsumerModule),
+        disabled = Set(ConsumerModule.id),
+      )
+      assertTrue(
+        registry.modules.size == 1,
+        registry.modules.head.id == ProviderModule.id,
+      )
+    },
+    test("fromAll respects Module.enabled") {
+      object DisabledModule extends SimpleModule:
+        val id = ModuleId("disabled")
+        val implements = Set(Capability("Something"))
+        val requires = Set.empty[Capability]
+        override def enabled(config: Unit) = false
+
+      val registry = ModuleRegistry.fromAll(Seq(ProviderModule, DisabledModule))
+      assertTrue(
+        registry.modules.size == 1,
+        registry.modules.head.id == ProviderModule.id,
+      )
+    },
+    test("report includes all module info") {
+      val registry = ModuleRegistry(Seq(ProviderModule, ConsumerModule))
+      val report = registry.report
+      assertTrue(
+        report.contains("2 modules loaded"),
+        report.contains("provider"),
+        report.contains("consumer"),
+        report.contains("Signer(eddsa)"),
+        report.contains("Builder(jwt)"),
+      )
+    },
   )
