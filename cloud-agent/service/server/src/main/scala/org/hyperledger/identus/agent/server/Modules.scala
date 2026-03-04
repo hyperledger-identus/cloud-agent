@@ -183,9 +183,10 @@ object AppModule {
               usePlainText = conf.usePlainText
             )
           }
-          neoPrismClientOpt <- if appConfig.agent.vdr.neoPrismDriverEnabled then
-            neoPrismClientLayer.build.map(env => Some(env.get[NeoPrismClient]))
-          else ZIO.none
+          neoPrismClientOpt <-
+            if appConfig.agent.vdr.neoPrismDriverEnabled then
+              neoPrismClientLayer.build.map(env => Some(env.get[NeoPrismClient]))
+            else ZIO.none
         } yield VdrServiceImpl.Config(
           enableInMemoryDriver = appConfig.agent.vdr.inMemoryDriverEnabled,
           enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,

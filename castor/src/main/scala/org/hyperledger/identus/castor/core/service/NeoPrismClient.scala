@@ -73,8 +73,8 @@ trait NeoPrismClient {
     */
   def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]]
 
-  /** Get VDR entry metadata (latest event hash, status) by entry hash.
-    * Requires neoprism endpoint: GET /api/vdr-entries/{entry_hash}
+  /** Get VDR entry metadata (latest event hash, status) by entry hash. Requires neoprism endpoint: GET
+    * /api/vdr-entries/{entry_hash}
     * @param entryHash
     *   Hex string of the entry hash
     * @return
@@ -232,11 +232,13 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
                 .fromEither(body.fromJson[VdrEntryMetadataResponse])
                 .mapError(e => new RuntimeException(s"Failed to decode VDR entry metadata: $e"))
                 .map(r =>
-                  Some(NeoPrismVdrEntryMetadata(
-                    entryHash = r.entry_hash,
-                    latestEventHash = r.latest_event_hash,
-                    status = r.status
-                  ))
+                  Some(
+                    NeoPrismVdrEntryMetadata(
+                      entryHash = r.entry_hash,
+                      latestEventHash = r.latest_event_hash,
+                      status = r.status
+                    )
+                  )
                 )
             }
         case Status.NotFound =>

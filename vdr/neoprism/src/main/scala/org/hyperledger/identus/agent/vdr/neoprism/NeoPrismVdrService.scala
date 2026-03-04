@@ -1,13 +1,13 @@
 package org.hyperledger.identus.agent.vdr.neoprism
 
 import hyperledger.identus.vdr.prism
+import interfaces.Proof
 import io.iohk.atala.prism.protos.node_models
 import org.hyperledger.identus.agent.vdr.*
 import org.hyperledger.identus.agent.vdr.VdrServiceError.*
 import org.hyperledger.identus.castor.core.service.{NeoPrismClient, NeoPrismSubmissionResult, NeoPrismVdrEntryMetadata}
 import org.hyperledger.identus.shared.crypto.Sha256Hash
 import org.hyperledger.identus.shared.models.{HexString, WalletAccessContext}
-import interfaces.Proof
 import urlManagers.BaseUrlManager
 import zio.*
 
@@ -84,7 +84,10 @@ class NeoPrismVdrService(
       // operation_id which is sha256(SignedPrismOperation).
       entryHash = hexString(Sha256Hash.compute(signed.getOperation.toByteArray).bytes.toArray)
       url = composeUrl(entryHash, options)
-      _ <- logResponse("create", s"txId=${result.txId}, operationIds=${result.operationIds.mkString(",")}, entryHash=$entryHash")
+      _ <- logResponse(
+        "create",
+        s"txId=${result.txId}, operationIds=${result.operationIds.mkString(",")}, entryHash=$entryHash"
+      )
     } yield VdrOperationResult(url, result.operationIds.headOption)
 
   override def update(

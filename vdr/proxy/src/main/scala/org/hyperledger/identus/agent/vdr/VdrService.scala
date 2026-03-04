@@ -9,7 +9,6 @@ import org.hyperledger.identus.agent.vdr.blockfrost.BlockfrostPrismDriverProvide
 import org.hyperledger.identus.agent.vdr.database.DatabaseDriverProvider
 import org.hyperledger.identus.agent.vdr.memory.MemoryDriverProvider
 import org.hyperledger.identus.agent.vdr.neoprism.NeoPrismVdrService
-import org.hyperledger.identus.castor.core.service.NeoPrismClient
 import org.hyperledger.identus.agent.vdr.VdrConfigs.PRISMDriverConfig
 import org.hyperledger.identus.agent.vdr.VdrServiceError.{
   DeactivatedDid,
@@ -17,6 +16,7 @@ import org.hyperledger.identus.agent.vdr.VdrServiceError.{
   MissingVdrKey,
   VdrEntryNotFound
 }
+import org.hyperledger.identus.castor.core.service.NeoPrismClient
 import org.hyperledger.identus.shared.models.WalletAccessContext
 import proxy.VDRProxyMultiDrivers
 import proxy.VDRProxyMultiDrivers.NoDriverWithThisSpecificationsException
@@ -223,8 +223,16 @@ object VdrServiceImpl {
         proxyOpt <-
           if drivers.nonEmpty then ZIO.attempt(Some(VDRProxyMultiDrivers(urlManager, drivers, "proxy", "0.1.0")))
           else ZIO.succeed(None)
-        identifier = proxyOpt.map(_.getIdentifier()).orElse(prismNodeSvc.map(_.identifier)).orElse(neoPrismSvc.map(_.identifier)).getOrElse("vdr")
-        version = proxyOpt.map(_.getVersion()).orElse(prismNodeSvc.map(_.version)).orElse(neoPrismSvc.map(_.version)).getOrElse("0.1.0")
+        identifier = proxyOpt
+          .map(_.getIdentifier())
+          .orElse(prismNodeSvc.map(_.identifier))
+          .orElse(neoPrismSvc.map(_.identifier))
+          .getOrElse("vdr")
+        version = proxyOpt
+          .map(_.getVersion())
+          .orElse(prismNodeSvc.map(_.version))
+          .orElse(neoPrismSvc.map(_.version))
+          .getOrElse("0.1.0")
         service = VdrServiceImpl(
           proxyOpt,
           prismNodeSvc,
