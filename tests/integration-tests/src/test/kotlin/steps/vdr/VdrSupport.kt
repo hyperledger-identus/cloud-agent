@@ -31,6 +31,16 @@ enum class VdrDriver(
         fun fromName(name: String): VdrDriver =
             entries.firstOrNull { it.drid == name }
                 ?: throw IllegalArgumentException("Unknown VDR driver: $name")
+
+        /** Resolve the ledger VDR driver from the VDR_LEDGER_DRIVER env var. */
+        fun ledgerDriver(): VdrDriver {
+            val name = System.getenv("VDR_LEDGER_DRIVER")
+                ?: throw IllegalStateException(
+                    "VDR_LEDGER_DRIVER env var is not set. " +
+                    "Set it to 'prism-node' or 'neoprism' to select the ledger-backed VDR driver."
+                )
+            return fromName(name)
+        }
     }
 }
 

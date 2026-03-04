@@ -91,7 +91,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
   override def getResolutionMetadata(did: PrismDID): Task[Option[DIDMetadata]] =
     for
       resp <- baseClient.batched
-        .addHeader("Content-Type", "application/did-resolution")
+        .addHeader("Accept", "application/did-resolution")
         .get(s"api/dids/$did")
       metadataOpt <- resp.status match
         case Status.NotFound => ZIO.none
@@ -108,7 +108,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
   override def getDIDData(did: PrismDID): Task[Option[node_models.DIDData]] =
     for
       didDataResp <- baseClient.batched
-        .get(s"api/did-data/$did")
+        .get(s"api/dids/$did/protobuf")
       protoDIDDataOpt <- didDataResp.status match
         case Status.Ok =>
           for
@@ -132,7 +132,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         .request(
           Request(
             method = Method.POST,
-            url = URL.root / "api" / "signed-operation-submissions",
+            url = URL.root / "api" / "submissions" / "signed-operations",
             headers = Headers(Header.ContentType(MediaType.application.json)),
             body = Body.fromString(requestBody.toJson)
           )
@@ -183,7 +183,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         .request(
           Request(
             method = Method.POST,
-            url = URL.root / "api" / "signed-operation-submissions",
+            url = URL.root / "api" / "submissions" / "signed-operations",
             headers = Headers(Header.ContentType(MediaType.application.json)),
             body = Body.fromString(requestBody.toJson)
           )
@@ -212,9 +212,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
       resp <- baseClient.batched.get(s"api/vdr-data/$entryHash")
       dataOpt <- resp.status match
         case Status.Ok =>
-          resp.body.asString.flatMap { hexStr =>
-            ZIO.fromTry(HexString.fromString(hexStr)).map(h => Some(h.toByteArray))
-          }
+          resp.body.asArray.map(Some(_))
         case Status.NotFound =>
           ZIO.succeed(None)
         case status =>
@@ -338,7 +336,10 @@ object NeoPrismClientImpl {
     given encoder: JsonEncoder[SignedOperationSubmissionRequest] = DeriveJsonEncoder.gen
   }
 
-  private case class SignedOperationSubmissionResponse(tx_id: String, operation_ids: Seq[String])
+  private case class SignedOperationSubmissionResponse(
+      tx_id: String,
+      operation_ids: Seq[String]
+  )
 
   private object SignedOperationSubmissionResponse {
     given decoder: JsonDecoder[SignedOperationSubmissionResponse] = DeriveJsonDecoder.gen

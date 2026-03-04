@@ -5,6 +5,7 @@ import io.iohk.atala.prism.protos.node_models
 import org.hyperledger.identus.agent.vdr.*
 import org.hyperledger.identus.agent.vdr.VdrServiceError.*
 import org.hyperledger.identus.castor.core.service.{NeoPrismClient, NeoPrismSubmissionResult, NeoPrismVdrEntryMetadata}
+import org.hyperledger.identus.shared.crypto.Sha256Hash
 import org.hyperledger.identus.shared.models.{HexString, WalletAccessContext}
 import interfaces.Proof
 import urlManagers.BaseUrlManager
@@ -28,10 +29,10 @@ class NeoPrismVdrService(
     url.split("#").lastOption.getOrElse(url)
 
   private def logRequest(name: String, payload: String): UIO[Unit] =
-    ZIO.logDebug(s"[neoprism VDR] $name request: $payload")
+    ZIO.logInfo(s"[neoprism VDR] $name request: $payload")
 
   private def logResponse(name: String, payload: String): UIO[Unit] =
-    ZIO.logDebug(s"[neoprism VDR] $name response: $payload")
+    ZIO.logInfo(s"[neoprism VDR] $name response: $payload")
 
   private def fetchPreviousEventHash(
       entryHash: String
@@ -77,9 +78,13 @@ class NeoPrismVdrService(
       _ <- logRequest("create", s"bytes=${data.length}, didKeyId=${didKeyId.getOrElse("none")}")
       signed <- signer.signCreate(data, didKeyId)
       result <- submitSigned(signed)
-      operationId = result.operationIds.headOption.getOrElse(result.txId)
-      url = composeUrl(operationId, options)
-      _ <- logResponse("create", s"txId=${result.txId}, operationIds=${result.operationIds.mkString(",")}")
+      // Use the inner operation hash (not the signed operation ID) as the entry hash.
+      // Neoprism indexes VDR entries by sha256(PrismOperation) — the hash of the inner
+      // operation without the signature wrapper. The submission response only returns
+      // operation_id which is sha256(SignedPrismOperation).
+      entryHash = hexString(Sha256Hash.compute(signed.getOperation.toByteArray).bytes.toArray)
+      url = composeUrl(entryHash, options)
+      _ <- logResponse("create", s"txId=${result.txId}, operationIds=${result.operationIds.mkString(",")}, entryHash=$entryHash")
     } yield VdrOperationResult(url, result.operationIds.headOption)
 
   override def update(

@@ -34,7 +34,7 @@ class VdrSteps {
     @Given("{actor} has a VDR entry with value {} using {} driver")
     fun agentHasVdrEntry(actor: Actor, dataHex: String, driver: String) {
         val c = ctx(actor)
-        val expectedDriver = VdrDriver.fromName(driver)
+        val expectedDriver = if (driver == "ledger") VdrDriver.ledgerDriver() else VdrDriver.fromName(driver)
         if (c.entryId == null || c.payload?.toHexString() != dataHex || c.driver != expectedDriver) {
             agentCreatesVdrEntry(actor, dataHex, driver)
         }
@@ -42,7 +42,8 @@ class VdrSteps {
 
     @When("{actor} creates a VDR entry with value {} using {} driver")
     fun agentCreatesVdrEntry(actor: Actor, dataHex: String, driver: String) {
-        val driverEnum = VdrDriver.fromName(driver)
+        // "ledger" is a virtual driver name resolved from VDR_LEDGER_DRIVER env var
+        val driverEnum = if (driver == "ledger") VdrDriver.ledgerDriver() else VdrDriver.fromName(driver)
         val data = dataHex.decodeHex()
         val didKeyId = recallString(actor, "didKeyId")
         val did = recallString(actor, "shortFormDid")
