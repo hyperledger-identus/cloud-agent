@@ -508,6 +508,20 @@ lazy val sharedTest = (project in file("modules/shared/test"))
   )
   .dependsOn(shared)
 
+lazy val persistenceSqlite = project
+  .in(file("modules/shared/persistence-sqlite"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "persistence-sqlite",
+    libraryDependencies ++= Seq(
+      "org.xerial" % "sqlite-jdbc" % "3.45.1.0",
+      "org.flywaydb" % "flyway-core" % V.flyway,
+      D.zioCatsInterop,
+    )
+  )
+  .dependsOn(shared)
+
 // #########################
 // ###     DIDComm       ###
 // #########################
@@ -1413,6 +1427,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   sharedJson,
   sharedCrypto,
   sharedTest,
+  persistenceSqlite,
   // DID
   didApi,
   didCore,
