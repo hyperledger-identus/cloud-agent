@@ -13,7 +13,6 @@ object JwtBuilderModule extends Module:
   )
 
   val requires: Set[Capability] = Set(
-    Capability("CredentialSigner"),
     Capability("DataModelCodec"),
   )
 

@@ -1,7 +1,6 @@
 package org.hyperledger.identus.credentials.vc.jwt
 
 import org.hyperledger.identus.credentials.core.codec.Vcdm11CodecModule
-import org.hyperledger.identus.shared.crypto.{EdDsaSignerModule, Secp256k1SignerModule}
 import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.test.*
@@ -9,8 +8,6 @@ import zio.test.*
 object ModuleRegistryIntegrationSpec extends ZIOSpecDefault:
 
   private val allModules: Seq[Module] = Seq(
-    EdDsaSignerModule,
-    Secp256k1SignerModule,
     Vcdm11CodecModule,
     JwtBuilderModule,
   )
@@ -19,20 +16,7 @@ object ModuleRegistryIntegrationSpec extends ZIOSpecDefault:
     test("all modules register and dependencies are satisfied") {
       val registry = ModuleRegistry(allModules)
       for _ <- registry.validateDependencies
-      yield assertTrue(registry.modules.size == 4)
-    },
-    test("resolves CredentialSigner to both signer modules") {
-      val registry = ModuleRegistry(allModules)
-      val signers = registry.resolve(Capability("CredentialSigner"))
-      assertTrue(signers.size == 2)
-    },
-    test("resolves CredentialSigner(eddsa) to EdDSA only") {
-      val registry = ModuleRegistry(allModules)
-      val signers = registry.resolve(Capability("CredentialSigner", Some("eddsa")))
-      assertTrue(
-        signers.size == 1,
-        signers.head.id == EdDsaSignerModule.id,
-      )
+      yield assertTrue(registry.modules.size == 2)
     },
     test("resolves CredentialBuilder(jwt) to JwtBuilderModule") {
       val registry = ModuleRegistry(allModules)
@@ -50,14 +34,8 @@ object ModuleRegistryIntegrationSpec extends ZIOSpecDefault:
         codecs.head.id == Vcdm11CodecModule.id,
       )
     },
-    test("fails validation when signer is missing") {
-      val incomplete = Seq(Vcdm11CodecModule, JwtBuilderModule)
-      val registry = ModuleRegistry(incomplete)
-      for result <- registry.validateDependencies.exit
-      yield assertTrue(result.isFailure)
-    },
     test("fails validation when codec is missing") {
-      val incomplete = Seq(EdDsaSignerModule, JwtBuilderModule)
+      val incomplete = Seq(JwtBuilderModule)
       val registry = ModuleRegistry(incomplete)
       for result <- registry.validateDependencies.exit
       yield assertTrue(result.isFailure)
