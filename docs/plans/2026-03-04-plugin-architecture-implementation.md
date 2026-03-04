@@ -1157,12 +1157,20 @@ Create separate modules for protocol versions:
 ```
 DIDCommIssuanceV2Module:
   implements: [IssuanceProtocol("aries-issue-v2")]
+  requires: [CredentialBuilder(any), ProtocolTransport("didcomm")]
 
 DIDCommIssuanceV3Module:
   implements: [IssuanceProtocol("aries-issue-v3")]
+  requires: [CredentialBuilder(any), ProtocolTransport("didcomm")]
+
+DIDCommPresentationV2Module:
+  implements: [PresentationProtocol("aries-present-v2")]
+
+DIDCommPresentationV3Module:
+  implements: [PresentationProtocol("aries-present-v3")]
 ```
 
-Each version has its own message format definitions and state machine transitions, sharing the same `CredentialBuilder` and `ProtocolTransport` contracts.
+Each version has its own message format definitions and state machine transitions, sharing the same `CredentialBuilder` and `ProtocolTransport` contracts. Multiple versions can be enabled simultaneously — the protocol dispatcher routes by message `@type`.
 
 ---
 
@@ -1174,12 +1182,85 @@ Each version has its own message format definitions and state machine transition
 
 ---
 
-## Phase 5: Wire via ModuleRegistry (outline)
+## Phase 5: SQLite Persistence Layer (outline)
 
-### Task 5.1: Add Module.register to each extracted module
-### Task 5.2: Replace Modules.scala with ModuleRegistry.assembleAll
-### Task 5.3: Replace MainApp.scala monolithic .provide()
-### Task 5.4: Add enable/disable via application.conf
+### Task 5.1: Add PersistenceProvider contract
+
+**Files:**
+- Create: `modules/shared/core/src/main/scala/org/hyperledger/identus/shared/persistence/PersistenceProvider.scala`
+
+```scala
+trait PersistenceProvider:
+  def providerType: PersistenceType    // PostgreSQL, SQLite
+  def transactor: Transactor[Task]
+  def migrate: IO[Throwable, Unit]
+```
+
+### Task 5.2: Create SQLite persistence module (sbt project)
+
+**Files:**
+- Create: `modules/shared/persistence-sqlite/` directory structure
+- Modify: `build.sbt` — add `persistenceSqlite` project with `org.xerial:sqlite-jdbc` dependency
+
+```scala
+lazy val persistenceSqlite = project
+  .in(file("modules/shared/persistence-sqlite"))
+  .configure(commonConfigure)
+  .settings(
+    name := "persistence-sqlite",
+    libraryDependencies ++= Seq(
+      "org.xerial" % "sqlite-jdbc" % "3.45.1.0",
+      // Doobie (already available via shared)
+    )
+  )
+  .dependsOn(shared)
+```
+
+### Task 5.3: Create SQLite-compatible Flyway migrations
+
+For each domain module, create SQLite migration variants:
+
+**Files:**
+- Create: `modules/credentials/persistence-sqlite/src/main/resources/db/migration/sqlite/` — SQLite-compatible versions of credential migrations
+- Create: `modules/connections/persistence-sqlite/src/main/resources/db/migration/sqlite/` — same for connections
+
+Key differences from PostgreSQL migrations:
+- Replace `CREATE INDEX CONCURRENTLY` with `CREATE INDEX`
+- Replace `pg_advisory_xact_lock` usage with application-level mutex
+- Replace PostgreSQL-specific types (`JSONB` → `TEXT`, `BYTEA` → `BLOB`)
+- Remove PostgreSQL extensions (`uuid-ossp`, etc.) — use application-generated UUIDs
+
+### Task 5.4: Implement SQLite repository adapters
+
+Where PostgreSQL-specific SQL is used (e.g., advisory locks in `JdbcCredentialStatusListRepository`), create SQLite-specific alternatives:
+
+**Files:**
+- Create: `modules/credentials/persistence-sqlite/src/main/scala/.../SqliteCredentialStatusListRepository.scala`
+
+The advisory lock in `incrementAndGetStatusListIndex` becomes a JVM `ReentrantLock` (acceptable for single-instance demos).
+
+### Task 5.5: Add persistence provider configuration
+
+**Files:**
+- Modify: existing config to support provider selection
+
+```hocon
+# reference.conf (default = postgresql for backward compat)
+identus.persistence.provider = "postgresql"
+
+# For demos
+identus.persistence.provider = "sqlite"
+identus.persistence.sqlite.url = "jdbc:sqlite::memory:"
+```
+
+---
+
+## Phase 6: Wire via ModuleRegistry (outline)
+
+### Task 6.1: Add Module.register to each extracted module
+### Task 6.2: Replace Modules.scala with ModuleRegistry.assembleAll
+### Task 6.3: Replace MainApp.scala monolithic .provide()
+### Task 6.4: Add enable/disable via application.conf
 
 ---
 
@@ -1195,3 +1276,5 @@ Each version has its own message format definitions and state machine transition
 | `modules/api-server/core/.../MainApp.scala` | Simplified to `ModuleRegistry.assembleLayers` (Phase 5) |
 | `modules/credentials/vc-jwt/.../VCStatusList2021.scala` | Wrapped by `StatusList2021Module` (Phase 1) |
 | `modules/credentials/core/.../CredentialStatusListService*.scala` | Stays, but revocation checking extracted to `RevocationCheck` (Phase 1) |
+| `modules/credentials/persistence-doobie/` | Becomes `PostgresPersistenceModule`; SQLite alternative in `persistence-sqlite/` (Phase 5) |
+| `modules/connections/persistence-doobie/` | Same — Postgres stays, SQLite variant added (Phase 5) |

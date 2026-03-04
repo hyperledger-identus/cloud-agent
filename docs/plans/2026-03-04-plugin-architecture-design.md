@@ -57,6 +57,18 @@ This design draws from:
 
 These axes are independent — any credential type can flow over any protocol/transport combination.
 
+**Persistence axis** — where we store data:
+
+| Dimension | Role | Examples |
+|-----------|------|----------|
+| Persistence | Storage backend for records, keys, config | PostgreSQL (production), SQLite (prototyping/demos) |
+
+The persistence axis is orthogonal to both credential and protocol axes. Repository traits (e.g., `CredentialRepository`, `ConnectionRepository`) are already contracts — the current Doobie+Postgres implementations are one provider. SQLite is another, using the same Doobie JDBC layer with the SQLite driver.
+
+**Protocol versioning:**
+
+DIDComm protocols are versioned (Issue Credential v2 vs v3, Present Proof v2 vs v3). Each version has its own message format and state machine but shares the same transport and credential builders. Version is part of the `ProtocolId` (e.g., `"aries-issue-v2"`, `"aries-issue-v3"`), and each version is a separate module that can be enabled/disabled independently.
+
 ---
 
 ## Core Infrastructure
@@ -438,12 +450,20 @@ PredicateCheckModule:
 IssuerTrustCheckModule:
   implements: [VerificationCheck("issuer-trust")]
 
-DIDCommIssuanceModule:
+DIDCommIssuanceV2Module:
   implements: [IssuanceProtocol("aries-issue-v2")]
   requires: [CredentialBuilder(any), ProtocolTransport("didcomm")]
 
-DIDCommPresentationModule:
+DIDCommIssuanceV3Module:
+  implements: [IssuanceProtocol("aries-issue-v3")]
+  requires: [CredentialBuilder(any), ProtocolTransport("didcomm")]
+
+DIDCommPresentationV2Module:
   implements: [PresentationProtocol("aries-present-v2")]
+  requires: [VerificationCheck(any), ProtocolTransport("didcomm")]
+
+DIDCommPresentationV3Module:
+  implements: [PresentationProtocol("aries-present-v3")]
   requires: [VerificationCheck(any), ProtocolTransport("didcomm")]
 
 DIDCommTransportModule:
@@ -462,6 +482,12 @@ OID4VPModule:
 
 PEXModule:
   implements: [PresentationExchange]
+
+PostgresPersistenceModule:
+  implements: [PersistenceProvider("postgresql")]
+
+SQLitePersistenceModule:
+  implements: [PersistenceProvider("sqlite")]
 ```
 
 ### Runtime composition example
@@ -487,6 +513,62 @@ OID4VPPresentationProtocol
     -> ExpiryCheck
     -> RevocationCheck("status-list-2021")
     -> IssuerTrustCheck
+```
+
+---
+
+## Persistence Contracts
+
+### PersistenceProvider
+
+The repository traits already serve as persistence contracts. The new dimension is making the storage backend pluggable:
+
+```scala
+// Contract: persistence-provider
+// Cardinality: ExactlyOne
+trait PersistenceProvider:
+  def providerType: PersistenceType    // PostgreSQL, SQLite
+  def transactor: Transactor[Task]     // Doobie transactor (works with any JDBC driver)
+  def migrate: IO[Throwable, Unit]     // Runs provider-specific Flyway migrations
+```
+
+### Module examples
+
+```
+PostgresPersistenceModule:
+  implements: [PersistenceProvider("postgresql")]
+  config: { url, user, password, pool-size }
+  migrate: runs Flyway with PostgreSQL-specific SQL
+
+SQLitePersistenceModule:
+  implements: [PersistenceProvider("sqlite")]
+  config: { url = "jdbc:sqlite::memory:" or "jdbc:sqlite:demo.db" }
+  migrate: runs Flyway with SQLite-compatible SQL
+```
+
+### SQLite considerations
+
+- **No advisory locks**: PostgreSQL's `pg_advisory_xact_lock` (used in `JdbcCredentialStatusListRepository.incrementAndGetStatusListIndex`) is replaced by a JVM-level mutex. Acceptable for single-instance demos.
+- **No `CREATE INDEX CONCURRENTLY`**: SQLite migrations use simpler `CREATE INDEX` without `CONCURRENTLY`.
+- **Single-writer**: SQLite allows one writer at a time. Fine for prototyping/demos, not for production.
+- **Each module owns its migrations**: The `Module.migrate` method runs the correct migration set for the active persistence provider. PostgreSQL modules run `db/migration/postgres/*.sql`, SQLite modules run `db/migration/sqlite/*.sql`.
+
+### Configuration
+
+```hocon
+# For production
+identus.persistence.provider = "postgresql"
+identus.persistence.postgresql {
+  url = "jdbc:postgresql://localhost:5432/identus"
+  user = "identus"
+  password = "secret"
+}
+
+# For demos / prototyping
+identus.persistence.provider = "sqlite"
+identus.persistence.sqlite {
+  url = "jdbc:sqlite::memory:"    # or "jdbc:sqlite:./demo.db" for file-based
+}
 ```
 
 ---
