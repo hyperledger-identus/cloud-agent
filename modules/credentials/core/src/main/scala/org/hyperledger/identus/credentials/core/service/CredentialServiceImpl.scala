@@ -36,16 +36,14 @@ import org.hyperledger.identus.wallet.storage.GenericSecretStorage
 import zio.*
 import zio.json.*
 import zio.json.ast.Json
-import zio.prelude.ZValidation
-
-import java.time.{Instant, ZoneId}
+import java.time.Instant
 import java.util.UUID
 
 object CredentialServiceImpl {
   val layer: URLayer[
     CredentialRepository & CredentialStatusListRepository & DidResolver & UriResolver & GenericSecretStorage &
       CredentialDefinitionService & LinkSecretService & DIDService & ManagedDIDService &
-      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService,
+      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService & VcJwtService,
     CredentialService
   ] = {
     ZLayer.fromZIO {
@@ -62,6 +60,7 @@ object CredentialServiceImpl {
         messageProducer <- ZIO.service[Producer[UUID, WalletIdAndRecordId]]
         sdJwtService <- ZIO.service[SDJwtService]
         anoncredService <- ZIO.service[AnoncredService]
+        vcJwtService <- ZIO.service[VcJwtService]
       } yield CredentialServiceImpl(
         credentialRepo,
         credentialStatusListRepo,
@@ -75,7 +74,8 @@ object CredentialServiceImpl {
         5,
         messageProducer,
         sdJwtService,
-        anoncredService
+        anoncredService,
+        vcJwtService
       )
     }
   }
@@ -98,6 +98,7 @@ class CredentialServiceImpl(
     messageProducer: Producer[UUID, WalletIdAndRecordId],
     sdJwtService: SDJwtService,
     anoncredService: AnoncredService,
+    vcJwtService: VcJwtService,
 ) extends CredentialService {
 
   import CredentialServiceImpl.*
@@ -619,7 +620,7 @@ class CredentialServiceImpl(
           case Some(keyPair: Secp256k1KeyPair) => {
             val jwtIssuer = JwtIssuer(
               jwtIssuerDID.did,
-              ES256KSigner(keyPair.privateKey.toJavaPrivateKey, keyId),
+              vcJwtService.createES256KSigner(keyPair.privateKey.toJavaPrivateKey, keyId),
               keyPair.publicKey.toJavaPublicKey
             )
             ZIO.some(jwtIssuer)
@@ -627,7 +628,7 @@ class CredentialServiceImpl(
           case Some(keyPair: Ed25519KeyPair) => {
             val jwtIssuer = JwtIssuer(
               jwtIssuerDID.did,
-              EdSigner(keyPair, keyId),
+              vcJwtService.createEdSigner(keyPair, keyId),
               keyPair.publicKey.toJava
             )
             ZIO.some(jwtIssuer)
@@ -677,7 +678,7 @@ class CredentialServiceImpl(
     } yield {
       JwtIssuer(
         jwtIssuerDID.did,
-        EdSigner(ed25519keyPair, keyId),
+        vcJwtService.createEdSigner(ed25519keyPair, keyId),
         ed25519keyPair.publicKey.toJava
       )
     }
@@ -703,7 +704,7 @@ class CredentialServiceImpl(
       longFormPrismDID <- getLongForm(subjectDID, true)
       jwtIssuer <- getIssuer(longFormPrismDID, VerificationRelationship.Authentication, record.keyId)
       presentationPayload <- createPresentationPayload(record, jwtIssuer)
-      signedPayload = JwtPresentation.encodeJwt(presentationPayload.toJwtPresentationPayload, jwtIssuer)
+      signedPayload = vcJwtService.encodePresentationJwt(presentationPayload.toJwtPresentationPayload, jwtIssuer)
       request = createDidCommRequestCredential(formatAndOffer._1, formatAndOffer._2, signedPayload)
       count <- credentialRepository
         .updateWithJWTRequestCredential(recordId, request, ProtocolState.RequestGenerated)
@@ -1239,7 +1240,7 @@ class CredentialServiceImpl(
         maybeValidFrom = None,
         maybeValidUntil = None
       )
-      signedJwtCredential = W3CCredential.toEncodedJwt(w3Credential, jwtIssuer)
+      signedJwtCredential = vcJwtService.encodeCredentialToJwt(w3Credential, jwtIssuer)
       issueCredential = IssueCredential.build(
         fromDID = issue.from,
         toDID = issue.to,
@@ -1282,10 +1283,10 @@ class CredentialServiceImpl(
             .updateProtocolState(record.id, ProtocolState.CredentialPending, ProtocolState.ProblemReportPending)
         )
         .orDieAsUnmanagedFailure
-      jwtHeader <- JWTVerification.extractJwtHeader(requestJwt) match
-        case ZValidation.Success(log, header)  => ZIO.succeed(header)
-        case ZValidation.Failure(log, failure) =>
-          ZIO.fail(VCJwtHeaderParsingError(s"Extraction of JwtHeader failed ${failure.toChunk.toString}"))
+      jwtHeaderKeyId <- vcJwtService.extractJwtHeaderKeyId(requestJwt) match
+        case Right(keyId) => ZIO.succeed(keyId)
+        case Left(error) =>
+          ZIO.fail(VCJwtHeaderParsingError(s"Extraction of JwtHeader failed $error"))
       ed25519KeyPair <- getEd25519SigningKeyPair(
         longFormPrismDID,
         VerificationRelationship.AssertionMethod,
@@ -1295,7 +1296,7 @@ class CredentialServiceImpl(
         case failed: DIDResolutionFailed =>
           ZIO.dieMessage(s"Error occurred while resolving the DID: ${failed.error.toString}")
         case succeeded: DIDResolutionSucceeded =>
-          jwtHeader.keyId match {
+          jwtHeaderKeyId match {
             case Some(
                   kid
                 ) => // TODO should we check in authentication and assertion or just in verificationMethod since this cane different how did document is implemented
@@ -1501,34 +1502,32 @@ class CredentialServiceImpl(
       _ <- maybeOptions match
         case None          => ZIO.unit
         case Some(options) =>
-          JwtPresentation.validatePresentation(jwt, options.domain, options.challenge) match
-            case ZValidation.Success(log, value) => ZIO.unit
-            case ZValidation.Failure(log, error) =>
+          vcJwtService.validatePresentation(jwt, options.domain, options.challenge) match
+            case Right(()) => ZIO.unit
+            case Left(errors) =>
               ZIO.fail(
-                CredentialRequestValidationFailed(s"JWTPresentation validation failed: ${error.toList.mkString(";")}")
+                CredentialRequestValidationFailed(s"JWTPresentation validation failed: ${errors.mkString(";")}")
               )
 
-      clock = java.time.Clock.system(ZoneId.systemDefault)
-      verificationResult <- JwtPresentation
-        .verify(
+      verificationResult <- vcJwtService
+        .verifyPresentation(
           jwt,
-          JwtPresentation.PresentationVerificationOptions(
+          PresentationVerificationOptions(
             maybeProofPurpose = Some(VerificationRelationship.Authentication),
             verifySignature = true,
             verifyDates = false,
             leeway = Duration.Zero
           )
-        )(didResolver, uriResolver)(clock)
+        )(didResolver, uriResolver)
         .mapError(errors => CredentialRequestValidationFailed(errors*))
 
-      result <- verificationResult match
-        case ZValidation.Success(log, value) => ZIO.unit
-        case ZValidation.Failure(log, error) =>
-          ZIO.fail(CredentialRequestValidationFailed(s"JWT presentation verification failed: $error"))
+      _ <- if (!verificationResult) then
+          ZIO.fail(CredentialRequestValidationFailed(s"JWT presentation verification failed"))
+        else ZIO.unit
 
-      jwtPresentation <- ZIO
-        .fromTry(JwtPresentation.decodeJwt[JwtPresentationPayload](jwt))
-        .mapError(t => CredentialRequestValidationFailed(s"JWT presentation decoding failed: ${t.getMessage}"))
+      jwtPresentation <- vcJwtService
+        .decodePresentationJwt(jwt)
+        .mapError(error => CredentialRequestValidationFailed(s"JWT presentation decoding failed: $error"))
     } yield jwtPresentation
   }
 

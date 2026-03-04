@@ -6,8 +6,7 @@ import org.hyperledger.identus.credentials.vc.jwt.{
   CredentialSchema as JwtCredentialSchema,
   DidResolver,
   JWT,
-  JWTVerification,
-  JwtCredential
+  VcJwtService
 }
 import org.hyperledger.identus.shared.http.UriResolver
 import zio.*
@@ -15,7 +14,8 @@ import zio.json.EncoderOps
 
 import java.time.OffsetDateTime
 
-class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolver) extends VcVerificationService {
+class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolver, vcJwtService: VcJwtService)
+    extends VcVerificationService {
   override def verify(
       vcVerificationRequests: List[VcVerificationRequest]
   ): IO[VcVerificationServiceError, List[VcVerificationResult]] = {
@@ -53,8 +53,8 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
     val result =
       for {
         decodedJwt <-
-          JwtCredential
-            .decodeJwt(JWT(credential))
+          vcJwtService
+            .decodeCredentialJwt(JWT(credential))
             .mapError(error => VcVerificationServiceError.UnexpectedError(s"Unable to decode JWT: $error"))
         credentialSchema <-
           ZIO
@@ -103,8 +103,8 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
     val result =
       for {
         decodedJwt <-
-          JwtCredential
-            .decodeJwt(JWT(credential))
+          vcJwtService
+            .decodeCredentialJwt(JWT(credential))
             .mapError(error => VcVerificationServiceError.UnexpectedError(s"Unable decode JWT: $error"))
         credentialSchema <-
           ZIO
@@ -153,16 +153,14 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
   }
 
   private def verifySignature(credential: String): IO[VcVerificationServiceError, VcVerificationResult] = {
-    JwtCredential
-      .validateEncodedJWT(JWT(credential))(didResolver)
+    vcJwtService
+      .validateCredentialSignature(JWT(credential), None)(didResolver)
       .mapError(error => VcVerificationServiceError.UnexpectedError(error))
-      .map(validation =>
+      .map(success =>
         VcVerificationResult(
           credential = credential,
           verification = VcVerification.SignatureVerification,
-          success = validation
-            .map(_ => true)
-            .getOrElse(false)
+          success = success
         )
       )
   }
@@ -175,10 +173,7 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
       VcVerificationResult(
         credential = credential,
         verification = VcVerification.ExpirationCheck(dateTime),
-        success = JwtCredential
-          .validateExpiration(JWT(credential), dateTime)
-          .map(_ => true)
-          .getOrElse(false)
+        success = vcJwtService.validateExpiration(JWT(credential), dateTime)
       )
     )
   }
@@ -191,10 +186,7 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
       VcVerificationResult(
         credential = credential,
         verification = VcVerification.NotBeforeCheck(dateTime),
-        success = JwtCredential
-          .validateNotBefore(JWT(credential), dateTime)
-          .map(_ => true)
-          .getOrElse(false)
+        success = vcJwtService.validateNotBefore(JWT(credential), dateTime)
       )
     )
   }
@@ -204,10 +196,7 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
       VcVerificationResult(
         credential = credential,
         verification = VcVerification.AlgorithmVerification,
-        success = JWTVerification
-          .validateAlgorithm(JWT(credential))
-          .map(_ => true)
-          .getOrElse(false)
+        success = vcJwtService.validateAlgorithm(JWT(credential))
       )
     )
   }
@@ -219,8 +208,8 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
     val result =
       for {
         decodedJwt <-
-          JwtCredential
-            .decodeJwt(JWT(credential))
+          vcJwtService
+            .decodeCredentialJwt(JWT(credential))
             .mapError(error => VcVerificationServiceError.UnexpectedError(s"Unable decode JWT: $error"))
       } yield decodedJwt.iss.contains(iss)
 
@@ -238,8 +227,8 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
     val result =
       for {
         decodedJwt <-
-          JwtCredential
-            .decodeJwt(JWT(credential))
+          vcJwtService
+            .decodeCredentialJwt(JWT(credential))
             .mapError(error => VcVerificationServiceError.UnexpectedError(s"Unable decode JWT: $error"))
       } yield decodedJwt
 
@@ -269,8 +258,8 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
     val result =
       for {
         decodedJwt <-
-          JwtCredential
-            .decodeJwt(JWT(credential))
+          vcJwtService
+            .decodeCredentialJwt(JWT(credential))
             .mapError(error => VcVerificationServiceError.UnexpectedError(s"Unable decode JWT: $error"))
       } yield decodedJwt.aud.contains(aud)
 
@@ -286,6 +275,6 @@ class VcVerificationServiceImpl(didResolver: DidResolver, uriResolver: UriResolv
 }
 
 object VcVerificationServiceImpl {
-  val layer: URLayer[DidResolver & UriResolver, VcVerificationService] =
-    ZLayer.fromFunction(VcVerificationServiceImpl(_, _))
+  val layer: URLayer[DidResolver & UriResolver & VcJwtService, VcVerificationService] =
+    ZLayer.fromFunction(VcVerificationServiceImpl(_, _, _))
 }

@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.credentials.anoncreds.AnoncredLinkSecret
+import org.hyperledger.identus.credentials.anoncreds.{AnoncredLinkSecret, AnoncredServiceStub}
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
 import org.hyperledger.identus.wallet.storage.GenericSecretStorage
@@ -14,6 +14,7 @@ object LinkSecretServiceImplSpec extends ZIOSpecDefault {
   protected val linkSecretServiceServiceLayer =
     ZLayer.make[GenericSecretStorage & LinkSecretService & WalletAccessContext](
       GenericSecretStorageInMemory.layer,
+      AnoncredServiceStub.layer,
       LinkSecretServiceImpl.layer,
       defaultWalletLayer
     )

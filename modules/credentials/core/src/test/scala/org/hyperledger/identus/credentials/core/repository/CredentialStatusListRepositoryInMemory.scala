@@ -12,7 +12,8 @@ import java.util.UUID
 
 class CredentialStatusListRepositoryInMemory(
     walletToStatusListRefs: Ref[Map[WalletId, Ref[Map[UUID, CredentialStatusList]]]],
-    statusListToCredInStatusListRefs: Ref[Map[UUID, Ref[Map[UUID, CredentialInStatusList]]]]
+    statusListToCredInStatusListRefs: Ref[Map[UUID, Ref[Map[UUID, CredentialInStatusList]]]],
+    vcJwtService: org.hyperledger.identus.credentials.vc.jwt.VcJwtService
 ) extends CredentialStatusListRepository {
 
   private def walletToStatusListStorageRefs: URIO[WalletAccessContext, Ref[Map[UUID, CredentialStatusList]]] =
@@ -122,7 +123,7 @@ class CredentialStatusListRepositoryInMemory(
 
     for {
       id <- ZIO.succeed(UUID.randomUUID())
-      newStatusListVC <- createStatusListVC(jwtIssuer, statusListRegistryUrl, id).orDie
+      newStatusListVC <- createStatusListVC(jwtIssuer, statusListRegistryUrl, id, vcJwtService).orDie
       maybeStatusList <- getLatestOfTheWallet
       statusList <- maybeStatusList match
         case Some(csl) if csl.lastUsedIndex < csl.size => ZIO.succeed(csl)
@@ -252,13 +253,15 @@ class CredentialStatusListRepositoryInMemory(
 }
 
 object CredentialStatusListRepositoryInMemory {
-  val layer: ULayer[CredentialStatusListRepositoryInMemory] = ZLayer.fromZIO(
-    for {
-      walletToStatusList <- Ref
-        .make(Map.empty[WalletId, Ref[Map[UUID, CredentialStatusList]]])
-      statusListIdToCredInStatusList <- Ref.make(Map.empty[UUID, Ref[Map[UUID, CredentialInStatusList]]])
-    } yield CredentialStatusListRepositoryInMemory(walletToStatusList, statusListIdToCredInStatusList)
-  )
+  val layer: URLayer[org.hyperledger.identus.credentials.vc.jwt.VcJwtService, CredentialStatusListRepositoryInMemory] =
+    ZLayer.fromZIO(
+      for {
+        vcJwtService <- ZIO.service[org.hyperledger.identus.credentials.vc.jwt.VcJwtService]
+        walletToStatusList <- Ref
+          .make(Map.empty[WalletId, Ref[Map[UUID, CredentialStatusList]]])
+        statusListIdToCredInStatusList <- Ref.make(Map.empty[UUID, Ref[Map[UUID, CredentialInStatusList]]])
+      } yield CredentialStatusListRepositoryInMemory(walletToStatusList, statusListIdToCredInStatusList, vcJwtService)
+    )
 }
 
 private case class CredentialInStatusList(

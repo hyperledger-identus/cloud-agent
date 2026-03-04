@@ -8,24 +8,11 @@ import com.nimbusds.jwt.{JWTClaimsSet, SignedJWT}
 import org.hyperledger.identus.shared.crypto.{Ed25519KeyPair, Secp256k1PrivateKey}
 import org.hyperledger.identus.shared.models.KeyId
 import zio.*
-import zio.json.{EncoderOps, JsonDecoder, JsonEncoder}
+import zio.json.EncoderOps
 import zio.json.ast.Json
 
-import java.security.*
+import java.security.{PrivateKey, PublicKey}
 import java.security.interfaces.ECPublicKey
-
-opaque type JWT = String
-
-object JWT {
-  def apply(value: String): JWT = value
-
-  extension (jwt: JWT) {
-    def value: String = jwt
-  }
-
-  given JsonEncoder[JWT] = JsonEncoder.string.contramap(jwt => jwt.value)
-  given JsonDecoder[JWT] = JsonDecoder.string.map(JWT(_))
-}
 
 object JwtSignerImplicits {
   import com.nimbusds.jose.JWSSigner
@@ -38,12 +25,6 @@ object JwtSignerImplicits {
       ecdsaSigner
     }
   }
-}
-
-trait Signer {
-  def encode(claim: Json): JWT
-
-  def generateProofForJson(payload: Json, pk: PublicKey): Task[Proof]
 }
 
 // works with java 7, 8, 11 & bouncycastle provider
@@ -101,6 +82,11 @@ class EdSigner(ed25519KeyPair: Ed25519KeyPair, keyId: Option[KeyId] = None) exte
     signedJwt.sign(signer)
     JWT(signedJwt.serialize())
   }
+}
+
+object Signers {
+  def es256k(privateKey: PrivateKey, keyId: Option[KeyId] = None): Signer = ES256KSigner(privateKey, keyId)
+  def ed(ed25519KeyPair: Ed25519KeyPair, keyId: Option[KeyId] = None): Signer = EdSigner(ed25519KeyPair, keyId)
 }
 
 def toJWKFormat(holderJwk: ECKey): JsonWebKey = {

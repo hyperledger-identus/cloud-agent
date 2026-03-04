@@ -1,5 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
+import org.hyperledger.identus.credentials.anoncreds.AnoncredServiceStub
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.schema.CredentialDefinition
 import org.hyperledger.identus.credentials.core.repository.CredentialDefinitionRepositoryInMemory
@@ -15,7 +16,7 @@ trait CredentialDefinitionServiceSpecHelper {
   protected val defaultWalletLayer = ZLayer.succeed(WalletAccessContext(WalletId.default))
 
   protected val credentialDefinitionServiceLayer =
-    GenericSecretStorageInMemory.layer ++ CredentialDefinitionRepositoryInMemory.layer ++ ResourceUrlResolver.layer >>>
+    AnoncredServiceStub.layer ++ GenericSecretStorageInMemory.layer ++ CredentialDefinitionRepositoryInMemory.layer ++ ResourceUrlResolver.layer >>>
       CredentialDefinitionServiceImpl.layer ++ defaultWalletLayer
 
   val defaultDefinition =

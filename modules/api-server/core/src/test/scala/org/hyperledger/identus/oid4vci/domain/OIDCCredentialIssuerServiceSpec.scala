@@ -48,6 +48,7 @@ object OIDCCredentialIssuerServiceSpec
     ](
       InMemoryIssuanceSessionService.layer,
       CredentialRepositoryInMemory.layer,
+      org.hyperledger.identus.credentials.vc.jwt.VcJwtServiceLive.layer,
       CredentialStatusListRepositoryInMemory.layer,
       PrismDidResolver.layer,
       ResourceUrlResolver.layer,

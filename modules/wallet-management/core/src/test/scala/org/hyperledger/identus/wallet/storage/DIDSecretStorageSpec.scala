@@ -1,7 +1,7 @@
 package org.hyperledger.identus.wallet.storage
 
 import org.hyperledger.identus.did.core.model.did.PrismDIDOperation
-import org.hyperledger.identus.didcomm.{PeerDID, PeerDIDCreation}
+import org.hyperledger.identus.didcomm.PeerDIDCreation
 import org.hyperledger.identus.shared.crypto.{Apollo, ApolloSpecHelper, Ed25519KeyPair, X25519KeyPair}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletAdministrationContext}
 import org.hyperledger.identus.sharedtest.containers.PostgresTestContainerSupport

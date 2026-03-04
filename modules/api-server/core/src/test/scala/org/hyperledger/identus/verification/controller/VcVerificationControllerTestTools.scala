@@ -59,6 +59,7 @@ trait VcVerificationControllerTestTools extends PostgresTestContainerSupport {
       didResolverLayer,
       ResourceUrlResolver.layer,
       VcVerificationControllerImpl.layer,
+      org.hyperledger.identus.credentials.vc.jwt.VcJwtServiceLive.layer,
       VcVerificationServiceImpl.layer,
       DefaultEntityAuthenticator.layer
     )

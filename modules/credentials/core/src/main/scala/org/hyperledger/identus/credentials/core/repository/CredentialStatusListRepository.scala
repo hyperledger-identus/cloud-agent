@@ -1,14 +1,14 @@
 package org.hyperledger.identus.credentials.core.repository
 
 import org.hyperledger.identus.credentials.core.model.*
-import org.hyperledger.identus.credentials.vc.jwt.revocation.{BitString, VCStatusList2021}
+import org.hyperledger.identus.credentials.vc.jwt.revocation.BitString
 import org.hyperledger.identus.credentials.vc.jwt.revocation.BitStringError.{
   DecodingError,
   EncodingError,
   IndexOutOfBounds,
   InvalidSize
 }
-import org.hyperledger.identus.credentials.vc.jwt.Issuer
+import org.hyperledger.identus.credentials.vc.jwt.{Issuer, VcJwtService}
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import zio.*
 import zio.json.EncoderOps
@@ -19,7 +19,8 @@ trait CredentialStatusListRepository {
   def createStatusListVC(
       jwtIssuer: Issuer,
       statusListRegistryUrl: String,
-      id: UUID
+      id: UUID,
+      vcJwtService: VcJwtService
   ): IO[Throwable, String] = {
     for {
       bitString <- BitString.getInstance().mapError {
@@ -28,15 +29,12 @@ trait CredentialStatusListRepository {
         case DecodingError(message)    => new Throwable(message)
         case IndexOutOfBounds(message) => new Throwable(message)
       }
-      emptyStatusListCredential <- VCStatusList2021
-        .build(
+      credentialWithEmbeddedProof <- vcJwtService
+        .buildStatusListCredential(
           vcId = s"$statusListRegistryUrl/credential-status/$id",
           revocationData = bitString,
           jwtIssuer = jwtIssuer
         )
-        .mapError(x => new Throwable(x.msg))
-
-      credentialWithEmbeddedProof <- emptyStatusListCredential.toJsonWithEmbeddedProof
     } yield credentialWithEmbeddedProof.toJson
   }
 

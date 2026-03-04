@@ -764,7 +764,7 @@ lazy val credentialsVcJWT = project
     name := "credentials-vc-jwt",
     libraryDependencies ++= D_Credentials_VC_JWT.credentialsVcJwtDependencies
   )
-  .dependsOn(didApi, sharedJson)
+  .dependsOn(credentialsCore, didApi, sharedJson)
 
 lazy val credentialsCore = project
   .in(file("modules/credentials/core"))
@@ -784,7 +784,6 @@ lazy val credentialsCore = project
     protocolPresentProof,
     didcommAgentDidcommx % "test->compile", // Test is for PeerDID/AgentPeerService
     notifications,
-    credentialsVcJWT,
     sharedJson, // for PresentationDefinition (JsonPath, JsonSchema)
   )
 

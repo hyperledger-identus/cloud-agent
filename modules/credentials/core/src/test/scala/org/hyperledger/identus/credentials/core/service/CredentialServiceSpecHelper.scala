@@ -40,8 +40,9 @@ trait CredentialServiceSpecHelper {
       : URLayer[DIDService & ManagedDIDService & UriResolver, CredentialService & CredentialDefinitionService] =
     ZLayer.makeSome[DIDService & ManagedDIDService & UriResolver, CredentialService & CredentialDefinitionService](
       CredentialRepositoryInMemory.layer,
+      VcJwtServiceStub.layer,
       CredentialStatusListRepositoryInMemory.layer,
-      ZLayer.fromFunction(PrismDidResolver(_)),
+      didResolverLayer,
       credentialDefinitionServiceLayer,
       GenericSecretStorageInMemory.layer,
       LinkSecretServiceImpl.layer,

@@ -16,10 +16,24 @@ trait VcVerificationServiceSpecHelper {
   protected val (issuerOp, issuerKp, issuerDidMetadata, issuerDidData) =
     MockDIDService.createDID(VerificationRelationship.AssertionMethod)
 
+  private val testSigner = new Signer {
+    override def encode(claim: zio.json.ast.Json): JWT = {
+      val header =
+        java.util.Base64.getUrlEncoder.withoutPadding.encodeToString("""{"alg":"none","typ":"JWT"}""".getBytes)
+      val payload = java.util.Base64.getUrlEncoder.withoutPadding.encodeToString(claim.toString.getBytes)
+      JWT(s"$header.$payload.test-signature")
+    }
+    override def generateProofForJson(
+        payload: zio.json.ast.Json,
+        pk: java.security.PublicKey
+    ): zio.Task[Proof] =
+      zio.ZIO.fail(Throwable("Test signer: generateProofForJson not implemented"))
+  }
+
   protected val issuer =
     Issuer(
       did = issuerDidData.id.did,
-      signer = ES256KSigner(issuerKp.privateKey.toJavaPrivateKey),
+      signer = testSigner,
       publicKey = issuerKp.publicKey.toJavaPublicKey
     )
 
@@ -30,19 +44,23 @@ trait VcVerificationServiceSpecHelper {
     MockManagedDIDService.getManagedDIDStateExpectation(issuerOp)
       ++ MockManagedDIDService.findDIDKeyPairExpectation(issuerKp)
 
-  protected val issuerDidResolverLayer: ZLayer[Any, Nothing, PrismDidResolver] = (issuerDidServiceExpectations ++
-    issuerManagedDIDServiceExpectations).toLayer >>> ZLayer.fromFunction(PrismDidResolver(_))
-
-  protected val emptyDidResolverLayer: ZLayer[Any, Nothing, PrismDidResolver] = MockDIDService.empty ++
-    MockManagedDIDService.empty >>> ZLayer.fromFunction(PrismDidResolver(_))
+  protected val emptyDidResolverLayer: ULayer[DidResolver] =
+    ZLayer.succeed(
+      ((didUrl: String) =>
+        ZIO.succeed(
+          DIDResolutionFailed(NotFound(s"DIDDocument not found for $didUrl"))
+        )
+      ): DidResolver
+    )
 
   protected val vcVerificationServiceLayer: ZLayer[Any, Nothing, VcVerificationService & WalletAccessContext] =
-    emptyDidResolverLayer ++ ResourceUrlResolver.layer >>>
+    emptyDidResolverLayer ++ ResourceUrlResolver.layer ++ VcJwtServiceStub.layer >>>
       VcVerificationServiceImpl.layer ++ defaultWalletLayer
 
-  protected val someVcVerificationServiceLayer: URLayer[DIDService & UriResolver, VcVerificationService] =
-    ZLayer.makeSome[DIDService & UriResolver, VcVerificationService](
-      ZLayer.fromFunction(PrismDidResolver(_)),
+  protected val someVcVerificationServiceLayer: URLayer[UriResolver, VcVerificationService] =
+    ZLayer.makeSome[UriResolver, VcVerificationService](
+      emptyDidResolverLayer,
+      VcJwtServiceStub.layer,
       VcVerificationServiceImpl.layer
     )
 

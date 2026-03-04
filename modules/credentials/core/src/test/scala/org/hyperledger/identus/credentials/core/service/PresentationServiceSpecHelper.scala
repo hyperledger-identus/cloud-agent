@@ -1,6 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
-import org.hyperledger.identus.credentials.anoncreds.AnoncredServiceStub
+import org.hyperledger.identus.credentials.anoncreds.{AnoncredService, AnoncredServiceStub}
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.error.PresentationError
 import org.hyperledger.identus.credentials.core.repository.*
@@ -12,7 +12,7 @@ import org.hyperledger.identus.did.core.model.did.DID
 import org.hyperledger.identus.didcomm.{AgentPeerService, PeerDIDCreation}
 import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, DidId}
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
-import org.hyperledger.identus.shared.crypto.KmpSecp256k1KeyOps
+import org.hyperledger.identus.shared.crypto.KmpEd25519KeyOps
 import org.hyperledger.identus.shared.http.UriResolver
 import org.hyperledger.identus.shared.messaging.{MessagingService, MessagingServiceConfig, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
@@ -31,18 +31,16 @@ trait PresentationServiceSpecHelper {
 
   val genericSecretStorageLayer = GenericSecretStorageInMemory.layer
   val uriResolverLayer = ResourceUrlResolver.layer
-  val credentialDefLayer =
-    CredentialDefinitionRepositoryInMemory.layer ++ uriResolverLayer >>> CredentialDefinitionServiceImpl.layer
-  val linkSecretLayer = genericSecretStorageLayer >+> LinkSecretServiceImpl.layer
-
   val presentationServiceLayer = ZLayer.make[
     PresentationService & CredentialDefinitionService & UriResolver & LinkSecretService & PresentationRepository &
-      CredentialRepository
+      CredentialRepository & AnoncredService
   ](
     PresentationServiceImpl.layer,
-    credentialDefLayer,
-    uriResolverLayer,
-    linkSecretLayer,
+    CredentialDefinitionRepositoryInMemory.layer,
+    CredentialDefinitionServiceImpl.layer,
+    ResourceUrlResolver.layer,
+    GenericSecretStorageInMemory.layer,
+    LinkSecretServiceImpl.layer,
     PresentationRepositoryInMemory.layer,
     CredentialRepositoryInMemory.layer,
     SDJwtServiceStub.layer,
@@ -53,14 +51,25 @@ trait PresentationServiceSpecHelper {
 
   def createIssuer(did: String): Issuer = {
 
-    val keyPair = KmpSecp256k1KeyOps.generateKeyPair
-    val javaSKey = keyPair.privateKey.toJavaPrivateKey
-    val javaPKey = keyPair.publicKey.toJavaPublicKey
+    val keyPair = KmpEd25519KeyOps.generateKeyPair
+    val testSigner = new Signer {
+      override def encode(claim: zio.json.ast.Json): JWT = {
+        val header =
+          java.util.Base64.getUrlEncoder.withoutPadding.encodeToString("""{"alg":"none","typ":"JWT"}""".getBytes)
+        val payload = java.util.Base64.getUrlEncoder.withoutPadding.encodeToString(claim.toString.getBytes)
+        JWT(s"$header.$payload.test-signature")
+      }
+      override def generateProofForJson(
+          payload: zio.json.ast.Json,
+          pk: java.security.PublicKey
+      ): zio.Task[Proof] =
+        zio.ZIO.fail(Throwable("Test signer: generateProofForJson not implemented"))
+    }
 
     Issuer(
       did = DID.fromString(did).toOption.get,
-      signer = ES256KSigner(javaSKey),
-      publicKey = javaPKey
+      signer = testSigner,
+      publicKey = keyPair.publicKey.toJava
     )
   }
 

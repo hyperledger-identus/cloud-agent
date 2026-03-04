@@ -21,8 +21,11 @@ import zio.interop.catz.*
 import java.time.Instant
 import java.util.{Objects, UUID}
 
-class JdbcCredentialStatusListRepository(xa: Transactor[ContextAwareTask], xb: Transactor[Task])
-    extends CredentialStatusListRepository {
+class JdbcCredentialStatusListRepository(
+    xa: Transactor[ContextAwareTask],
+    xb: Transactor[Task],
+    vcJwtService: org.hyperledger.identus.credentials.vc.jwt.VcJwtService
+) extends CredentialStatusListRepository {
 
   def findById(id: UUID): UIO[Option[CredentialStatusList]] = {
     val cxnIO =
@@ -123,7 +126,7 @@ class JdbcCredentialStatusListRepository(xa: Transactor[ContextAwareTask], xb: T
 
     (for {
       id <- ZIO.succeed(UUID.randomUUID())
-      newStatusListVC <- createStatusListVC(jwtIssuer, statusListRegistryUrl, id)
+      newStatusListVC <- createStatusListVC(jwtIssuer, statusListRegistryUrl, id, vcJwtService)
       walletCtx <- ZIO.service[WalletAccessContext]
       walletId = walletCtx.walletId
       cnxIO = for {
@@ -330,6 +333,9 @@ class JdbcCredentialStatusListRepository(xa: Transactor[ContextAwareTask], xb: T
 }
 
 object JdbcCredentialStatusListRepository {
-  val layer: URLayer[Transactor[ContextAwareTask] & Transactor[Task], CredentialStatusListRepository] =
-    ZLayer.fromFunction(new JdbcCredentialStatusListRepository(_, _))
+  val layer: URLayer[
+    Transactor[ContextAwareTask] & Transactor[Task] & org.hyperledger.identus.credentials.vc.jwt.VcJwtService,
+    CredentialStatusListRepository
+  ] =
+    ZLayer.fromFunction(new JdbcCredentialStatusListRepository(_, _, _))
 }

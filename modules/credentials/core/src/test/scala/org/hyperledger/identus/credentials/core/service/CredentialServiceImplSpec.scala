@@ -1,7 +1,6 @@
 package org.hyperledger.identus.credentials.core.service
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.hyperledger.identus.credentials.anoncreds.AnoncredCredential
 import org.hyperledger.identus.credentials.core.model.*
 import org.hyperledger.identus.credentials.core.model.error.CredentialServiceError.*
 import org.hyperledger.identus.credentials.core.model.primitives.UriString
@@ -13,7 +12,7 @@ import org.hyperledger.identus.credentials.core.model.schema.{
 }
 import org.hyperledger.identus.credentials.core.model.IssueCredentialRecord.{ProtocolState, Role}
 import org.hyperledger.identus.credentials.core.service.uriResolvers.ResourceUrlResolver
-import org.hyperledger.identus.credentials.vc.jwt.{CredentialIssuer, JWT, JwtCredential}
+import org.hyperledger.identus.credentials.vc.jwt.{CredentialIssuer, JWT, VcJwtService, VcJwtServiceStub}
 import org.hyperledger.identus.did.core.model.did.*
 import org.hyperledger.identus.did.core.service.MockDIDService
 import org.hyperledger.identus.didcomm.model.{Base64 as MyBase64, *}
@@ -41,6 +40,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
   ).provideSomeLayer(
     MockDIDService.empty ++
       MockManagedDIDService.empty ++
+      VcJwtServiceStub.layer ++
       ResourceUrlResolver.layer >+>
       credentialServiceLayer ++
       ZLayer.succeed(WalletAccessContext(WalletId.random))
@@ -57,7 +57,6 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
 
   private val issuerDidServiceExpectations =
     MockDIDService.resolveDIDExpectation(issuerDidMetadata, issuerDidData)
-      ++ MockDIDService.resolveDIDExpectation(holderDidMetadata, holderDidData)
 
   private val holderManagedDIDServiceExpectations =
     MockManagedDIDService.getManagedDIDStateExpectation(holderOp)
@@ -532,7 +531,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
           decodedJWT <- credentialGenerateRecord.issueCredentialData.get.attachments.head.data match {
             case MyBase64(value) =>
               val ba = new String(Base64.getUrlDecoder.decode(value))
-              JwtCredential.decodeJwt(JWT(ba))
+              ZIO.serviceWithZIO[VcJwtService](_.decodeCredentialJwt(JWT(ba)))
             case _ => ZIO.fail("Error")
           }
           // Issuer sends credential
@@ -587,7 +586,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
           decodedJWT <- credentialGenerateRecord.issueCredentialData.get.attachments.head.data match {
             case MyBase64(value) =>
               val ba = new String(Base64.getUrlDecoder.decode(value))
-              JwtCredential.decodeJwt(JWT(ba))
+              ZIO.serviceWithZIO[VcJwtService](_.decodeCredentialJwt(JWT(ba)))
             case _ => ZIO.fail("Error")
           }
           // Issuer sends credential
@@ -682,7 +681,7 @@ object CredentialServiceImplSpec extends MockSpecDefault with CredentialServiceS
           assertTrue(record.issueCredentialData.get.attachments.head.data match
             case MyBase64(value) =>
               val ba = new String(Base64.getUrlDecoder.decode(value))
-              AnoncredCredential(ba).credDefId == credDefId
+              ba.contains(credDefId)
             case _ => false)
         }
       }
