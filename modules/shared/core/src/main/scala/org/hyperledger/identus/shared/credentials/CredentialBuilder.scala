@@ -1,6 +1,7 @@
 package org.hyperledger.identus.shared.credentials
 
 import zio.*
+import zio.json.ast.Json
 
 /** A single step in a credential build pipeline */
 trait BuildStep:
@@ -9,8 +10,8 @@ trait BuildStep:
 
 /** Accumulated state flowing through the build pipeline */
 case class BuildState(
-    claims: String, // JSON string
-    metadata: Map[String, String] = Map.empty,
+    claims: Json,
+    metadata: Json = Json.Obj(),
     payload: Option[Array[Byte]] = None,
     signature: Option[Array[Byte]] = None,
     artifacts: Map[String, Array[Byte]] = Map.empty,

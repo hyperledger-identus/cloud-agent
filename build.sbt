@@ -200,6 +200,7 @@ lazy val D_Shared = new {
       D.scalaPbGrpc,
       D.zio,
       D.zioConcurrent,
+      D.zioJson,
       D.zioHttp,
       D.zioKafka,
       D.zioPrelude,

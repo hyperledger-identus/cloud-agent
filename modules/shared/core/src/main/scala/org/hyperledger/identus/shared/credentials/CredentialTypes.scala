@@ -1,5 +1,7 @@
 package org.hyperledger.identus.shared.credentials
 
+import zio.json.ast.Json
+
 /** Wire format of a credential */
 enum CredentialFormat:
   case JWT, SDJWT, JsonLD, AnonCreds
@@ -24,7 +26,7 @@ enum VerificationCheckType:
 case class RawCredential(format: CredentialFormat, data: Array[Byte])
 
 /** Result of building a credential */
-case class BuiltCredential(raw: RawCredential, metadata: Map[String, String] = Map.empty)
+case class BuiltCredential(raw: RawCredential, metadata: Json = Json.Obj())
 
 /** Result of a single verification check */
 case class CheckResult(checkType: VerificationCheckType, success: Boolean, detail: Option[String] = None)
@@ -36,14 +38,14 @@ case class VerificationResult(checks: Seq[CheckResult]):
 /** Opaque reference to a signing key */
 case class KeyRef(id: String, algorithm: SignatureAlgorithm)
 
-/** Context for building a credential (uses String for JSON to avoid zio-json dependency in contracts) */
+/** Context for building a credential */
 case class BuildContext(
-    claims: String, // JSON string
+    claims: Json,
     format: CredentialFormat,
     dataModel: DataModelType,
     issuerDid: String,
     keyRef: KeyRef,
-    metadata: Map[String, String] = Map.empty,
+    metadata: Json = Json.Obj(),
 )
 
 /** Context for verification */

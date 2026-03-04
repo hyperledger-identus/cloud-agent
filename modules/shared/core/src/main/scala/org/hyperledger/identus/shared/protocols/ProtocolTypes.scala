@@ -1,5 +1,7 @@
 package org.hyperledger.identus.shared.protocols
 
+import zio.json.ast.Json
+
 import java.util.UUID
 
 enum TransportType:
@@ -19,6 +21,6 @@ case class Endpoint(uri: String, metadata: Map[String, String] = Map.empty)
 case class ProtocolMessage(
     id: String,
     `type`: String,
-    body: String, // JSON string
+    body: Json,
     attachments: Seq[Array[Byte]] = Seq.empty,
 )
