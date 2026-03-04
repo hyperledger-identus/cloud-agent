@@ -1,6 +1,7 @@
 package org.hyperledger.identus.credentials.vc.jwt
 
 import org.hyperledger.identus.credentials.core.codec.Vcdm11CodecModule
+import org.hyperledger.identus.credentials.core.protocol.{DIDCommIssuanceModule, DIDCommPresentationModule}
 import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.test.*
@@ -10,13 +11,15 @@ object ModuleRegistryIntegrationSpec extends ZIOSpecDefault:
   private val allModules: Seq[Module] = Seq(
     Vcdm11CodecModule,
     JwtBuilderModule,
+    DIDCommIssuanceModule,
+    DIDCommPresentationModule,
   )
 
   override def spec = suite("ModuleRegistry Integration")(
     test("all modules register and dependencies are satisfied") {
       val registry = ModuleRegistry(allModules)
       for _ <- registry.validateDependencies
-      yield assertTrue(registry.modules.size == 2)
+      yield assertTrue(registry.modules.size == 4)
     },
     test("resolves CredentialBuilder(jwt) to JwtBuilderModule") {
       val registry = ModuleRegistry(allModules)
@@ -32,6 +35,22 @@ object ModuleRegistryIntegrationSpec extends ZIOSpecDefault:
       assertTrue(
         codecs.size == 1,
         codecs.head.id == Vcdm11CodecModule.id,
+      )
+    },
+    test("resolves IssuanceProtocol(didcomm-v3) to DIDCommIssuanceModule") {
+      val registry = ModuleRegistry(allModules)
+      val protocols = registry.resolve(Capability("IssuanceProtocol", Some("didcomm-v3")))
+      assertTrue(
+        protocols.size == 1,
+        protocols.head.id == DIDCommIssuanceModule.id,
+      )
+    },
+    test("resolves PresentationProtocol(didcomm-v3) to DIDCommPresentationModule") {
+      val registry = ModuleRegistry(allModules)
+      val protocols = registry.resolve(Capability("PresentationProtocol", Some("didcomm-v3")))
+      assertTrue(
+        protocols.size == 1,
+        protocols.head.id == DIDCommPresentationModule.id,
       )
     },
     test("fails validation when codec is missing") {
