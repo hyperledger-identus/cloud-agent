@@ -3,6 +3,7 @@ package org.hyperledger.identus.server
 import org.hyperledger.identus.credentials.core.codec.Vcdm11CodecModule
 import org.hyperledger.identus.credentials.core.protocol.{DIDCommIssuanceModule, DIDCommPresentationModule}
 import org.hyperledger.identus.credentials.vc.jwt.JwtBuilderModule
+import org.hyperledger.identus.oid4vci.OidcIssuanceModule
 import org.hyperledger.identus.shared.db.PostgresPersistenceModule
 import org.hyperledger.identus.shared.models.*
 
@@ -13,9 +14,11 @@ object AllModules:
     Vcdm11CodecModule,
     // Credential builders
     JwtBuilderModule,
-    // Protocol adapters
+    // Protocol adapters — DIDComm
     DIDCommIssuanceModule,
     DIDCommPresentationModule,
+    // Protocol adapters — OIDC
+    OidcIssuanceModule,
     // Persistence
     PostgresPersistenceModule,
   )
