@@ -1,5 +1,7 @@
-package org.hyperledger.identus.shared.credentials
+package org.hyperledger.identus.credentials.vc.jwt
 
+import org.hyperledger.identus.credentials.core.codec.Vcdm11DataModelCodec
+import org.hyperledger.identus.shared.credentials.*
 import zio.*
 import zio.json.*
 import zio.json.ast.Json
