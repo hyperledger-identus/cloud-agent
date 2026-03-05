@@ -16,6 +16,7 @@ import org.hyperledger.identus.did.core.model.did.PrismDID
 import org.hyperledger.identus.did.core.service.DIDService
 import org.hyperledger.identus.didcomm.model.{AttachmentDescriptor, DidId}
 import org.hyperledger.identus.didcomm.protocol.issuecredential.*
+import org.hyperledger.identus.shared.credentials.CredentialBuilderRegistry
 import org.hyperledger.identus.shared.http.UriResolver
 import org.hyperledger.identus.shared.messaging.{MessagingService, MessagingServiceConfig, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.{KeyId, WalletAccessContext, WalletId}
@@ -50,6 +51,7 @@ trait CredentialServiceSpecHelper {
         (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,
       SDJwtServiceStub.layer,
       AnoncredServiceStub.layer,
+      ZLayer.succeed(CredentialBuilderRegistry.empty),
       CredentialServiceImpl.layer
     )
 

@@ -201,6 +201,7 @@ object MainApp extends ZIOAppDefault {
           SDJwtServiceLive.layer,
           AnoncredServiceLive.layer,
           VcJwtServiceLive.layer,
+          CredentialBuilderRegistryLive.layer,
           LinkSecretServiceImpl.layer >>> CredentialServiceImpl.layer >>> CredentialServiceNotifier.layer,
           EntityServiceImpl.layer,
           ManagedDIDServiceWithEventNotificationImpl.layer,

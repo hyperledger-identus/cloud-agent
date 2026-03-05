@@ -36,6 +36,8 @@ object CloudAgentApp {
       _ <- ZIO.log(s"Plugin architecture: ${registry.report}")
       _ <- registry.validateDependencies.mapError(e => new Exception(e.message))
       _ <- ZIO.log("Module dependency graph validated successfully")
+      builderRegistry <- registry.assembleBuilderRegistry
+      _ <- ZIO.log(s"CredentialBuilderRegistry: ${builderRegistry.formats.mkString(", ")}")
     yield ()
 
   def run = for {

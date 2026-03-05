@@ -17,6 +17,7 @@ import org.hyperledger.identus.did.core.service.{DIDService, MockDIDService}
 import org.hyperledger.identus.oid4vci.http.{ClaimDescriptor, CredentialDefinition, Localization}
 import org.hyperledger.identus.oid4vci.service.{OIDCCredentialIssuerService, OIDCCredentialIssuerServiceImpl}
 import org.hyperledger.identus.oid4vci.storage.InMemoryIssuanceSessionService
+import org.hyperledger.identus.shared.credentials.CredentialBuilderRegistry
 import org.hyperledger.identus.shared.messaging.{MessagingService, MessagingServiceConfig, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.{WalletAccessContext, WalletId}
 import org.hyperledger.identus.wallet.memory.GenericSecretStorageInMemory
@@ -57,6 +58,7 @@ object OIDCCredentialIssuerServiceSpec
       LinkSecretServiceImpl.layer,
       SDJwtServiceLive.layer,
       AnoncredServiceLive.layer,
+      ZLayer.succeed(CredentialBuilderRegistry.empty),
       CredentialServiceImpl.layer,
       (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>
         (zio.Scope.default >>> MessagingService.producerLayer[UUID, WalletIdAndRecordId])).orDie,

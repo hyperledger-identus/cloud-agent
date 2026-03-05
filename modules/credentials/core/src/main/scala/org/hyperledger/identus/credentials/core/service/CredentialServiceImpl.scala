@@ -25,6 +25,7 @@ import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
 import org.hyperledger.identus.didcomm.protocol.issuecredential.*
 import org.hyperledger.identus.shared.crypto.{Ed25519KeyPair, Secp256k1KeyPair}
 import org.hyperledger.identus.shared.http.UriResolver
+import org.hyperledger.identus.shared.credentials.CredentialBuilderRegistry
 import org.hyperledger.identus.shared.messaging.{Producer, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.*
 import org.hyperledger.identus.shared.models.Failure.orDieAsUnmanagedFailure
@@ -43,7 +44,7 @@ object CredentialServiceImpl {
   val layer: URLayer[
     CredentialRepository & CredentialStatusListRepository & DidResolver & UriResolver & GenericSecretStorage &
       CredentialDefinitionService & LinkSecretService & DIDService & ManagedDIDService &
-      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService & VcJwtService,
+      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService & VcJwtService & CredentialBuilderRegistry,
     CredentialService
   ] = {
     ZLayer.fromZIO {
@@ -61,6 +62,7 @@ object CredentialServiceImpl {
         sdJwtService <- ZIO.service[SDJwtService]
         anoncredService <- ZIO.service[AnoncredService]
         vcJwtService <- ZIO.service[VcJwtService]
+        builderRegistry <- ZIO.service[CredentialBuilderRegistry]
       } yield CredentialServiceImpl(
         credentialRepo,
         credentialStatusListRepo,
@@ -75,7 +77,8 @@ object CredentialServiceImpl {
         messageProducer,
         sdJwtService,
         anoncredService,
-        vcJwtService
+        vcJwtService,
+        builderRegistry
       )
     }
   }
@@ -99,6 +102,7 @@ class CredentialServiceImpl(
     sdJwtService: SDJwtService,
     anoncredService: AnoncredService,
     vcJwtService: VcJwtService,
+    @scala.annotation.unused builderRegistry: CredentialBuilderRegistry = CredentialBuilderRegistry.empty,
 ) extends CredentialService {
 
   import CredentialServiceImpl.*

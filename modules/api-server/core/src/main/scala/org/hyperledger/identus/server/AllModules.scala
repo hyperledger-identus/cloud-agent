@@ -6,6 +6,7 @@ import org.hyperledger.identus.credentials.core.protocol.{DIDCommIssuanceModule,
 import org.hyperledger.identus.credentials.sdjwt.SdJwtBuilderModule
 import org.hyperledger.identus.credentials.vc.jwt.JwtBuilderModule
 import org.hyperledger.identus.oid4vci.{OidcIssuanceModule, OidcPresentationModule}
+import org.hyperledger.identus.shared.credentials.CredentialBuilderRegistry
 import org.hyperledger.identus.shared.db.PostgresPersistenceModule
 import org.hyperledger.identus.shared.models.*
 
