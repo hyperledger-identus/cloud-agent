@@ -1132,6 +1132,9 @@ lazy val apiServer = project
     iamWalletHttp,
     sharedTest % "test->test",
     credentialsCore % "compile->compile;test->test",
+    credentialsVcJWT,
+    credentialsSDJWT,
+    credentialsAnoncreds,
     credentialsPersistenceDoobie,
     connectionsCore % "compile->compile;test->test", // Test is for MockConnectionService
     connectionsPersistenceDoobie,

@@ -206,6 +206,8 @@ object ArchConstraints {
     // Plugin architecture: shared should only contain contracts, not implementations
     ("shared", "persistenceSqlite", "shared should not depend on persistenceSqlite", Direct),
     ("shared", "credentialsVcJWT", "shared should not depend on credentialsVcJWT", Direct),
+    ("shared", "credentialsSDJWT", "shared should not depend on credentialsSDJWT", Direct),
+    ("shared", "credentialsAnoncreds", "shared should not depend on credentialsAnoncreds", Direct),
     // Plugin architecture: persistence-sqlite should not depend on domain modules
     ("persistenceSqlite", "credentialsCore", "persistenceSqlite should not depend on credentialsCore", Direct),
     ("persistenceSqlite", "connectionsCore", "persistenceSqlite should not depend on connectionsCore", Direct),
