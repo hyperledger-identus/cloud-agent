@@ -1355,14 +1355,14 @@ lazy val apiServerJobsIssue = project
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "api-server-jobs-issue")
-  .dependsOn(apiServerJobsCore, credentialsCore, credentialsVcJWT, credentialsSDJWT, credentialsAnoncreds)
+  .dependsOn(apiServerJobsCore, credentialsCore)
 
 lazy val apiServerJobsPresent = project
   .in(file("modules/api-server/jobs-present"))
   .configure(commonConfigure)
   .settings(commonSetttings)
   .settings(name := "api-server-jobs-present")
-  .dependsOn(apiServerJobsCore, credentialsCore, credentialsVcJWT, credentialsSDJWT, credentialsAnoncreds, didApi)
+  .dependsOn(apiServerJobsCore, credentialsCore, didApi)
 
 lazy val apiServerJobsStatusList = project
   .in(file("modules/api-server/jobs-status-list"))

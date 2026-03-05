@@ -31,6 +31,13 @@ trait PresentationServiceSpecHelper {
 
   val genericSecretStorageLayer = GenericSecretStorageInMemory.layer
   val uriResolverLayer = ResourceUrlResolver.layer
+  private val didResolverStubLayer: ULayer[DidResolver] = ZLayer.succeed(
+    new DidResolver {
+      override def resolve(didUrl: String): UIO[DIDResolutionResult] =
+        ZIO.succeed(DIDResolutionFailed(NotFound(s"Stub resolver: $didUrl")))
+    }
+  )
+
   val presentationServiceLayer = ZLayer.make[
     PresentationService & CredentialDefinitionService & UriResolver & LinkSecretService & PresentationRepository &
       CredentialRepository & AnoncredService
@@ -43,6 +50,8 @@ trait PresentationServiceSpecHelper {
     LinkSecretServiceImpl.layer,
     PresentationRepositoryInMemory.layer,
     CredentialRepositoryInMemory.layer,
+    VcJwtServiceStub.layer,
+    didResolverStubLayer,
     SDJwtServiceStub.layer,
     AnoncredServiceStub.layer,
     (MessagingServiceConfig.inMemoryLayer >>> MessagingService.serviceLayer >>>

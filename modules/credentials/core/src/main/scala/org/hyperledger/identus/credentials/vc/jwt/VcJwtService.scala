@@ -1,5 +1,6 @@
 package org.hyperledger.identus.credentials.vc.jwt
 
+import org.hyperledger.identus.credentials.core.model.CredentialSchemaAndTrustedIssuersConstraint
 import org.hyperledger.identus.credentials.vc.jwt.revocation.BitString
 import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.shared.crypto.Ed25519KeyPair
@@ -23,6 +24,7 @@ trait VcJwtService {
 
   // JWT presentation encode/decode
   def encodePresentationJwt(payload: JwtPresentationPayload, issuer: Issuer): JWT
+  def encodePresentationToJwt(payload: W3cPresentationPayload, issuer: Issuer): JWT
   def decodePresentationJwt(jwt: JWT): IO[String, JwtPresentationPayload]
 
   // Credential verification
@@ -36,6 +38,12 @@ trait VcJwtService {
 
   // Presentation verification
   def validatePresentation(jwt: JWT, domain: String, challenge: String): Either[List[String], Unit]
+  def validatePresentationClaims(
+      jwt: JWT,
+      domain: Option[String],
+      challenge: Option[String],
+      schemaIdAndTrustedIssuers: Seq[CredentialSchemaAndTrustedIssuersConstraint]
+  ): Either[List[String], Unit]
   def verifyPresentation(
       jwt: JWT,
       options: PresentationVerificationOptions

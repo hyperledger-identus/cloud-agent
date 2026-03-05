@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.core.service
 
 import org.hyperledger.identus.credentials.anoncreds.AnoncredPresentation
-import org.hyperledger.identus.credentials.core.model.{DidCommID, PresentationRecord}
+import org.hyperledger.identus.credentials.core.model.{CredentialSchemaAndTrustedIssuersConstraint, DidCommID, PresentationRecord}
 import org.hyperledger.identus.credentials.core.model.error.PresentationError
 import org.hyperledger.identus.credentials.core.model.presentation.Options
 import org.hyperledger.identus.credentials.core.service.serdes.{
@@ -9,7 +9,7 @@ import org.hyperledger.identus.credentials.core.service.serdes.{
   AnoncredPresentationRequestV1
 }
 import org.hyperledger.identus.credentials.sdjwt.PresentationCompact
-import org.hyperledger.identus.credentials.vc.jwt.{Issuer, PresentationPayload, W3cCredentialPayload}
+import org.hyperledger.identus.credentials.vc.jwt.{Issuer, JWT, PresentationPayload, PresentationVerificationOptions, W3cCredentialPayload}
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.presentproof.{
   PresentCredentialRequestFormat,
@@ -18,7 +18,7 @@ import org.hyperledger.identus.didcomm.protocol.presentproof.{
   ProposePresentation,
   RequestPresentation
 }
-import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
+import org.hyperledger.identus.shared.crypto.{Ed25519PrivateKey, Ed25519PublicKey}
 import org.hyperledger.identus.shared.models.*
 import zio.{mock, Duration, IO, UIO, URIO, URLayer, ZIO, ZLayer}
 import zio.json.*
@@ -95,6 +95,12 @@ object MockPresentationService extends Mock[PresentationService] {
   object MarkPresentationRejected extends Effect[DidCommID, PresentationError, PresentationRecord]
 
   object MarkPresentationVerificationFailed extends Effect[DidCommID, PresentationError, PresentationRecord]
+
+  object EncodeJwtPresentation extends Effect[(PresentationPayload, Issuer), Nothing, JWT]
+
+  object VerifyJwtPresentation extends Effect[DidCommID, PresentationError, Unit]
+
+  object VerifySDJwtPresentation extends Effect[DidCommID, PresentationError, Unit]
 
   object VerifyAnoncredPresentation extends Effect[DidCommID, PresentationError, PresentationRecord]
 
@@ -266,6 +272,28 @@ object MockPresentationService extends Mock[PresentationService] {
 
       override def markPresentationVerificationFailed(recordId: DidCommID): IO[PresentationError, PresentationRecord] =
         proxy(MarkPresentationVerificationFailed, recordId)
+
+      override def encodeJwtPresentation(
+          presentationPayload: PresentationPayload,
+          issuer: Issuer,
+      ): JWT =
+        throw new UnsupportedOperationException("MockPresentationService.encodeJwtPresentation")
+
+      override def verifyJwtPresentation(
+          recordId: DidCommID,
+          jwt: JWT,
+          maybeOptions: Option[Options],
+          schemaIdAndTrustedIssuers: Seq[CredentialSchemaAndTrustedIssuersConstraint],
+          verificationOptions: PresentationVerificationOptions,
+      ): ZIO[WalletAccessContext, PresentationError, Unit] =
+        proxy(VerifyJwtPresentation, recordId)
+
+      override def verifySDJwtPresentation(
+          recordId: DidCommID,
+          issuerPublicKey: Ed25519PublicKey,
+          presentation: PresentationCompact,
+      ): ZIO[WalletAccessContext, PresentationError, Unit] =
+        proxy(VerifySDJwtPresentation, recordId)
 
       override def verifyAnoncredPresentation(
           presentation: Presentation,

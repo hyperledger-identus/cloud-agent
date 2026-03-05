@@ -11,7 +11,7 @@ import org.hyperledger.identus.credentials.sdjwt.PresentationCompact
 import org.hyperledger.identus.credentials.vc.jwt.*
 import org.hyperledger.identus.didcomm.model.*
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
-import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
+import org.hyperledger.identus.shared.crypto.{Ed25519PrivateKey, Ed25519PublicKey}
 import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.json.ast
@@ -178,6 +178,25 @@ trait PresentationService {
       recordId: DidCommID,
       claimsDisclosed: SdJwtDisclosedClaims
   ): ZIO[WalletAccessContext, PresentationError, PresentationRecord]
+
+  def encodeJwtPresentation(
+      presentationPayload: PresentationPayload,
+      issuer: Issuer,
+  ): JWT
+
+  def verifyJwtPresentation(
+      recordId: DidCommID,
+      jwt: JWT,
+      maybeOptions: Option[presentation.Options],
+      schemaIdAndTrustedIssuers: Seq[CredentialSchemaAndTrustedIssuersConstraint],
+      verificationOptions: PresentationVerificationOptions,
+  ): ZIO[WalletAccessContext, PresentationError, Unit]
+
+  def verifySDJwtPresentation(
+      recordId: DidCommID,
+      issuerPublicKey: Ed25519PublicKey,
+      presentation: PresentationCompact,
+  ): ZIO[WalletAccessContext, PresentationError, Unit]
 
   def verifyAnoncredPresentation(
       presentation: Presentation,

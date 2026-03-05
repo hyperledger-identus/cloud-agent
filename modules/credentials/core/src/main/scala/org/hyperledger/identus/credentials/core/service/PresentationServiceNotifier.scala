@@ -1,7 +1,7 @@
 package org.hyperledger.identus.credentials.core.service
 
 import org.hyperledger.identus.credentials.anoncreds.AnoncredPresentation
-import org.hyperledger.identus.credentials.core.model.{DidCommID, PresentationRecord}
+import org.hyperledger.identus.credentials.core.model.{CredentialSchemaAndTrustedIssuersConstraint, DidCommID, PresentationRecord}
 import org.hyperledger.identus.credentials.core.model.error.PresentationError
 import org.hyperledger.identus.credentials.core.model.presentation.Options
 import org.hyperledger.identus.credentials.core.repository.PresentationRepository
@@ -10,11 +10,11 @@ import org.hyperledger.identus.credentials.core.service.serdes.{
   AnoncredPresentationRequestV1
 }
 import org.hyperledger.identus.credentials.sdjwt.PresentationCompact
-import org.hyperledger.identus.credentials.vc.jwt.{Issuer, PresentationPayload, W3cCredentialPayload}
+import org.hyperledger.identus.credentials.vc.jwt.{Issuer, JWT, PresentationPayload, PresentationVerificationOptions, W3cCredentialPayload}
 import org.hyperledger.identus.didcomm.model.DidId
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
 import org.hyperledger.identus.notifications.{Event, EventNotificationService}
-import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
+import org.hyperledger.identus.shared.crypto.{Ed25519PrivateKey, Ed25519PublicKey}
 import org.hyperledger.identus.shared.models.*
 import zio.*
 import zio.json.*
@@ -176,6 +176,28 @@ class PresentationServiceNotifier(
       recordId: DidCommID
   ): ZIO[WalletAccessContext, PresentationError, PresentationRecord] =
     notifyOnSuccess(svc.markPresentationInvitationExpired(recordId))
+
+  override def encodeJwtPresentation(
+      presentationPayload: PresentationPayload,
+      issuer: Issuer,
+  ): JWT =
+    svc.encodeJwtPresentation(presentationPayload, issuer)
+
+  override def verifyJwtPresentation(
+      recordId: DidCommID,
+      jwt: JWT,
+      maybeOptions: Option[Options],
+      schemaIdAndTrustedIssuers: Seq[CredentialSchemaAndTrustedIssuersConstraint],
+      verificationOptions: PresentationVerificationOptions,
+  ): ZIO[WalletAccessContext, PresentationError, Unit] =
+    svc.verifyJwtPresentation(recordId, jwt, maybeOptions, schemaIdAndTrustedIssuers, verificationOptions)
+
+  override def verifySDJwtPresentation(
+      recordId: DidCommID,
+      issuerPublicKey: Ed25519PublicKey,
+      presentation: PresentationCompact,
+  ): ZIO[WalletAccessContext, PresentationError, Unit] =
+    svc.verifySDJwtPresentation(recordId, issuerPublicKey, presentation)
 
   override def verifyAnoncredPresentation(
       presentation: Presentation,

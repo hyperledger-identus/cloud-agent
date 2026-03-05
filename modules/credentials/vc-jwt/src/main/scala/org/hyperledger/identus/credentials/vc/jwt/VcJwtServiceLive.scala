@@ -1,5 +1,8 @@
 package org.hyperledger.identus.credentials.vc.jwt
 
+import org.hyperledger.identus.credentials.core.model.{
+  CredentialSchemaAndTrustedIssuersConstraint as CoreSchemaConstraint
+}
 import org.hyperledger.identus.credentials.vc.jwt.revocation.{BitString, VCStatusList2021}
 import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.shared.crypto.Ed25519KeyPair
@@ -29,6 +32,9 @@ class VcJwtServiceLive extends VcJwtService {
   override def encodePresentationJwt(payload: JwtPresentationPayload, issuer: Issuer): JWT =
     JwtPresentation.encodeJwt(payload, issuer)
 
+  override def encodePresentationToJwt(payload: W3cPresentationPayload, issuer: Issuer): JWT =
+    JwtPresentation.toEncodedJwt(payload, issuer)
+
   override def decodePresentationJwt(jwt: JWT): IO[String, JwtPresentationPayload] = {
     ZIO
       .fromTry(JwtPresentation.decodeJwt[JwtPresentationPayload](jwt))
@@ -55,6 +61,19 @@ class VcJwtServiceLive extends VcJwtService {
 
   override def validatePresentation(jwt: JWT, domain: String, challenge: String): Either[List[String], Unit] = {
     val result = JwtPresentation.validatePresentation(jwt, domain, challenge)
+    result.toEither.left.map(_.toList)
+  }
+
+  override def validatePresentationClaims(
+      jwt: JWT,
+      domain: Option[String],
+      challenge: Option[String],
+      schemaIdAndTrustedIssuers: Seq[CoreSchemaConstraint]
+  ): Either[List[String], Unit] = {
+    val jwtConstraints = schemaIdAndTrustedIssuers.map(c =>
+      CredentialSchemaAndTrustedIssuersConstraint(c.schemaId, Some(c.trustedIssuers))
+    )
+    val result = JwtPresentation.validatePresentation(jwt, domain, challenge, jwtConstraints)
     result.toEither.left.map(_.toList)
   }
 

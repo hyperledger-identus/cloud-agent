@@ -1,7 +1,8 @@
 package org.hyperledger.identus.credentials.sdjwt
 
-import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
+import org.hyperledger.identus.shared.crypto.{Ed25519PrivateKey, Ed25519PublicKey}
 import zio.*
+import zio.json.ast.Json
 
 /** Stub SDJwtService for tests that don't exercise actual SD-JWT operations. */
 class SDJwtServiceStub extends SDJwtService {
@@ -22,6 +23,12 @@ class SDJwtServiceStub extends SDJwtService {
       holderKey: Ed25519PrivateKey,
   ): PresentationCompact =
     throw new UnsupportedOperationException("SDJwtServiceStub.createPresentation not implemented")
+
+  override def verifyPresentation(
+      issuerPublicKey: Ed25519PublicKey,
+      presentation: PresentationCompact,
+  ): Either[String, Json.Obj] =
+    Right(Json.Obj())
 }
 
 object SDJwtServiceStub {

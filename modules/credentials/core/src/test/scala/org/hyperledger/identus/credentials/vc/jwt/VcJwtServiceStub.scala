@@ -1,5 +1,6 @@
 package org.hyperledger.identus.credentials.vc.jwt
 
+import org.hyperledger.identus.credentials.core.model.CredentialSchemaAndTrustedIssuersConstraint
 import org.hyperledger.identus.credentials.vc.jwt.revocation.BitString
 import org.hyperledger.identus.did.core.model.did.VerificationRelationship
 import org.hyperledger.identus.shared.crypto.Ed25519KeyPair
@@ -52,6 +53,9 @@ class VcJwtServiceStub extends VcJwtService {
   override def encodePresentationJwt(payload: JwtPresentationPayload, issuer: Issuer): JWT =
     issuer.signer.encode(payload.toJsonAST.toOption.get)
 
+  override def encodePresentationToJwt(payload: W3cPresentationPayload, issuer: Issuer): JWT =
+    encodePresentationJwt(payload.toJwtPresentationPayload, issuer)
+
   override def decodePresentationJwt(jwt: JWT): IO[String, JwtPresentationPayload] =
     ZIO.fromEither(decodeJwtPayload(jwt).flatMap(_.as[JwtPresentationPayload]))
 
@@ -80,6 +84,14 @@ class VcJwtServiceStub extends VcJwtService {
   override def validateAlgorithm(jwt: JWT): Boolean = true
 
   override def validatePresentation(jwt: JWT, domain: String, challenge: String): Either[List[String], Unit] =
+    Right(())
+
+  override def validatePresentationClaims(
+      jwt: JWT,
+      domain: Option[String],
+      challenge: Option[String],
+      schemaIdAndTrustedIssuers: Seq[CredentialSchemaAndTrustedIssuersConstraint]
+  ): Either[List[String], Unit] =
     Right(())
 
   override def verifyPresentation(

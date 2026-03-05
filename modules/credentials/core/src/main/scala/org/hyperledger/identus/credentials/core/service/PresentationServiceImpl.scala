@@ -15,7 +15,7 @@ import org.hyperledger.identus.didcomm.model.*
 import org.hyperledger.identus.didcomm.protocol.invitation.v2.Invitation
 import org.hyperledger.identus.didcomm.protocol.issuecredential.IssueCredentialIssuedFormat
 import org.hyperledger.identus.didcomm.protocol.presentproof.*
-import org.hyperledger.identus.shared.crypto.Ed25519PrivateKey
+import org.hyperledger.identus.shared.crypto.{Ed25519PrivateKey, Ed25519PublicKey}
 import org.hyperledger.identus.shared.http.UriResolver
 import org.hyperledger.identus.shared.messaging.{Producer, WalletIdAndRecordId}
 import org.hyperledger.identus.shared.models.*
@@ -31,10 +31,12 @@ import scala.util.Try
 
 private class PresentationServiceImpl(
     uriResolver: UriResolver,
+    didResolver: DidResolver,
     linkSecretService: LinkSecretService,
     presentationRepository: PresentationRepository,
     credentialRepository: CredentialRepository,
     messageProducer: Producer[UUID, WalletIdAndRecordId],
+    vcJwtService: VcJwtService,
     sdJwtService: SDJwtService,
     anoncredService: AnoncredService,
     maxRetries: Int = 5, // TODO move to config,
@@ -1156,6 +1158,52 @@ private class PresentationServiceImpl(
       PresentationRecord.ProtocolState.PresentationVerificationFailed
     )
 
+  override def encodeJwtPresentation(
+      presentationPayload: PresentationPayload,
+      issuer: Issuer,
+  ): JWT =
+    vcJwtService.encodePresentationToJwt(presentationPayload.toW3CPresentationPayload, issuer)
+
+  override def verifyJwtPresentation(
+      recordId: DidCommID,
+      jwt: JWT,
+      maybeOptions: Option[presentation.Options],
+      schemaIdAndTrustedIssuers: Seq[CredentialSchemaAndTrustedIssuersConstraint],
+      verificationOptions: PresentationVerificationOptions,
+  ): ZIO[WalletAccessContext, PresentationError, Unit] = {
+    for {
+      _ <- ZIO.fromEither(
+        vcJwtService.validatePresentationClaims(
+          jwt,
+          maybeOptions.map(_.domain),
+          maybeOptions.map(_.challenge),
+          schemaIdAndTrustedIssuers
+        )
+      ).mapError(errors => PresentationVerificationError(errors.mkString("; ")))
+      _ <- vcJwtService
+        .verifyPresentation(jwt, verificationOptions)(didResolver, uriResolver)
+        .mapError(errors => PresentationVerificationError(errors.mkString("; ")))
+      _ <- markPresentationVerified(recordId)
+    } yield ()
+  }
+
+  override def verifySDJwtPresentation(
+      recordId: DidCommID,
+      issuerPublicKey: Ed25519PublicKey,
+      presentation: PresentationCompact,
+  ): ZIO[WalletAccessContext, PresentationError, Unit] = {
+    for {
+      result <- ZIO.fromEither(
+        sdJwtService.verifyPresentation(issuerPublicKey, presentation)
+      ).mapError(error => PresentationVerificationError(error))
+        .flatMapError(e =>
+          markPresentationVerificationFailed(recordId).ignore *> ZIO.succeed(e)
+        )
+      _ <- updateWithSDJWTDisclosedClaims(recordId, result)
+      _ <- markPresentationVerified(recordId)
+    } yield ()
+  }
+
   override def verifyAnoncredPresentation(
       presentation: Presentation,
       requestPresentation: RequestPresentation,
@@ -1361,9 +1409,9 @@ private class PresentationServiceImpl(
 
 object PresentationServiceImpl {
   val layer: URLayer[
-    UriResolver & LinkSecretService & PresentationRepository & CredentialRepository &
-      Producer[UUID, WalletIdAndRecordId] & SDJwtService & AnoncredService,
+    UriResolver & DidResolver & LinkSecretService & PresentationRepository & CredentialRepository &
+      Producer[UUID, WalletIdAndRecordId] & VcJwtService & SDJwtService & AnoncredService,
     PresentationService
   ] =
-    ZLayer.fromFunction(PresentationServiceImpl(_, _, _, _, _, _, _))
+    ZLayer.fromFunction(PresentationServiceImpl(_, _, _, _, _, _, _, _, _))
 }

@@ -196,6 +196,13 @@ object ArchConstraints {
     ("apiServerJobsCore", "credentialsVcJWT", "apiServerJobsCore should not depend on credentialsVcJWT", Direct),
     // oid4vciCore should not depend on credentialsVcJWT (JwtSignerImplicits moved to sharedCrypto)
     ("oid4vciCore", "credentialsVcJWT", "oid4vciCore should not depend on credentialsVcJWT", Direct),
+    // Job modules should not depend on format-specific credential modules
+    ("apiServerJobsIssue", "credentialsVcJWT", "apiServerJobsIssue should not depend on credentialsVcJWT", Direct),
+    ("apiServerJobsIssue", "credentialsSDJWT", "apiServerJobsIssue should not depend on credentialsSDJWT", Direct),
+    ("apiServerJobsIssue", "credentialsAnoncreds", "apiServerJobsIssue should not depend on credentialsAnoncreds", Direct),
+    ("apiServerJobsPresent", "credentialsVcJWT", "apiServerJobsPresent should not depend on credentialsVcJWT", Direct),
+    ("apiServerJobsPresent", "credentialsSDJWT", "apiServerJobsPresent should not depend on credentialsSDJWT", Direct),
+    ("apiServerJobsPresent", "credentialsAnoncreds", "apiServerJobsPresent should not depend on credentialsAnoncreds", Direct),
     // Plugin architecture: shared should only contain contracts, not implementations
     ("shared", "persistenceSqlite", "shared should not depend on persistenceSqlite", Direct),
     ("shared", "credentialsVcJWT", "shared should not depend on credentialsVcJWT", Direct),
