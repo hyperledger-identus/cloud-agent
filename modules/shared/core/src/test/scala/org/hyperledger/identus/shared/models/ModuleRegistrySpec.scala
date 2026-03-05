@@ -8,9 +8,11 @@ object ModuleRegistrySpec extends ZIOSpecDefault:
 
   trait SimpleModule extends Module:
     type Config = Unit
+    type Service = Unit
     def defaultConfig = ()
     def enabled(config: Unit) = true
     def version = SemVer(1, 0, 0)
+    def layer = ZLayer.succeed(())
 
   object ProviderModule extends SimpleModule:
     val id = ModuleId("provider")

@@ -1,5 +1,7 @@
 package org.hyperledger.identus.shared.models
 
+import zio.*
+
 case class ModuleId(value: String)
 
 case class SemVer(major: Int, minor: Int, patch: Int):
@@ -7,6 +9,7 @@ case class SemVer(major: Int, minor: Int, patch: Int):
 
 trait Module:
   type Config
+  type Service
 
   def id: ModuleId
   def version: SemVer
@@ -16,3 +19,4 @@ trait Module:
 
   def defaultConfig: Config
   def enabled(config: Config): Boolean
+  def layer: TaskLayer[Service]

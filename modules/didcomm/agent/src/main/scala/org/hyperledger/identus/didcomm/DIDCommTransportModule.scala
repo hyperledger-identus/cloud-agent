@@ -1,9 +1,11 @@
 package org.hyperledger.identus.didcomm
 
 import org.hyperledger.identus.shared.models.*
+import zio.*
 
 object DIDCommTransportModule extends Module:
   type Config = Unit
+  type Service = Unit
 
   val id: ModuleId = ModuleId("didcomm-v2-transport")
   val version: SemVer = SemVer(0, 1, 0)
@@ -16,3 +18,4 @@ object DIDCommTransportModule extends Module:
 
   def defaultConfig: Unit = ()
   def enabled(config: Unit): Boolean = true
+  def layer = ZLayer.succeed(())

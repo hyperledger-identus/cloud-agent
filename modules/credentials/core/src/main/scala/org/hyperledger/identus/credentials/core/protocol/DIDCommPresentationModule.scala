@@ -1,9 +1,11 @@
 package org.hyperledger.identus.credentials.core.protocol
 
 import org.hyperledger.identus.shared.models.*
+import zio.*
 
 object DIDCommPresentationModule extends Module:
   type Config = Unit
+  type Service = Unit
 
   val id: ModuleId = ModuleId("didcomm-presentation-v3")
   val version: SemVer = SemVer(0, 1, 0)
@@ -18,3 +20,4 @@ object DIDCommPresentationModule extends Module:
 
   def defaultConfig: Unit = ()
   def enabled(config: Unit): Boolean = true
+  def layer = ZLayer.succeed(())

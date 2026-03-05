@@ -1,9 +1,11 @@
 package org.hyperledger.identus.credentials.anoncreds
 
 import org.hyperledger.identus.shared.models.*
+import zio.*
 
 object AnonCredsBuilderModule extends Module:
   type Config = Unit
+  type Service = Unit
 
   val id: ModuleId = ModuleId("anoncreds-credential-builder")
   val version: SemVer = SemVer(0, 1, 0)
@@ -16,3 +18,4 @@ object AnonCredsBuilderModule extends Module:
 
   def defaultConfig: Unit = ()
   def enabled(config: Unit): Boolean = true
+  def layer = ZLayer.succeed(())
