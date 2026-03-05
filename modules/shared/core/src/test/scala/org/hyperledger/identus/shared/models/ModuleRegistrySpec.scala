@@ -90,4 +90,52 @@ object ModuleRegistrySpec extends ZIOSpecDefault:
         report.contains("Builder(jwt)"),
       )
     },
+    test("assembleBuilderRegistry collects builder modules by format") {
+      import org.hyperledger.identus.shared.credentials.*
+      import zio.json.ast.Json
+
+      object JwtBuilderMod extends Module:
+        type Config = Unit
+        type Service = CredentialBuilder
+        val id = ModuleId("jwt-builder")
+        val implements = Set(Capability("CredentialBuilder", Some("jwt")))
+        val requires = Set.empty[Capability]
+        def defaultConfig = ()
+        def enabled(config: Unit) = true
+        def version = SemVer(1, 0, 0)
+        def layer = ZLayer.succeed[CredentialBuilder](new CredentialBuilder:
+          def format = CredentialFormat.JWT
+          def supportedDataModels = Set(DataModelType.VCDM_1_1)
+          def buildCredential(ctx: BuildContext) =
+            ZIO.succeed(BuiltCredential(RawCredential(CredentialFormat.JWT, "jwt".getBytes), Json.Obj()))
+          def steps = Seq.empty
+        )
+
+      object SdJwtBuilderMod extends Module:
+        type Config = Unit
+        type Service = CredentialBuilder
+        val id = ModuleId("sdjwt-builder")
+        val implements = Set(Capability("CredentialBuilder", Some("sdjwt")))
+        val requires = Set.empty[Capability]
+        def defaultConfig = ()
+        def enabled(config: Unit) = true
+        def version = SemVer(1, 0, 0)
+        def layer = ZLayer.succeed[CredentialBuilder](new CredentialBuilder:
+          def format = CredentialFormat.SDJWT
+          def supportedDataModels = Set(DataModelType.VCDM_1_1)
+          def buildCredential(ctx: BuildContext) =
+            ZIO.succeed(BuiltCredential(RawCredential(CredentialFormat.SDJWT, "sdjwt".getBytes), Json.Obj()))
+          def steps = Seq.empty
+        )
+
+      val registry = ModuleRegistry(Seq(ProviderModule, JwtBuilderMod, SdJwtBuilderMod))
+      for
+        builderRegistry <- registry.assembleBuilderRegistry
+      yield assertTrue(
+        builderRegistry.formats == Set(CredentialFormat.JWT, CredentialFormat.SDJWT),
+        builderRegistry.get(CredentialFormat.JWT).map(_.format) == Some(CredentialFormat.JWT),
+        builderRegistry.get(CredentialFormat.SDJWT).map(_.format) == Some(CredentialFormat.SDJWT),
+        builderRegistry.get(CredentialFormat.AnonCreds).isEmpty,
+      )
+    },
   )

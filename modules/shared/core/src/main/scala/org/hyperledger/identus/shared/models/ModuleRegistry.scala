@@ -1,6 +1,7 @@
 package org.hyperledger.identus.shared.models
 
 import zio.*
+import org.hyperledger.identus.shared.credentials.{CredentialBuilder, CredentialBuilderRegistry}
 
 case class ModuleRegistryError(message: String) extends Exception(message)
 
@@ -37,6 +38,16 @@ class ModuleRegistry(val modules: Seq[Module]):
     val providedCaps = allProvided.map(c => s"${c.contract}${c.variant.map(v => s"($v)").getOrElse("")}")
     val capLine = s"  Capabilities: ${providedCaps.mkString(", ")}"
     (header +: moduleLines :+ capLine).mkString("\n")
+
+  def assembleBuilderRegistry: Task[CredentialBuilderRegistry] =
+    val builderModules = modules.filter(_.implements.exists(_.contract == "CredentialBuilder"))
+    val builderEffects = builderModules.map { m =>
+      val typedModule = m.asInstanceOf[Module { type Service = CredentialBuilder }]
+      ZIO.scoped(typedModule.layer.build.map(env => env.get[CredentialBuilder]))
+        .map(builder => builder.format -> builder)
+    }
+    ZIO.collectAll(builderEffects)
+      .map(pairs => CredentialBuilderRegistry(pairs.toMap))
 
 object ModuleRegistry:
 
