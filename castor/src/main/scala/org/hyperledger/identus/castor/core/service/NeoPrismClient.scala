@@ -74,7 +74,7 @@ trait NeoPrismClient {
   def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]]
 
   /** Get VDR entry metadata (latest event hash, status) by entry hash. Requires neoprism endpoint: GET
-    * /api/vdr-entries/{entry_hash}
+    * /api/vdr-data/{entry_hash}/metadata
     * @param entryHash
     *   Hex string of the entry hash
     * @return
@@ -193,7 +193,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
 
   override def getVdrEntryMetadata(entryHash: String): Task[Option[NeoPrismVdrEntryMetadata]] =
     for
-      resp <- baseClient.batched.get(s"api/vdr-entries/$entryHash")
+      resp <- baseClient.batched.get(s"api/vdr-data/$entryHash/metadata")
       metadataOpt <- resp.status match
         case Status.Ok =>
           resp.body.asString
@@ -215,7 +215,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
           ZIO.succeed(None)
         case status =>
           resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} from vdr-entries: $body"))
+            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} from vdr-data/metadata: $body"))
           }
     yield metadataOpt
 
