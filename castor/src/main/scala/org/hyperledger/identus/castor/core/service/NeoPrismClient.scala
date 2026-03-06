@@ -14,6 +14,19 @@ import scala.util.Try
 
 case class NeoPrismConfig(baseUrl: URL)
 
+/** Result of submitting signed operations to neoprism REST API. */
+final case class NeoPrismSubmissionResult(
+    txId: String,
+    operationIds: Seq[String]
+)
+
+/** Metadata about a VDR entry from neoprism. */
+final case class NeoPrismVdrEntryMetadata(
+    entryHash: String,
+    latestEventHash: String,
+    status: String
+)
+
 trait NeoPrismClient {
 
   /** Get resolution metadata for a DID.
@@ -43,6 +56,31 @@ trait NeoPrismClient {
     *   true if operation found (200), false if not found (404), throws on errors (400/500)
     */
   def isOperationIndexed(operationId: String): Task[Boolean]
+
+  /** Submit hex-encoded signed operations for VDR entries.
+    * @param hexEncodedOps
+    *   Sequence of hex-encoded SignedAtalaOperation protobuf bytes
+    * @return
+    *   Submission result with txId and operationIds
+    */
+  def submitVdrOperation(hexEncodedOps: Seq[String]): Task[NeoPrismSubmissionResult]
+
+  /** Get raw VDR blob data by entry hash.
+    * @param entryHash
+    *   Hex string of the entry hash
+    * @return
+    *   None if not found (404), Some(bytes) if found
+    */
+  def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]]
+
+  /** Get VDR entry metadata (latest event hash, status) by entry hash. Requires neoprism endpoint: GET
+    * /api/vdr-data/{entry_hash}/metadata
+    * @param entryHash
+    *   Hex string of the entry hash
+    * @return
+    *   None if not found (404), Some(metadata) if found
+    */
+  def getVdrEntryMetadata(entryHash: String): Task[Option[NeoPrismVdrEntryMetadata]]
 }
 
 private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends NeoPrismClient {
@@ -50,77 +88,55 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
 
   private val baseClient = client.url(config.baseUrl)
 
+  /** Decode JSON body from a response, failing with a descriptive error. */
+  private def decodeJson[A: JsonDecoder](resp: Response, context: String): Task[A] =
+    resp.body.asString.flatMap { body =>
+      ZIO
+        .fromEither(body.fromJson[A])
+        .mapError(e => new RuntimeException(s"Failed to decode $context: $e"))
+    }
+
+  /** Fail with a descriptive error for unexpected HTTP status codes. */
+  private def unexpectedStatus(resp: Response, context: String): Task[Nothing] =
+    resp.body.asString.flatMap { body =>
+      ZIO.fail(new RuntimeException(s"Unexpected status ${resp.status.code} from $context: $body"))
+    }
+
   override def getResolutionMetadata(did: PrismDID): Task[Option[DIDMetadata]] =
     for
       resp <- baseClient.batched
-        .addHeader("Content-Type", "application/did-resolution")
+        .addHeader("Accept", "application/did-resolution")
         .get(s"api/dids/$did")
       metadataOpt <- resp.status match
+        case Status.Ok =>
+          decodeJson[NeoPrismResolutionResult](resp, "resolution")
+            .map(result => Some(convertToMetadata(result.didDocumentMetadata)))
         case Status.NotFound => ZIO.none
-        case _               =>
-          resp.body.asString
-            .flatMap { body =>
-              ZIO
-                .fromEither(body.fromJson[NeoPrismResolutionResult])
-                .mapError(e => new RuntimeException(s"Failed to decode JSON: $e"))
-                .map(result => Some(convertToMetadata(result.didDocumentMetadata)))
-            }
+        case _               => unexpectedStatus(resp, "resolution")
     yield metadataOpt
 
   override def getDIDData(did: PrismDID): Task[Option[node_models.DIDData]] =
     for
-      didDataResp <- baseClient.batched
-        .get(s"api/did-data/$did")
-      protoDIDDataOpt <- didDataResp.status match
+      resp <- baseClient.batched
+        .get(s"api/dids/$did/protobuf")
+      result <- resp.status match
         case Status.Ok =>
           for
-            hexStr <- didDataResp.body.asString
+            hexStr <- resp.body.asString
             hexBytes <- ZIO.fromTry(HexString.fromString(hexStr))
             protoData <- ZIO.attempt(node_models.DIDData.parseFrom(hexBytes.toByteArray))
           yield Some(protoData)
-        case Status.NotFound =>
-          ZIO.succeed(None)
-        case status =>
-          ZIO.fail(new RuntimeException(s"Unexpected status code from did-data: ${status.code}"))
-    yield protoDIDDataOpt
+        case Status.NotFound => ZIO.none
+        case _               => unexpectedStatus(resp, "did-data")
+    yield result
 
   override def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String] =
-    val signedAtalaOperation = signedOperation.toSignedAtalaOperation
-    val operationBytes = signedAtalaOperation.toByteArray
-    val hexString = HexString.fromByteArray(operationBytes).toString
-    val requestBody = SignedOperationSubmissionRequest(Seq(hexString))
-    for
-      resp <- baseClient.batched
-        .request(
-          Request(
-            method = Method.POST,
-            url = URL.root / "api" / "signed-operation-submissions",
-            headers = Headers(Header.ContentType(MediaType.application.json)),
-            body = Body.fromString(requestBody.toJson)
-          )
-        )
-      operationId <- resp.status match
-        case Status.Ok =>
-          resp.body.asString
-            .flatMap { body =>
-              ZIO
-                .fromEither(body.fromJson[SignedOperationSubmissionResponse])
-                .mapError(e => new RuntimeException(s"Failed to decode JSON response: $e"))
-                .flatMap { response =>
-                  response.operation_ids.headOption match
-                    case Some(opId) => ZIO.succeed(opId)
-                    case None       => ZIO.fail(new RuntimeException("No operation_id returned from NeoPRISM"))
-                }
-            }
-        case Status.BadRequest =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Bad request: $body"))
-          }
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
-          }
-    yield operationId
+    val hexString = HexString.fromByteArray(signedOperation.toSignedAtalaOperation.toByteArray).toString
+    submitVdrOperation(Seq(hexString)).flatMap { result =>
+      result.operationIds.headOption match
+        case Some(opId) => ZIO.succeed(opId)
+        case None       => ZIO.fail(new RuntimeException("No operation_id returned from NeoPRISM"))
+    }
 
   override def isOperationIndexed(operationId: String): Task[Boolean] =
     for
@@ -129,14 +145,52 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         case Status.Ok         => ZIO.succeed(true)
         case Status.NotFound   => ZIO.succeed(false)
         case Status.BadRequest =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Invalid operation ID: $body"))
-          }
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
-          }
+          resp.body.asString.flatMap(body => ZIO.fail(new RuntimeException(s"Invalid operation ID: $body")))
+        case _ => unexpectedStatus(resp, "operations")
     yield found
+
+  override def submitVdrOperation(hexEncodedOps: Seq[String]): Task[NeoPrismSubmissionResult] =
+    val requestBody = SignedOperationSubmissionRequest(hexEncodedOps)
+    for
+      resp <- baseClient.batched
+        .request(
+          Request(
+            method = Method.POST,
+            url = URL.root / "api" / "submissions" / "signed-operations",
+            headers = Headers(Header.ContentType(MediaType.application.json)),
+            body = Body.fromString(requestBody.toJson)
+          )
+        )
+      result <- resp.status match
+        case Status.Ok =>
+          decodeJson[SignedOperationSubmissionResponse](resp, "submission")
+            .map(r => NeoPrismSubmissionResult(r.tx_id, r.operation_ids))
+        case Status.BadRequest =>
+          resp.body.asString.flatMap(body =>
+            ZIO.fail(new RuntimeException(s"Bad request submitting VDR operation: $body"))
+          )
+        case _ => unexpectedStatus(resp, "submission")
+    yield result
+
+  override def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]] =
+    for
+      resp <- baseClient.batched.get(s"api/vdr-data/$entryHash")
+      dataOpt <- resp.status match
+        case Status.Ok       => resp.body.asArray.map(Some(_))
+        case Status.NotFound => ZIO.none
+        case _               => unexpectedStatus(resp, "vdr-data")
+    yield dataOpt
+
+  override def getVdrEntryMetadata(entryHash: String): Task[Option[NeoPrismVdrEntryMetadata]] =
+    for
+      resp <- baseClient.batched.get(s"api/vdr-data/$entryHash/metadata")
+      metadataOpt <- resp.status match
+        case Status.Ok =>
+          decodeJson[VdrEntryMetadataResponse](resp, "vdr-data/metadata")
+            .map(r => Some(NeoPrismVdrEntryMetadata(r.entry_hash, r.latest_event_hash, r.status)))
+        case Status.NotFound => ZIO.none
+        case _               => unexpectedStatus(resp, "vdr-data/metadata")
+    yield metadataOpt
 
   private def convertToMetadata(documentMetadata: NeoPrismDocumentMetadata): DIDMetadata = {
     val lastOperationHash = documentMetadata.versionId
@@ -212,9 +266,8 @@ object NeoPrismClientImpl {
     given decoder: JsonDecoder[NeoPrismDocumentMetadata] = DeriveJsonDecoder.gen
   }
 
-  private case class NeoPrismDidDocument(
-      id: String
-  )
+  // Only the `id` field is used for JSON shape compatibility; the document itself is not read.
+  private case class NeoPrismDidDocument(id: String)
 
   private object NeoPrismDidDocument {
     given decoder: JsonDecoder[NeoPrismDidDocument] = DeriveJsonDecoder.gen
@@ -227,9 +280,22 @@ object NeoPrismClientImpl {
     given encoder: JsonEncoder[SignedOperationSubmissionRequest] = DeriveJsonEncoder.gen
   }
 
-  private case class SignedOperationSubmissionResponse(tx_id: String, operation_ids: Seq[String])
+  private case class SignedOperationSubmissionResponse(
+      tx_id: String,
+      operation_ids: Seq[String]
+  )
 
   private object SignedOperationSubmissionResponse {
     given decoder: JsonDecoder[SignedOperationSubmissionResponse] = DeriveJsonDecoder.gen
+  }
+
+  private case class VdrEntryMetadataResponse(
+      entry_hash: String,
+      latest_event_hash: String,
+      status: String
+  )
+
+  private object VdrEntryMetadataResponse {
+    given decoder: JsonDecoder[VdrEntryMetadataResponse] = DeriveJsonDecoder.gen
   }
 }

@@ -22,12 +22,38 @@ Then we will try to deactivate the data and observe the resolution failure.
 ## Prerequisites
 
 1. Cloud Agent up and running
-2. Database driver enabled: Set `VDR_DATABASE_DRIVER_ENABLED=true` environment variable
-3. Agent database configured and accessible
+2. At least one VDR driver enabled (see below)
+
+## Choosing a VDR Driver
+
+The Cloud Agent supports multiple VDR drivers. Each driver stores data differently:
+
+| Driver | Enable with | Backend | Use Case |
+|--------|-------------|---------|----------|
+| **Database** | `VDR_DATABASE_DRIVER_ENABLED=true` | Agent PostgreSQL database | Development and testing |
+| **In-memory** | `VDR_MEMORY_DRIVER_ENABLED=true` | Ephemeral memory | Testing only (data lost on restart) |
+| **NeoPrism** | `VDR_NEOPRISM_DRIVER_ENABLED=true` | NeoPRISM → Cardano blockchain | **Recommended for production** |
+| **PRISM Node** | `VDR_PRISM_NODE_DRIVER_ENABLED=true` | PRISM Node → Cardano blockchain | Legacy production deployments |
+| **PRISM (Blockfrost)** | `VDR_PRISM_DRIVER_ENABLED=true` | Blockfrost → Cardano blockchain | Direct blockchain access |
+
+For blockchain-backed storage (NeoPrism, PRISM Node, or PRISM), VDR entries are anchored to the Cardano blockchain via PRISM DID transaction metadata. The DID used by the Cloud Agent must have an active **VDR key** for signing operations.
+
+```mermaid
+graph LR
+    CA[Cloud Agent] -->|"drid=database"| DB[(PostgreSQL)]
+    CA -->|"drid=memory"| MEM[(In-Memory)]
+    CA -->|"drid=neoprism"| NEO[NeoPRISM]
+    CA -->|"drid=prism-node"| PN[PRISM Node]
+    CA -->|"drf=PRISM"| BF[PRISM Driver]
+    NEO -->|REST API| Chain[(Cardano)]
+    PN -->|gRPC| Chain
+    BF -->|Blockfrost API| Chain
+```
 
 # Overview
 
 In this example, we will store data using a database driver to enable easy setup and testing.
+For blockchain-backed VDR with NeoPrism or PRISM Node, see the [VDR Interface](../../../documentation/develop/cloud-agent/vdr) documentation.
 
 ## Endpoints
 
