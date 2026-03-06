@@ -35,19 +35,6 @@ class VdrServiceImpl(
   private val PrismNodeDriverId = "prism-node"
   private val NeoPrismDriverId = "neoprism"
 
-  extension [R, A](z: ZIO[R, Throwable, A]) {
-    def refineVdrError: ZIO[R, DriverNotFound | VdrEntryNotFound, A] =
-      z.refineOrDie[DriverNotFound | VdrEntryNotFound] {
-        case e: NoDriverWithThisSpecificationsException     => DriverNotFound(e)
-        case e: InMemoryDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        case e: DatabaseDriver.DataCouldNotBeFoundException => VdrEntryNotFound(e)
-        // Errors thrown from prism-vdr-driver are wrapped in ZIO FiberFailure context
-        case FiberFailure(Cause.Die(e: prism.DataAlreadyDeactivatedException, _)) => VdrEntryNotFound(e)
-        case FiberFailure(Cause.Die(e: prism.DataNotInitializedException, _))     => VdrEntryNotFound(e)
-        case FiberFailure(Cause.Die(e: prism.DataCouldNotBeFoundException, _))    => VdrEntryNotFound(e)
-      }
-  }
-
   private def proxyUrl(url: String): Boolean = url.startsWith("vdr://")
   private def wantPrismNode(options: VdrOptions): Boolean =
     options.get("drid").contains(PrismNodeDriverId) || options.get("drf").contains(PrismNodeDriverId)
@@ -58,6 +45,7 @@ class VdrServiceImpl(
   private def isNeoPrismUrl(url: String): Boolean =
     url.contains(s"drid=$NeoPrismDriverId")
 
+  /** Classify errors from the Java proxy driver into typed VDR errors. */
   private def mapProxyError(th: Throwable): DriverNotFound | VdrEntryNotFound = th match
     case e: NoDriverWithThisSpecificationsException                           => DriverNotFound(e)
     case e: InMemoryDriver.DataCouldNotBeFoundException                       => VdrEntryNotFound(e)
@@ -87,6 +75,18 @@ class VdrServiceImpl(
         )
       )
       .orDie
+
+  /** Route a URL-based operation to the correct VDR driver: neoprism > prism-node > proxy. */
+  private def routeByUrl[R, E >: DriverNotFound | VdrEntryNotFound, A](url: VdrUrl)(
+      onDriver: VdrService => ZIO[R, E, A],
+      onProxy: => ZIO[R, DriverNotFound | VdrEntryNotFound, A]
+  ): ZIO[R, E, A] =
+    neoPrismService match
+      case Some(s) if isNeoPrismUrl(url) => onDriver(s)
+      case _                             =>
+        prismNodeService match
+          case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) => onDriver(s)
+          case _                                                => onProxy
 
   override def create(
       data: Array[Byte],
@@ -118,41 +118,23 @@ class VdrServiceImpl(
   ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey | DeactivatedDid, Option[
     VdrOperationResult
   ]] =
-    neoPrismService match
-      case Some(s) if isNeoPrismUrl(url) =>
-        s.update(data, url, options, didKeyId)
-      case _ =>
-        prismNodeService match
-          case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) =>
-            s.update(data, url, options, didKeyId)
-          case _ =>
-            useProxy(p => Option(p.update(data, url, options.asJava))).map(_.map(VdrOperationResult(_, None)))
+    routeByUrl(url)(
+      _.update(data, url, options, didKeyId),
+      useProxy(p => Option(p.update(data, url, options.asJava))).map(_.map(VdrOperationResult(_, None)))
+    )
 
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
-    neoPrismService match
-      case Some(s) if isNeoPrismUrl(url) =>
-        s.read(url)
-      case _ =>
-        prismNodeService match
-          case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) =>
-            s.read(url)
-          case _ =>
-            useProxy(_.read(url))
+    routeByUrl(url)(_.read(url), useProxy(_.read(url)))
 
   override def delete(
       url: VdrUrl,
       options: VdrOptions,
       didKeyId: Option[String]
   ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey | DeactivatedDid, Option[String]] =
-    neoPrismService match
-      case Some(s) if isNeoPrismUrl(url) =>
-        s.delete(url, options, didKeyId)
-      case _ =>
-        prismNodeService match
-          case Some(s) if !proxyUrl(url) || isPrismNodeUrl(url) =>
-            s.delete(url, options, didKeyId)
-          case _ =>
-            useProxy(_.delete(url, options.asJava)).as(None)
+    routeByUrl(url)(
+      _.delete(url, options, didKeyId),
+      useProxy(_.delete(url, options.asJava)).as(None)
+    )
 
   override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
     neoPrismService match
@@ -179,7 +161,6 @@ object VdrServiceImpl {
       enableDatabaseDriver: Boolean,
       prismDriver: Option[PRISMDriverConfig],
       prismNodeDriver: Option[PrismNodeDriverConfig],
-      enableNeoPrismDriver: Boolean = false,
       neoPrismClient: Option[NeoPrismClient] = None
   )
 
@@ -202,10 +183,9 @@ object VdrServiceImpl {
         prismNodeSvc: Option[VdrService] <- config.prismNodeDriver match
           case Some(_) => PrismNodeVdrService.init(stub, signer, urlManager).map(Some(_))
           case None    => ZIO.none
-        neoPrismSvc: Option[VdrService] <- (config.enableNeoPrismDriver, config.neoPrismClient) match
-          case (true, Some(client)) =>
-            NeoPrismVdrService.init(client, signer, urlManager).map(Some(_))
-          case _ => ZIO.none
+        neoPrismSvc: Option[VdrService] <- config.neoPrismClient match
+          case Some(client) => NeoPrismVdrService.init(client, signer, urlManager).map(Some(_))
+          case None         => ZIO.none
         dbDriverDataSource <- ZIO.service[DataSource]
         maybeMemoryDriver = MemoryDriverProvider.load(config.enableInMemoryDriver)
         maybeDatabaseDriver = DatabaseDriverProvider.load(config.enableDatabaseDriver, dbDriverDataSource)

@@ -88,39 +88,47 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
 
   private val baseClient = client.url(config.baseUrl)
 
+  /** Decode JSON body from a response, failing with a descriptive error. */
+  private def decodeJson[A: JsonDecoder](resp: Response, context: String): Task[A] =
+    resp.body.asString.flatMap { body =>
+      ZIO
+        .fromEither(body.fromJson[A])
+        .mapError(e => new RuntimeException(s"Failed to decode $context: $e"))
+    }
+
+  /** Fail with a descriptive error for unexpected HTTP status codes. */
+  private def unexpectedStatus(resp: Response, context: String): Task[Nothing] =
+    resp.body.asString.flatMap { body =>
+      ZIO.fail(new RuntimeException(s"Unexpected status ${resp.status.code} from $context: $body"))
+    }
+
   override def getResolutionMetadata(did: PrismDID): Task[Option[DIDMetadata]] =
     for
       resp <- baseClient.batched
         .addHeader("Accept", "application/did-resolution")
         .get(s"api/dids/$did")
       metadataOpt <- resp.status match
+        case Status.Ok =>
+          decodeJson[NeoPrismResolutionResult](resp, "resolution")
+            .map(result => Some(convertToMetadata(result.didDocumentMetadata)))
         case Status.NotFound => ZIO.none
-        case _               =>
-          resp.body.asString
-            .flatMap { body =>
-              ZIO
-                .fromEither(body.fromJson[NeoPrismResolutionResult])
-                .mapError(e => new RuntimeException(s"Failed to decode JSON: $e"))
-                .map(result => Some(convertToMetadata(result.didDocumentMetadata)))
-            }
+        case _               => unexpectedStatus(resp, "resolution")
     yield metadataOpt
 
   override def getDIDData(did: PrismDID): Task[Option[node_models.DIDData]] =
     for
-      didDataResp <- baseClient.batched
+      resp <- baseClient.batched
         .get(s"api/dids/$did/protobuf")
-      protoDIDDataOpt <- didDataResp.status match
+      result <- resp.status match
         case Status.Ok =>
           for
-            hexStr <- didDataResp.body.asString
+            hexStr <- resp.body.asString
             hexBytes <- ZIO.fromTry(HexString.fromString(hexStr))
             protoData <- ZIO.attempt(node_models.DIDData.parseFrom(hexBytes.toByteArray))
           yield Some(protoData)
-        case Status.NotFound =>
-          ZIO.succeed(None)
-        case status =>
-          ZIO.fail(new RuntimeException(s"Unexpected status code from did-data: ${status.code}"))
-    yield protoDIDDataOpt
+        case Status.NotFound => ZIO.none
+        case _               => unexpectedStatus(resp, "did-data")
+    yield result
 
   override def submitSignedOperation(signedOperation: SignedPrismDIDOperation): Task[String] =
     val hexString = HexString.fromByteArray(signedOperation.toSignedAtalaOperation.toByteArray).toString
@@ -137,13 +145,8 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         case Status.Ok         => ZIO.succeed(true)
         case Status.NotFound   => ZIO.succeed(false)
         case Status.BadRequest =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Invalid operation ID: $body"))
-          }
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code}: $body"))
-          }
+          resp.body.asString.flatMap(body => ZIO.fail(new RuntimeException(s"Invalid operation ID: $body")))
+        case _ => unexpectedStatus(resp, "operations")
     yield found
 
   override def submitVdrOperation(hexEncodedOps: Seq[String]): Task[NeoPrismSubmissionResult] =
@@ -160,35 +163,22 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         )
       result <- resp.status match
         case Status.Ok =>
-          resp.body.asString
-            .flatMap { body =>
-              ZIO
-                .fromEither(body.fromJson[SignedOperationSubmissionResponse])
-                .mapError(e => new RuntimeException(s"Failed to decode JSON response: $e"))
-                .map(r => NeoPrismSubmissionResult(r.tx_id, r.operation_ids))
-            }
+          decodeJson[SignedOperationSubmissionResponse](resp, "submission")
+            .map(r => NeoPrismSubmissionResult(r.tx_id, r.operation_ids))
         case Status.BadRequest =>
-          resp.body.asString.flatMap { body =>
+          resp.body.asString.flatMap(body =>
             ZIO.fail(new RuntimeException(s"Bad request submitting VDR operation: $body"))
-          }
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} submitting VDR operation: $body"))
-          }
+          )
+        case _ => unexpectedStatus(resp, "submission")
     yield result
 
   override def getVdrBlob(entryHash: String): Task[Option[Array[Byte]]] =
     for
       resp <- baseClient.batched.get(s"api/vdr-data/$entryHash")
       dataOpt <- resp.status match
-        case Status.Ok =>
-          resp.body.asArray.map(Some(_))
-        case Status.NotFound =>
-          ZIO.succeed(None)
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} from vdr-data: $body"))
-          }
+        case Status.Ok       => resp.body.asArray.map(Some(_))
+        case Status.NotFound => ZIO.none
+        case _               => unexpectedStatus(resp, "vdr-data")
     yield dataOpt
 
   override def getVdrEntryMetadata(entryHash: String): Task[Option[NeoPrismVdrEntryMetadata]] =
@@ -196,27 +186,10 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
       resp <- baseClient.batched.get(s"api/vdr-data/$entryHash/metadata")
       metadataOpt <- resp.status match
         case Status.Ok =>
-          resp.body.asString
-            .flatMap { body =>
-              ZIO
-                .fromEither(body.fromJson[VdrEntryMetadataResponse])
-                .mapError(e => new RuntimeException(s"Failed to decode VDR entry metadata: $e"))
-                .map(r =>
-                  Some(
-                    NeoPrismVdrEntryMetadata(
-                      entryHash = r.entry_hash,
-                      latestEventHash = r.latest_event_hash,
-                      status = r.status
-                    )
-                  )
-                )
-            }
-        case Status.NotFound =>
-          ZIO.succeed(None)
-        case status =>
-          resp.body.asString.flatMap { body =>
-            ZIO.fail(new RuntimeException(s"Unexpected status code ${status.code} from vdr-data/metadata: $body"))
-          }
+          decodeJson[VdrEntryMetadataResponse](resp, "vdr-data/metadata")
+            .map(r => Some(NeoPrismVdrEntryMetadata(r.entry_hash, r.latest_event_hash, r.status)))
+        case Status.NotFound => ZIO.none
+        case _               => unexpectedStatus(resp, "vdr-data/metadata")
     yield metadataOpt
 
   private def convertToMetadata(documentMetadata: NeoPrismDocumentMetadata): DIDMetadata = {
@@ -293,9 +266,8 @@ object NeoPrismClientImpl {
     given decoder: JsonDecoder[NeoPrismDocumentMetadata] = DeriveJsonDecoder.gen
   }
 
-  private case class NeoPrismDidDocument(
-      id: String
-  )
+  // Only the `id` field is used for JSON shape compatibility; the document itself is not read.
+  private case class NeoPrismDidDocument(id: String)
 
   private object NeoPrismDidDocument {
     given decoder: JsonDecoder[NeoPrismDidDocument] = DeriveJsonDecoder.gen

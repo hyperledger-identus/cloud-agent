@@ -5,7 +5,7 @@ import interfaces.Proof
 import io.iohk.atala.prism.protos.node_models
 import org.hyperledger.identus.agent.vdr.*
 import org.hyperledger.identus.agent.vdr.VdrServiceError.*
-import org.hyperledger.identus.castor.core.service.{NeoPrismClient, NeoPrismSubmissionResult, NeoPrismVdrEntryMetadata}
+import org.hyperledger.identus.castor.core.service.{NeoPrismClient, NeoPrismSubmissionResult}
 import org.hyperledger.identus.shared.crypto.Sha256Hash
 import org.hyperledger.identus.shared.models.{HexString, WalletAccessContext}
 import urlManagers.BaseUrlManager
@@ -25,8 +25,11 @@ class NeoPrismVdrService(
   private def hexString(bytes: Array[Byte]): String = HexString.fromByteArray(bytes).toString
   private def bytesFromHex(hex: String): Task[Array[Byte]] = ZIO.fromTry(HexString.fromString(hex)).map(_.toByteArray)
 
-  private def extractHash(url: String): String =
-    url.split("#").lastOption.getOrElse(url)
+  /** Extract the URL fragment (after #) as the entry hash, or return the full string if no fragment. */
+  private def extractFragment(url: String): String =
+    url.indexOf('#') match
+      case -1 => url
+      case i  => url.substring(i + 1)
 
   private def logRequest(name: String, payload: String): UIO[Unit] =
     ZIO.logInfo(s"[neoprism VDR] $name request: $payload")
@@ -99,7 +102,7 @@ class NeoPrismVdrService(
     VdrOperationResult
   ]] =
     for {
-      entryHash <- ZIO.succeed(extractHash(url))
+      entryHash <- ZIO.succeed(extractFragment(url))
       previousEventHash <- fetchPreviousEventHash(entryHash)
       _ <- logRequest(
         "update",
@@ -112,7 +115,7 @@ class NeoPrismVdrService(
 
   override def read(url: VdrUrl): IO[DriverNotFound | VdrEntryNotFound, Array[Byte]] =
     (for {
-      entryHash <- ZIO.succeed(extractHash(url))
+      entryHash <- ZIO.succeed(extractFragment(url))
       _ <- logRequest("read", s"url=$url, entryHash=$entryHash")
       dataOpt <- client.getVdrBlob(entryHash)
       data <- dataOpt match
@@ -130,7 +133,7 @@ class NeoPrismVdrService(
       didKeyId: Option[String]
   ): ZIO[WalletAccessContext, DriverNotFound | VdrEntryNotFound | MissingVdrKey | DeactivatedDid, Option[String]] =
     for {
-      entryHash <- ZIO.succeed(extractHash(url))
+      entryHash <- ZIO.succeed(extractFragment(url))
       previousEventHash <- fetchPreviousEventHash(entryHash)
       _ <- logRequest(
         "delete",
@@ -141,8 +144,11 @@ class NeoPrismVdrService(
       _ <- logResponse("delete", s"txId=${result.txId}, operationIds=${result.operationIds.mkString(",")}")
     } yield result.operationIds.headOption
 
+  // Verification is not yet implemented for neoprism VDR entries.
+  // Returns an empty proof so callers do not silently assume verification succeeded.
   override def verify(url: VdrUrl, returnData: Boolean): UIO[Proof] =
-    ZIO.succeed(Proof("neoprism", Array.emptyByteArray, Array.emptyByteArray))
+    ZIO.logWarning(s"[neoprism VDR] verify not implemented, returning empty proof for url=$url") *>
+      ZIO.succeed(Proof("neoprism", Array.emptyByteArray, Array.emptyByteArray))
 
   override def getOperationStatus(operationId: String): IO[DriverNotFound, VdrOperationStatus] =
     (for {

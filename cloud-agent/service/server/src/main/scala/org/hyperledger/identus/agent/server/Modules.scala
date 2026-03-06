@@ -192,7 +192,6 @@ object AppModule {
           enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,
           prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled),
           prismNodeDriver = prismNodeDriverOpt.filter(_ => appConfig.agent.vdr.prismNodeDriverEnabled),
-          enableNeoPrismDriver = appConfig.agent.vdr.neoPrismDriverEnabled,
           neoPrismClient = neoPrismClientOpt
         )
       }
