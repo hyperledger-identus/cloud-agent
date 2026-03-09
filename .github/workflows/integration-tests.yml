@@ -96,7 +96,7 @@ jobs:
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
-          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_ledger and not @deactivate"
+          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_ledger"
 
       - name: Make report of integration tests (neoprism)
         working-directory: "tests/integration-tests"
