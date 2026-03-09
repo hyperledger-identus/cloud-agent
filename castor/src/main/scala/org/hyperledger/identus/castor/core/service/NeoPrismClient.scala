@@ -31,7 +31,7 @@ trait NeoPrismClient {
 
   /** Get resolution metadata for a DID.
     * @return
-    *   None if DID not found (404), Some if found, throws on other errors
+    *   None if DID not found (404), Some if found (200) or deactivated (410), throws on other errors
     */
   def getResolutionMetadata(did: PrismDID): Task[Option[DIDMetadata]]
 
@@ -108,7 +108,7 @@ private class NeoPrismClientImpl(client: Client, config: NeoPrismConfig) extends
         .addHeader("Accept", "application/did-resolution")
         .get(s"api/dids/$did")
       metadataOpt <- resp.status match
-        case Status.Ok =>
+        case Status.Ok | Status.Gone =>
           decodeJson[NeoPrismResolutionResult](resp, "resolution")
             .map(result => Some(convertToMetadata(result.didDocumentMetadata)))
         case Status.NotFound => ZIO.none

@@ -96,7 +96,7 @@ jobs:
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
-          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_prism_node"
+          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_ledger"
 
       - name: Make report of integration tests (neoprism)
         working-directory: "tests/integration-tests"
@@ -113,7 +113,7 @@ jobs:
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
-          ./gradlew reports -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_prism_node"
+          ./gradlew reports -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_ledger and not @deactivate"
 
       - name: Extract test results
         working-directory: "tests/integration-tests"
@@ -268,10 +268,14 @@ jobs:
           GITHUB_ACTOR: hyperledger-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TESTS_CONFIG: /configs/basic.conf
+          VDR_LEDGER_DRIVER: prism-node
+          VDR_PRISM_NODE_DRIVER_ENABLED: "true"
+          VDR_MEMORY_DRIVER_ENABLED: "true"
+          VDR_DATABASE_DRIVER_ENABLED: "true"
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
-          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="@vdr_prism_node"
+          ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="@vdr_ledger"
 
       - name: Make report of integration tests (prism-node)
         working-directory: "tests/integration-tests"
@@ -282,10 +286,14 @@ jobs:
           GITHUB_ACTOR: hyperledger-bot
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TESTS_CONFIG: /configs/basic.conf
+          VDR_LEDGER_DRIVER: prism-node
+          VDR_PRISM_NODE_DRIVER_ENABLED: "true"
+          VDR_MEMORY_DRIVER_ENABLED: "true"
+          VDR_DATABASE_DRIVER_ENABLED: "true"
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
-          ./gradlew reports -Dcucumber.filter.tags="@vdr_prism_node"
+          ./gradlew reports -Dcucumber.filter.tags="@vdr_ledger"
 
       - name: Publish e2e test Results (prism-node)
         id: publish-unit-tests-prism
