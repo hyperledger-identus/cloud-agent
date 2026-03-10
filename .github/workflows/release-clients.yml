@@ -5,31 +5,53 @@ run-name: Build and publish Identus Cloud Agent clients from from ${{ github.hea
 on:
   workflow_call:
     inputs:
+      release:
+        description: "Release to build and publish clients"
+        required: true
+        type: boolean
+        default: false
       revision:
-        description: "Revision to build and publish clients (e.g. 1.33.0-a3j4456-1)"
+        description: "Revision to build and publish clients"
         required: true
         type: string
       check_sum:
         description: "Checksum of the OAS specification"
-        required: true
+        required: false
         type: string
+    secrets:
+      HYP_BOT_GPG_PRIVATE:
+        required: true
+      HYP_BOT_GPG_PASSWORD:
+        required: true
+      OSSRH_USERNAME:
+        required: true
+      OSSRH_PASSWORD:
+        required: true
   workflow_dispatch:
     inputs:
-      releaseTag:
-        description: "Tag to release clients (e.g. cloud-agent-v1.33.0)"
-        required: false
-        type: string
+      release:
+        description: 'Is a release publication?'
+        required: true
+        type: boolean
+        default: false
       revision:
-        description: "Revision to build and publish clients (e.g. 1.33.0-a3j4456-1)"
-        required: false
+        description: "Revision to build and publish clients"
+        required: true
         type: string
+      kotlin:
+        description: 'Publish kotlin client'
+        required: false
+        type: boolean
+        default: false
+      ts:
+        description: 'Publish ts client'
+        required: false
+        type: boolean
+        default: false
       check_sum:
         description: "Checksum of the OAS specification"
         required: false
         type: string
-  push:
-    tags:
-      - "v*"
 
 permissions:
   contents: read
@@ -68,11 +90,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
-      - name: Delete existing Open API specification
-        if: ${{ !inputs.releaseTag }}
+      - name: Download release OAS
+        if: ${{ inputs.release }}
+        env:
+          REVISION: ${{ inputs.revision }}
         run: |
-          echo "Current directory: $(pwd)"
-          rm -f ./cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml
+          curl -fSL "https://raw.githubusercontent.com/hyperledger-identus/cloud-agent/refs/tags/v${REVISION}/cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml" \
+            -o ./cloud-agent/service/api/http/cloud-agent-openapi-spec.yaml
 
       - name: Download OpenAPI specification
         if: ${{ !inputs.releaseTag }}
@@ -81,43 +105,23 @@ jobs:
           name: cloud-agent-openapi-spec-${{ inputs.check_sum }}
           path: ./cloud-agent/service/api/http
 
-      - name: Rename OpenAPI specification
-        if: ${{ !inputs.releaseTag }}
-        working-directory: cloud-agent/service/api/http
+      - name: Generator
+        working-directory: cloud-agent/client/generator
         run: |
-          mv cloud-agent-openapi-spec-${{ inputs.revision }}.yaml cloud-agent-openapi-spec.yaml
-
-      - name: Set revision version
-        if: ${{ !inputs.releaseTag }}
-        working-directory: cloud-agent/client/generator
-        run: yarn version --new-version ${{ inputs.revision }} --no-git-tag-version
-
-      - name: Install generator dependencies
-        working-directory: cloud-agent/client/generator
-        run: yarn install
-
-      - name: Generate clients
-        working-directory: cloud-agent/client/generator
-        run: yarn generate:all
-
-      - name: Set version for clients
-        run: |
-          if [ -z "${{ github.event.inputs.releaseTag }}" ]; then
-              echo "VERSION_TAG=cloud-agent-v${{ inputs.revision }}" >> $GITHUB_ENV
-          else
-              echo "VERSION_TAG=${{ github.event.inputs.releaseTag }}" >> $GITHUB_ENV
-          fi
+          yarn install
+          yarn generate:all
 
       # The npm publish step uses Trusted Publisher via OIDC
       - name: Publish clients (npm Trusted Publisher)
         working-directory: cloud-agent/client/generator
         env:
-          VERSION_TAG: ${{ env.VERSION_TAG }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          GPG_PRIVATE: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
-          GPG_PASSWORD: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION_TAG: ${{ inputs.revision }}
+          PUBLISH_KOTLIN: ${{ inputs.kotlin }}
+          PUBLISH_TS: ${{ inputs.ts }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.HYP_BOT_GPG_PRIVATE }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.HYP_BOT_GPG_PASSWORD }}
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.OSSRH_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.OSSRH_PASSWORD }}
         run: |
           echo "Using npm version $(npm -v)"
           npm audit signatures
