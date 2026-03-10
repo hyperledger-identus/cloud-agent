@@ -126,6 +126,13 @@ afterEvaluate {
             systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
             systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")
             systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
+            // Infer ledger driver from config name if not explicitly set
+            val inferredDriver = when {
+                fileName.contains("neoprism") -> "neoprism"
+                fileName.contains("prism_node") || fileName == "basic" -> "prism-node"
+                else -> ""
+            }
+            environment("VDR_LEDGER_DRIVER", System.getenv("VDR_LEDGER_DRIVER") ?: inferredDriver)
             systemProperty("jdk.net.hosts.file", "hosts_test")
             finalizedBy("aggregate", "reports")
             outputs.upToDateWhen { false }
