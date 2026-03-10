@@ -12,10 +12,11 @@ enum class VdrDriver(
     val drid: String,
     val drf: String,
     val version: String,
-    val mutable: Boolean = true
+    val mutable: Boolean = true,
+    val isLedgerBacked: Boolean = false
 ) {
-    PRISM_NODE("prism-node", "prism", "1.0.0"),
-    NEOPRISM("neoprism", "prism", "1.0.0"),
+    PRISM_NODE("prism-node", "prism", "1.0.0", isLedgerBacked = true),
+    NEOPRISM("neoprism", "prism", "1.0.0", isLedgerBacked = true),
     SCALA_DID("scala-did", "prism", "1.0.0"),
     MEMORY("memory", "memory", "0.1.0"),
     DATABASE("database", "database", "0.1.0");
@@ -31,6 +32,16 @@ enum class VdrDriver(
         fun fromName(name: String): VdrDriver =
             entries.firstOrNull { it.drid == name }
                 ?: throw IllegalArgumentException("Unknown VDR driver: $name")
+
+        /** Resolve the ledger VDR driver from the VDR_LEDGER_DRIVER env var. */
+        fun ledgerDriver(): VdrDriver {
+            val name = System.getenv("VDR_LEDGER_DRIVER")
+                ?: throw IllegalStateException(
+                    "VDR_LEDGER_DRIVER env var is not set. " +
+                    "Set it to 'prism-node' or 'neoprism' to select the ledger-backed VDR driver."
+                )
+            return fromName(name)
+        }
     }
 }
 

@@ -258,6 +258,7 @@ final case class VdrConfig(
     prismDriver: Option[PrismDriverVdrConfig],
     prismNodeDriverEnabled: Boolean,
     prismNodeDriver: Option[GrpcServiceConfig],
+    neoPrismDriverEnabled: Boolean = false,
     defaultVdrKeyId: String = "vdr-1",
     maxDidScan: Int = 200
 ) {

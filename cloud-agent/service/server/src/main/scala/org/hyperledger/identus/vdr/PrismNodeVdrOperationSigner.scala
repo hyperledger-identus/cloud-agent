@@ -175,7 +175,7 @@ final class PrismNodeVdrOperationSigner(
             data = node_models.CreateStorageEntryOperation.Data.Bytes(ByteString.copyFrom(data))
           )
         )
-    } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
+    } yield sign(op, parsed._2.value, key)
 
   override def signUpdate(
       previousEventHash: Array[Byte],
@@ -202,7 +202,7 @@ final class PrismNodeVdrOperationSigner(
             data = node_models.UpdateStorageEntryOperation.Data.Bytes(ByteString.copyFrom(data))
           )
         )
-    } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
+    } yield sign(op, parsed._2.value, key)
 
   override def signDeactivate(
       previousEventHash: Array[Byte],
@@ -227,7 +227,7 @@ final class PrismNodeVdrOperationSigner(
             previousEventHash = ByteString.copyFrom(previousEventHash)
           )
         )
-    } yield sign(op, didKeyId.getOrElse(defaultVdrKeyId.value), key)
+    } yield sign(op, parsed._2.value, key)
 }
 
 object PrismNodeVdrOperationSigner {

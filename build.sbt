@@ -46,7 +46,7 @@ inThisBuild(
 )
 
 lazy val V = new {
-  val munit = "1.2.1" // "0.7.29"
+  val munit = "1.2.3" // "0.7.29"
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
@@ -893,7 +893,7 @@ lazy val cloudAgentVdr = project
     name := "cloud-agent-vdr",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrDatabase, vdrMemory, vdrProxy)
+  .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrNeoprism, vdrDatabase, vdrMemory, vdrProxy)
 
 lazy val vdrCore = project
   .in(file("vdr/core"))
@@ -924,6 +924,16 @@ lazy val vdrPrismNode = project
     libraryDependencies ++= D_CloudAgent.vdrDependencies,
   )
   .dependsOn(vdrCore, prismNodeClient, shared % "compile->compile;test->test")
+
+lazy val vdrNeoprism = project
+  .in(file("vdr/neoprism"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-neoprism",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, castorCore, shared % "compile->compile;test->test")
 
 lazy val vdrDatabase = project
   .in(file("vdr/database"))
@@ -959,7 +969,7 @@ lazy val vdrProxy = project
     ),
     Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
   )
-  .dependsOn(vdrCore, vdrPrismNode, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
+  .dependsOn(vdrCore, vdrPrismNode, vdrNeoprism, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -1050,6 +1060,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   vdrBlockfrost,
   vdrMemory,
   vdrPrismNode,
+  vdrNeoprism,
   vdrDatabase,
   vdrProxy,
   cloudAgentVdr,

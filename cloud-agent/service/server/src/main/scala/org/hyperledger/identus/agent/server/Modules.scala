@@ -24,6 +24,7 @@ import org.hyperledger.identus.agent.walletapi.storage.{DIDSecretStorage, Generi
 import org.hyperledger.identus.agent.walletapi.vault.*
 import org.hyperledger.identus.castor.core.service.{
   DIDService,
+  NeoPrismClient,
   NeoPrismClientImpl,
   NeoPrismConfig,
   NeoPrismDIDService,
@@ -154,35 +155,46 @@ object AppModule {
     }
   }
 
-  val vdrServiceLayer: RLayer[AppConfig & ManagedDIDService, VdrService] = {
-    val vdrConfigLayer = ZLayer.fromFunction((appConfig: AppConfig) => {
-      val prismDriverOpt = appConfig.agent.vdr.prismDriver
-        .map { conf =>
-          VdrConfigs.PRISMDriverConfig(
-            blockfrostApiKey = conf.blockfrostApiKey,
-            privateNetwork =
-              conf.privateNetwork.map(pn => VdrConfigs.BlockfrostPrivateNetworkConfig(pn.url, pn.protocolMagic)),
-            walletMnemonic = conf.walletMnemonicSeq,
-            didPrism = conf.didPrism,
-            vdrPrivateKey = conf.vdrPrivateKeyBytes,
-            prismStateDir = conf.stateDir,
-            indexIntervalSecond = conf.indexIntervalSecond
-          )
-        }
-      val prismNodeDriverOpt = appConfig.agent.vdr.prismNodeDriver.map { conf =>
-        VdrServiceImpl.PrismNodeDriverConfig(
-          host = conf.host,
-          port = conf.port,
-          usePlainText = conf.usePlainText
+  val vdrServiceLayer: RLayer[AppConfig & ManagedDIDService & Client, VdrService] = {
+    val neoPrismClientLayer: RLayer[AppConfig & Client, NeoPrismClient] =
+      neoPrismConfigLayer ++ ZLayer.service[Client] >>> NeoPrismClientImpl.layer
+
+    val vdrConfigLayer: RLayer[AppConfig & Client, VdrServiceImpl.Config] =
+      ZLayer.scoped[AppConfig & Client] {
+        for {
+          appConfig <- ZIO.service[AppConfig]
+          prismDriverOpt = appConfig.agent.vdr.prismDriver
+            .map { conf =>
+              VdrConfigs.PRISMDriverConfig(
+                blockfrostApiKey = conf.blockfrostApiKey,
+                privateNetwork =
+                  conf.privateNetwork.map(pn => VdrConfigs.BlockfrostPrivateNetworkConfig(pn.url, pn.protocolMagic)),
+                walletMnemonic = conf.walletMnemonicSeq,
+                didPrism = conf.didPrism,
+                vdrPrivateKey = conf.vdrPrivateKeyBytes,
+                prismStateDir = conf.stateDir,
+                indexIntervalSecond = conf.indexIntervalSecond
+              )
+            }
+          prismNodeDriverOpt = appConfig.agent.vdr.prismNodeDriver.map { conf =>
+            VdrServiceImpl.PrismNodeDriverConfig(
+              host = conf.host,
+              port = conf.port,
+              usePlainText = conf.usePlainText
+            )
+          }
+          neoPrismClientOpt <-
+            if appConfig.agent.vdr.neoPrismDriverEnabled then
+              neoPrismClientLayer.build.map(env => Some(env.get[NeoPrismClient]))
+            else ZIO.none
+        } yield VdrServiceImpl.Config(
+          enableInMemoryDriver = appConfig.agent.vdr.inMemoryDriverEnabled,
+          enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,
+          prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled),
+          prismNodeDriver = prismNodeDriverOpt.filter(_ => appConfig.agent.vdr.prismNodeDriverEnabled),
+          neoPrismClient = neoPrismClientOpt
         )
       }
-      VdrServiceImpl.Config(
-        enableInMemoryDriver = appConfig.agent.vdr.inMemoryDriverEnabled,
-        enableDatabaseDriver = appConfig.agent.vdr.databaseDriverEnabled,
-        prismDriver = prismDriverOpt.filter(_ => appConfig.agent.vdr.prismDriverEnabled),
-        prismNodeDriver = prismNodeDriverOpt.filter(_ => appConfig.agent.vdr.prismNodeDriverEnabled)
-      )
-    })
     val signerLayer: RLayer[AppConfig & ManagedDIDService, VdrOperationSigner] =
       ZLayer.fromFunction((cfg: AppConfig, managed: ManagedDIDService) =>
         new PrismNodeVdrOperationSigner(
@@ -192,7 +204,7 @@ object AppModule {
         )
       )
 
-    ZLayer.makeSome[AppConfig & ManagedDIDService, VdrService](
+    ZLayer.makeSome[AppConfig & ManagedDIDService & Client, VdrService](
       vdrConfigLayer,
       RepoModule.agentDataSourceLayer,
       signerLayer,
@@ -201,7 +213,7 @@ object AppModule {
     )
   }
 
-  val neoPrismConfigLayer: RLayer[AppConfig, NeoPrismConfig] =
+  lazy val neoPrismConfigLayer: RLayer[AppConfig, NeoPrismConfig] =
     ZLayer.fromZIO {
       ZIO.serviceWith[AppConfig](_.didNode.neoprism.baseUrl).flatMap { javaUrl =>
         zio.http.URL.fromURI(javaUrl.toURI()) match {
