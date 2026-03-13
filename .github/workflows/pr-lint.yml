@@ -1,7 +1,9 @@
 name: "Validate PR Title"
 
 on:
-  pull_request_target:
+  # https://github.com/amannn/action-semantic-pull-request
+  # This action will not longer have access to the secrets.GITHUB_TOKEN from forked repos
+  pull_request: # Do not use pull_request_target to prevent supply chain attacks
     types:
       - opened
       - edited
