@@ -334,7 +334,7 @@ object ManagedDIDServiceSpec
       // this template will fail during validation for reserved key id
       val template = generateDIDTemplate(
         publicKeys = Seq(
-          DIDPublicKeyTemplate("master0", VerificationRelationship.Authentication, EllipticCurve.SECP256K1)
+          DIDPublicKeyTemplate("master", VerificationRelationship.Authentication, EllipticCurve.SECP256K1)
         )
       )
       val result = ZIO.serviceWithZIO[ManagedDIDService](_.createAndStoreDID(template))

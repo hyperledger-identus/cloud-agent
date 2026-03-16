@@ -31,9 +31,9 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
     test("make CrateOperation from same seed is deterministic") {
       val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       for {
-        result1 <- operationFactory.makeCreateOperation(KeyId("master0"), seed)(0, didTemplate)
+        result1 <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op1, hdKey1) = result1
-        result2 <- operationFactory.makeCreateOperation(KeyId("master0"), seed)(0, didTemplate)
+        result2 <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op2, hdKey2) = result2
       } yield assert(op1)(equalTo(op2)) &&
         assert(hdKey1)(equalTo(hdKey2))
@@ -41,11 +41,11 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
     test("make CreateOperation must contain 1 master key") {
       val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       for {
-        result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
+        result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, hdKey) = result
         pk = op.publicKeys.head.asInstanceOf[InternalPublicKey]
       } yield assert(op.publicKeys)(hasSize(equalTo(1))) &&
-        assert(pk.id)(equalTo("master-0")) &&
+        assert(pk.id)(equalTo("master")) &&
         assert(pk.purpose)(equalTo(InternalKeyPurpose.Master))
     },
     test("make CreateOperation containing multiple key purposes") {
@@ -59,12 +59,12 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         contexts = Nil
       )
       for {
-        result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
+        result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, keys) = result
       } yield assert(op.publicKeys.length)(equalTo(4)) &&
         assert(keys.hdKeys.size)(equalTo(4)) &&
         assert(keys.randKeys)(isEmpty) &&
-        assert(keys.hdKeys.get("master-0").get.keyIndex)(equalTo(0)) &&
+        assert(keys.hdKeys.get("master").get.keyIndex)(equalTo(0)) &&
         assert(keys.hdKeys.get("auth-0").get.keyIndex)(equalTo(0)) &&
         assert(keys.hdKeys.get("auth-1").get.keyIndex)(equalTo(1)) &&
         assert(keys.hdKeys.get("issue-0").get.keyIndex)(equalTo(0))
@@ -80,7 +80,7 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         contexts = Nil
       )
       for {
-        result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
+        result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, keys) = result
         publicKeyData = op.publicKeys.map {
           case PublicKey(id, _, publicKeyData)         => id -> publicKeyData
@@ -107,7 +107,7 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         ) &&
         assert(keys.hdKeys.size)(equalTo(2)) &&
         assert(keys.randKeys.size)(equalTo(2)) &&
-        assert(keys.hdKeys.get("master-0").get.keyIndex)(equalTo(0)) &&
+        assert(keys.hdKeys.get("master").get.keyIndex)(equalTo(0)) &&
         assert(keys.hdKeys.get("auth-0").get.keyIndex)(equalTo(0)) &&
         assert(keys.randKeys.get("auth-1").get.keyPair)(isSubtype[Ed25519KeyPair](anything)) &&
         assert(keys.randKeys.get("comm-0").get.keyPair)(isSubtype[X25519KeyPair](anything))

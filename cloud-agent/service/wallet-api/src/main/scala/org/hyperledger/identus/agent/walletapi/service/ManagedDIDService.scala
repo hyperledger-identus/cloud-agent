@@ -70,6 +70,6 @@ trait ManagedDIDService {
 }
 
 object ManagedDIDService {
-  val DEFAULT_MASTER_KEY_ID: String = "master0"
+  val DEFAULT_MASTER_KEY_ID: String = "master"
   val reservedKeyIds: Set[String] = Set(DEFAULT_MASTER_KEY_ID)
 }
