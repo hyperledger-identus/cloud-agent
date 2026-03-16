@@ -67,13 +67,13 @@ class OperationFactory(apollo: Apollo) {
           .map(outcome => (keys :+ outcome, outcome.nextCounter))
       }
       (derivedInternalKeys, _) = derivedInternalKeysWithCounter
+      // CreateDIDOperation only contains the master key with CompressedECKeyData.
+      // All other keys (authentication, issuance), services, and context
+      // must be added via subsequent UpdateDIDOperation.
       operation = PrismDIDOperation.Create(
-        publicKeys = hdKeysWithCounter._1.map(_._1) ++
-          randKeys.map(_.publicKey) ++
-          Seq(masterKeyOutcome.publicKey) ++
-          derivedInternalKeys.map(_.publicKey),
-        services = didTemplate.services,
-        context = didTemplate.contexts
+        publicKeys = Seq(masterKeyOutcome.publicKey),
+        services = Seq.empty,
+        context = Seq.empty
       )
       keys = CreateDIDKey(
         hdKeys = hdKeysWithCounter._1.map(i => i.publicKey.id.value -> i.path).toMap ++

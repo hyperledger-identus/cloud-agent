@@ -293,7 +293,7 @@ object ManagedDIDServiceSpec
         assert(key3KeyPair)(isSubtype[Ed25519KeyPair](anything)) &&
         assert(key4KeyPair)(isSubtype[X25519KeyPair](anything))
     },
-    test("created DID have corresponding public keys in CreateOperation") {
+    test("created DID CreateOperation contains only master key regardless of template") {
       val template = generateDIDTemplate(
         publicKeys = Seq(
           DIDPublicKeyTemplate("key1", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
@@ -308,16 +308,15 @@ object ManagedDIDServiceSpec
         createOperation <- ZIO.fromOption(state.collect {
           case ManagedDIDState(operation, _, PublicationState.Created()) => operation
         })
+        // CreateDIDOperation only contains master key; other keys go in subsequent UpdateDIDOperation
         publicKeys = createOperation.publicKeys.collect { case pk: PublicKey => pk }
-      } yield assert(publicKeys.map(i => i.id -> i.purpose))(
-        hasSameElements(
-          Seq(
-            "key1" -> VerificationRelationship.Authentication,
-            "key2" -> VerificationRelationship.KeyAgreement,
-            "key3" -> VerificationRelationship.AssertionMethod
-          )
-        )
-      )
+        internalKeys = createOperation.publicKeys.collect { case pk: InternalPublicKey => pk }
+      } yield assert(publicKeys)(isEmpty) &&
+        assert(internalKeys)(hasSize(equalTo(1))) &&
+        assert(internalKeys.head.id)(equalTo("master")) &&
+        assert(internalKeys.head.purpose)(equalTo(InternalKeyPurpose.Master)) &&
+        assert(createOperation.services)(isEmpty) &&
+        assert(createOperation.context)(isEmpty)
     },
     test("created DID contain at least 1 master key in CreateOperation") {
       for {

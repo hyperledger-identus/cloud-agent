@@ -48,7 +48,7 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         assert(pk.id)(equalTo("master")) &&
         assert(pk.purpose)(equalTo(InternalKeyPurpose.Master))
     },
-    test("make CreateOperation containing multiple key purposes") {
+    test("make CreateOperation containing multiple key purposes has only master key in operation") {
       val didTemplate = ManagedDIDTemplate(
         Seq(
           DIDPublicKeyTemplate("auth-0", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
@@ -61,7 +61,12 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
       for {
         result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, keys) = result
-      } yield assert(op.publicKeys.length)(equalTo(4)) &&
+        pk = op.publicKeys.head.asInstanceOf[InternalPublicKey]
+      } yield // CreateDIDOperation only contains master key
+        assert(op.publicKeys)(hasSize(equalTo(1))) &&
+        assert(pk.id)(equalTo("master")) &&
+        assert(pk.purpose)(equalTo(InternalKeyPurpose.Master)) &&
+        // But all keys are still derived and stored for subsequent UpdateDIDOperation
         assert(keys.hdKeys.size)(equalTo(4)) &&
         assert(keys.randKeys)(isEmpty) &&
         assert(keys.hdKeys.get("master").get.keyIndex)(equalTo(0)) &&
@@ -69,7 +74,7 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         assert(keys.hdKeys.get("auth-1").get.keyIndex)(equalTo(1)) &&
         assert(keys.hdKeys.get("issue-0").get.keyIndex)(equalTo(0))
     },
-    test("make CreateOperation containing multiple key types") {
+    test("make CreateOperation with multiple key types has only master key in operation") {
       val didTemplate = ManagedDIDTemplate(
         Seq(
           DIDPublicKeyTemplate("auth-0", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
@@ -86,25 +91,19 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
           case PublicKey(id, _, publicKeyData)         => id -> publicKeyData
           case InternalPublicKey(id, _, publicKeyData) => id -> publicKeyData
         }.toMap
-      } yield assert(publicKeyData.size)(equalTo(4)) &&
-        assert(publicKeyData.get(KeyId("auth-0")).get)(
+        masterPk = op.publicKeys.head.asInstanceOf[InternalPublicKey]
+      } yield // CreateDIDOperation only contains master key with CompressedECKeyData
+        assert(op.publicKeys)(hasSize(equalTo(1))) &&
+        assert(masterPk.id)(equalTo("master")) &&
+        assert(publicKeyData.get(KeyId("master")).get)(
           isSubtype[PublicKeyData.ECCompressedKeyData](
             hasField[PublicKeyData.ECCompressedKeyData, Int]("data", _.data.toByteArray.length, equalTo(33)) &&
               hasField("crv", _.crv, equalTo(EllipticCurve.SECP256K1))
           )
         ) &&
-        assert(publicKeyData.get(KeyId("auth-1")).get)(
-          isSubtype[PublicKeyData.ECCompressedKeyData](
-            hasField[PublicKeyData.ECCompressedKeyData, Int]("data", _.data.toByteArray.length, equalTo(32)) &&
-              hasField("crv", _.crv, equalTo(EllipticCurve.ED25519))
-          )
-        ) &&
-        assert(publicKeyData.get(KeyId("comm-0")).get)(
-          isSubtype[PublicKeyData.ECCompressedKeyData](
-            hasField[PublicKeyData.ECCompressedKeyData, Int]("data", _.data.toByteArray.length, equalTo(32)) &&
-              hasField("crv", _.crv, equalTo(EllipticCurve.X25519))
-          )
-        ) &&
+        assert(op.services)(isEmpty) &&
+        assert(op.context)(isEmpty) &&
+        // But all keys are still derived and stored for subsequent UpdateDIDOperation
         assert(keys.hdKeys.size)(equalTo(2)) &&
         assert(keys.randKeys.size)(equalTo(2)) &&
         assert(keys.hdKeys.get("master").get.keyIndex)(equalTo(0)) &&
