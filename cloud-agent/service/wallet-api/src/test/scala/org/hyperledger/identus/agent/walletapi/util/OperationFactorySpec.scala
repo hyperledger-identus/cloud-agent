@@ -74,6 +74,29 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         assert(keys.hdKeys.get("auth-1").get.keyIndex)(equalTo(1)) &&
         assert(keys.hdKeys.get("issue-0").get.keyIndex)(equalTo(0))
     },
+    test("spec test vector: raw seed produces expected canonical DID") {
+      // Spec test vector from:
+      // https://github.com/input-output-hk/prism-did-method-spec/blob/main/extensions/deterministic-prism-did-generation-proposal.md#examples--test-vector
+      val specSeed = HexString
+        .fromStringUnsafe(
+          "3b32a5049f2b4e3af31ec5c1ae75fada1ad2eb8be5accf56ada343ad89eeb083208e538b3b97836e3bd7048c131421bf5bea9e3a1d25812a2d831e2bab89e058"
+        )
+        .toByteArray
+      val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
+      for {
+        result <- operationFactory.makeCreateOperation(KeyId("master"), specSeed)(0, didTemplate)
+        (op, _) = result
+        did = op.did
+      } yield {
+        // Verify the compressed public key matches the spec test vector
+        val masterKeyData = op.publicKeys.head.asInstanceOf[InternalPublicKey].publicKeyData
+          .asInstanceOf[PublicKeyData.ECCompressedKeyData]
+        val compressedPubKeyHex = HexString.fromByteArray(masterKeyData.data.toByteArray).toString
+        assert(compressedPubKeyHex)(equalTo("023f7c75c9e5fba08fea1640d6faa3f8dc0151261d2b56026d46ddcbe1fc5a5bbb")) &&
+        // Verify the canonical DID matches the spec test vector exactly
+        assert(did.toString)(equalTo("did:prism:35fbaf7f8a68e927feb89dc897f4edc24ca8d7510261829e4834d931e947e6ca"))
+      }
+    },
     test("make CreateOperation with multiple key types has only master key in operation") {
       val didTemplate = ManagedDIDTemplate(
         Seq(
