@@ -18,6 +18,10 @@ inThisBuild(
 // Fixes a bug with concurrent packages download from GitHub registry
 Global / concurrentRestrictions += Tags.limit(Tags.Network, 1)
 
+// JitPack serves stale .sha1 for java-multibase, causing Coursier checksum mismatch.
+// Set COURSIER_CHECKSUMS=none in CI to disable validation (local builds unaffected).
+lazy val disableCoursierChecksums = sys.env.getOrElse("COURSIER_CHECKSUMS", "") == "none"
+
 coverageDataDir := target.value / "coverage"
 coberturaFile := target.value / "coverage" / "coverage-report" / "cobertura.xml"
 coverageExcludedPackages := "(?i).*proto.*;.*grpc.*;.*scalapb.*;.*protobuf.*;.*generated.*"
@@ -457,6 +461,10 @@ val commonSetttings = Seq(
 lazy val commonConfigure: Project => Project = _.settings(
   Compile / scalacOptions += "-Yimports:java.lang,scala,scala.Predef,org.hyperledger.identus.Predef",
   Test / scalacOptions -= "-Yimports:java.lang,scala,scala.Predef,org.hyperledger.identus.Predef",
+  csrConfiguration := {
+    val conf = csrConfiguration.value
+    if (disableCoursierChecksums) conf.withChecksums(Vector.empty) else conf
+  },
 ).dependsOn(predef)
 
 // #####################

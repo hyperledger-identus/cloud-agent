@@ -23,6 +23,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       JAVA_TOOL_OPTIONS: -Djava.net.preferIPv4Stack=true
       SBT_OPTS: -Xmx2G
+      COURSIER_CHECKSUMS: "none" # JitPack serves stale .sha1 for java-multibase
 
     runs-on: ubuntu-latest
 
