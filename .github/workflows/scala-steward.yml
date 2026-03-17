@@ -12,7 +12,7 @@ jobs:
     name: Launch Scala Steward
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
         with:
           egress-policy: audit
 
@@ -36,7 +36,7 @@ jobs:
           echo "email:       ${{ steps.import_gpg.outputs.email }}"
 
       - name: Launch Scala Steward
-        uses: scala-steward-org/scala-steward-action@df2a4cec1721d0b48be3e1d1f0acdf7543ea0fb4 # v2.84.0
+        uses: scala-steward-org/scala-steward-action@026472ebc0e1f80577b240b249e3dc1494e7041b # v2.86.0
         with:
           github-token: ${{ secrets.HYP_BOT_STEWARD_GITHUB_TOKEN }}
           sign-commits: true
