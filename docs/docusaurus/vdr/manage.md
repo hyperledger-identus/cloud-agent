@@ -53,7 +53,7 @@ graph LR
 # Overview
 
 In this example, we will store data using a database driver to enable easy setup and testing.
-For blockchain-backed VDR with NeoPrism or PRISM Node, see the [VDR Interface](../../../documentation/develop/cloud-agent/vdr) documentation.
+For blockchain-backed VDR with NeoPrism or PRISM Node, see the [VDR Interface](../../../../documentation/develop/cloud-agent/vdr) documentation.
 
 ## Endpoints
 
