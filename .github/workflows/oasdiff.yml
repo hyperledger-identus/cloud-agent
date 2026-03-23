@@ -81,7 +81,7 @@ jobs:
           echo "Revision url: ${{ env.REV_URL }}"
 
       - name: Running OpenAPI Spec diff action
-        uses: oasdiff/oasdiff-action/breaking@aa8903311a8d1ac05b94223b500c160da0ca909a
+        uses: oasdiff/oasdiff-action/breaking@1f38ea5ea0b4a2e4e49901c3bcdf4386a05e9ea1
         with:
           fail-on: "ERR"
           base: ${{ env.BASE_URL }}
