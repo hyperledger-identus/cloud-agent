@@ -46,7 +46,7 @@ jobs:
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@dd1ef7d7798fab5ce802a6adab3b782817b8c2d0 # v1.1.18 pinned
+        uses: sbt/setup-sbt@508b753e53cb6095967669e0911487d2b9bc9f41 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -83,7 +83,7 @@ jobs:
           cache: "sbt"
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@dd1ef7d7798fab5ce802a6adab3b782817b8c2d0 # v1.1.18 pinned
+        uses: sbt/setup-sbt@508b753e53cb6095967669e0911487d2b9bc9f41 # v1.1.18 pinned
 
       - name: Run integration tests (neoprism)
         working-directory: "tests/integration-tests"
@@ -231,7 +231,7 @@ jobs:
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@dd1ef7d7798fab5ce802a6adab3b782817b8c2d0 # v1.1.18 pinned
+        uses: sbt/setup-sbt@508b753e53cb6095967669e0911487d2b9bc9f41 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -267,7 +267,7 @@ jobs:
           cache: "sbt"
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@dd1ef7d7798fab5ce802a6adab3b782817b8c2d0 # v1.1.18 pinned
+        uses: sbt/setup-sbt@508b753e53cb6095967669e0911487d2b9bc9f41 # v1.1.18 pinned
 
       - name: Run integration tests (prism-node)
         working-directory: "tests/integration-tests"
