@@ -24,6 +24,7 @@ env:
   GITHUB_ACTOR: ${{ github.actor }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   DOCKER_API_VERSION: "1.44"
+  COURSIER_CHECKSUMS: "none" # JitPack serves stale .sha1 for java-multibase
 
 jobs:
   run-e2e-tests:
