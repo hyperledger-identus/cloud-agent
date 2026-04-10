@@ -38,6 +38,7 @@ Please check the full [Cloud Agent API](/agent-api) specification for more detai
 4. Send the connection response via the DIDComm Agent (connection achieves `ConnectionResponseSent` state)
 
 The following diagram represents the Inviter's Connection state transitions:
+
 ```mermaid
 ---
 title: Inviter Connection State
@@ -50,7 +51,6 @@ ConnectionResponsePending --> ConnectionResponseSent: send connection response (
 ConnectionResponseSent --> [*]
 ```
 
-
 ## Invitee Flow
 
 1. Receive the OOB invitation (`InvitationReceived` state)
@@ -59,6 +59,7 @@ ConnectionResponseSent --> [*]
 4. Receive the connection response (connection achieves `ConnectionResponseReceived` state)
 
 The following diagram represents the Invitee's Connection state transitions:
+
 ```mermaid
 ---
 title: Invitee Connection State
@@ -92,6 +93,7 @@ curl -X 'POST' \
 ```
 
 Example response:
+
 ```json
 {
   "connectionId": "1893e207-4cba-4792-8179-067c78d2acc2",
@@ -112,6 +114,7 @@ Example response:
 ### **Invitee** accepts OOB invitation
 
 Replace `{RAW_INVITATION}` with the value of the '_oob' query string parameter from the invitation URL above
+
 ```shell
 curl -X 'POST' \
  'http://localhost:8090/cloud-agent/connection-invitations' \
@@ -121,6 +124,7 @@ curl -X 'POST' \
 ```
 
 Example response:
+
 ```json
 {
   "connectionId": "755a457a-878e-4292-a3f2-cb83601f802e",
@@ -148,6 +152,7 @@ curl -X 'GET' 'http://localhost:8090/cloud-agent/connections' \
 ```
 
 Example output:
+
 ```json
 {
   "contents": [
@@ -181,6 +186,7 @@ curl -X 'GET' 'http://localhost:8080/cloud-agent/connections' \
 ```
 
 Example response:
+
 ```json
 {
   "contents": [

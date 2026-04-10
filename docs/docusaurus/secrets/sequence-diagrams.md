@@ -20,6 +20,7 @@ This diagram describes the basic flow for the secret management.
 Goal : the Agent stores the secrets using the `root` token to access the Vault service
 
 Context:
+
 - Tenant uses the access token to access the REST API via APISIX.
 - The Agent uses root Vault token to communicate with the Vault.
 - Tenant represented by any REST API client, Web or Mobile application.
@@ -52,6 +53,7 @@ This diagram describes the flow for the secret management for the single tenant.
 Goal: AppRole authentication method is used to authenticate the Agent to the Vault service.
 
 Context:
+
 - The Agent is authenticated to the Vault using the AppRole authentication method.
 - Tenant uses the access token to access the REST API via APISIX.
 - Tenant represented by any REST API client, Web or Mobile application.
@@ -80,6 +82,7 @@ sequenceDiagram
     APISIX->>+Application: Agent REST API response
     Application->>+ User: react
 ```
+
 ### Phase #3: Single Tenant Flow for Secret Management with Wallet
 
 This diagram describes the flow for the secret management for the single tenant with the Wallet.
@@ -87,11 +90,11 @@ This diagram describes the flow for the secret management for the single tenant 
 Goal: Tenant uses JWT token to authenticate to the Identus Platform.
 
 Context:
+
 - The Agent is authenticated to the Vault using the AppRole authentication method.
 - Tenant uses the access token to access the REST API via APISIX (probably this might be removed, we need to decide what to do with the `api-token`)
 - Tenant represented by any REST API client, Web or Mobile application authenticated to the Identus Platform using JWT token.
 - Tenant uses the Wallet to communicate with the Vault
-
 
 ```mermaid
 sequenceDiagram
