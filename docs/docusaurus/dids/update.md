@@ -94,6 +94,7 @@ Example DID document response (some fields omitted for readability)
     "didResolutionMetadata": {...}
 }
 ```
+
 The `verificationMethod` in the DID document only shows one public key called `key-1`.
 
 ### 2. Add a new key and remove the existing key
@@ -127,9 +128,9 @@ curl --location --request POST 'http://localhost:8080/cloud-agent/did-registrar/
     ]
 }'
 ```
+
 Under the hood, the Cloud Agent constructs the DID update-operation from the last confirmed operation observed on the blockchain.
 The DID Controller should receive a response about the scheduled operation, waiting for confirmation on the blockchain.
-
 
 ```json
 {

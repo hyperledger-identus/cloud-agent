@@ -1,0 +1,10 @@
+name: File Hygiene
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    uses: hyperledger-identus/.github/.github/workflows/lint-files.yml@f2c9e417fa46f69b015a9cdbaafdfb9e52e4ed60 # main

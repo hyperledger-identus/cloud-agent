@@ -63,6 +63,7 @@ Example DID document response (some fields omitted for readability)
     "didResolutionMetadata": {...}
 }
 ```
+
 The DID metadata shows the `deactivation` status as `false`, meaning that this DID is still active.
 
 ### 2. Requesting the DID deactivation to PRSIM Agent

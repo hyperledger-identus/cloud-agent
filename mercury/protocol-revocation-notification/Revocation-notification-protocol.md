@@ -2,8 +2,6 @@
 
 This Protocol for an Issuer to notify the revocation of a credential to the holder.
 
-
-
 ## PIURI
 
 Version 1.0: <https://atalaprism.io/revocation_notification/1.0/revoke>
@@ -14,7 +12,6 @@ Version 1.0: <https://atalaprism.io/revocation_notification/1.0/revoke>
   - Will create the message and send it to the holder via previously established connection
 - Holder
   - Will process the message as they see fit, protocol does not require any actions from the holder
-
 
 ### Revocation notification DIDcomV2 message as JSON
 

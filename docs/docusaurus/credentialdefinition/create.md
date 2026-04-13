@@ -41,7 +41,7 @@ Here's a sample content of the credential definition:
     1. `/credential-definition-registry/definitions` creates a credential definition that can later be resolved via HTTP URL
     2. `/credential-definition-registry/definitions/did-url` creates a credential definition that can later be resolved via [DID URL](/home/concepts/glossary#did-url), the DID includes a service endpoint with the location of the credential definition registry.
 
-Please note: The `author` field value should align with the short form of a PRISM DID previously created by the same agent. It's okay if this DID is unpublished. You can refer to the [Create DID](../dids/create.md) documentation for more comprehensive details on crafting a PRISM DID.
+   Please note: The `author` field value should align with the short form of a PRISM DID previously created by the same agent. It's okay if this DID is unpublished. You can refer to the [Create DID](../dids/create.md) documentation for more comprehensive details on crafting a PRISM DID.
 
 3. Construct the request body using the following JSON object:
 
@@ -118,7 +118,6 @@ curl -X 'GET' \
 ```
 
 or in case of DID URL
-
 
 ```shell
 curl -X 'GET' \

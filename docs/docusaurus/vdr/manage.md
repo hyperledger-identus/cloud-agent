@@ -29,7 +29,7 @@ Then we will try to deactivate the data and observe the resolution failure.
 The Cloud Agent supports multiple VDR drivers. Each driver stores data differently:
 
 | Driver | Enable with | Backend | Use Case |
-|--------|-------------|---------|----------|
+| --- | --- | --- | --- |
 | **Database** | `VDR_DATABASE_DRIVER_ENABLED=true` | Agent PostgreSQL database | Development and testing |
 | **In-memory** | `VDR_MEMORY_DRIVER_ENABLED=true` | Ephemeral memory | Testing only (data lost on restart) |
 | **NeoPrism** | `VDR_NEOPRISM_DRIVER_ENABLED=true` | NeoPRISM → Cardano blockchain | **Recommended for production** |

@@ -17,6 +17,7 @@ The Identus Platform endorses the Anoncred Credential Definition, conforming to 
 A descriptive and readable name indicating the type or category of the credential.
 
 **Example:**
+
 ```json
 {
 "name": "{{CREDENTIAL_NAME}}"
@@ -30,6 +31,7 @@ A descriptive and readable name indicating the type or category of the credentia
 A succinct descriptor providing an overview of the credential definition's purpose or category.
 
 **Example:**
+
 ```json
 {
 "description": "{{CREDENTIAL_DESCRIPTION}}"
@@ -43,6 +45,7 @@ A succinct descriptor providing an overview of the credential definition's purpo
 Specifies the version of the credential definition, using the [SemVer](https://semver.org/) protocol.
 
 **Example:**
+
 ```json
 {
 "version": "{{VERSION_NUMBER}}"
@@ -56,6 +59,7 @@ Specifies the version of the credential definition, using the [SemVer](https://s
 A unique identifier or tag associated with the credential definition.
 
 **Example:**
+
 ```json
 {
 "tag": "{{TAG_IDENTIFIER}}"
@@ -69,6 +73,7 @@ A unique identifier or tag associated with the credential definition.
 The decentralized identifier (DID) of the entity that created the credential definition.
 
 **Example:**
+
 ```json
 {
 "author": "{{ISSUER_DID_SHORT}}"
@@ -82,6 +87,7 @@ The decentralized identifier (DID) of the entity that created the credential def
 A distinct reference to retrieve the schema from the Schema Registry.
 
 **Example:**
+
 ```json
 {
 "schemaId": "{{SCHEMA_REGISTRY_URI}}"
@@ -95,6 +101,7 @@ A distinct reference to retrieve the schema from the Schema Registry.
 Indicates the type of signature applied to the credential definition.
 
 **Example:**
+
 ```json
 {
 "signatureType": "{{SIGNATURE_TYPE}}"
@@ -108,6 +115,7 @@ Indicates the type of signature applied to the credential definition.
 Specifies if the credential definition incorporates revocation capabilities.
 
 **Example:**
+
 ```json
 {
 "supportRevocation": "{{BOOLEAN_VALUE}}"

@@ -39,6 +39,7 @@ The Screenplay pattern is used to write the tests. The pattern is described in d
 ## Project structure
 
 The project structure is represented below:
+
 ```text
 ├── main
 │   └── kotlin
@@ -58,6 +59,7 @@ The project structure is represented below:
 ```
 
 Here are some rules to follow when writing the tests:
+
 1. Do not mix steps from different features in the same step definition class. Always create a separate class for each feature.
 2. Do not duplicate configurations, check if the configuration you need already exists in the `test/resources/configs` directory.
 3. Combine scenarios into features based on the functionality they test.
@@ -84,8 +86,8 @@ The tests interact with the ICA through the API and webhook messages.
 | Verifier | Verifies the credentials presented by the holder.     |
 | Admin    | Performs specific administrative tasks                |
 
-- Each ICA can play multiple roles simultaneously after multitenancy is implemented.
-- ICAs can be created on-the-fly or use existing ones, regardless of their origin (local or cloud).
+* Each ICA can play multiple roles simultaneously after multitenancy is implemented.
+* ICAs can be created on-the-fly or use existing ones, regardless of their origin (local or cloud).
 
 ### ICA Configurations
 
@@ -112,6 +114,7 @@ In this section, we will describe the configuration options and their purpose.
 ### Overview
 
 The configuration files are divided into the following sections:
+
 * `services`: contains the configuration for the services (PRISM Node, Keycloak, Vault) that will be started and can be consumed by `agents` if specified.
 * `agents`: contains the configuration for the agents (ICA) that will be started. By default, all agents will be destroyed after the test run is finished.
 * `roles`: contains the configuration for the roles (Issuer, Holder, Verifier, Admin). A role can be assigned to one or more agents that we set in `agents` section or already running locally or in the cloud.
@@ -123,6 +126,7 @@ You could explore the `configs` directory for more complex examples.
 ### Configuring services
 
 There are three services that can be configured:
+
 * `prism_node`: PRISM Node as VDR
 * `keycloak`: Keycloak for authentication
 * `vault`: Vault for secret storage management
@@ -133,6 +137,7 @@ There are three services that can be configured:
 #### Configuring PRISM Node
 
 To configure PRISM Node, you need to specify the following options:
+
 * `http_port`: [MANDATORY] the port to expose for the HTTP API.
 * `version`: [MANDATORY] the version of the PRISM Node docker image to use.
 * `keep_running`: [OPTIONAL] whether to keep the service running after the test run is finished.
@@ -140,6 +145,7 @@ To configure PRISM Node, you need to specify the following options:
 #### Configuring Keycloak
 
 To configure Keycloak, you need to specify the following options:
+
 * `http_port`: [MANDATORY] the port to expose for the HTTP API.
 * `realm`: [OPTIONAL] the name of the realm to use. Default: `atala-demo`
 * `client_id`: [OPTIONAL] the client ID to use. Default: `prism-agent`
@@ -149,10 +155,12 @@ To configure Keycloak, you need to specify the following options:
 #### Configuring Vault
 
 To configure Vault, you need to specify the following options:
+
 * `http_port`: [MANDATORY] the port to expose for the HTTP API.
 * `keep_running`: [OPTIONAL] whether to keep the service running after the test run is finished.
 
 Here is a complete example of the `services` section, including minimal configuration for all services:
+
 ```yaml
 # Specify shared services that are used by all agents (if any)
 services = {
@@ -180,6 +188,7 @@ There is a special `agents` section in the configuration file to specify the age
 `TestContainers` are in use for this purpose.
 
 To configure the agent, you need to specify the following options:
+
 * `version`: the version of the ICA docker image to use.
 * `http_port`: the port to expose for the HTTP API.
 * `didcomm_port`: the port to expose for the DIDComm API.
@@ -194,6 +203,7 @@ To configure the agent, you need to specify the following options:
 **CAUTION: when defining the `agents` section, please, make sure you're using free ports for each agent and they don't overlap.**
 
 Here is an example of the `agents` section that configures two agents, one with PRISM Node service, and another with PRISM Node, Keycloak, and Vault services:
+
 ```yaml
 # Specify agents that are required to be created before running tests
 agents = [
@@ -224,6 +234,7 @@ agents = [
 ### Configuring roles
 
 To configure the roles, you need to specify the following options:
+
 * `name`: [MANDATORY] the name of the role. Possible values: `Issuer`, `Holder`, `Verifier`, `Admin`. You MUST configure these roles to execute the tests. Although, if you run only connection or credential issuance scenarios, you can specify only `Issuer` and `Holder`.
 * `webhook`: [MANDATORY] the webhook object to use for this role. If not specified, the default webhook URL will be used.
 * `url`: [MANDATORY] the REST API URL of the agent to use for this role.
@@ -233,11 +244,13 @@ To configure the roles, you need to specify the following options:
 * `agent_role`: [OPTIONAL] the role that is assigned to the user and appears in the JWT. Possible values: `Admin` and `Tenant`.
 
 `webhook` is a special object that contains the following options:
+
 * `url`: [MANDATORY] the webhook URL to use for this role.
 * `local_port`: [OPTIONAL] the local port to use for the webhook. If not specified, the port from `url` will be taken. It is useful when you test remote agents and your local listener is different from the remote URL you specify, e.g. when using `ngrok` to open the port to the world.
 * `init_required`: [OPTIONAL] whether the webhook should be initialized before the test run. If not specified, the default value is `true`.
 
 Here is an example of the `roles` section for basic multi-tenancy configuration:
+
 ```yaml
 roles = [
     {
@@ -277,6 +290,7 @@ roles = [
 ```
 
 Important notes:
+
 1. For `Admin` role, we have to specify `auth_header = "x-admin-api-key"` to give this actor admin permissions to work with the agents.
 2. When specifying `apikey`, make sure you're using unique values for each role. You can use `random.string(16)` to generate a random string.
 3. When specifying `webhook`, make sure you're using unique values for each role and ports are not overlapping.
@@ -284,17 +298,20 @@ Important notes:
 #### Configuring roles for remote agents
 
 To work with remote agents, you need to specify the following options:
+
 1. Remote `url` of the agent.
 2. Remote `apikey` of the agent (if configured)
 3. Webhook configuration with the remote `url` (to be registered on the agent side) and `local_port` that will be opened locally. You have to use `ngrok` or similar tool to open the local port to the world and get the remote URL.
 
 When we would like to test local agent VS remote agents, we need to open the local ports to the world.
 We need to open 3 things:
+
 1. REST service URL should be available to fetch credential definitions and credential schemas
 2. DIDComm service URL should be available to send and receive DIDComm messages
 3. Webhook URL should be available to receive webhook messages
 
 Here is an example ngrok configuration to open 3 ports:
+
 ```yaml
 version: "2"
 authtoken: ...
@@ -312,11 +329,13 @@ tunnels:
 ```
 
 Then, run `ngrok` as follows:
+
 ```shell
 ngrok start --all
 ```
 
 And you should see something like this:
+
 ```text
 Session Status                online                                                                                                                            
 Account                       antonbaliasnikov@gmail.com (Plan: Free)                                                                                           
@@ -331,6 +350,7 @@ Forwarding                    https://90e7-2001-818-dce2-c000-9c53-d0a3-15f2-ca5
 ```
 
 After that, you could configure your local agent as follows to provide the required URLs:
+
 ```yaml
     {
         version = "${AGENT_VERSION}"
@@ -347,6 +367,7 @@ After that, you could configure your local agent as follows to provide the requi
 
 Next, you are able to configure your roles to use remote agents.
 Here is an example of the agent configuration for SIT environment:
+
 ```yaml
     {
         name = "Holder"
@@ -362,6 +383,7 @@ Here is an example of the agent configuration for SIT environment:
 
 There is also an option to use JWT token instead of API key for authentication if the remote agent is configured to use Keycloak authentication.
 Here is an example of the agent configuration for sandbox environment:
+
 ```yaml
     {
         name = "Issuer"
@@ -392,6 +414,7 @@ Here is an example of the agent configuration for sandbox environment:
 ### Running the tests locally
 
 The following variables must be set before running the tests:
+
 * `TESTS_CONFIG`: path to the configuration file to use, relative to `resources` directory. Default to `/configs/basic.conf`.
 * `PRISM_NODE_VERSION`: version of the PRISM Node docker image to use.
 * `AGENT_VERSION`: version of the ICA docker image to use.
@@ -403,6 +426,7 @@ TESTS_CONFIG=/configs/basic.conf PRISM_NODE_VERSION=2.5.0 AGENT_VERSION=1.36.1 .
 > Please note: there is no need to pass environment variables if you're using already running agents.
 
 Additional `-Dcucumber.filter.tags` option can be used to specify the tags to include or exclude scenarios:
+
 ```shell
 TESTS_CONFIG=/configs/mt_keycloak.conf ./gradlew test -Dcucumber.filter.tags="@connection and @credentials"
 ```
@@ -431,6 +455,7 @@ To enable a full report of the regression execution, `context` variable was intr
 To run all scenarios, even if there's a failure, it's required to add `--continue` to the execution
 
 Example
+
 ```bash
 AGENT_VERSION=v1.36.1 PRISM_NODE_VERSION=v2.5.0 ./gradlew regression --continue
 ```
@@ -463,6 +488,7 @@ The required configuration will be created, but you have to edit it to set the e
 You could edit `@CucumberOptions` annotation to specify the features to run, as well as specify tags to include or exclude:
 
 For example, here is how you can run only connection scenarios:
+
 ```kotlin
 @CucumberOptions(
     features = ["src/test/resources/features/connection"],
@@ -473,6 +499,7 @@ class IntegrationTestsRunner
 
 If you would like to run only particular scenarios from the feature or combine multiple scenarios from different feature file,
 you could use tags:
+
 ```kotlin
 @CucumberOptions(
     features = ["src/test/resources/features"],
@@ -488,6 +515,7 @@ class IntegrationTestsRunner
 ### Running individual scenarios through IntelliJ IDEA
 
 There is also an option to install IntelliJ Plugins:
+
 * Cucumber for Kotlin
 * Cucumber+
 
@@ -546,6 +574,7 @@ To do so, execute the following command from the top-level directory:
 ```
 
 After the command is finished, you will see the following output:
+
 ```text
 > Task :reports
 Generating Additional Serenity Reports to directory ./integration-tests/target/site/serenity
@@ -569,6 +598,7 @@ If you're running the test using the custom config goals  it will have the conte
 to the path as `target/logs/basic`.
 
 Example
+
 ```bash
 AGENT_VERSION=v1.36.1 PRISM_NODE_VERSION=v2.3.0 ./gradlew test_basic
 ```
