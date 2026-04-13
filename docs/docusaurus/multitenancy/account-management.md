@@ -20,6 +20,7 @@ The account is identified by the tenant ID and represented by the Entity in the 
 ### Account Types
 
 The Identus Platform supports the following types of accounts:
+
 - Cloud Agent Account - application account used by the Cloud Agent to authenticate itself to the Vault service
 - Wallet Account - application or user account used to access the Wallet assets over the REST API or WEB UI
 
@@ -39,8 +40,9 @@ The Cloud Agent uses [AppRole](https://www.vaultproject.io/docs/auth/approle) au
 
 The Wallet account is required to authenticate the entity to the Identus Platform and give it the access to Wallet.
 The Wallet account can be authenticated by the following methods:
+
 - JWT/OIDC token
-- user/password 
+- user/password
 - AppRole method (for the applications)
 - other methods supported by the Vault service
 
@@ -57,6 +59,7 @@ In the case when the account must be deleted, the entity must be deleted from th
 Retention policy is a matter of the configuration and must be discussed separately.
 
 ## Links
+
 - [Vault AppRole](https://www.vaultproject.io/docs/auth/approle)
 - [Vault Entities and Groups](https://developer.hashicorp.com/vault/tutorials/auth-methods/identity)
 - [Vault JWT/OIDC](https://developer.hashicorp.com/vault/api-docs/auth/jwt)

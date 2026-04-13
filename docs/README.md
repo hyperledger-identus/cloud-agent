@@ -5,6 +5,7 @@ This is the landing page for the Cloud Agent technical documentation set.
 ## OpenAPI Specifications
 
 ### Source files
+
 - The OpenAPI specification for a **service** building block is written in YAML format.
 - Each building block is responsible for making its YAML spec available to other parties via HTTP GET on one of its service endpoints.
 
@@ -22,9 +23,5 @@ The following [docker-compose.yml](./docker-compose.yml) file can be used to run
 ```bash
 docker-compose -f docs/docker-compose.yml up
 ```
+
 - OpenAPI specifications doc is available *localhost:8081*
-
-
-
-
-

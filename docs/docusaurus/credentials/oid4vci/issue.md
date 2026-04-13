@@ -42,6 +42,7 @@ docker build -t identus-oid4vci-demo:latest ./demo
 ```bash
 docker run --network <NETWORK_NAME> -it identus-oid4vci-demo:latest
 ```
+
 The parameter `NETWORK_NAME` should be the same as the network name in docker-compose.
 This name can be discovered by running the `docker network ls` command.
 

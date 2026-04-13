@@ -461,4 +461,3 @@ none specified | []() | org.hyperledger # shared-crypto # 2.1.0 | <notextile></n
 none specified | []() | org.hyperledger # shared-json # 2.1.0 | <notextile></notextile>
 none specified | []() | org.hyperledger # shared-test # 2.1.0 | <notextile></notextile>
 none specified | []() | [org.webjars # swagger-ui # 5.17.14](https://www.webjars.org) | <notextile></notextile>
-
