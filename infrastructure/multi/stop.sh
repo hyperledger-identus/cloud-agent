@@ -60,7 +60,7 @@ then
 fi
 
 # set a default port as required to ensure docker-compose is valid if not set in env
-PORT="80"
+export PORT="80"
 
 echo "NAME            = ${NAME}"
 

@@ -49,6 +49,7 @@ curl --location --request GET 'http://localhost:8080/cloud-agent/did-registrar/d
   --header "apikey: $API_KEY" \
   --header 'Accept: application/json'
 ```
+
 The result should show an empty list, as no DIDs exist on this Cloud Agent instance.
 
 ### 2. Create the Cloud Agent managed DID using DID registrar endpoint
