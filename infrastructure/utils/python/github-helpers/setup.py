@@ -14,9 +14,9 @@ setup(
     },
     install_requires=[
         "Click==8.1.3",
-        "requests==2.32.4",
+        "requests==2.33.0",
         "pylint==2.10.2",
-        "pytest==6.2.4",
+        "pytest==9.0.3",
         "pytest-cov==2.12.1",
     ],
 )
