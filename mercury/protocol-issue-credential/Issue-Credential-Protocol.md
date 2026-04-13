@@ -9,14 +9,14 @@ A standard protocol for issuing credentials. This is the basis of interoperabili
 - See [https://identity.foundation/didcomm-messaging/spec]
 - See [https://github.com/hyperledger/aries-rfcs/tree/main/features/0453-issue-credential-v2]
 
-Others: 
+Others:
+
 - See [https://didcomm.org/issue-credential/3.0]
 - See [https://github.com/decentralized-identity/waci-didcomm/tree/main/issue_credential]
 
 ## PIURI
 
 Version 1.0: `https://didcomm.org/issue-credential/1.0/propose-credential`
-
 
 ### Roles
 

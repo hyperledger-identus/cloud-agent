@@ -495,6 +495,7 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
    as `did:prism:subjectIdentifier`.
 3. `keyId` Option parameter
     1. when keyId is not provided the SDJWT VC is not binded to Holder/Prover key
+
    ```shell
    # Holder POST request to accept the credential offer
    curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holder_record_id/accept-offer" \
@@ -505,6 +506,7 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
              "subjectId": "did:prism:subjectIdentifier"
         }'
    ```
+
    A SD-JWT Verifiable Credential (VC) without a `cnf` key could possibly look like below
 
    ```json
@@ -526,7 +528,8 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
      "_sd_alg": "sha-256"
    }
    ```
-    2. `keyId`: This is optional field but must be specified to choose which key bounds to the verifiable credential.
+
+    1. `keyId`: This is optional field but must be specified to choose which key bounds to the verifiable credential.
        For more information on
        key-binding, [ietf-oauth-selective-disclosure-jwt](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt).
        Currently, we only support the EdDSA algorithm and curve Ed25519.
@@ -544,7 +547,9 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
              "keyId": "key-1"    
         }'
    ```
+
    A SD-JWT Verifiable Credential (VC) that includes a `cnf` key could possibly look like below
+
    ```json
     {
      "_sd": [

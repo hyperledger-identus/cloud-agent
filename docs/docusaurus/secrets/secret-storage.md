@@ -6,11 +6,11 @@
 
 **NOTE**: this document is a draft and is not implemented yet. Statement in this document might be changed in the future.
 
-
 ## Introduction
 
 Secrets are sensitive data that should be stored securely.
 There are following types of the secrets in the Identus Platform:
+
 - seed: a secret used to derive cryptographic keys
 - private key: a secret used to sign data
 - any other entities that contain sensitive data (for instance, `credential-definition` and the `link-secret` used by the AnonCreds)
@@ -25,24 +25,29 @@ Hashicorp Vault is used as a secret storage service and provides a REST API, Web
 ## Terminology
 
 ### Vault
+
 Vault is a secrets management service developed by HashiCorp.
 It can be used as the default secret storage for the Identus Platform as well as for authentication and account management.
 
 **NOTE**: The Identus Platform must not be dependent on the Vault service and must be able to use other services for the same purposes
 
 ### Agent
+
 The Cloud Agent is a service that provides an APIs to interact with the Identus Platform and use the SSI capabilities.
 
 ### Wallet
+
 Logical component of the Agent that holds secrets and provides the logical or physical isolation of the data.
 
 ## Technical Overview
 
 ### The Cloud Agent Logical Isolation
+
 Each instance of the Cloud Agent needs to have access to the secrets but must be isolated from other agents at the same environment.
 For horizontal scalability the group of agents can be configured to share the same namespace, so they can access the same secrets, but they still need to use different Vault account to authenticate themselves to the Vault service.
 
 ### The Cloud Agent Authentication
+
 Each instance of the Cloud Agent needs to authenticate itself to the Vault service.
 The Vault service uses a token-based authentication mechanism.
 The Cloud Agent uses a Vault [AppRole](https://developer.hashicorp.com/vault/docs/auth/approle) authentication method to authenticate itself to the Vault service.
@@ -50,12 +55,15 @@ The token issued to the agent has the expiration time set in the application con
 After the token expires, the agent needs to re-authenticate itself to the Vault service.
 
 ### Wallet Authentication
+
 Each instance of the Wallet needs to authenticate itself to the Vault service.
 The Cloud Agent issues the authentication token to the Wallet based on the tenant ID.
 
 ### Secrets Engine Configuration
+
 The Vault service uses a secrets engine to store secrets.
 KV2 secrets engine is used to store secrets in the Vault service and provides the following features:
+
 - secrets are encrypted at rest
 - secrets are encrypted in transit
 - secrets are versioned
@@ -64,6 +72,7 @@ KV2 secrets engine is used to store secrets in the Vault service and provides th
 - secrets are logically separated by tenants
 
 ### Single and Multi-Tenant Configuration
+
 The Identus Platform supports single and multi-tenant configurations.
 In the single-tenant configuration, the Cloud Agent uses a single Wallet and a single Vault account to authenticate itself to the Vault service.
 In the multi-tenant configuration, the Cloud Agent manages multiple Wallets, each Wallet is associated with a single tenant.
@@ -88,6 +97,7 @@ sequenceDiagram
 The Identus Platform uses HD key derivation to derive cryptographic keys from the seed.
 The Wallet is initialized with the seed and uses it to derive cryptographic keys for managed DIDs.
 Key derivation path is conventional and is defined as follows:
+
 ```
 m / wallet-purpose / DID-index / key-purpose / key-index
 ```
@@ -112,6 +122,7 @@ The private keys for the DID can be stored by the following path:
 ```
 
 where:
+
 - `tenant-id` is the tenant ID assigned to the Wallet
 - `did-ref` is the DID ref
 - `key-purpose` is the key purpose according to the PRISM DID Method specification
@@ -127,6 +138,7 @@ The keys material of the DID peer can be stored by the following path:
 ```
 
 Links:
+
 - [PRISM DID Method Specification](https://github.com/input-output-hk/prism-did-method-spec)
 - [Vault Secrets Engine API](https://www.vaultproject.io/api/secret/kv/kv-v2)
 - [Vault Namespaces](https://www.vaultproject.io/docs/concepts/namespaces)

@@ -98,12 +98,13 @@ The next diagrams offer a concise architectural overview, depicting a Cloud Agen
 ![Identus Cloud Agent Architecture](docs/images/identus-cloud-agent-architecture-light.png#gh-light-mode-only)
 
 ### Running the Cloud Agent locally on MacOS or Linux
+
 #### Prerequisites
 
-- Java (OpenJDK 21)
-- SBT (latest version)
-- Git (for cloning the repository)
-- Docker (for running the PostgreSQL database, Hashicorp Vault, APISIX, and  PRISM Node)
+* Java (OpenJDK 21)
+* SBT (latest version)
+* Git (for cloning the repository)
+* Docker (for running the PostgreSQL database, Hashicorp Vault, APISIX, and  PRISM Node)
 
 #### Compile, Test, create the docker image of the Cloud Agent
 
@@ -147,10 +148,12 @@ System requirements can vary depending on the use case. The following are the mi
 To run Identus locally you should follow the instructions in the [Quickstart guide](https://hyperledger-identus.github.io/docs/home/quick-start)
 
 If the Cloud Agent is started successfully, all the running containers should achieve `Healthy` state, and Cloud Agent Rest API should be available at the specified port, for example:
+
 * `http://localhost:8080/cloud-agent` for the `issuer` instance
 * `http://localhost:8090/cloud-agent` for the `holder` instance
 
 You can check the status of the running containers using the [health endpoint](https://hyperledger.github.io/identus-docs/agent-api/#tag/System/operation/systemHealth):
+
 ```bash
 $ curl http://localhost:8080/cloud-agent/_system/health
 {"version":"1.19.1"}
@@ -160,8 +163,9 @@ $ curl http://localhost:8080/cloud-agent/_system/health
 
 The Identus Platform is a set of services that work together to provide a complete SSI solution.
 The following services are included in the Identus Platform:
-- Cloud Agent
-- Mediator
+
+* Cloud Agent
+* Mediator
 
 The docker compose file and documentation for running the full stack with the simplest configuration (single tenant without authentication) is available [here](https://github.com/hyperledger/identus/blob/main/identus-docker/dockerize-identus.md)
 
