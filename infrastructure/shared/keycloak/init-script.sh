@@ -10,7 +10,8 @@ REALM_NAME=$REALM_NAME
 PRISM_AGENT_CLIENT_SECRET=$PRISM_AGENT_CLIENT_SECRET
 
 function get_admin_token() {
-	local response=$(
+	local response
+	response=$(
 		curl --request POST "$KEYCLOAK_BASE_URL/realms/master/protocol/openid-connect/token" \
 			--fail -s \
 			-d "grant_type=password" \
@@ -18,7 +19,8 @@ function get_admin_token() {
 			-d "username=$KEYCLOAK_ADMIN_USER" \
 			-d "password=$KEYCLOAK_ADMIN_PASSWORD"
 	)
-	local access_token=$(echo $response | jq -r '.access_token')
+	local access_token
+	access_token=$(echo "$response" | jq -r '.access_token')
 	echo $access_token
 }
 

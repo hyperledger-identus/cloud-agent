@@ -2,13 +2,13 @@
 
 This folder contains scripts and a docker-compose file to run the Atala `building-block` stack for development purposes.
 
-All components are built at the current repository version and published locally. 
+All components are built at the current repository version and published locally.
 
-> If you want to run a local instance without compilation - for end-user use - please see the `infrastructure/local` folder. 
+> If you want to run a local instance without compilation - for end-user use - please see the `infrastructure/local` folder.
 
 **Running using the scripts in this directory does not create a production-ready or secure environment. It is designed to allow easy development and should not be used to run a production instance**
 
-Please ensure you have set the `GITHUB_TOKEN` environment variable. 
+Please ensure you have set the `GITHUB_TOKEN` environment variable.
 
 The value of this variable must be a Github token generated with the  `read:packages` permission set on the `building-block` repository.
 
@@ -44,7 +44,7 @@ Example - Run an instance named `inviter` on port 8080 and an instance named `in
 
 > These examples show running in `background mode` using the `-b` flag. This means that docker-compose is passed the `daemon -d` flag.
 > If you wish to run them in the foreground to view logs - please make sure each line is executed in a different terminal and the `-b` flag is removed.
-> After running in either mode (foreground or background) - you can remove the local state of volumes by using the `stop.sh` script with the `-d` argument. 
+> After running in either mode (foreground or background) - you can remove the local state of volumes by using the `stop.sh` script with the `-d` argument.
 
 Starting the instances:
 

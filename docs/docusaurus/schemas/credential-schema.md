@@ -69,8 +69,6 @@ Resource identifier of the given credential schema composed from the author's DI
 
 **For example:** `did:example:MDP8AsFhHzhwUvGNuYkX7T/06e126d1-fa44-4882-a243-1e326fbe21db?version=1.0`
 
-
-
 ---
 
 ### type (String)
