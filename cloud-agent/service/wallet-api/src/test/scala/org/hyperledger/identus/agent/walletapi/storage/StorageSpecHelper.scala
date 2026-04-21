@@ -44,7 +44,7 @@ trait StorageSpecHelper extends ApolloSpecHelper {
   protected def generateKeyPair() = apollo.secp256k1.generateKeyPair
 
   protected def generateCreateOperation(keyIds: Seq[String], didIndex: Int) =
-    OperationFactory(apollo).makeCreateOperation(KeyId("master0"), Array.fill(64)(0))(
+    OperationFactory(apollo).makeCreateOperation(KeyId("master"), Array.fill(64)(0))(
       didIndex,
       ManagedDIDTemplate(
         publicKeys =

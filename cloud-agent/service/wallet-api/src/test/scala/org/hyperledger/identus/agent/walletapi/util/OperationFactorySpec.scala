@@ -31,9 +31,9 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
     test("make CrateOperation from same seed is deterministic") {
       val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       for {
-        result1 <- operationFactory.makeCreateOperation(KeyId("master0"), seed)(0, didTemplate)
+        result1 <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op1, hdKey1) = result1
-        result2 <- operationFactory.makeCreateOperation(KeyId("master0"), seed)(0, didTemplate)
+        result2 <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op2, hdKey2) = result2
       } yield assert(op1)(equalTo(op2)) &&
         assert(hdKey1)(equalTo(hdKey2))
@@ -41,14 +41,14 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
     test("make CreateOperation must contain 1 master key") {
       val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       for {
-        result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
+        result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, hdKey) = result
         pk = op.publicKeys.head.asInstanceOf[InternalPublicKey]
       } yield assert(op.publicKeys)(hasSize(equalTo(1))) &&
-        assert(pk.id)(equalTo("master-0")) &&
+        assert(pk.id)(equalTo("master")) &&
         assert(pk.purpose)(equalTo(InternalKeyPurpose.Master))
     },
-    test("make CreateOperation containing multiple key purposes") {
+    test("make CreateOperation containing multiple key purposes has only master key in operation") {
       val didTemplate = ManagedDIDTemplate(
         Seq(
           DIDPublicKeyTemplate("auth-0", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
@@ -59,17 +59,45 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         contexts = Nil
       )
       for {
-        result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
+        result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, keys) = result
-      } yield assert(op.publicKeys.length)(equalTo(4)) &&
+        pk = op.publicKeys.head.asInstanceOf[InternalPublicKey]
+      } yield // CreateDIDOperation only contains master key
+        assert(op.publicKeys)(hasSize(equalTo(1))) &&
+        assert(pk.id)(equalTo("master")) &&
+        assert(pk.purpose)(equalTo(InternalKeyPurpose.Master)) &&
+        // But all keys are still derived and stored for subsequent UpdateDIDOperation
         assert(keys.hdKeys.size)(equalTo(4)) &&
         assert(keys.randKeys)(isEmpty) &&
-        assert(keys.hdKeys.get("master-0").get.keyIndex)(equalTo(0)) &&
+        assert(keys.hdKeys.get("master").get.keyIndex)(equalTo(0)) &&
         assert(keys.hdKeys.get("auth-0").get.keyIndex)(equalTo(0)) &&
         assert(keys.hdKeys.get("auth-1").get.keyIndex)(equalTo(1)) &&
         assert(keys.hdKeys.get("issue-0").get.keyIndex)(equalTo(0))
     },
-    test("make CreateOperation containing multiple key types") {
+    test("spec test vector: raw seed produces expected canonical DID") {
+      // Spec test vector from:
+      // https://github.com/input-output-hk/prism-did-method-spec/blob/main/extensions/deterministic-prism-did-generation-proposal.md#examples--test-vector
+      val specSeed = HexString
+        .fromStringUnsafe(
+          "3b32a5049f2b4e3af31ec5c1ae75fada1ad2eb8be5accf56ada343ad89eeb083208e538b3b97836e3bd7048c131421bf5bea9e3a1d25812a2d831e2bab89e058"
+        )
+        .toByteArray
+      val didTemplate = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
+      for {
+        result <- operationFactory.makeCreateOperation(KeyId("master"), specSeed)(0, didTemplate)
+        (op, _) = result
+        did = op.did
+      } yield {
+        // Verify the compressed public key matches the spec test vector
+        val masterKeyData = op.publicKeys.head.asInstanceOf[InternalPublicKey].publicKeyData
+          .asInstanceOf[PublicKeyData.ECCompressedKeyData]
+        val compressedPubKeyHex = HexString.fromByteArray(masterKeyData.data.toByteArray).toString
+        assert(compressedPubKeyHex)(equalTo("023f7c75c9e5fba08fea1640d6faa3f8dc0151261d2b56026d46ddcbe1fc5a5bbb")) &&
+        // Verify the canonical DID matches the spec test vector exactly
+        assert(did.toString)(equalTo("did:prism:35fbaf7f8a68e927feb89dc897f4edc24ca8d7510261829e4834d931e947e6ca"))
+      }
+    },
+    test("make CreateOperation with multiple key types has only master key in operation") {
       val didTemplate = ManagedDIDTemplate(
         Seq(
           DIDPublicKeyTemplate("auth-0", VerificationRelationship.Authentication, EllipticCurve.SECP256K1),
@@ -80,34 +108,28 @@ object OperationFactorySpec extends ZIOSpecDefault, ApolloSpecHelper {
         contexts = Nil
       )
       for {
-        result <- operationFactory.makeCreateOperation(KeyId("master-0"), seed)(0, didTemplate)
+        result <- operationFactory.makeCreateOperation(KeyId("master"), seed)(0, didTemplate)
         (op, keys) = result
         publicKeyData = op.publicKeys.map {
           case PublicKey(id, _, publicKeyData)         => id -> publicKeyData
           case InternalPublicKey(id, _, publicKeyData) => id -> publicKeyData
         }.toMap
-      } yield assert(publicKeyData.size)(equalTo(4)) &&
-        assert(publicKeyData.get(KeyId("auth-0")).get)(
+        masterPk = op.publicKeys.head.asInstanceOf[InternalPublicKey]
+      } yield // CreateDIDOperation only contains master key with CompressedECKeyData
+        assert(op.publicKeys)(hasSize(equalTo(1))) &&
+        assert(masterPk.id)(equalTo("master")) &&
+        assert(publicKeyData.get(KeyId("master")).get)(
           isSubtype[PublicKeyData.ECCompressedKeyData](
             hasField[PublicKeyData.ECCompressedKeyData, Int]("data", _.data.toByteArray.length, equalTo(33)) &&
               hasField("crv", _.crv, equalTo(EllipticCurve.SECP256K1))
           )
         ) &&
-        assert(publicKeyData.get(KeyId("auth-1")).get)(
-          isSubtype[PublicKeyData.ECCompressedKeyData](
-            hasField[PublicKeyData.ECCompressedKeyData, Int]("data", _.data.toByteArray.length, equalTo(32)) &&
-              hasField("crv", _.crv, equalTo(EllipticCurve.ED25519))
-          )
-        ) &&
-        assert(publicKeyData.get(KeyId("comm-0")).get)(
-          isSubtype[PublicKeyData.ECCompressedKeyData](
-            hasField[PublicKeyData.ECCompressedKeyData, Int]("data", _.data.toByteArray.length, equalTo(32)) &&
-              hasField("crv", _.crv, equalTo(EllipticCurve.X25519))
-          )
-        ) &&
+        assert(op.services)(isEmpty) &&
+        assert(op.context)(isEmpty) &&
+        // But all keys are still derived and stored for subsequent UpdateDIDOperation
         assert(keys.hdKeys.size)(equalTo(2)) &&
         assert(keys.randKeys.size)(equalTo(2)) &&
-        assert(keys.hdKeys.get("master-0").get.keyIndex)(equalTo(0)) &&
+        assert(keys.hdKeys.get("master").get.keyIndex)(equalTo(0)) &&
         assert(keys.hdKeys.get("auth-0").get.keyIndex)(equalTo(0)) &&
         assert(keys.randKeys.get("auth-1").get.keyPair)(isSubtype[Ed25519KeyPair](anything)) &&
         assert(keys.randKeys.get("comm-0").get.keyPair)(isSubtype[X25519KeyPair](anything))
