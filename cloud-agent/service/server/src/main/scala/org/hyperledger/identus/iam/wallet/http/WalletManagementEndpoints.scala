@@ -26,15 +26,15 @@ object WalletManagementEndpoints {
   private val tagName = "Wallet Management"
   private val tagDescription =
     s"""
-       |The __${tagName}__ endpoints enable both users and administrators to manage [wallets](https://hyperledger-identus.github.io/docs/home/concepts/multi-tenancy#wallet).
+       |The __${tagName}__ endpoints enable both users and administrators to manage wallets.
        |
-       |In a multitenant agent, wallet is a container for various resources (e.g. Connections, DIDs) and it isolates the access based on the authorization settings.
-       |[Admnistrator](https://hyperledger-identus.github.io/docs/home/concepts/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger-identus.github.io/docs/home/concepts/glossary#tenant).
-       |See [this example](https://hyperledger-identus.github.io/docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for instructions how to utilize the endpoints for administrator.
+       |In a multitenant agent, a wallet is a container for various resources (e.g. Connections, DIDs) and it isolates the access based on the authorization settings.
+       |[Administrators](https://hyperledger-identus.github.io/docs/documentation/learn/glossary#administrator) can utilize the endpoints to manage and onboard [tenants](https://hyperledger-identus.github.io/docs/documentation/learn/glossary#tenant).
+       |See [this example](https://hyperledger-identus.github.io/docs/cloud-agent/docs/docusaurus/multitenancy/tenant-onboarding) for instructions on how to utilize the endpoints as an administrator.
        |Tenants can also manage and onboard their own wallets using these endpoints depending on the configuration.
-       |See [this document](https://hyperledger-identus.github.io/docs/tutorials/multitenancy/tenant-onboarding-ext-iam) for a detailed example for self-service tenants onboarding.
+       |See [this document](https://hyperledger-identus.github.io/docs/cloud-agent/docs/docusaurus/multitenancy/tenant-onboarding) for a detailed example of self-service tenant onboarding.
        |
-       |Wallet permissions are controlled by [UMA](https://hyperledger-identus.github.io/docs/home/concepts/glossary#uma) configuration which the agent
+       |Wallet permissions are controlled by [UMA](https://hyperledger-identus.github.io/docs/documentation/learn/glossary#uma) configuration which the agent
        |exposes endpoints to easily configure wallet access using `uma-permissions` resource.
        |The permissions can also be configured out-of-band directly on the external IAM provider that supports the UMA standard.
        |""".stripMargin
@@ -65,7 +65,7 @@ object WalletManagementEndpoints {
       .out(jsonBody[WalletDetailPage])
       .summary("List all permitted wallets")
       .description(
-        "List all permitted wallets. If the role is admin, returns all the wallets. If the role is tenant, only return permitted wallets."
+        "List all permitted wallets. If the role is admin, returns all wallets. If the role is tenant, returns only permitted wallets."
       )
 
   val getWallet: Endpoint[
@@ -81,7 +81,7 @@ object WalletManagementEndpoints {
       .out(statusCode(StatusCode.Ok).description("Successfully get the wallet"))
       .out(jsonBody[WalletDetail])
       .summary("Get the wallet by ID")
-      .description("Get the wallet by ID. If the role is tenant, only search the ID of permitted wallets.")
+      .description("Get the wallet by ID. If the role is tenant, only searches among permitted wallets.")
 
   val createWallet: Endpoint[
     (AdminApiKeyCredentials, ApiKeyCredentials, JwtCredentials),
@@ -108,7 +108,7 @@ object WalletManagementEndpoints {
         """.stripMargin
     )
 
-  val createWalletUmaPermmission: Endpoint[
+  val createWalletUmaPermission: Endpoint[
     (AdminApiKeyCredentials, ApiKeyCredentials, JwtCredentials),
     (RequestContext, UUID, CreateWalletUmaPermissionRequest),
     ErrorResponse,
@@ -131,7 +131,7 @@ object WalletManagementEndpoints {
           """.stripMargin
       )
 
-  val deleteWalletUmaPermmission: Endpoint[
+  val deleteWalletUmaPermission: Endpoint[
     (AdminApiKeyCredentials, ApiKeyCredentials, JwtCredentials),
     (RequestContext, UUID, UUID),
     ErrorResponse,
@@ -150,7 +150,7 @@ object WalletManagementEndpoints {
       .summary("Delete a UMA resource permission on an authorization server for the wallet.")
       .description(
         """Remove a UMA resource permission on an authorization server for the wallet.
-          |This remove the wallet permission to the specified `subject`, where the `subject` denotes the identity of the tenant on an authorization server.
+          |This removes the wallet permission for the specified `subject`, where the `subject` denotes the identity of the tenant on an authorization server.
           """.stripMargin
       )
 

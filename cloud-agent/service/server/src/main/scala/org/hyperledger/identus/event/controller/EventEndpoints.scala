@@ -30,7 +30,7 @@ object EventEndpoints {
        |- Issuance protocol notifications
        |- Presentation protocol notifications
        |
-       |For more detailed information regarding event notifications, please refer to this [documentation](https://hyperledger-identus.github.io/docs/tutorials/webhooks/webhook).
+       |For more detailed information regarding event notifications, please refer to the project documentation.
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))
@@ -54,7 +54,7 @@ object EventEndpoints {
     .errorOut(EndpointOutputs.basicFailuresAndForbiddenWith(FailureVariant.conflict))
     .out(statusCode(StatusCode.Ok).description("Webhook notification has been created successfully"))
     .out(jsonBody[WebhookNotification])
-    .summary("Create wallet webhook notifications")
+    .summary("Create a wallet webhook notification")
     .description(
       """Create a new wallet webhook notification and subscribe to events.
         |A dispatched webhook request may contain static custom headers for authentication or custom metadata.
@@ -70,7 +70,7 @@ object EventEndpoints {
   ] = baseEndpoint.get
     .in("webhooks")
     .errorOut(EndpointOutputs.basicFailuresAndForbidden)
-    .out(statusCode(StatusCode.Ok).description("List wallet webhook notifications"))
+    .out(statusCode(StatusCode.Ok).description("Wallet webhook notifications listed successfully"))
     .out(jsonBody[WebhookNotificationPage])
     .summary("List wallet webhook notifications")
     .description(
