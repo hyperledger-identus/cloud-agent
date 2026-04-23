@@ -175,7 +175,7 @@ object PresentationStatus {
         )
     object requestData
         extends Annotation[Seq[String]](
-          description = "The list of request presented by the verifier to the prover.",
+          description = "The list of requests presented by the verifier to the prover.",
           example = Seq.empty
         )
     object connectionId

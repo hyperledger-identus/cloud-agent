@@ -93,11 +93,11 @@ object IssueEndpoints {
       .out(jsonBody[IssueCredentialRecord].description("The issue credential record."))
       .name("createCredentialOfferInvitation")
       .summary(
-        "As a credential issuer, create a new credential offer Invitation that will be delivered as out-of-band to a peer Agent."
+        "As a credential issuer, create a new credential offer invitation that will be delivered as an out-of-band message to a peer Agent."
       )
       .description("""
-        |Creates a new credential offer invitation to be delivered as an out-of-band message. 
-        |The invitation message adheres to the OOB specification as outlined [here](https://identity.foundation/didcomm-messaging/spec/#invitation),
+        |Creates a new credential offer invitation to be delivered as an out-of-band message.
+        |The invitation message adheres to the OOB specification as outlined [here](https://identity.foundation/didcomm-messaging/spec/v2.0/#invitation),
         |with the credential offer message attached according to the [Issue Credential Protocol 3.0 - Offer Credential specification](https://github.com/decentralized-identity/waci-didcomm/tree/main/issue_credential#offer-credential).
         |The created offer attachment can be of three types: 'JWT', 'AnonCreds', or 'SDJWT'.
         |""".stripMargin)
@@ -129,7 +129,7 @@ object IssueEndpoints {
       )
       .out(
         jsonBody[IssueCredentialRecordPage]
-          .description("The list of issue credential records available found in the Agent's database.")
+          .description("The list of issue credential records found in the Agent's database.")
       )
       .name("getCredentialRecords")
       .summary("Retrieves the list of issue credential records from the Agent's database.")
@@ -170,8 +170,7 @@ object IssueEndpoints {
       )
       .description("""
         |Retrieves a specific issue credential flow record from the Agent's database based on its unique `recordId`.
-        |The API returns a comprehensive collection of issue credential flow records within the system, regardless of their state.
-        |The returned items include essential metadata such as record ID, thread ID, state, role, issued credential, and other relevant details.
+        |The returned record includes essential metadata such as record ID, thread ID, state, role, issued credential, and other relevant details.
         |""".stripMargin)
       .tag(tagName)
 
@@ -233,7 +232,7 @@ object IssueEndpoints {
       )
       .in(
         jsonBody[AcceptCredentialOfferInvitation]
-          .description("The accept credential offer Invitation OOB message.")
+          .description("The accept credential offer invitation OOB message.")
       )
       .errorOut(
         oneOf(
@@ -246,14 +245,14 @@ object IssueEndpoints {
       .out(
         jsonBody[IssueCredentialRecord]
           .description(
-            "The issue credential offer Invitation was successfully accepted, and new record with RequestReceived state is returned in the response body."
+            "The issue credential offer invitation was successfully accepted, and a new record with RequestReceived state is returned in the response body."
           )
       )
       .name("acceptCredentialOfferInvitation")
       .summary("As a holder, accept a new credential offer invitation received from another issuer Agent.")
       .description("""
         |As a holder, accept a new credential offer invitation received from an issuer Agent.
-        |The credential offer request message from issuer is decoded and processed. New record with RequestReceived state is created.
+        |The credential offer request message from the issuer is decoded and processed. A new record with RequestReceived state is created.
         |""".stripMargin)
       .tag(tagName)
 
@@ -289,12 +288,12 @@ object IssueEndpoints {
           |""".stripMargin)
       )
       .name("issueCredential")
-      .summary("As an issuer, issues the verifiable credential related the identified issuance flow record.")
+      .summary("As an issuer, issues the verifiable credential related to the identified issuance flow record.")
       .description(
         """
-        |As an issuer, issues the verifiable credential related the identified issuance flow record.
+        |As an issuer, issues the verifiable credential related to the identified issuance flow record.
         |The JWT or AnonCreds credential will be generated and sent to the holder Agent asynchronously and through DIDComm.
-        |Note that this endpoint should only be called when automatic issuance is disabled for this record (i.e. `automaticIssuance` attribute set to `false` at offer creation time).
+        |Note that this endpoint should only be called when automatic issuance is disabled for this record (i.e. `automaticIssuance` attribute is set to `false` at offer creation time).
         |""".stripMargin
       )
       .tag(tagName)
