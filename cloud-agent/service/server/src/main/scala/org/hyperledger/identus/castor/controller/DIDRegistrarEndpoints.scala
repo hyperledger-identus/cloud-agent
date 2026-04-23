@@ -28,12 +28,12 @@ object DIDRegistrarEndpoints {
     s"""
        |The __${tagName}__ endpoints facilitate the management of [PRISM DIDs](https://github.com/input-output-hk/prism-did-method-spec) hosted in the cloud agent.
        |
-       |Implentation of [DID management](https://hyperledger-identus.github.io/docs/home/identus/cloud-agent/did-management) in the cloud agent.
+       |Implementation of [DID management](https://hyperledger-identus.github.io/docs/documentation/develop/cloud-agent/did-management/) in the cloud agent.
        |The agent securely manages and stores DIDs along with their keys in its secret storage.
        |These endpoints allow users to create, read, update, deactivate, and publish without direct exposure to the key material.
        |These DIDs can be utilized for various operations during issuance and verification processes.
        |
-       |More examples and tutorials can be found in this [documentation](https://hyperledger-identus.github.io/docs/tutorials/category/dids).
+       |More examples and tutorials can be found in the [Identus documentation](https://hyperledger-identus.github.io/docs/documentation/develop/).
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))
@@ -61,7 +61,7 @@ object DIDRegistrarEndpoints {
     .summary("List all DIDs stored in the agent's wallet")
     .description(
       """List all DIDs stored in the agent's wallet.
-        |Return a paginated items ordered by created timestamp.""".stripMargin
+        |Returns paginated items ordered by created timestamp.""".stripMargin
     )
 
   val createManagedDid: Endpoint[
@@ -136,7 +136,7 @@ object DIDRegistrarEndpoints {
       """Update DID in the agent's wallet and post the update operation to the VDR.
         |Only the DID with status `PUBLISHED` can be updated.
         |This endpoint updates the DID document from the last confirmed operation.
-        |The update operation is asynchronous operation and the agent will reject
+        |The update operation is an asynchronous operation and the agent will reject
         |a new update request if the previous operation is not yet confirmed.""".stripMargin
     )
 
@@ -155,8 +155,8 @@ object DIDRegistrarEndpoints {
     .description(
       """Deactivate DID in the agent's wallet and post deactivate operation to the VDR.
         |Only the DID with status `PUBLISHED` can be deactivated.
-        |The deactivate operation is asynchornous operation and the agent will reject
-        |a new deactivate request if the previous operation is not yet comfirmed.""".stripMargin
+        |The deactivation operation is an asynchronous operation and the agent will reject
+        |a new deactivate request if the previous operation is not yet confirmed.""".stripMargin
     )
 
 }

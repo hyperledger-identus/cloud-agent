@@ -57,41 +57,41 @@ object EntityResponsePage {
     object contents
         extends Annotation[Seq[EntityResponse]](
           description =
-            "A sequence of CredentialSchemaResponse objects representing the list of credential schemas that the API response contains",
+            "A sequence of EntityResponse objects representing the list of entities that the API response contains",
           example = Seq(EntityResponse.Example)
         )
 
     object kind
         extends Annotation[String](
           description =
-            "A string field indicating the type of the API response. In this case, it will always be set to `CredentialSchemaPage`",
-          example = "CredentialSchemaPage"
+            "A string field indicating the type of the API response. In this case, it will always be set to `EntityResponsePage`",
+          example = "EntityResponsePage"
         ) // TODO Tech Debt ticket - the kind in a collection should be collection, not the underlying record type
 
     object self
         extends Annotation[String](
           description = "A string field containing the URL of the current API endpoint",
-          example = "/cloud-agent/schema-registry/schemas?skip=10&limit=10"
+          example = "/cloud-agent/iam/entities?offset=10&limit=10"
         )
 
     object pageOf
         extends Annotation[String](
           description = "A string field indicating the type of resource that the contents field contains",
-          example = "/cloud-agent/schema-registry/schemas"
+          example = "/cloud-agent/iam/entities"
         )
 
     object next
         extends Annotation[String](
           description = "An optional string field containing the URL of the next page of results. " +
             "If the API response does not contain any more pages, this field should be set to None.",
-          example = "/cloud-agent/schema-registry/schemas?skip=20&limit=10"
+          example = "/cloud-agent/iam/entities?offset=20&limit=10"
         )
 
     object previous
         extends Annotation[String](
           description = "An optional string field containing the URL of the previous page of results. " +
             "If the API response is the first page of results, this field should be set to None.",
-          example = "/cloud-agent/schema-registry/schemas?skip=0&limit=10"
+          example = "/cloud-agent/iam/entities?offset=0&limit=10"
         )
   }
 

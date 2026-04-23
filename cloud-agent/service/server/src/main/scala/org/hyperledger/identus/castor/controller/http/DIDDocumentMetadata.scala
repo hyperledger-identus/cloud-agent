@@ -40,7 +40,7 @@ object DIDDocumentMetadata {
         extends Annotation[String](
           description = """
             |A DID in canonical form.
-            |If a DID is in long form and has been published, DID document metadata MUST contain a `canonicalId`` property with the short form DID as its value.
+            |If a DID is in long form and has been published, DID document metadata MUST contain a `canonicalId` property with the short form DID as its value.
             |If a DID in short form or has not been published, DID document metadata MUST NOT contain a `canonicalId` property.
             |""".stripMargin,
           example = "did:prism:4a5b5cf0a513e83b598bbea25cd6196746747f361a73ef77068268bc9bd732ff"
