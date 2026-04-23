@@ -132,7 +132,7 @@ object PresentProofEndpoints {
       )
       .description("""
                      |Create a new presentation request invitation that can be delivered out-of-band to a peer Agent, regardless of whether it resides in a Cloud Agent or an edge environment.
-                     |The generated invitation adheres to the DIDComm Messaging v2.0 - [Out of Band Messages](https://identity.foundation/didcomm-messaging/spec/v2.0/#out-of-band-messages) specification.
+                     |The generated invitation adheres to the DIDComm Messaging v2.0 - [Out of Band Messages](https://identity.foundation/didcomm-messaging/spec/v2.0/#out-of-band-messages) specification [section 9.5.4](https://identity.foundation/didcomm-messaging/spec/v2.0/#invitation).
                      |The <b>from</b> field of the out-of-band invitation message contains a freshly generated Peer DID that complies with the [did:peer:2](https://identity.foundation/peer-did-method-spec/#generating-a-didpeer2) specification.
                      |This Peer DID includes the 'uri' location of the DIDComm messaging service, essential for the prover's subsequent execution of the connection flow.
                      |In the Agent database, the created presentation record has an initial state set to `InvitationGenerated`.
