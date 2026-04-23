@@ -25,7 +25,7 @@ object ConnectionEndpoints {
   private val tagName = "Connections Management"
   private val tagDescription =
     s"""
-       |The __${tagName}__ endpoints facilitate the initiation of connection flows between the current Agent and peer Agents, regardless of whether they reside in Cloud Agent or edge environments.
+       |The __${tagName}__ endpoints facilitate the initiation of connection flows between the current Agent and peer Agents, regardless of whether they reside in a Cloud Agent or edge environments.
        |This implementation adheres to the DIDComm Messaging v2.0 - [Out of Band Messages](https://identity.foundation/didcomm-messaging/spec/v2.0/#out-of-band-messages) specification [section 9.5.4](https://identity.foundation/didcomm-messaging/spec/v2.0/#invitation) - to generate invitations.
        |The <b>from</b> field of the out-of-band invitation message contains a freshly generated Peer DID that complies with the [did:peer:2](https://identity.foundation/peer-did-method-spec/#generating-a-didpeer2) specification.
        |This Peer DID includes the 'uri' location of the DIDComm messaging service, essential for the invitee's subsequent execution of the connection flow.
@@ -62,8 +62,7 @@ object ConnectionEndpoints {
             "The connection record was created successfully, and is returned in the response body."
           )
       )
-      .out(jsonBody[Connection])
-      .description("The newly created connection record.")
+      .out(jsonBody[Connection].description("The newly created connection record."))
       .errorOut(
         oneOf(
           FailureVariant.forbidden,
@@ -75,7 +74,7 @@ object ConnectionEndpoints {
       .name("createConnection")
       .summary("Create a new connection invitation that can be delivered out-of-band to a peer Agent.")
       .description("""
-         |Create a new connection invitation that can be delivered out-of-band to a peer Agent, regardless of whether it resides in Cloud Agent or edge environment.
+         |Create a new connection invitation that can be delivered out-of-band to a peer Agent, regardless of whether it resides in a Cloud Agent or an edge environment.
          |The generated invitation adheres to the DIDComm Messaging v2.0 - [Out of Band Messages](https://identity.foundation/didcomm-messaging/spec/v2.0/#out-of-band-messages) specification [section 9.5.4](https://identity.foundation/didcomm-messaging/spec/v2.0/#invitation).
          |The <b>from</b> field of the out-of-band invitation message contains a freshly generated Peer DID that complies with the [did:peer:2](https://identity.foundation/peer-did-method-spec/#generating-a-didpeer2) specification.
          |This Peer DID includes the 'uri' location of the DIDComm messaging service, essential for the invitee's subsequent execution of the connection flow.
@@ -110,7 +109,7 @@ object ConnectionEndpoints {
         "Retrieves a specific connection flow record from the Agent's database based on its unique `connectionId`."
       )
       .description("""
-          |Retrieve a specific connection flow record from the Agent's database based in its unique `connectionId`.
+          |Retrieve a specific connection flow record from the Agent's database based on its unique `connectionId`.
           |The returned item includes essential metadata such as connection ID, thread ID, state, role, participant information, and other relevant details.
           |""".stripMargin)
       .tag(tagName)
@@ -147,7 +146,7 @@ object ConnectionEndpoints {
       .name("getConnections")
       .summary("Retrieves the list of connection flow records available from the Agent's database.")
       .description("""
-          |Retrieve of a list containing connections available from the Agent's database.
+          |Retrieve a list containing connections available from the Agent's database.
           |The API returns a comprehensive collection of connection flow records within the system, regardless of their state.
           |Each connection item includes essential metadata such as connection ID, thread ID, state, role, participant information, and other relevant details.
           |Pagination support is available, allowing for efficient handling of large datasets.
@@ -165,7 +164,7 @@ object ConnectionEndpoints {
           "The `connectionId` uniquely identifying the connection flow record."
         )
       )
-      .out(statusCode(StatusCode.NoContent))
+      .out(statusCode(StatusCode.NoContent).description("The connection record was deleted successfully."))
       .errorOut(
         oneOf(
           FailureVariant.notFound,
@@ -180,7 +179,7 @@ object ConnectionEndpoints {
         "Deletes a specific connection flow record from the Agent's database based on its unique `connectionId`."
       )
       .description("""
-          |Delete a specific connection flow record from the Agent's database based in its unique `connectionId`.
+          |Delete a specific connection flow record from the Agent's database based on its unique `connectionId`.
           |""".stripMargin)
       .tag(tagName)
 
@@ -204,11 +203,10 @@ object ConnectionEndpoints {
       .out(
         statusCode(StatusCode.Ok)
           .description(
-            "The invitation was successfully accepted."
+            "The invitation was successfully accepted and a new connection record was created."
           )
       )
-      .out(jsonBody[Connection])
-      .description("The newly connection record.")
+      .out(jsonBody[Connection].description("The newly created connection record."))
       .errorOut(
         oneOf(
           FailureVariant.forbidden,
@@ -220,11 +218,11 @@ object ConnectionEndpoints {
       .name("acceptConnectionInvitation")
       .summary("Accept a new connection invitation received out-of-band from another peer Agent.")
       .description("""
-          |Accept an new connection invitation received out-of-band from another peer Agent.
+          |Accept a new connection invitation received out-of-band from another peer Agent.
           |The invitation must be compliant with the DIDComm Messaging v2.0 - [Out of Band Messages](https://identity.foundation/didcomm-messaging/spec/v2.0/#out-of-band-messages) specification [section 9.5.4](https://identity.foundation/didcomm-messaging/spec/v2.0/#invitation).
           |A new connection record with state `ConnectionRequestPending` will be created in the agent database and later processed by a background job to send a connection request to the peer Agent.
           |The created record will contain a newly generated pairwise Peer DID used for that connection.
-          |A connection request will then be sent to the peer Agent to actually establish the connection, moving the record state to `ConnectionRequestSent`, and waiting the connection response from the peer Agent.
+          |A connection request will then be sent to the peer Agent to actually establish the connection, moving the record state to `ConnectionRequestSent`, and waiting for the connection response from the peer Agent.
           |""".stripMargin)
       .tag(tagName)
 

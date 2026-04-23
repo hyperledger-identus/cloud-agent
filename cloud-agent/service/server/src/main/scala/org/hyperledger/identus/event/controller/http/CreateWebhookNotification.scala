@@ -20,7 +20,7 @@ object CreateWebhookNotification {
   object annotations {
     object url
         extends Annotation[String](
-          description = "A URL of webhook for event notification",
+          description = "The URL of the webhook for event notifications",
           example = "http://example.com"
         )
   }
