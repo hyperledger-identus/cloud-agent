@@ -123,7 +123,7 @@ object CredentialIssuerEndpoints {
     .name("getNonce")
     .summary("Nonce Endpoint")
     .description(
-      """The endpoint that returns a `nonce` value for the [Token Endpoint](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-nonce-endpoint)""".stripMargin
+      """The endpoint that returns a `nonce` value for the [Nonce Endpoint](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-nonce-endpoint)""".stripMargin
     )
 
   val createCredentialIssuerEndpoint: Endpoint[
@@ -140,7 +140,7 @@ object CredentialIssuerEndpoints {
     .out(jsonBody[CredentialIssuer])
     .errorOut(EndpointOutputs.basicFailureAndNotFoundAndForbidden)
     .name("createCredentialIssuer")
-    .summary("Create a new  credential issuer")
+    .summary("Create a new credential issuer")
 
   val getCredentialIssuersEndpoint: Endpoint[
     (ApiKeyCredentials, JwtCredentials),
@@ -200,7 +200,7 @@ object CredentialIssuerEndpoints {
     .out(jsonBody[CredentialConfiguration])
     .errorOut(EndpointOutputs.basicFailuresAndForbiddenWith(FailureVariant.notFound, FailureVariant.conflict))
     .name("createCredentialConfiguration")
-    .summary("Create a new  credential configuration")
+    .summary("Create a new credential configuration")
     .description(
       """Create a new credential configuration for the issuer.
         |It represents the configuration of the credential that can be issued by the issuer.

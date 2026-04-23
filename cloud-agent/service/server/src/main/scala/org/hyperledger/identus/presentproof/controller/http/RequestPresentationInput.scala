@@ -46,7 +46,7 @@ object RequestPresentationInput {
     object connectionId
         extends Annotation[Option[UUID]](
           description = """
-            |The unique identifier of a DIDComm connection that already exists between the this verifier agent and the prover cloud or edeg agent.
+            |The unique identifier of a DIDComm connection that already exists between this verifier agent and the prover cloud or edge agent.
             |It should be the identifier of a connection that exists in the verifier agent's database.
             |This connection will be used to execute the present proof protocol.
             |Note: connectionId is only required when the presentation request is from existing connection.
@@ -58,8 +58,8 @@ object RequestPresentationInput {
     object goalcode
         extends Annotation[Option[String]](
           description = """
-            | A self-attested code the receiver may want to display to the user or use in automatically deciding what to do with the out-of-band message.
-            | goalcode is optional and can be included when the presentation request is from invitation for connectionless verification.
+            |A self-attested code the receiver may want to display to the user or use in automatically deciding what to do with the out-of-band message.
+            |goalcode is optional and can be included when the presentation request is from invitation for connectionless verification.
             |""".stripMargin,
           example = Some("present-vp")
         )
@@ -149,7 +149,7 @@ object RequestPresentationInput {
     object claims
         extends Annotation[Option[zio.json.ast.Json.Obj]](
           description = """
-                        |The set of claims to be disclosed from the  issued credential.
+                        |The set of claims to be disclosed from the issued credential.
                         |The JSON object should comply with the schema applicable for this offer (i.e. 'schemaId' or 'credentialDefinitionId').
                         |""".stripMargin,
           example = Some(

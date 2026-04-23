@@ -30,13 +30,13 @@ object Proof {
   object annotations {
     object `type`
         extends Annotation[String](
-          description = "A type of proof",
+          description = "The type of the proof",
           example = "SHA256"
         )
 
     object proof
         extends Annotation[String](
-          description = "A proof in hexadecimal string",
+          description = "The proof value, encoded as a hexadecimal string",
           example = "98e6a4db10e58fcc011dd8def5ce99fd8b52af39e61e5fb436dc28259139818b"
         )
   }

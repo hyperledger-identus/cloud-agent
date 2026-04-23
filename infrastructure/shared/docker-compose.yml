@@ -55,7 +55,7 @@ services:
         condition: service_healthy
 
   vault-server:
-    image: hashicorp/vault:latest
+    image: hashicorp/vault:1.15.6
     #    ports:
     #      - "8200:8200"
     environment:
