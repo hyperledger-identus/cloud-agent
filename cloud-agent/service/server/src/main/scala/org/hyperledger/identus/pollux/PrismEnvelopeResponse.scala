@@ -11,7 +11,7 @@ case class PrismEnvelopeResponse(
     @description(annotations.resource.description)
     @encodedExample(annotations.resource.example)
     resource: String,
-    @description(annotations.resource.description)
+    @description(annotations.url.description)
     @encodedExample(annotations.url.example)
     url: String
 ) extends PrismEnvelope

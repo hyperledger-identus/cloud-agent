@@ -19,7 +19,7 @@ object PresentProofEndpoints {
   private val paginationInput: EndpointInput[PaginationInput] = EndpointInput.derived[PaginationInput]
   private val thidInput: EndpointInput[Option[String]] =
     query[Option[String]]("thid")
-      .description("Filter by the DID Comm message's 'thid' of presentProof")
+      .description("Filter by the DIDComm message's 'thid' of the present-proof protocol")
 
   val requestPresentation: Endpoint[
     (ApiKeyCredentials, JwtCredentials),
@@ -32,7 +32,7 @@ object PresentProofEndpoints {
       .tag("Present Proof")
       .name("requestPresentation")
       .summary("As a Verifier, create a new proof presentation request and send it to the Prover.")
-      .description("Holder presents proof derived from the verifiable credential to verifier.")
+      .description("As a Verifier, create a new proof presentation request to be sent to the Prover.")
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in("present-proof" / "presentations")
@@ -57,7 +57,7 @@ object PresentProofEndpoints {
       .tag("Present Proof")
       .name("getAllPresentation")
       .summary("Gets the list of proof presentation records.")
-      .description("Get the list of proof presentation records and its status that the Agent have at moment")
+      .description("Get the list of proof presentation records and their statuses that the agent currently has.")
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in("present-proof" / "presentations")
@@ -74,8 +74,7 @@ object PresentProofEndpoints {
       .tag("Present Proof")
       .name("getPresentation")
       .summary(
-        "Gets an existing proof presentation record by its unique identifier. " +
-          "More information on the error can be found in the response body."
+        "Gets an existing proof presentation record by its unique identifier."
       )
       .description("Returns an existing presentation record by id.")
       .securityIn(apiKeyHeader)
@@ -104,7 +103,7 @@ object PresentProofEndpoints {
         "Updates the proof presentation record matching the unique identifier, " +
           "with the specific action to perform."
       )
-      .description("Accept or reject presentation of proof request.")
+      .description("Accept or reject a proof presentation request, or accept or reject a proof presentation.")
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in(extractFromRequest[RequestContext](RequestContext.apply))
@@ -129,15 +128,15 @@ object PresentProofEndpoints {
       .tag("Present Proof")
       .name("createOOBRequestPresentationInvitation")
       .summary(
-        "As a Verifier, create a new OOB Invitation as proof presentation request that can be delivered out-of-band to a invitee/prover."
+        "As a Verifier, create a new OOB invitation for a proof presentation request that can be delivered out-of-band to an invitee/prover."
       )
       .description("""
-                     |Create a new presentation request invitation that can be delivered out-of-band to a peer Agent, regardless of whether it resides in Cloud Agent or edge environment.
+                     |Create a new presentation request invitation that can be delivered out-of-band to a peer Agent, regardless of whether it resides in a Cloud Agent or an edge environment.
                      |The generated invitation adheres to the DIDComm Messaging v2.0 - [Out of Band Messages](https://identity.foundation/didcomm-messaging/spec/v2.0/#out-of-band-messages) specification [section 9.5.4](https://identity.foundation/didcomm-messaging/spec/v2.0/#invitation).
                      |The <b>from</b> field of the out-of-band invitation message contains a freshly generated Peer DID that complies with the [did:peer:2](https://identity.foundation/peer-did-method-spec/#generating-a-didpeer2) specification.
                      |This Peer DID includes the 'uri' location of the DIDComm messaging service, essential for the prover's subsequent execution of the connection flow.
                      |In the Agent database, the created presentation record has an initial state set to `InvitationGenerated`.
-                     |The invitation is in the form of a presentation request (as described https://github.com/decentralized-identity/waci-didcomm/blob/main/present_proof/present-proof-v3.md), which is included as an attachment in the OOB DIDComm message sent to the invitee/prover.
+                     |The invitation is in the form of a presentation request (as described in [WACI Present Proof v3](https://github.com/decentralized-identity/waci-didcomm/blob/main/present_proof/present-proof-v3.md)), which is included as an attachment in the OOB DIDComm message sent to the invitee/prover.
                      |""".stripMargin)
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
@@ -146,7 +145,7 @@ object PresentProofEndpoints {
       .in(jsonBody[RequestPresentationInput].description("The present proof creation request."))
       .out(
         statusCode(StatusCode.Created).description(
-          "The proof presentation request invitation was created successfully and that can be delivered as out-of-band to a peer Agent.."
+          "The proof presentation request invitation was created successfully and can be delivered out-of-band to a peer agent."
         )
       )
       .out(jsonBody[PresentationStatus])
@@ -163,9 +162,11 @@ object PresentProofEndpoints {
       .tag("Present Proof")
       .name("acceptRequestPresentationInvitation")
       .summary(
-        "Decode the invitation extract Request Presentation and Create the proof presentation record with RequestReceived state."
+        "Decode an out-of-band invitation, extract the Request Presentation, and create a proof presentation record with RequestReceived state."
       )
-      .description("Accept Invitation for request presentation")
+      .description(
+        "Accept an out-of-band invitation for a proof presentation request and create a new presentation record."
+      )
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in(extractFromRequest[RequestContext](RequestContext.apply))
@@ -177,7 +178,7 @@ object PresentProofEndpoints {
           "The action to perform on the proof presentation request invitation."
         )
       )
-      .out(statusCode(StatusCode.Ok).description("The proof presentation record was successfully updated."))
+      .out(statusCode(StatusCode.Ok).description("The proof presentation record was successfully created."))
       .out(jsonBody[PresentationStatus])
       .errorOut(basicFailureAndNotFoundAndForbidden)
 }
