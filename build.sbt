@@ -146,7 +146,7 @@ lazy val D = new {
   val didcommx: ModuleID = "org.didcommx" % "didcomm" % "0.3.2"
   val peerDidcommx: ModuleID = "org.didcommx" % "peerdid" % "0.5.0"
   // peerdid depends on java-multibase (transitive, JitPack only). v1.1.0 has stale .sha1 metadata,
-  // so we force v1.1.1 which has consistent JitPack checksums. Remove once peerdid upgrades.
+  // so we force v1.1.1 which currently has consistent JitPack checksums. Remove once peerdid upgrades.
   val javaMultibase: ModuleID = "com.github.multiformats" % "java-multibase" % "v1.1.1"
   val didScala: ModuleID = "app.fmgp" %% "did" % "0.0.0+113-61efa271-SNAPSHOT"
 

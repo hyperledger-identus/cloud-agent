@@ -17,8 +17,6 @@ defaults:
 permissions:
   contents: read
 
-env:
-
 jobs:
   run-integration-tests-neoprism:
     name: "Run integration tests (neoprism)"
