@@ -17,9 +17,6 @@ defaults:
 permissions:
   contents: read
 
-env:
-  COURSIER_CHECKSUMS: "none" # JitPack serves stale .sha1 for java-multibase
-
 jobs:
   run-integration-tests-neoprism:
     name: "Run integration tests (neoprism)"

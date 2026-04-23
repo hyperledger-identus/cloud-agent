@@ -23,7 +23,6 @@ jobs:
       pull-requests: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      COURSIER_CHECKSUMS: "none" # JitPack serves stale .sha1 for java-multibase
       SBT_OPTS: -Xmx2G
       DOCKER_API_VERSION: "1.44"
       TESTCONTAINERS_RYUK_DISABLED: true
