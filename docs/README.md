@@ -25,3 +25,8 @@ docker-compose -f docs/docker-compose.yml up
 ```
 
 - OpenAPI specifications doc is available *localhost:8081*
+
+## Docusaurus docs
+
+These `docs/docusaurus` are built as part of the [Identus Docs](https://github.com/hyperledger-identus/docs) repository.
+The over-arching configuration and setup needed to build the full docs are held there (these docs are loaded in as a git submodule).
