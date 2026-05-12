@@ -3,7 +3,6 @@ import TabItem from '@theme/TabItem';
 
 # Credential revocation
 
-
 Identus implements the revocation mechanism of JWT credentials according to [Verifiable Credentials Status List v2021](https://www.w3.org/TR/2023/WD-vc-status-list-20230427/). This open standard enables Identus to verify the revocation status of any credential that implements the revocation mechanism using the same specification.
 
 ## Overview
@@ -19,6 +18,7 @@ Every credential will contain the property `credentialStatus`, which will look l
     "statusListCredential": "http://localhost:8080/cloud-agent/cloud-agent/credential-status/27526236-3836-4061-9867-f69314e258b4"
   },
 ```
+
 * `type` will always be `StatusList2021Entry`
 * `statusListCredential` is a publicly accessible URL that resolves a status list credential that looks like this:
 
@@ -52,7 +52,6 @@ Every credential will contain the property `credentialStatus`, which will look l
 
 </Tabs>
 
-
 * `statusListIndex` is an index in a bit string at which the credential's revocation status can be verified.
 
 The status list credential contains  `encodedList`, a base64-encoded bit string that contains the credential's revocation status.
@@ -74,6 +73,7 @@ Status list credential integrity can be verified using the embedded proof.
 <TabItem value="jwt" label="JWT">
 
 We currently support 2 types of proofs:
+
 * `DataIntegrityProof` via crypto suite `eddsa-jcs-2022`. The exact steps on how to create a verify this proof are in the [Data Integrity EdDSA Cryptosuites v1.0](https://www.w3.org/TR/vc-di-eddsa/#eddsa-jcs-2022)
   * Used for Ed25519 EC curves, meaning if the proof was created using Ed25519 private key
 * `EcdsaSecp256k1Signature2019`, the description of this cryptosuite can be found [here](https://w3c-ccg.github.io/lds-ecdsa-secp256k1-2019/)
@@ -111,6 +111,7 @@ We currently support 2 types of proofs:
   }
 }
 ```
+
 #### Example of status list credential with `EcdsaSecp256k1Signature2019` proof
 
 ```json
@@ -146,22 +147,22 @@ We currently support 2 types of proofs:
 
 </Tabs>
 
-
-
-
 ## Revocation
 
 Only issuers of a credential can revoke a credential.
 
 *Get the list of credentials*
+
 ```bash
 curl -X 'GET' \
   'http://localhost:8080/cloud-agent/issue-credentials/records' \
   -H 'accept: application/json'
 ```
+
 This endpoint will return the credentials issued. Every credential includes an ID.
 
 *Revoke the credential*
+
 ```bash
 curl -X 'PATCH' \
   'http://localhost:8080/cloud-agent/revoke-credential/<credential_id>' \

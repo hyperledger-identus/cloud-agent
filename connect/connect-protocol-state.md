@@ -9,7 +9,9 @@ stateDiagram-v2
   ConnectionResponsePending --> ConnectionResponseSent: send connection response (via DIDComm Agent)
   ConnectionResponseSent --> [*]
 ```
+
 ---
+
 ```mermaid
 ---
 title: Invitee Connect State

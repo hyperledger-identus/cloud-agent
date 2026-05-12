@@ -32,23 +32,28 @@ jobs:
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
+        uses: step-security/harden-runner@8d3c67de8e2fe68ef647c8db1e6a09f647780f40 # v2.19.0
         with:
           egress-policy: audit
 
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
+      - name: Set up JDK 21 (Temurin) with sbt cache
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0 pinned
         with:
-          java-version: openjdk@
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+
+      - name: Set up sbt
+        uses: sbt/setup-sbt@508b753e53cb6095967669e0911487d2b9bc9f41 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ env.GITHUB_ACTOR }}
@@ -83,7 +88,7 @@ jobs:
           NODE_REFRESH_AND_SUBMIT_PERIOD: 1s
           NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD: 1s
           NODE_WALLET_MAX_TPS: 1000
-        uses: hoverkraft-tech/compose-action@4894d2492015c1774ee5a13a95b1072093087ec3 # v2.5.0
+        uses: hoverkraft-tech/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
         with:
           compose-file: "./infrastructure/shared/docker-compose-combined.yml"
           compose-flags: "--env-file ./infrastructure/local/.env"
@@ -91,7 +96,7 @@ jobs:
           down-flags: "--volumes"
 
       - name: Setup Node.js
-        uses: actions/setup-node@774c1d62961e73038a114d59c8847023c003194d # v4.4.0
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v4.4.0
         with:
           node-version: 16.x
           registry-url: "https://npm.pkg.github.com"

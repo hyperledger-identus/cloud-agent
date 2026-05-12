@@ -4,6 +4,7 @@ import TabItem from '@theme/TabItem';
 # Present proof (DIDComm)
 
 The [Present Proof Protocol](/home/concepts/glossary#present-proof-protocol) allows:
+
 - a [Verifier](/home/concepts/glossary#verifier) to request a verifiable credential presentation from a Holder/Prover
 - a [Holder/Prover](/home/concepts/glossary#holder) responds by presenting a cryptographic proof to the Verifier
 
@@ -125,6 +126,7 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
         "credentialFormat": "AnonCreds" 
       }'
 ```
+
 </TabItem>
 <TabItem value="sdjwt" label="SDJWT">
 
@@ -149,6 +151,7 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
 ```
 
 b. `SD-JWT` The presence of the `cnf` key as a disclosable claim in the SD-JWT Verifiable Credential (VC) allows the Holder/Prover to create a presentation and sign the `challenge` and `domain` given by the verifier.
+
 ```bash
 curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
   -H 'accept: application/json' \
@@ -170,7 +173,9 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
          }
       }'
 ```
+
 SDJWT Specific attributes
+
 1. `credentialFormat`: SDJWT.
 2. `claims`: The claims to be disclosed  by Holder/Prover.
 
@@ -180,6 +185,7 @@ SDJWT Specific attributes
 Upon execution, a new presentation request record gets created with an initial state of `RequestPending`. The Verifier Cloud Agent will send the presentation request message to the Cloud Agent of the Holder/Prover through the specified DIDComm connection. The record state then is updated to `RequestSent`.
 
 The Verifier can retrieve the list of presentation records by making a `GET` request to the [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) endpoint:
+
 ```bash
 curl -X 'GET' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
   -H 'accept: application/json' \
@@ -187,6 +193,7 @@ curl -X 'GET' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
 ```
 
 ### Accept presentation proof received from the Holder/prover
+
 Once the Holder/Prover has received a proof presentation request, he can accept it using an appropriate verifiable credential. The Cloud Agent of the Verifier will receive that proof and verify it. Upon successful verification, the presentation record state gets updated to `PresentationVerified`.
 
 The Verifier can then explicitly accept the specific verified proof presentation to change the record state to `PresentationAccepted` by making a `PATCH` request to the [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/updatePresentation) endpoint:
@@ -213,9 +220,11 @@ stateDiagram-v2
 ```
 
 ## Holder/Prover
+
 This section describes the interactions available to the Holder/Prover with his Cloud Agent.
 
 ### Reviewing and accepting a received presentation request
+
 The Holder/Prover can retrieve the list of presentation requests received by its Cloud Agent from different Verifiers making a `GET` request to the [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) endpoint:
 
 ```bash
@@ -240,6 +249,7 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
 ```
 
 The Holder/Prover will have to provide the following information:
+
 1. `presentationId`: The unique identifier of the presentation record to accept.
 2. `proofId`: The unique identifier of the verifiable credential record to use as proof.
 
@@ -267,6 +277,7 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
         }
       }'
 ```
+
 </TabItem>
 
 <TabItem value="sdjwt" label="SDJWT">
@@ -291,10 +302,12 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
 ```
 
 The Holder/Prover will have to provide the following information:
+
 1. `presentationId`: The unique identifier of the presentation record to accept.
 2. `proofId`: The unique identifier of the verifiable credential record to use as proof.
 3. `credentialFormat`: SDJWT.
 4. `claims`: The Verifier requests specific claims to disclose. The path of these claims must match exactly with those in the SD-JWT Verifiable Credential (VC).
+
 - 📌 **Note:**  When a SD-JWT Verifiable Credential (VC) has nested claims such as region and country within an address object, as shown in the example above, it falls under the Holder's responsibility to supply the correct nested JSON structure for the claims attribute(s) that is being disclosed.
 - 📌 **Note:** The holder or prover of the claims is only required to disclose the attribute names and the correct JSON path. The actual values are not necessary. A special JSON placeholder `{}`, can be used instead.
 
@@ -303,6 +316,7 @@ The Holder/Prover will have to provide the following information:
 </Tabs>
 
 The Holder/Prover will have to provide the following information:
+
 1. `presentationId`: The unique identifier of the presentation record to accept.
 2. `anoncredPresentationRequest`: A list of credential unique identifier with the attribute and predicate the credential is answering for.
 

@@ -14,7 +14,6 @@ In the Issue Credentials Protocol, there are two roles:
 
 The Issuer and Holder interact with the Identus Cloud Agent API to perform the operations defined in the protocol.
 
-
 ## Prerequisites
 
 Before using the "Connectionless" Issuing Credentials protocol, the following conditions must be present:
@@ -38,6 +37,7 @@ Before using the "Connectionless" Issuing Credentials protocol, the following co
 <TabItem value="sdjwt" label="SDJWT">
 
 - 📌 **Note:** Currently we only support `Ed25519` curve
+
 1. Issuer Cloud Agents is up and running
 2. The Issuer has a published PRISM DID, and the [DID document](/home/concepts/glossary#did-document) must have at least one `assertionMethod` key for issuing credentials (see [Create DID](../../dids/create.md) and [Publish DID](../../dids/publish.md))
 3. The Holder is either another Cloud Agent or Edge Agent SDK
@@ -74,7 +74,6 @@ The VCs issued during this protocol could represent a diploma, a certificate of 
 | [`/issue-credentials/records/{recordId}`](/agent-api/#tag/Issue-Credentials-Protocol/operation/getCredentialRecord)                              | This endpoint allows you to retrieve a specific credential record by its `id`            | Issuer, Holder |
 | [`/issue-credentials/records/{recordId}/accept-offer`](/agent-api/#tag/Issue-Credentials-Protocol/operation/acceptCredentialOffer)               | This endpoint allows you to accept a credential offer                                    | Holder         |
 | [`/issue-credentials/records/{recordId}/issue-credential`](/agent-api/#tag/Issue-Credentials-Protocol/operation/issueCredential)                 | This endpoint allows you to issue a VC for a specific credential record.                 | Issuer         |
-
 
 :::info
 Please check the full [Cloud Agent API](/agent-api) specification for more detailed information.
@@ -134,14 +133,16 @@ curl -X 'POST' \
 1. `claims`: The data stored in a verifiable credential. AnonCreds claims get expressed in a flat, "string -> string", key-value pair format. The claims contain the data that the issuer attests to, such as name, address, date of birth, and so on.
 2. `issuingDID`: The DID referring to the issuer to issue this credential from
 3. `credentialDefinitionId`: The unique ID of the [credential definition](../../credentialdefinition/credential-definition.md) that has been created by the issuer as a prerequisite. Please refer to the [Create AnonCreds Credential Definition](../../credentialdefinition/credential-definition.md) doc for details on how to create a credential definition.
+
 :::note
 📌 Note: If the credential definition was created via HTTP URL endpoint, then this credential definition will be referenced to that credential via HTTP URL, and if this credential definition was created via DID URL endpoint, then it will be referenced via DID URL, How to create credential definition for HTTP URL or DID URL is explained in [credential definition creation guide](../../credentialdefinition/create.md)
 :::
+
 4. `credentialFormat`: The format of the credential that will be issued - `AnonCreds` in this case.
 
-:::note
-The `issuingDID` and `credentialDefinitionId` properties come from completing the pre-requisite steps listed above
-:::
+   :::note
+   The `issuingDID` and `credentialDefinitionId` properties come from completing the pre-requisite steps listed above
+   :::
 
 Once the request initiates, a new credential record for the issuer gets created with a unique ID. The state of this record is now `OfferPending`.
 
@@ -173,11 +174,11 @@ curl -X 'POST' \
 
 1. `claims`: The data stored in a verifiable credential. Claims get expressed in a key-value format. The claims contain the data that the issuer attests to, such as name, address, date of birth, and so on.
 2. `issuingDID`: The DID referring to the issuer to issue this credential from
-4. `schemaId`: An optional field that, if specified, contains a valid URL to an existing VC schema.
+3. `schemaId`: An optional field that, if specified, contains a valid URL to an existing VC schema.
    The Cloud Agent must be able to dereference the specified URL (i.e. fetch the VC schema content from it), in order to validate the provided claims against it.
    When not specified, the claims fields is not validated and can be any valid JSON object.
    Please refer to the [Create VC schema](../../schemas/create.md) doc for details on how to create a VC schema.
-5. `credentialFormat`: The format of the credential that will be issued - `SDJWT` in this case.
+4. `credentialFormat`: The format of the credential that will be issued - `SDJWT` in this case.
 
 :::note
 The `issuingDID` property comes from completing the pre-requisite steps listed above
@@ -214,12 +215,10 @@ curl -X 'POST' \
 </TabItem>
 </Tabs>
 
-
 ### Sending the Offer to the Holder
 
 The next step for the Issuer is to send the OOB invite Holder (by definition, this is "out of band", so not handled by Identus).
 Common ways to convey such OOB invites might be a QR code that is scanned, or via an existing channel of connection in an application.
-
 
 ### Issuing the Credential
 
@@ -269,13 +268,13 @@ and a new credential record with a unique ID gets created in the `OfferReceived`
 This process is automatic for the Cloud Agent.
 
 You could check if a new credential offer is available using [`/issue-credentials/records`](/#tag/Issue-Credentials-Protocol/operation/getCredentialRecords) request and check for any records available in `OfferReceived` state:
+
 ```shell
 # Holder GET request to retrieve credential records
 curl "http://localhost:8090/cloud-agent/issue-credentials/records" \
     -H "Content-Type: application/json" \
     -H "apikey: $API_KEY"
 ```
-
 
 ### Approving the VC Offer
 
@@ -320,6 +319,7 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
 2. `subjectId`: This field represents the unique identifier for the subject of the verifiable credential. It is a short-form PRISM [DID](/home/concepts/glossary#decentralized-identifier) string, such as `did:prism:subjectIdentifier`.
 3. `keyId` Option parameter
    1. when keyId is not provided the SDJWT VC is not binded to Holder/Prover key
+
    ```shell
    # Holder POST request to accept the credential offer
    curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holder_record_id/accept-offer" \
@@ -330,6 +330,7 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
              "subjectId": "did:prism:subjectIdentifier"
         }'
    ```
+
    A SD-JWT Verifiable Credential (VC) without a `cnf` key could possibly look like below
 
    ```json
@@ -351,7 +352,8 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
      "_sd_alg": "sha-256"
    }
    ```
-   2. `keyId`: This is optional field but must be specified to choose which key bounds to the verifiable credential.
+
+   1. `keyId`: This is optional field but must be specified to choose which key bounds to the verifiable credential.
    For more information on key-binding, [ietf-oauth-selective-disclosure-jwt](https://datatracker.ietf.org/doc/draft-ietf-oauth-selective-disclosure-jwt).
    Currently, we only support the EdDSA algorithm and curve Ed25519.
    The specified keyId should be of type Ed25519.
@@ -368,7 +370,9 @@ curl -X POST "http://localhost:8090/cloud-agent/issue-credentials/records/$holde
              "keyId": "key-1"    
         }'
    ```
+
    A SD-JWT Verifiable Credential (VC) that includes a `cnf` key could possibly look like below
+
    ```json
     {
      "_sd": [

@@ -81,6 +81,9 @@ data class Agent(
             "VDR_PRISM_NODE_DRIVER_ENABLED" to (
                 System.getenv("VDR_PRISM_NODE_DRIVER_ENABLED") ?: (selectedDriver == "prism-node").toString()
             ),
+            "VDR_NEOPRISM_DRIVER_ENABLED" to flag("VDR_NEOPRISM_DRIVER_ENABLED") {
+                selectedDriver == "neoprism"
+            },
         )
 
         // setup token authentication

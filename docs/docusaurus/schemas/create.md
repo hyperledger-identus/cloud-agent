@@ -355,7 +355,6 @@ and for DID URL request, response will include the same schema wrapped in [Prism
 
 Schemas created for HTTP URL (`/cloud-agent/schema-registry/schemas`) will not be resolvable by endpoint that returns schemas created for DID URL (`/cloud-agent/schema-registry/schemas/did-url`) and vice verca.
 
-
 The Cloud Agent instance's triple `author`, `id`, and `version` are unique.
 So, having a single [DID](/home/concepts/glossary#decentralized-identifier) reference that the author uses, creating the credential schema with the same `id` and `version`
 is impossible.

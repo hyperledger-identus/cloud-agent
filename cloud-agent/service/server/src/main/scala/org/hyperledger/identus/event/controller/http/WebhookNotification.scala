@@ -37,13 +37,13 @@ object WebhookNotification {
 
     object url
         extends Annotation[String](
-          description = "A URL of webhook for event notification",
+          description = "The URL of the webhook for event notifications",
           example = "http://example.com"
         )
 
     object createdAt
         extends Annotation[Instant](
-          description = "A time which the webhook notification resource was created.",
+          description = "The time at which the webhook notification resource was created.",
           example = Instant.EPOCH
         )
   }

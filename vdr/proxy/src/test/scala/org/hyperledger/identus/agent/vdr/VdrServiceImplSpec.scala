@@ -138,6 +138,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         val svc = new VdrServiceImpl(
           Some(proxy),
           None,
+          None,
           "proxy",
           "0.1.0"
         )
@@ -158,6 +159,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         val svc = new VdrServiceImpl(
           Some(proxy),
           Some(prism),
+          None,
           "proxy",
           "0.1.0"
         )
@@ -173,6 +175,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         val svc = new VdrServiceImpl(
           Some(proxy),
           Some(prism),
+          None,
           "proxy",
           "0.1.0"
         )
@@ -189,6 +192,7 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         val svc = new VdrServiceImpl(
           Some(proxy),
           None,
+          None,
           "proxy",
           "0.1.0"
         )
@@ -196,6 +200,40 @@ object VdrServiceImplSpec extends ZIOSpecDefault {
         for {
           _ <- svc.create("data".getBytes(), Map("drf" -> "first"), None).provideLayer(walletLayer)
         } yield assertTrue(first.createCount.get() == 1, second.createCount.get() == 0)
+      },
+      test("create uses neoprism when drid=neoprism") {
+        val driver = new CountingDriver("memory")
+        val proxy = VDRProxyMultiDrivers(BaseUrlManager(VdrScheme, "BaseURL"), Array(driver), "proxy", "0.1.0")
+        val prism = new CountingPrismService
+        val neoprism = new CountingPrismService { override val identifier: String = "neoprism" }
+        val svc = new VdrServiceImpl(
+          Some(proxy),
+          Some(prism),
+          Some(neoprism),
+          "proxy",
+          "0.1.0"
+        )
+
+        for {
+          _ <- svc.create("data".getBytes(), Map("drid" -> "neoprism"), None).provideLayer(walletLayer)
+        } yield assertTrue(neoprism.createCount.get() == 1, prism.createCount.get() == 0, driver.createCount.get() == 0)
+      },
+      test("read routes neoprism URL to neoprism service") {
+        val driver = new CountingDriver("memory")
+        val proxy = VDRProxyMultiDrivers(BaseUrlManager(VdrScheme, "BaseURL"), Array(driver), "proxy", "0.1.0")
+        val prism = new CountingPrismService
+        val neoprism = new CountingPrismService { override val identifier: String = "neoprism" }
+        val svc = new VdrServiceImpl(
+          Some(proxy),
+          Some(prism),
+          Some(neoprism),
+          "proxy",
+          "0.1.0"
+        )
+
+        for {
+          _ <- svc.read("vdr://some-entry?drid=neoprism")
+        } yield assertTrue(neoprism.readCount.get() == 1, prism.readCount.get() == 0, driver.readCount.get() == 0)
       },
       test("layer wiring prefers memory driver when both memory and db enabled") {
         val ds = new org.h2.jdbcx.JdbcDataSource()

@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "@hyperledger/identus-cloud-agent-client": "^1.40.1-10a7302",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   }
 }

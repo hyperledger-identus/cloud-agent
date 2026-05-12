@@ -13,13 +13,13 @@ object SystemEndpoints {
   private val tagName = "System"
   private val tagDescription =
     s"""
-       |The __${tagName}__ is a REST API that allows to check the system health and scrap the runtime metrics.
+       |The __${tagName}__ is a REST API that allows to check the system health and scrape the runtime metrics.
        |
        |The __health__ endpoint returns the current version of the running service.
-       |This information can be used to check the health status of the running service in the docker or kubernetes environment.
+       |This information can be used to check the health status of the running service in the Docker or Kubernetes environment.
        |
-       |The __metrics__ endpoint returns the runtime metrics of the running service scraped from the internal prometheus registry.
-       |This information is collected by the prometheus server and can be used to monitor the running service.
+       |The __metrics__ endpoint returns the runtime metrics of the running service scraped from the internal Prometheus registry.
+       |This information is collected by the Prometheus server and can be used to monitor the running service.
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))
@@ -49,7 +49,7 @@ object SystemEndpoints {
     endpoint.get
       .in(extractFromRequest[RequestContext](RequestContext.apply))
       .in("_system" / "metrics")
-      .out(stringBody.description("The metrics as plain strings."))
+      .out(stringBody.description("The Prometheus metrics in text exposition format."))
       .errorOut(basicFailures)
       .tag(tagName)
       .summary("Collect the runtime metrics of the running service")

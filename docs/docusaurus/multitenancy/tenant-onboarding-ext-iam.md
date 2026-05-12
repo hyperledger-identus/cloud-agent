@@ -99,7 +99,6 @@ Create a wallet using a `POST /wallets` endpoint.
 This wallet will be a container for the tenant's assets (DIDs, VCs, Connections, etc.).
 Provide a wallet seed during the wallet creation or let the Agent generate one
 
-
 ```bash
 curl -X 'POST' \
   'http://localhost:8080/cloud-agent/wallets' \

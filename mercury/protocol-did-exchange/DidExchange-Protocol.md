@@ -16,13 +16,12 @@ See [https://github.com/hyperledger/aries-rfcs/tree/main/features/0023-did-excha
 ### Roles
 
 - Requester(Is the receiver in out-of-band protocol)
-  - Will initiate the did-exchange 
+  - Will initiate the did-exchange
 - Responder (Is the invitation sender in out-of-band protocol)
   - Will respond to did exchange
 
-  
-
 ### Requester request did-exchange
+
 step1-->step2-->step3 Is a happy path flow
 
 error - error received or sent and state transition
@@ -42,11 +41,12 @@ stateDiagram-v2
   completed --> [*]
 ```
 
-
 ### Responder responds to did-exchange
+
 step1-->step2-->step3 Is a happy path flow
 
 error received or sent and state transition
+
 ```mermaid
 stateDiagram-v2
   [*] --> invitation_sent:out-of-band send Invitation
