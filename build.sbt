@@ -46,7 +46,7 @@ inThisBuild(
 )
 
 lazy val V = new {
-  val munit = "1.2.3" // "0.7.29"
+  val munit = "1.3.0" // "0.7.29"
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
@@ -145,6 +145,9 @@ lazy val D = new {
   // https://mvnrepository.com/artifact/org.didcommx/didcomm/0.3.2
   val didcommx: ModuleID = "org.didcommx" % "didcomm" % "0.3.2"
   val peerDidcommx: ModuleID = "org.didcommx" % "peerdid" % "0.5.0"
+  // peerdid depends on java-multibase (transitive, JitPack only). v1.1.0 has stale .sha1 metadata,
+  // so we force v1.1.1 which currently has consistent JitPack checksums. Remove once peerdid upgrades.
+  val javaMultibase: ModuleID = "com.github.multiformats" % "java-multibase" % "v1.1.1"
   val didScala: ModuleID = "app.fmgp" %% "did" % "0.0.0+113-61efa271-SNAPSHOT"
 
   val nimbusJwt: ModuleID = "com.nimbusds" % "nimbus-jose-jwt" % V.nimbusJwt
@@ -457,6 +460,7 @@ val commonSetttings = Seq(
 lazy val commonConfigure: Project => Project = _.settings(
   Compile / scalacOptions += "-Yimports:java.lang,scala,scala.Predef,org.hyperledger.identus.Predef",
   Test / scalacOptions -= "-Yimports:java.lang,scala,scala.Predef,org.hyperledger.identus.Predef",
+  dependencyOverrides += D.javaMultibase,
 ).dependsOn(predef)
 
 // #####################
@@ -893,7 +897,7 @@ lazy val cloudAgentVdr = project
     name := "cloud-agent-vdr",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrDatabase, vdrMemory, vdrProxy)
+  .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrNeoprism, vdrDatabase, vdrMemory, vdrProxy)
 
 lazy val vdrCore = project
   .in(file("vdr/core"))
@@ -924,6 +928,16 @@ lazy val vdrPrismNode = project
     libraryDependencies ++= D_CloudAgent.vdrDependencies,
   )
   .dependsOn(vdrCore, prismNodeClient, shared % "compile->compile;test->test")
+
+lazy val vdrNeoprism = project
+  .in(file("vdr/neoprism"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-neoprism",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, castorCore, shared % "compile->compile;test->test")
 
 lazy val vdrDatabase = project
   .in(file("vdr/database"))
@@ -959,7 +973,7 @@ lazy val vdrProxy = project
     ),
     Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
   )
-  .dependsOn(vdrCore, vdrPrismNode, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
+  .dependsOn(vdrCore, vdrPrismNode, vdrNeoprism, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -1050,6 +1064,7 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   vdrBlockfrost,
   vdrMemory,
   vdrPrismNode,
+  vdrNeoprism,
   vdrDatabase,
   vdrProxy,
   cloudAgentVdr,

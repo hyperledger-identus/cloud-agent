@@ -58,8 +58,8 @@ object CredentialSchemaDidUrlResponsePage {
     object kind
         extends Annotation[String](
           description =
-            "A string field indicating the type of the API response. In this case, it will always be set to `CredentialSchemaPage`",
-          example = "CredentialSchemaPage"
+            "A string field indicating the type of the API response. In this case, it will always be set to `CredentialSchemaDidUrlPage`",
+          example = "CredentialSchemaDidUrlPage"
         ) // TODO Tech Debt ticket - the kind in a collection should be collection, not the underlying record type
 
     object self

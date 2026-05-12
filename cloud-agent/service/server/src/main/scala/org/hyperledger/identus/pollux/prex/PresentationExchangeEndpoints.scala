@@ -20,10 +20,10 @@ object PresentationExchangeEndpoints {
   private val tagName = "Presentation Exchange"
   private val tagDescription =
     s"""
-       |The __${tagName}__ endpoints offers a way to manage resources related to [presentation exchange protocol](https://identity.foundation/presentation-exchange/spec/v2.1.1/).
+       |The __${tagName}__ endpoints offer a way to manage resources related to [presentation exchange protocol](https://identity.foundation/presentation-exchange/spec/v2.1.1/).
        |
-       |The verifier can create the resources such as `presentation-definition` that can be publicly referenced
-       |in various protocols such as [OpenID for Verificable Presentation](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html).
+       |The verifier can create resources such as `presentation-definition` that can be publicly referenced
+       |in various protocols such as [OpenID for Verifiable Presentation](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html).
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))
@@ -71,7 +71,7 @@ object PresentationExchangeEndpoints {
       .summary("List all presentation-definitions")
       .description(
         """List all `presentation-definitions` in the wallet.
-          |Return a paginated items ordered by created timestamp.""".stripMargin
+          |Returns paginated items ordered by creation timestamp.""".stripMargin
       )
 
   val createPresentationDefinition: Endpoint[
@@ -91,7 +91,7 @@ object PresentationExchangeEndpoints {
       .summary("Create a new presentation-definition")
       .description(
         """Create a `presentation-definition` object according to the [presentation exchange protocol](https://identity.foundation/presentation-exchange/spec/v2.1.1/).
-          |The `POST` endpoint is restricted to the owner of the wallet. The `presentation-definition` object, however can be referenced by publicly by `id` returned in the response.""".stripMargin
+          |The `POST` endpoint is restricted to the owner of the wallet. The `presentation-definition` object, however, can be publicly referenced by `id` returned in the response.""".stripMargin
       )
 
 }

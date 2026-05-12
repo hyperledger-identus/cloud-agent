@@ -8,6 +8,8 @@ import io.iohk.atala.automation.matchers.RestAssuredJsonProperty
 import io.iohk.atala.automation.serenity.ensure.Ensure
 import io.iohk.atala.automation.serenity.interactions.PollingWait
 import io.iohk.atala.automation.serenity.questions.HttpRequest
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.milliseconds
 import net.serenitybdd.rest.SerenityRest
 import net.serenitybdd.screenplay.Actor
 import org.apache.http.HttpStatus
@@ -38,7 +40,7 @@ class DeactivateDidSteps {
     fun actorSeesThatPrismDidIsSuccessfullyDeactivated(actor: Actor) {
         val deactivatedDid = actor.recall<String>("deactivatedDid")
         actor.attemptsTo(
-            PollingWait.until(
+            PollingWait.with(5.minutes, 500.milliseconds).until(
                 HttpRequest.get("/dids/$deactivatedDid"),
                 RestAssuredJsonProperty.toBe("didDocumentMetadata.deactivated", "true"),
             ),

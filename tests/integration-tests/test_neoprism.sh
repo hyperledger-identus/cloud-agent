@@ -3,15 +3,15 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-# Use NeoPrism config but enable memory and database VDR drivers; exclude prism-node scenarios.
+# Use NeoPrism config with memory and database VDR drivers enabled.
 export TESTS_CONFIG=/configs/basic_neoprism.conf
 export VDR_MEMORY_DRIVER_ENABLED=true
 export VDR_DATABASE_DRIVER_ENABLED=true
 export VDR_PRISM_NODE_DRIVER_ENABLED=false
+export VDR_LEDGER_DRIVER=neoprism
 export AGENT_VERSION=2.1.1-SNAPSHOT
 export PRISM_NODE_VERSION=${PRISM_NODE_VERSION:-edge}
-export NEOPRISM_VERSION=${NEOPRISM_VERSION:-0.10.1}
+export NEOPRISM_VERSION=${NEOPRISM_VERSION:-0.13.0}
 
-# Run all but prism-node and memory/db-specific VDR scenarios (NeoPrism driver)
 ./gradlew clean
-./gradlew test -Dcucumber.filter.tags='not @vdr_prism_node'
+./gradlew test

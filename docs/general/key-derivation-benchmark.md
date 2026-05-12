@@ -9,6 +9,7 @@ future decisions in managing the key material on the agent.
 ### Environment
 
 __System information__
+
 - Platform: Linux (6.3.7)
 - CPU: AMD Ryzen 7 PRO 6850U
 - Memory: 30856MiB
@@ -16,6 +17,7 @@ __System information__
 - SBT version: 1.8.0
 
 __JVM options__
+
 - Xmx:4G
 
 The tests can be run by running the `org.hyperledger.identus.agent.walletapi.benchmark.KeyDerivation`.

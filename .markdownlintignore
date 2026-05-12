@@ -1,0 +1,6 @@
+.claude/
+node_modules/
+target/
+tmp/
+atala-prism/
+cloud-agent/client/

@@ -1,6 +1,7 @@
 # Logging
 
 We want traceability from HTTP calls.
+
 - Each HTTP call needs to generate a call ID (preferable on the proxy). This ID must be should be pass to the scope of the ZIO application. So every log will mention this ID. This ID must also be returned to the user as a HTTP header.
 - In case of errors and problem reports those IDs can be use by the user to get support.
 
@@ -8,11 +9,11 @@ Level 3 support can be provided to user during the logging retention policies. W
 
 ## Annotates
 
-We have special annotations in the log so there is traceability between the different logs. 
+We have special annotations in the log so there is traceability between the different logs.
 Here is the list of annotations and their meaning that we currently have:
 
 - `request-id` - Is the HTTP header `X-Request-Id` from the caller.
-  - If this header is missing, it is create by the APISIX https://apisix.apache.org/docs/apisix/plugins/request-id/. See the configuration how to enable in the file [apisixroute.yaml](./infrastructure/charts/agent/templates/apisixroute.yaml)
+  - If this header is missing, it is create by the APISIX <https://apisix.apache.org/docs/apisix/plugins/request-id/>. See the configuration how to enable in the file [apisixroute.yaml](./infrastructure/charts/agent/templates/apisixroute.yaml)
 
 ## Code
 

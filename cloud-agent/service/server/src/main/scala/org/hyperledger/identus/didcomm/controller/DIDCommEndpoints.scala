@@ -7,6 +7,8 @@ import sttp.tapir.*
 import sttp.tapir.json.zio.jsonBody
 
 object DIDCommEndpoints {
+  private val tagName = "DIDComm Messaging"
+
   val handleDIDCommMessage: PublicEndpoint[
     (RequestContext, DIDCommMessage),
     ErrorResponse,
@@ -18,4 +20,11 @@ object DIDCommEndpoints {
     .in("")
     .out(emptyOutput)
     .errorOut(basicFailuresWith(FailureVariant.unprocessableEntity, FailureVariant.notFound))
+    .tag(tagName)
+    .summary("Handle an incoming DIDComm message")
+    .description(
+      "Receives and processes an encrypted DIDComm v2 message. " +
+        "The message is unpacked and dispatched to the appropriate protocol handler " +
+        "(connection, issuance, presentation, revocation)."
+    )
 }
