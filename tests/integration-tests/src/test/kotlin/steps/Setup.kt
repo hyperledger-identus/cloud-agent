@@ -208,6 +208,7 @@ fun init() {
 
 @AfterAll
 fun clearStage() {
+    Thread.sleep(30000)
     Setup.stopActors()
     Setup.stopServices()
 }

@@ -88,7 +88,7 @@ object DIDEndpoints {
     )(_ => true),
   )
 
-  // MUST conform to https://w3c-ccg.github.io/did-resolution/#bindings-https
+  // MUST conform to https://www.w3.org/TR/did-resolution/#bindings-https
   val getDID: PublicEndpoint[
     (RequestContext, String),
     Nothing,
@@ -101,10 +101,10 @@ object DIDEndpoints {
     .name("getDID")
     .summary("Resolve Prism DID to a W3C representation")
     .description(
-      """Resolve Prism DID to a W3C DID document representation.
-        |The response can be the [DID resolution result](https://w3c-ccg.github.io/did-resolution/#did-resolution-result)
+      """Resolve a Prism DID to a W3C DID document representation.
+        |The response can be the [DID resolution result](https://www.w3.org/TR/did-resolution/#did-resolution-result)
         |or [DID document representation](https://www.w3.org/TR/did-core/#representations) depending on the `Accept` request header.
-        |The response is implemented according to [resolver HTTP binding](https://w3c-ccg.github.io/did-resolution/#bindings-https) in the DID resolution spec.
+        |The response is implemented according to [resolver HTTP binding](https://www.w3.org/TR/did-resolution/#bindings-https) in the DID resolution spec.
         |""".stripMargin
     )
     .tag(tagName)

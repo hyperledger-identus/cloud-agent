@@ -14,12 +14,14 @@ object UpdateManagedDIDActionValidator {
 
   private def validateReservedKeyId(actions: Seq[UpdateManagedDIDAction]): Either[String, Unit] = {
     val keyIds = actions.flatMap {
-      case UpdateManagedDIDAction.AddKey(template) => Some(template.id)
-      case UpdateManagedDIDAction.RemoveKey(id)    => Some(id)
-      case UpdateManagedDIDAction.AddService(_)    => None
-      case UpdateManagedDIDAction.RemoveService(_) => None
-      case UpdateManagedDIDAction.UpdateService(_) => None
-      case UpdateManagedDIDAction.PatchContext(_)  => None
+      case UpdateManagedDIDAction.AddKey(template)         => Some(template.id)
+      case UpdateManagedDIDAction.AddInternalKey(template) => Some(template.id)
+      case UpdateManagedDIDAction.RemoveKey(id)            => Some(id)
+      case UpdateManagedDIDAction.RemoveInternalKey(id)    => Some(id)
+      case UpdateManagedDIDAction.AddService(_)            => None
+      case UpdateManagedDIDAction.RemoveService(_)         => None
+      case UpdateManagedDIDAction.UpdateService(_)         => None
+      case UpdateManagedDIDAction.PatchContext(_)          => None
     }
     val reservedKeyIds = keyIds.filter(id => ManagedDIDService.reservedKeyIds.contains(id))
     if (reservedKeyIds.nonEmpty)

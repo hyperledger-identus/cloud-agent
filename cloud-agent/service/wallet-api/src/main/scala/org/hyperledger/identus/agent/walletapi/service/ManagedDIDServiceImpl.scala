@@ -7,6 +7,7 @@ import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService.DEFAULT
 import org.hyperledger.identus.agent.walletapi.storage.{DIDNonSecretStorage, DIDSecretStorage, WalletSecretStorage}
 import org.hyperledger.identus.agent.walletapi.util.*
 import org.hyperledger.identus.castor.core.model.did.*
+import org.hyperledger.identus.castor.core.model.did.InternalKeyPurpose
 import org.hyperledger.identus.castor.core.model.did.Service as DidDocumentService
 import org.hyperledger.identus.castor.core.model.error.DIDOperationError
 import org.hyperledger.identus.castor.core.service.DIDService
@@ -41,6 +42,33 @@ class ManagedDIDServiceImpl private[walletapi] (
     DIDCreateHandler(apollo, nonSecretStorage, secretStorage, walletSecretStorage)(KeyId(DEFAULT_MASTER_KEY_ID))
   private val didUpdateHandler =
     DIDUpdateHandler(apollo, nonSecretStorage, secretStorage, walletSecretStorage, publicationHandler)
+
+  /** Ensure remove-internal-key actions target only existing internal VDR keys. */
+  private[walletapi] def validateInternalKeyRemoval(
+      state: ManagedDIDState,
+      actions: Seq[UpdateManagedDIDAction]
+  ): ZIO[WalletAccessContext, UpdateManagedDIDError, Unit] = {
+    val prismDid = state.createOperation.did
+    val internalRemovals = actions.collect { case UpdateManagedDIDAction.RemoveInternalKey(id) => id }
+    ZIO.foreachDiscard(internalRemovals) { keyId =>
+      nonSecretStorage
+        .getKeyMeta(prismDid, KeyId(keyId))
+        .mapError(UpdateManagedDIDError.WalletStorageError.apply)
+        .someOrFail(UpdateManagedDIDError.InvalidArgument(s"Internal key '$keyId' not found"))
+        .flatMap {
+          case (ManagedDIDKeyMeta.HD(path), _) if path.keyUsage == InternalKeyPurpose.VDR =>
+            ZIO.unit
+          case (ManagedDIDKeyMeta.HD(path), _) =>
+            ZIO.fail(
+              UpdateManagedDIDError.InvalidArgument(
+                s"Key '$keyId' is not a VDR internal key (usage=${path.keyUsage})"
+              )
+            )
+          case (_: ManagedDIDKeyMeta.Rand, _) =>
+            ZIO.fail(UpdateManagedDIDError.InvalidArgument(s"Key '$keyId' is not an internal HD key"))
+        }
+    }
+  }
 
   def syncManagedDIDState: ZIO[WalletAccessContext, GetManagedDIDError, Unit] = nonSecretStorage
     .listManagedDID(offset = None, limit = None)
@@ -153,6 +181,7 @@ class ManagedDIDServiceImpl private[walletapi] (
         .collect(UpdateManagedDIDError.DIDNotPublished(did)) {
           case s @ ManagedDIDState(_, _, PublicationState.Published(_)) => s
         }
+      _ <- validateInternalKeyRemoval(didState, actions)
       resolvedDID <- didService
         .resolveDID(did)
         .mapError(UpdateManagedDIDError.ResolutionError.apply)
@@ -213,6 +242,14 @@ class ManagedDIDServiceImpl private[walletapi] (
       outcome <- doDeactivate(didState, deactivateOperation)
     } yield outcome
   }
+
+  override def isDidDeactivated(
+      did: CanonicalPrismDID
+  ): ZIO[WalletAccessContext, GetManagedDIDError, Boolean] =
+    didService
+      .resolveDID(did)
+      .mapError(GetManagedDIDError.ResolutionError.apply)
+      .map(_.exists(_._1.deactivated))
 
   /** return hash of previous operation. Currently support only last confirmed operation */
   private def computePreviousOperationHash[E](

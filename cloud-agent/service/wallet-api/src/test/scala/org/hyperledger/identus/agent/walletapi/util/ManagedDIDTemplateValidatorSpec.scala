@@ -1,9 +1,14 @@
 package org.hyperledger.identus.agent.walletapi.util
 
-import org.hyperledger.identus.agent.walletapi.model.{DIDPublicKeyTemplate, ManagedDIDTemplate}
+import org.hyperledger.identus.agent.walletapi.model.{
+  DIDPublicKeyTemplate,
+  ManagedDIDTemplate,
+  ManagedInternalDIDKeyTemplate
+}
 import org.hyperledger.identus.agent.walletapi.service.ManagedDIDService
 import org.hyperledger.identus.castor.core.model.did.{
   EllipticCurve,
+  InternalKeyPurpose,
   Service,
   ServiceEndpoint,
   ServiceType,
@@ -22,6 +27,20 @@ object ManagedDIDTemplateValidatorSpec extends ZIOSpecDefault {
     test("accept empty DID template") {
       val template = ManagedDIDTemplate(publicKeys = Nil, services = Nil, contexts = Nil)
       assert(ManagedDIDTemplateValidator.validate(template))(isRight)
+    },
+    test("reject DID template if secp256k1 used for key agreement") {
+      val template = ManagedDIDTemplate(
+        publicKeys = Seq(
+          DIDPublicKeyTemplate(
+            id = "bad-key",
+            purpose = VerificationRelationship.KeyAgreement,
+            curve = EllipticCurve.SECP256K1
+          )
+        ),
+        services = Nil,
+        contexts = Nil
+      )
+      assert(ManagedDIDTemplateValidator.validate(template))(isLeft)
     },
     test("accept valid non-empty DID template") {
       val template = ManagedDIDTemplate(
@@ -80,6 +99,46 @@ object ManagedDIDTemplateValidatorSpec extends ZIOSpecDefault {
       )
       assert(ManagedDIDTemplateValidator.validate(template1))(isLeft) &&
       assert(ManagedDIDTemplateValidator.validate(template2))(isLeft)
+    },
+    test("accept DID template with optional VDR signing internal key") {
+      val template = ManagedDIDTemplate(
+        publicKeys = Seq(
+          DIDPublicKeyTemplate(
+            id = "auth0",
+            purpose = VerificationRelationship.Authentication,
+            curve = EllipticCurve.SECP256K1
+          )
+        ),
+        internalKeys = Seq(ManagedInternalDIDKeyTemplate("vdr-1", InternalKeyPurpose.VDR)),
+        services = Nil,
+        contexts = Nil
+      )
+      assert(ManagedDIDTemplateValidator.validate(template))(isRight)
+    },
+    test("reject DID template when internal key purpose is unsupported") {
+      val template = ManagedDIDTemplate(
+        publicKeys = Nil,
+        internalKeys = Seq(ManagedInternalDIDKeyTemplate("bad", InternalKeyPurpose.Master)),
+        services = Nil,
+        contexts = Nil
+      )
+      assert(ManagedDIDTemplateValidator.validate(template))(isLeft)
+    },
+    test("reject DID template when key ids are duplicated across public and internal keys") {
+      val keyId = "dup-key"
+      val template = ManagedDIDTemplate(
+        publicKeys = Seq(
+          DIDPublicKeyTemplate(
+            id = keyId,
+            purpose = VerificationRelationship.Authentication,
+            curve = EllipticCurve.SECP256K1
+          )
+        ),
+        internalKeys = Seq(ManagedInternalDIDKeyTemplate(keyId, InternalKeyPurpose.VDR)),
+        services = Nil,
+        contexts = Nil
+      )
+      assert(ManagedDIDTemplateValidator.validate(template))(isLeft)
     }
   )
 

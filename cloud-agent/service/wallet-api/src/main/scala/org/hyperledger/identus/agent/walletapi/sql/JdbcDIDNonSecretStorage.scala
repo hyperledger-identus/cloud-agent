@@ -171,11 +171,12 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
     for {
       walletCtx <- ZIO.service[WalletAccessContext]
       walletId = walletCtx.walletId
-      cnxIO = for {
-        _ <- acquireAdvisoryLock(walletId)
-        _ <- insertWalletDIDIndexIfNotExists(walletId)
-        index <- incrementWalletDIDIndex(walletId)
-      } yield index
+      cnxIO =
+        for {
+          _ <- acquireAdvisoryLock(walletId)
+          _ <- insertWalletDIDIndexIfNotExists(walletId)
+          index <- incrementWalletDIDIndex(walletId)
+        } yield index
       index <- cnxIO.transactWallet(xa).orDie
     } yield index
   }
@@ -220,6 +221,7 @@ class JdbcDIDNonSecretStorage(xa: Transactor[ContextAwareTask], xb: Transactor[T
               InternalKeyCounter(
                 master = keyUsageIndexMap.getOrElse(InternalKeyPurpose.Master, 0),
                 revocation = keyUsageIndexMap.getOrElse(InternalKeyPurpose.Revocation, 0),
+                vdr = keyUsageIndexMap.getOrElse(InternalKeyPurpose.VDR, 0),
               )
             )
           )

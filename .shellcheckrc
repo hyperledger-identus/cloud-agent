@@ -1,0 +1,5 @@
+# SC2221/SC2222: Case pattern overlap (catch-all before specific) — intentional
+# in argument parsing where -* and --* are both handled together
+# SC2034: Unused variable — false positive for vars exported via env to docker-compose
+# SC3045: POSIX ulimit — in generated gradlew file
+disable=SC2221,SC2222,SC2034,SC3045

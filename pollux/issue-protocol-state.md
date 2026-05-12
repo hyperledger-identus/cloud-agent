@@ -26,7 +26,9 @@ stateDiagram-v2
   PublicationState --> CredentialSent: send credential (via DIDComm Agent)
   
 ```
+
 ---
+
 ```mermaid
 ---
 title: Holder Issue Protocol State

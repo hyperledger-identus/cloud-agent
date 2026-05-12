@@ -53,6 +53,11 @@ trait ManagedDIDService {
       did: CanonicalPrismDID
   ): ZIO[WalletAccessContext, UpdateManagedDIDError, ScheduleDIDOperationOutcome]
 
+  /** Returns true when the DID is marked as deactivated on ledger/resolution metadata. */
+  def isDidDeactivated(
+      did: CanonicalPrismDID
+  ): ZIO[WalletAccessContext, GetManagedDIDError, Boolean]
+
   /** PeerDID related methods */
   def createAndStorePeerDID(
       serviceEndpoint: java.net.URL

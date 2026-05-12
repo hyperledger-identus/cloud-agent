@@ -695,30 +695,31 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
           .fromOption(requestPresentation.to)
           .flatMap(buildWalletAccessContextLayer)
           .mapError(_ => PresentationError.RequestPresentationMissingField(id.value, "recipient"))
-        _ <- for {
-          presentationService <- ZIO.service[PresentationService]
-          prover <- createPrismDIDIssuerFromPresentationCredentials(id, credentialsToUse.getOrElse(Nil))
-            .provideSomeLayer(ZLayer.succeed(walletAccessContext))
-          presentation <-
-            for {
-              presentationPayload <-
-                presentationService
-                  .createJwtPresentationPayloadFromRecord(
-                    id,
-                    prover,
-                    Instant.now()
-                  )
-                  .provideSomeLayer(ZLayer.succeed(walletAccessContext))
-              signedJwtPresentation = JwtPresentation.toEncodedJwt(
-                presentationPayload.toW3CPresentationPayload,
-                prover
-              )
-              presentation <- createPresentation(id, requestPresentation, signedJwtPresentation)
-            } yield presentation
-          _ <- presentationService
-            .markPresentationGenerated(id, presentation)
-            .provideSomeLayer(ZLayer.succeed(walletAccessContext))
-        } yield ()
+        _ <-
+          for {
+            presentationService <- ZIO.service[PresentationService]
+            prover <- createPrismDIDIssuerFromPresentationCredentials(id, credentialsToUse.getOrElse(Nil))
+              .provideSomeLayer(ZLayer.succeed(walletAccessContext))
+            presentation <-
+              for {
+                presentationPayload <-
+                  presentationService
+                    .createJwtPresentationPayloadFromRecord(
+                      id,
+                      prover,
+                      Instant.now()
+                    )
+                    .provideSomeLayer(ZLayer.succeed(walletAccessContext))
+                signedJwtPresentation = JwtPresentation.toEncodedJwt(
+                  presentationPayload.toW3CPresentationPayload,
+                  prover
+                )
+                presentation <- createPresentation(id, requestPresentation, signedJwtPresentation)
+              } yield presentation
+            _ <- presentationService
+              .markPresentationGenerated(id, presentation)
+              .provideSomeLayer(ZLayer.succeed(walletAccessContext))
+          } yield ()
       } yield ()
 
       private def createPresentation(
@@ -804,25 +805,26 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
                 .fromOption(requestPresentation.to)
                 .flatMap(buildWalletAccessContextLayer)
                 .mapError(_ => PresentationError.RequestPresentationMissingField(id.value, "recipient"))
-              result <- for {
-                presentationService <- ZIO.service[PresentationService]
-                anoncredCredentialProofs <-
-                  AnoncredCredentialProofsV1.schemaSerDes
-                    .deserialize(credentialsToUseJson)
-                    .mapError(error => PresentationError.AnoncredCredentialProofParsingError(error.error))
-                presentation <-
-                  presentationService
-                    .createAnoncredPresentation(
-                      requestPresentation,
-                      id,
-                      anoncredCredentialProofs,
-                      Instant.now()
-                    )
+              result <-
+                for {
+                  presentationService <- ZIO.service[PresentationService]
+                  anoncredCredentialProofs <-
+                    AnoncredCredentialProofsV1.schemaSerDes
+                      .deserialize(credentialsToUseJson)
+                      .mapError(error => PresentationError.AnoncredCredentialProofParsingError(error.error))
+                  presentation <-
+                    presentationService
+                      .createAnoncredPresentation(
+                        requestPresentation,
+                        id,
+                        anoncredCredentialProofs,
+                        Instant.now()
+                      )
+                      .provideSomeLayer(ZLayer.succeed(walletAccessContext))
+                  _ <- presentationService
+                    .markPresentationGenerated(id, presentation)
                     .provideSomeLayer(ZLayer.succeed(walletAccessContext))
-                _ <- presentationService
-                  .markPresentationGenerated(id, presentation)
-                  .provideSomeLayer(ZLayer.succeed(walletAccessContext))
-              } yield ()
+                } yield ()
             } yield result
             proverPresentationPendingToGeneratedFlow
           case None =>
@@ -942,30 +944,31 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
       val ProverPresentationGeneratedToSentFlow = for {
         _ <- ZIO.log(s"PresentationRecord: PresentationPending (Send Message)")
         walletAccessContext <- buildWalletAccessContextLayer(presentation.from)
-        result <- for {
-          didCommAgent <- buildDIDCommAgent(presentation.from).provideSomeLayer(ZLayer.succeed(walletAccessContext))
-          resp <-
-            MessagingService
-              .send(presentation.makeMessage)
-              .provideSomeLayer(didCommAgent)
-              @@ Metric
-                .gauge("present_proof_flow_prover_send_presentation_msg_ms_gauge")
-                .trackDurationWith(_.toMetricsSeconds)
-          service <- ZIO.service[PresentationService]
-          _ <- {
-            if (resp.status >= 200 && resp.status < 300)
-              service
-                .markPresentationSent(id)
-                .provideSomeLayer(
-                  ZLayer.succeed(walletAccessContext)
-                ) @@ ProverSendPresentationMsgSuccess @@ CustomMetricsAspect
-                .endRecordingTime(
-                  s"${id}_present_proof_flow_prover_presentation_generated_to_sent_ms_gauge",
-                  "present_proof_flow_prover_presentation_generated_to_sent_ms_gauge"
-                )
-            else ZIO.fail(ErrorResponseReceivedFromPeerAgent(resp)) @@ ProverSendPresentationMsgFailed
-          }
-        } yield ()
+        result <-
+          for {
+            didCommAgent <- buildDIDCommAgent(presentation.from).provideSomeLayer(ZLayer.succeed(walletAccessContext))
+            resp <-
+              MessagingService
+                .send(presentation.makeMessage)
+                .provideSomeLayer(didCommAgent)
+                @@ Metric
+                  .gauge("present_proof_flow_prover_send_presentation_msg_ms_gauge")
+                  .trackDurationWith(_.toMetricsSeconds)
+            service <- ZIO.service[PresentationService]
+            _ <- {
+              if (resp.status >= 200 && resp.status < 300)
+                service
+                  .markPresentationSent(id)
+                  .provideSomeLayer(
+                    ZLayer.succeed(walletAccessContext)
+                  ) @@ ProverSendPresentationMsgSuccess @@ CustomMetricsAspect
+                  .endRecordingTime(
+                    s"${id}_present_proof_flow_prover_presentation_generated_to_sent_ms_gauge",
+                    "present_proof_flow_prover_presentation_generated_to_sent_ms_gauge"
+                  )
+              else ZIO.fail(ErrorResponseReceivedFromPeerAgent(resp)) @@ ProverSendPresentationMsgFailed
+            }
+          } yield ()
 
       } yield result
 
@@ -1012,35 +1015,36 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
           .mapError(_ => RequestPresentationMissingField(id.value, "sender"))
           .flatMap(buildWalletAccessContextLayer)
 
-        result <- for {
-          didOps <- ZIO.service[DidOps]
-          didCommAgent <- ZIO
-            .fromOption(requestPresentation.from)
-            .mapError(_ => RequestPresentationMissingField(id.value, "sender"))
-            .flatMap(buildDIDCommAgent(_).provideSomeLayer(ZLayer.succeed(walletAccessContext)))
-          resp <-
-            MessagingService
-              .send(requestPresentation.makeMessage)
-              .provideSomeLayer(didCommAgent)
-              @@ Metric
-                .gauge("present_proof_flow_verifier_send_presentation_request_msg_ms_gauge")
-                .trackDurationWith(_.toMetricsSeconds)
-          service <- ZIO.service[PresentationService]
-          _ <- {
-            if (resp.status >= 200 && resp.status < 300)
-              service
-                .markRequestPresentationSent(
-                  id
+        result <-
+          for {
+            didOps <- ZIO.service[DidOps]
+            didCommAgent <- ZIO
+              .fromOption(requestPresentation.from)
+              .mapError(_ => RequestPresentationMissingField(id.value, "sender"))
+              .flatMap(buildDIDCommAgent(_).provideSomeLayer(ZLayer.succeed(walletAccessContext)))
+            resp <-
+              MessagingService
+                .send(requestPresentation.makeMessage)
+                .provideSomeLayer(didCommAgent)
+                @@ Metric
+                  .gauge("present_proof_flow_verifier_send_presentation_request_msg_ms_gauge")
+                  .trackDurationWith(_.toMetricsSeconds)
+            service <- ZIO.service[PresentationService]
+            _ <- {
+              if (resp.status >= 200 && resp.status < 300)
+                service
+                  .markRequestPresentationSent(
+                    id
+                  )
+                  .provideSomeLayer(
+                    ZLayer.succeed(walletAccessContext)
+                  ) @@ VerifierSendPresentationRequestMsgSuccess @@ CustomMetricsAspect.endRecordingTime(
+                  s"${id}_present_proof_flow_verifier_req_pending_to_sent_ms_gauge",
+                  "present_proof_flow_verifier_req_pending_to_sent_ms_gauge"
                 )
-                .provideSomeLayer(
-                  ZLayer.succeed(walletAccessContext)
-                ) @@ VerifierSendPresentationRequestMsgSuccess @@ CustomMetricsAspect.endRecordingTime(
-                s"${id}_present_proof_flow_verifier_req_pending_to_sent_ms_gauge",
-                "present_proof_flow_verifier_req_pending_to_sent_ms_gauge"
-              )
-            else ZIO.fail(ErrorResponseReceivedFromPeerAgent(resp)) @@ VerifierSendPresentationRequestMsgFailed
-          }
-        } yield ()
+              else ZIO.fail(ErrorResponseReceivedFromPeerAgent(resp)) @@ VerifierSendPresentationRequestMsgFailed
+            }
+          } yield ()
       } yield result
       verifierReqPendingToSentFlow
         @@ metric
@@ -1130,105 +1134,106 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
         for {
           walletAccessContext <- buildWalletAccessContextLayer(presentation.to)
           _ <- checkInvitationExpiry(id, invitation).provideSomeLayer(ZLayer.succeed(walletAccessContext))
-          result <- for {
-            didResolverService <- ZIO.service[JwtDidResolver]
-            claimsValidationResult <- presentation.attachments.head.data match {
-              case Base64(data) =>
-                val base64Decoded = new String(java.util.Base64.getUrlDecoder.decode(data))
-                val maybePresentationOptions: Either[PresentationError, Option[Options]] =
-                  requestPresentation.attachments.headOption
-                    .map(attachment =>
-                      attachment.data.toJson
-                        .fromJson[JsonData]
-                        .leftMap(err => PresentationDecodingError(s"JsonData decoding error: $err"))
-                        .flatMap(data =>
-                          org.hyperledger.identus.pollux.core.model.presentation.PresentationAttachment.given_JsonDecoder_PresentationAttachment
-                            .decodeJson(data.json.toJson)
-                            .map(_.options)
-                            .leftMap(err => PresentationDecodingError(s"PresentationAttachment decoding error: $err"))
-                        )
+          result <-
+            for {
+              didResolverService <- ZIO.service[JwtDidResolver]
+              claimsValidationResult <- presentation.attachments.head.data match {
+                case Base64(data) =>
+                  val base64Decoded = new String(java.util.Base64.getUrlDecoder.decode(data))
+                  val maybePresentationOptions: Either[PresentationError, Option[Options]] =
+                    requestPresentation.attachments.headOption
+                      .map(attachment =>
+                        attachment.data.toJson
+                          .fromJson[JsonData]
+                          .leftMap(err => PresentationDecodingError(s"JsonData decoding error: $err"))
+                          .flatMap(data =>
+                            org.hyperledger.identus.pollux.core.model.presentation.PresentationAttachment.given_JsonDecoder_PresentationAttachment
+                              .decodeJson(data.json.toJson)
+                              .map(_.options)
+                              .leftMap(err => PresentationDecodingError(s"PresentationAttachment decoding error: $err"))
+                          )
+                      )
+                      .getOrElse(Right(None))
+                  val schemaIdAndTrustedIssuers = requestPresentation.body.proof_types.map { proofType =>
+                    CredentialSchemaAndTrustedIssuersConstraint(
+                      proofType.schema,
+                      proofType.trustIssuers.map(_.map(_.value))
                     )
-                    .getOrElse(Right(None))
-                val schemaIdAndTrustedIssuers = requestPresentation.body.proof_types.map { proofType =>
-                  CredentialSchemaAndTrustedIssuersConstraint(
-                    proofType.schema,
-                    proofType.trustIssuers.map(_.map(_.value))
-                  )
-                }
+                  }
 
-                val presentationClaimsValidationResult = for {
-                  validationResult: Validation[String, Unit] <- ZIO.fromEither(maybePresentationOptions.map {
-                    case Some(options) =>
-                      JwtPresentation
-                        .validatePresentation(
-                          JWT(base64Decoded),
-                          Some(options.domain),
-                          Some(options.challenge),
-                          schemaIdAndTrustedIssuers
-                        )
-                    case _ =>
-                      JwtPresentation
-                        .validatePresentation(
-                          JWT(base64Decoded),
-                          None,
-                          None,
-                          schemaIdAndTrustedIssuers
-                        )
-                  })
+                  val presentationClaimsValidationResult = for {
+                    validationResult: Validation[String, Unit] <- ZIO.fromEither(maybePresentationOptions.map {
+                      case Some(options) =>
+                        JwtPresentation
+                          .validatePresentation(
+                            JWT(base64Decoded),
+                            Some(options.domain),
+                            Some(options.challenge),
+                            schemaIdAndTrustedIssuers
+                          )
+                      case _ =>
+                        JwtPresentation
+                          .validatePresentation(
+                            JWT(base64Decoded),
+                            None,
+                            None,
+                            schemaIdAndTrustedIssuers
+                          )
+                    })
 
-                  verificationConfig <- ZIO.service[AppConfig].map(_.agent.verification)
-                  _ <- ZIO.log(s"VerificationConfig: ${verificationConfig}")
+                    verificationConfig <- ZIO.service[AppConfig].map(_.agent.verification)
+                    _ <- ZIO.log(s"VerificationConfig: ${verificationConfig}")
 
-                  // https://www.w3.org/TR/vc-data-model/#proofs-signatures-0
-                  // A proof is typically attached to a verifiable presentation for authentication purposes
-                  // and to a verifiable credential as a method of assertion.
-                  uriResolver <- ZIO.service[UriResolver]
-                  result: Validation[String, Unit] <- JwtPresentation
-                    .verify(
-                      JWT(base64Decoded),
-                      verificationConfig.toPresentationVerificationOptions()
-                    )(didResolverService, uriResolver)(clock)
-                    .mapError(error => PresentationError.PresentationVerificationError(error.mkString))
+                    // https://www.w3.org/TR/vc-data-model/#proofs-signatures-0
+                    // A proof is typically attached to a verifiable presentation for authentication purposes
+                    // and to a verifiable credential as a method of assertion.
+                    uriResolver <- ZIO.service[UriResolver]
+                    result: Validation[String, Unit] <- JwtPresentation
+                      .verify(
+                        JWT(base64Decoded),
+                        verificationConfig.toPresentationVerificationOptions()
+                      )(didResolverService, uriResolver)(clock)
+                      .mapError(error => PresentationError.PresentationVerificationError(error.mkString))
 
-                } yield Seq(validationResult, result)
-                presentationClaimsValidationResult
+                  } yield Seq(validationResult, result)
+                  presentationClaimsValidationResult
 
-              case any => ZIO.fail(PresentationReceivedError("Only Base64 Supported"))
-            }
-            credentialsClaimsValidationResult = ZValidation
-              .validateAll(claimsValidationResult)
-              .map(_ => ())
-            _ <- credentialsClaimsValidationResult match
-              case l @ ZFailure(_, _) => ZIO.logError(s"CredentialsClaimsValidationResult: $l")
-              case l @ Success(_, _)  => ZIO.logInfo(s"CredentialsClaimsValidationResult: $l")
-            service <- ZIO.service[PresentationService]
-            presReceivedToProcessedAspect = CustomMetricsAspect.endRecordingTime(
-              s"${id}_present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge",
-              "present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge"
-            )
-            _ <- credentialsClaimsValidationResult match {
-              case Success(log, value) =>
-                service
-                  .markPresentationVerified(id)
-                  .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect
-              case ZFailure(log, error) =>
-                for {
-                  _ <- service
-                    .markPresentationVerificationFailed(id)
+                case any => ZIO.fail(PresentationReceivedError("Only Base64 Supported"))
+              }
+              credentialsClaimsValidationResult = ZValidation
+                .validateAll(claimsValidationResult)
+                .map(_ => ())
+              _ <- credentialsClaimsValidationResult match
+                case l @ ZFailure(_, _) => ZIO.logError(s"CredentialsClaimsValidationResult: $l")
+                case l @ Success(_, _)  => ZIO.logInfo(s"CredentialsClaimsValidationResult: $l")
+              service <- ZIO.service[PresentationService]
+              presReceivedToProcessedAspect = CustomMetricsAspect.endRecordingTime(
+                s"${id}_present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge",
+                "present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge"
+              )
+              _ <- credentialsClaimsValidationResult match {
+                case Success(log, value) =>
+                  service
+                    .markPresentationVerified(id)
                     .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect
-                  didCommAgent <- buildDIDCommAgent(presentation.to).provideSomeLayer(
-                    ZLayer.succeed(walletAccessContext)
-                  )
-                  reportProblem = buildReportProblem(presentation, error.mkString)
-                  _ <-
-                    MessagingService
-                      .send(reportProblem.toMessage)
-                      .provideSomeLayer(didCommAgent)
-                  _ <- ZIO.log(s"CredentialsClaimsValidationResult: $error")
-                } yield ()
-            }
+                case ZFailure(log, error) =>
+                  for {
+                    _ <- service
+                      .markPresentationVerificationFailed(id)
+                      .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect
+                    didCommAgent <- buildDIDCommAgent(presentation.to).provideSomeLayer(
+                      ZLayer.succeed(walletAccessContext)
+                    )
+                    reportProblem = buildReportProblem(presentation, error.mkString)
+                    _ <-
+                      MessagingService
+                        .send(reportProblem.toMessage)
+                        .provideSomeLayer(didCommAgent)
+                    _ <- ZIO.log(s"CredentialsClaimsValidationResult: $error")
+                  } yield ()
+              }
 
-          } yield ()
+            } yield ()
         } yield result
       }
 
@@ -1240,59 +1245,60 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
         for {
           walletAccessContext <- buildWalletAccessContextLayer(presentation.to)
           _ <- checkInvitationExpiry(id, invitation).provideSomeLayer(ZLayer.succeed(walletAccessContext))
-          result <- for {
-            didResolverService <- ZIO.service[JwtDidResolver]
-            credentialsClaimsValidationResult <- presentation.attachments.head.data match {
-              case Base64(data) =>
-                val base64Decoded = new String(java.util.Base64.getUrlDecoder.decode(data))
-                val verifiedClaims = for {
-                  presentation <- ZIO.succeed(PresentationCompact.unsafeFromCompact(base64Decoded))
-                  iss <- ZIO.fromEither(presentation.iss)
-                  ed25519PublicKey <- resolveToEd25519PublicKey(iss)
-                  ret = SDJWT.getVerifiedClaims(
-                    IssuerPublicKey(ed25519PublicKey),
-                    presentation
-                  )
-                  _ <- ZIO.logInfo(s"ClaimsValidationResult: $ret")
-                } yield ret
-                verifiedClaims.mapError(error => PresentationReceivedError(error.toString))
-              case any => ZIO.fail(PresentationReceivedError("Only Base64 Supported"))
-            }
-            service <- ZIO.service[PresentationService]
-            _ <- credentialsClaimsValidationResult match
-              case valid: SDJWT.Valid =>
-                ZIO.logInfo(s"CredentialsClaimsValidationResult: $valid")
-                val jsonObj = valid.asInstanceOf[SDJWT.ValidClaims].claims
-                service
-                  .updateWithSDJWTDisclosedClaims(id, jsonObj)
-                  .provideSomeLayer(ZLayer.succeed(walletAccessContext))
-              case invalid: SDJWT.Invalid =>
-                ZIO.logError(s"CredentialsClaimsValidationResult: $invalid")
-            presReceivedToProcessedAspect = CustomMetricsAspect.endRecordingTime(
-              s"${id}_present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge",
-              "present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge"
-            )
-            _ <- credentialsClaimsValidationResult match
-              case valid: SDJWT.Valid =>
-                service
-                  .markPresentationVerified(id)
-                  .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect
-              case invalid: SDJWT.Invalid =>
-                for {
-                  _ <- service
-                    .markPresentationVerificationFailed(id)
+          result <-
+            for {
+              didResolverService <- ZIO.service[JwtDidResolver]
+              credentialsClaimsValidationResult <- presentation.attachments.head.data match {
+                case Base64(data) =>
+                  val base64Decoded = new String(java.util.Base64.getUrlDecoder.decode(data))
+                  val verifiedClaims = for {
+                    presentation <- ZIO.succeed(PresentationCompact.unsafeFromCompact(base64Decoded))
+                    iss <- ZIO.fromEither(presentation.iss)
+                    ed25519PublicKey <- resolveToEd25519PublicKey(iss)
+                    ret = SDJWT.getVerifiedClaims(
+                      IssuerPublicKey(ed25519PublicKey),
+                      presentation
+                    )
+                    _ <- ZIO.logInfo(s"ClaimsValidationResult: $ret")
+                  } yield ret
+                  verifiedClaims.mapError(error => PresentationReceivedError(error.toString))
+                case any => ZIO.fail(PresentationReceivedError("Only Base64 Supported"))
+              }
+              service <- ZIO.service[PresentationService]
+              _ <- credentialsClaimsValidationResult match
+                case valid: SDJWT.Valid =>
+                  ZIO.logInfo(s"CredentialsClaimsValidationResult: $valid")
+                  val jsonObj = valid.asInstanceOf[SDJWT.ValidClaims].claims
+                  service
+                    .updateWithSDJWTDisclosedClaims(id, jsonObj)
+                    .provideSomeLayer(ZLayer.succeed(walletAccessContext))
+                case invalid: SDJWT.Invalid =>
+                  ZIO.logError(s"CredentialsClaimsValidationResult: $invalid")
+              presReceivedToProcessedAspect = CustomMetricsAspect.endRecordingTime(
+                s"${id}_present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge",
+                "present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge"
+              )
+              _ <- credentialsClaimsValidationResult match
+                case valid: SDJWT.Valid =>
+                  service
+                    .markPresentationVerified(id)
                     .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect
-                  didCommAgent <- buildDIDCommAgent(presentation.to).provideSomeLayer(
-                    ZLayer.succeed(walletAccessContext)
-                  )
-                  reportProblem = buildReportProblem(presentation, invalid.toString)
-                  resp <-
-                    MessagingService
-                      .send(reportProblem.toMessage)
-                      .provideSomeLayer(didCommAgent)
-                  _ <- ZIO.log(s"CredentialsClaimsValidationResult: ${invalid.toString}")
-                } yield ()
-          } yield ()
+                case invalid: SDJWT.Invalid =>
+                  for {
+                    _ <- service
+                      .markPresentationVerificationFailed(id)
+                      .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect
+                    didCommAgent <- buildDIDCommAgent(presentation.to).provideSomeLayer(
+                      ZLayer.succeed(walletAccessContext)
+                    )
+                    reportProblem = buildReportProblem(presentation, invalid.toString)
+                    resp <-
+                      MessagingService
+                        .send(reportProblem.toMessage)
+                        .provideSomeLayer(didCommAgent)
+                    _ <- ZIO.log(s"CredentialsClaimsValidationResult: ${invalid.toString}")
+                  } yield ()
+            } yield ()
         } yield result
       }
 
@@ -1309,30 +1315,31 @@ object PresentBackgroundJobs extends BackgroundJobsHelper {
         for {
           walletAccessContext <- buildWalletAccessContextLayer(presentation.to)
           _ <- checkInvitationExpiry(id, invitation).provideSomeLayer(ZLayer.succeed(walletAccessContext))
-          result <- for {
-            service <- ZIO.service[PresentationService]
-            presReceivedToProcessedAspect = CustomMetricsAspect.endRecordingTime(
-              s"${id}_present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge",
-              "present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge"
-            )
-            _ <- (service
-              .verifyAnoncredPresentation(presentation, requestPresentation, id)
-              .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect)
-              .flatMapError(e =>
-                for {
-                  didCommAgent <- buildDIDCommAgent(presentation.to).provideSomeLayer(
-                    ZLayer.succeed(walletAccessContext)
-                  )
-                  reportProblem = buildReportProblem(presentation, e.toString)
-                  _ <-
-                    MessagingService
-                      .send(reportProblem.toMessage)
-                      .provideSomeLayer(didCommAgent)
-                  _ <- ZIO.log(s"CredentialsClaimsValidationResult: ${e.toString}")
-                } yield ()
-                ZIO.succeed(e)
+          result <-
+            for {
+              service <- ZIO.service[PresentationService]
+              presReceivedToProcessedAspect = CustomMetricsAspect.endRecordingTime(
+                s"${id}_present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge",
+                "present_proof_flow_verifier_presentation_received_to_verification_success_or_failure_ms_gauge"
               )
-          } yield ()
+              _ <- (service
+                .verifyAnoncredPresentation(presentation, requestPresentation, id)
+                .provideSomeLayer(ZLayer.succeed(walletAccessContext)) @@ presReceivedToProcessedAspect)
+                .flatMapError(e =>
+                  for {
+                    didCommAgent <- buildDIDCommAgent(presentation.to).provideSomeLayer(
+                      ZLayer.succeed(walletAccessContext)
+                    )
+                    reportProblem = buildReportProblem(presentation, e.toString)
+                    _ <-
+                      MessagingService
+                        .send(reportProblem.toMessage)
+                        .provideSomeLayer(didCommAgent)
+                    _ <- ZIO.log(s"CredentialsClaimsValidationResult: ${e.toString}")
+                  } yield ()
+                  ZIO.succeed(e)
+                )
+            } yield ()
         } yield result
       }
     }

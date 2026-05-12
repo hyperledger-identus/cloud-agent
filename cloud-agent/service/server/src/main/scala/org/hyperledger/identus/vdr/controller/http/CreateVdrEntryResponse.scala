@@ -8,7 +8,9 @@ import zio.json.{DeriveJsonDecoder, DeriveJsonEncoder, JsonDecoder, JsonEncoder}
 final case class CreateVdrEntryResponse(
     @description(CreateVdrEntryResponse.annotations.url.description)
     @encodedExample(CreateVdrEntryResponse.annotations.url.example)
-    url: String
+    url: String,
+    @description("Identifier of the asynchronous VDR operation, if applicable")
+    operationId: Option[String] = None
 )
 
 object CreateVdrEntryResponse {

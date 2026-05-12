@@ -20,6 +20,7 @@ Global / concurrentRestrictions += Tags.limit(Tags.Network, 1)
 
 coverageDataDir := target.value / "coverage"
 coberturaFile := target.value / "coverage" / "coverage-report" / "cobertura.xml"
+coverageExcludedPackages := "(?i).*proto.*;.*grpc.*;.*scalapb.*;.*protobuf.*;.*generated.*"
 
 inThisBuild(
   Seq(
@@ -35,12 +36,17 @@ inThisBuild(
     // scalacOptions += "-Ysafe-init",
     // scalacOptions +=  "-Werror", // <=> "-Xfatal-warnings"
     scalacOptions += "-Dquill.macro.log=false", // disable quill macro logs // TODO https://github.com/zio/zio-protoquill/issues/470,
-    scalacOptions ++= Seq("-Xmax-inlines", "50") // increase above 32 (https://github.com/circe/circe/issues/2162)
+    scalacOptions ++= Seq("-Xmax-inlines", "50"), // increase above 32 (https://github.com/circe/circe/issues/2162)
+    Test / javaOptions ++= Seq("-Dlog4j2.disable.jmx=true", "-Ddocker.api.version=1.44"),
+    Test / envVars ++= Map(
+      "DOCKER_API_VERSION" -> "1.44",
+      "DOCKER_HOST" -> "unix:///var/run/docker.sock"
+    )
   )
 )
 
 lazy val V = new {
-  val munit = "1.2.1" // "0.7.29"
+  val munit = "1.3.0" // "0.7.29"
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
@@ -63,13 +69,14 @@ lazy val V = new {
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
-  val testContainersScala = "0.43.0"
+  // align with Docker client API used by GH runners
+  val testContainersScala = "0.44.1"
   val testContainersJavaKeycloak = "3.2.0" // scala-steward:off
 
   val doobie = "1.0.0-RC5" // scala-steward:off
   val quill = "4.8.6"
   val flyway = "9.22.3" // scala-steward:off
-  val postgresDriver = "42.7.8"
+  val postgresDriver = "42.7.9"
   val logback = "1.5.18"
   val slf4j = "2.0.17"
 
@@ -138,6 +145,9 @@ lazy val D = new {
   // https://mvnrepository.com/artifact/org.didcommx/didcomm/0.3.2
   val didcommx: ModuleID = "org.didcommx" % "didcomm" % "0.3.2"
   val peerDidcommx: ModuleID = "org.didcommx" % "peerdid" % "0.5.0"
+  // peerdid depends on java-multibase (transitive, JitPack only). v1.1.0 has stale .sha1 metadata,
+  // so we force v1.1.1 which currently has consistent JitPack checksums. Remove once peerdid upgrades.
+  val javaMultibase: ModuleID = "com.github.multiformats" % "java-multibase" % "v1.1.1"
   val didScala: ModuleID = "app.fmgp" %% "did" % "0.0.0+113-61efa271-SNAPSHOT"
 
   val nimbusJwt: ModuleID = "com.nimbusds" % "nimbus-jose-jwt" % V.nimbusJwt
@@ -450,6 +460,7 @@ val commonSetttings = Seq(
 lazy val commonConfigure: Project => Project = _.settings(
   Compile / scalacOptions += "-Yimports:java.lang,scala,scala.Predef,org.hyperledger.identus.Predef",
   Test / scalacOptions -= "-Yimports:java.lang,scala,scala.Predef,org.hyperledger.identus.Predef",
+  dependencyOverrides += D.javaMultibase,
 ).dependsOn(predef)
 
 // #####################
@@ -886,7 +897,83 @@ lazy val cloudAgentVdr = project
     name := "cloud-agent-vdr",
     libraryDependencies ++= D_CloudAgent.baseDependencies ++ D_CloudAgent.vdrDependencies,
   )
-  .dependsOn(shared)
+  .dependsOn(shared, prismNodeClient, vdrCore, vdrPrismNode, vdrNeoprism, vdrDatabase, vdrMemory, vdrProxy)
+
+lazy val vdrCore = project
+  .in(file("vdr/core"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-core",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(shared, prismNodeClient)
+
+lazy val vdrMemory = project
+  .in(file("vdr/memory"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-memory",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore)
+
+lazy val vdrPrismNode = project
+  .in(file("vdr/prism-node"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-prism-node",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, prismNodeClient, shared % "compile->compile;test->test")
+
+lazy val vdrNeoprism = project
+  .in(file("vdr/neoprism"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-neoprism",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, castorCore, shared % "compile->compile;test->test")
+
+lazy val vdrDatabase = project
+  .in(file("vdr/database"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-database",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies ++ D_CloudAgent.postgresDependencies,
+    Test / libraryDependencies ++= Seq(
+      "com.dimafeng" %% "testcontainers-scala-postgresql" % V.testContainersScala % Test
+    ),
+  )
+  .dependsOn(vdrCore, shared)
+
+lazy val vdrBlockfrost = project
+  .in(file("vdr/blockfrost"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-blockfrost",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies,
+  )
+  .dependsOn(vdrCore, shared)
+
+lazy val vdrProxy = project
+  .in(file("vdr/proxy"))
+  .configure(commonConfigure)
+  .settings(commonSetttings)
+  .settings(
+    name := "vdr-proxy",
+    libraryDependencies ++= D_CloudAgent.vdrDependencies ++ Seq(
+      "com.h2database" % "h2" % "2.2.224"
+    ),
+    Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
+  )
+  .dependsOn(vdrCore, vdrPrismNode, vdrNeoprism, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
 lazy val cloudAgentServer = project
   .in(file("cloud-agent/service/server"))
@@ -906,7 +993,7 @@ lazy val cloudAgentServer = project
     Docker / dockerUsername := Some("hyperledgeridentus"), // https://hub.docker.com/u/hyperledgeridentus
     Docker / dockerRepository := Some("docker.io"),
     dockerExposedPorts := Seq(8085, 8090),
-    dockerBaseImage := "eclipse-temurin:21-jdk-ubi9-minimal",
+    dockerBaseImage := "eclipse-temurin:22-jdk-ubi9-minimal",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "org.hyperledger.identus.agent.server.buildinfo",
     Compile / packageDoc / publishArtifact := false
@@ -973,6 +1060,13 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
   polluxPreX,
   connectCore,
   connectDoobie,
+  vdrCore,
+  vdrBlockfrost,
+  vdrMemory,
+  vdrPrismNode,
+  vdrNeoprism,
+  vdrDatabase,
+  vdrProxy,
   cloudAgentVdr,
   cloudAgentWalletAPI,
   cloudAgentServer,
@@ -982,3 +1076,8 @@ lazy val aggregatedProjects: Seq[ProjectReference] = Seq(
 lazy val root = project
   .in(file("."))
   .aggregate(aggregatedProjects: _*)
+
+Global / excludeLintKeys ++= Set(
+  vdrDatabase / Test / libraryDependencies,
+  vdrProxy / Test / libraryDependencies
+)

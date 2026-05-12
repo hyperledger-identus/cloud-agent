@@ -22,6 +22,7 @@ object MockManagedDIDService extends Mock[ManagedDIDService] {
   object GetManagedDIDState extends Effect[CanonicalPrismDID, GetManagedDIDError, Option[ManagedDIDState]]
   object FindDIDKeyPair
       extends Effect[(CanonicalPrismDID, KeyId), Nothing, Option[Secp256k1KeyPair | Ed25519KeyPair | X25519KeyPair]]
+  object IsDidDeactivated extends Effect[CanonicalPrismDID, GetManagedDIDError, Boolean]
 
   override val compose: URLayer[mock.Proxy, ManagedDIDService] =
     ZLayer {
@@ -44,6 +45,11 @@ object MockManagedDIDService extends Mock[ManagedDIDService] {
             did: CanonicalPrismDID
         ): IO[GetManagedDIDError, Option[ManagedDIDState]] =
           proxy(GetManagedDIDState, did)
+
+        override def isDidDeactivated(
+            did: CanonicalPrismDID
+        ): IO[GetManagedDIDError, Boolean] =
+          proxy(IsDidDeactivated, did)
 
         override def listManagedDIDPage(
             offset: Int,

@@ -126,15 +126,17 @@ class JdbcCredentialStatusListRepository(xa: Transactor[ContextAwareTask], xb: T
       newStatusListVC <- createStatusListVC(jwtIssuer, statusListRegistryUrl, id)
       walletCtx <- ZIO.service[WalletAccessContext]
       walletId = walletCtx.walletId
-      cnxIO = for {
-        _ <- acquireAdvisoryLock(walletId)
-        maybeStatusList <- getLatestOfTheWallet
-        statusList <- maybeStatusList match
-          case Some(csl) if csl.lastUsedIndex < csl.size => cats.free.Free.pure[ConnectionOp, CredentialStatusList](csl)
-          case _ => createNewForTheWallet(id, jwtIssuer.did.toString, Instant.now(), newStatusListVC)
-        newIndex = statusList.lastUsedIndex + 1
-        _ <- updateLastUsedIndex(statusList.id, newIndex)
-      } yield (statusList.id, newIndex)
+      cnxIO =
+        for {
+          _ <- acquireAdvisoryLock(walletId)
+          maybeStatusList <- getLatestOfTheWallet
+          statusList <- maybeStatusList match
+            case Some(csl) if csl.lastUsedIndex < csl.size =>
+              cats.free.Free.pure[ConnectionOp, CredentialStatusList](csl)
+            case _ => createNewForTheWallet(id, jwtIssuer.did.toString, Instant.now(), newStatusListVC)
+          newIndex = statusList.lastUsedIndex + 1
+          _ <- updateLastUsedIndex(statusList.id, newIndex)
+        } yield (statusList.id, newIndex)
       result <- cnxIO.transactWallet(xa)
     } yield result).orDie
   }

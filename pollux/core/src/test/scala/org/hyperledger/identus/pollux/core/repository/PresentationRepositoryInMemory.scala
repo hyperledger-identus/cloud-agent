@@ -44,10 +44,11 @@ class PresentationRepositoryInMemory(
     val result =
       for {
         storeRef <- walletStoreRef
-        _ <- for {
-          store <- storeRef.get
-          maybeRecord = store.values.find(_.thid == record.thid)
-        } yield ()
+        _ <-
+          for {
+            store <- storeRef.get
+            maybeRecord = store.values.find(_.thid == record.thid)
+          } yield ()
         _ <- storeRef.update(r => r + (record.id -> record))
       } yield 1
     result.ensureOneAffectedRowOrDie

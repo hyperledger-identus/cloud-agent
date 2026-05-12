@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Identus Cloud Agent API Reference
-  version: 2.1.0
+  version: 2.1.1-SNAPSHOT
   description: |2
 
     The Identus Cloud Agent API facilitates the integration and management of self-sovereign identity capabilities within applications.
@@ -5242,6 +5242,11 @@ paths:
         required: true
         schema:
           type: string
+      - name: didKeyId
+        in: query
+        required: false
+        schema:
+          type: string
       requestBody:
         content:
           application/octet-stream:
@@ -5280,6 +5285,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - apiKeyAuth: []
+      - jwtAuth: []
     post:
       tags:
       - VDR
@@ -5299,6 +5307,11 @@ paths:
         schema:
           type: string
       - name: drv
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: didKeyId
         in: query
         required: false
         schema:
@@ -5347,6 +5360,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - apiKeyAuth: []
+      - jwtAuth: []
     delete:
       tags:
       - VDR
@@ -5358,9 +5374,18 @@ paths:
         required: true
         schema:
           type: string
+      - name: didKeyId
+        in: query
+        required: false
+        schema:
+          type: string
       responses:
         '200':
           description: Deleted a VDR entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteVdrEntryResponse'
         '400':
           description: Invalid request parameters
           content:
@@ -5385,6 +5410,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - apiKeyAuth: []
+      - jwtAuth: []
   /vdr/proofs:
     get:
       tags:
@@ -5404,6 +5432,49 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Proof3'
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Resource could not be found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unable to process the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /vdr/operations/{operationId}:
+    get:
+      tags:
+      - VDR
+      summary: Get VDR operation status
+      operationId: getVdrOperationStatus
+      parameters:
+      - name: operationId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: VDR operation status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VdrOperationStatusResponse'
         '400':
           description: Invalid request parameters
           content:
@@ -5482,9 +5553,11 @@ components:
       title: ActionType
       type: string
       enum:
+      - ADD_INTERNAL_KEY
       - ADD_KEY
       - ADD_SERVICE
       - PATCH_CONTEXT
+      - REMOVE_INTERNAL_KEY
       - REMOVE_KEY
       - REMOVE_SERVICE
       - UPDATE_SERVICE
@@ -6080,6 +6153,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ManagedDIDKeyTemplate'
+        internalKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/ManagedDIDInternalKeyTemplate'
         services:
           type: array
           items:
@@ -6113,6 +6190,8 @@ components:
         url:
           description: A VDR url that can be used to locate the resource
           example: http://host-a/?drf=memory&drid=memory&drv=0.1.0&m=0#a8bddddf-4894-437c-8d23-7b6f08ef766a
+          type: string
+        operationId:
           type: string
     CreateWalletRequest:
       title: CreateWalletRequest
@@ -7071,6 +7150,14 @@ components:
         c_nonce_expires_in:
           type: integer
           format: int32
+    DeleteVdrEntryResponse:
+      title: DeleteVdrEntryResponse
+      type: object
+      properties:
+        operationId:
+          description: Identifier of the deletion operation, if provided by the driver
+          example: 334b5860723bd190eca2187430ea638071ac0406a49cb22c8a7c90c24fa1df48
+          type: string
     DidOperationSubmission:
       title: DidOperationSubmission
       type: object
@@ -7287,6 +7374,13 @@ components:
           $ref: '#/components/schemas/ClaimFormat'
         constraints:
           $ref: '#/components/schemas/Constraints'
+    InternalPurpose:
+      title: InternalPurpose
+      description: Purpose of the internal key. Currently only `vdr` is supported.
+      example: vdr
+      type: string
+      enum:
+      - vdr
     IssueCredentialOfferInvitation:
       title: IssueCredentialOfferInvitation
       description: The invitation for this Offer Credential
@@ -7659,6 +7753,21 @@ components:
             Does not represent DID a lifecyle (e.g. `deactivated`, `recovered`, `updated`).
           example: CREATED
           type: string
+    ManagedDIDInternalKeyTemplate:
+      title: ManagedDIDInternalKeyTemplate
+      description: An internal key template (not exposed in DID Document).
+      type: object
+      required:
+      - id
+      - purpose
+      properties:
+        id:
+          description: Identifier of an internal key stored alongside the DID (not
+            published in DID Document)
+          example: vdr-1
+          type: string
+        purpose:
+          $ref: '#/components/schemas/InternalPurpose'
     ManagedDIDKeyTemplate:
       title: ManagedDIDKeyTemplate
       description: A key-pair template to add to DID document.
@@ -8623,6 +8732,10 @@ components:
           $ref: '#/components/schemas/ActionType'
         addKey:
           $ref: '#/components/schemas/ManagedDIDKeyTemplate'
+        addInternalKey:
+          $ref: '#/components/schemas/ManagedDIDInternalKeyTemplate'
+        removeInternalKey:
+          $ref: '#/components/schemas/RemoveEntryById'
         removeKey:
           $ref: '#/components/schemas/RemoveEntryById'
         addService:
@@ -8661,6 +8774,8 @@ components:
         url:
           description: A VDR url that can be used to locate the resource
           example: http://host-a/?drf=memory&drid=memory&drv=0.1.0&m=0#a8bddddf-4894-437c-8d23-7b6f08ef766a
+          type: string
+        operationId:
           type: string
     VcVerification:
       title: VcVerification
@@ -8780,6 +8895,18 @@ components:
         success:
           description: Indicates whether the verification was successful.
           type: boolean
+    VdrOperationStatusResponse:
+      title: VdrOperationStatusResponse
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+        details:
+          type: string
+        transactionId:
+          type: string
     VerificationMethod:
       title: VerificationMethod
       description: A cryptographic public key expressed in the DID document. https://www.w3.org/TR/did-core/#verification-methods

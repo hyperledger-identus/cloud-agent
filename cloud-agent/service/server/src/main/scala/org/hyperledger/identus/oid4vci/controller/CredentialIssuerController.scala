@@ -135,6 +135,12 @@ case class CredentialIssuerControllerImpl(
   private def baseCredentialIssuerUrl(issuerId: UUID): URL =
     URI(s"$agentBaseUrl/oid4vci/issuers/$issuerId").toURL()
 
+  private def redactedAuthServer(as: AuthorizationServer): String =
+    s"url=${Option(as.url).getOrElse("<none>")} clientId=${Option(as.clientId).getOrElse("<none>")} clientSecret=<redacted>"
+
+  private def redactedAuthServer(as: PatchAuthorizationServer): String =
+    s"url=${as.url.getOrElse("<unchanged>")} clientId=${as.clientId.getOrElse("<unchanged>")} clientSecret=<redacted>"
+
   def issueCredential(
       ctx: RequestContext,
       issuerId: UUID,
@@ -257,6 +263,7 @@ case class CredentialIssuerControllerImpl(
       request: CreateCredentialIssuerRequest
   ): ZIO[WalletAccessContext, ErrorResponse, CredentialIssuer] =
     for {
+      _ <- ZIO.logInfo(s"[oid4vci] create issuer ${redactedAuthServer(request.authorizationServer)}")
       authServerUrl <- parseAbsoluteURL(request.authorizationServer.url)
       id = request.id.getOrElse(UUID.randomUUID())
       issuerToCreate = PolluxCredentialIssuer(
@@ -266,6 +273,7 @@ case class CredentialIssuerControllerImpl(
         request.authorizationServer.clientSecret
       )
       issuer <- issuerMetadataService.createCredentialIssuer(issuerToCreate)
+      _ <- ZIO.logInfo(s"[oid4vci] created issuer id=${issuer.id}")
     } yield issuer
 
   override def getCredentialIssuers(
@@ -273,6 +281,7 @@ case class CredentialIssuerControllerImpl(
   ): ZIO[WalletAccessContext, ErrorResponse, CredentialIssuerPage] =
     val uri = ctx.request.uri
     for {
+      _ <- ZIO.logDebug(s"[oid4vci] list issuers path=${uri}")
       issuers <- issuerMetadataService.getCredentialIssuers
     } yield CredentialIssuerPage(
       self = uri.toString(),
@@ -286,6 +295,9 @@ case class CredentialIssuerControllerImpl(
       request: PatchCredentialIssuerRequest
   ): ZIO[WalletAccessContext, ErrorResponse, CredentialIssuer] =
     for {
+      _ <- ZIO.logInfo(
+        s"[oid4vci] update issuer id=$issuerId authServer=${request.authorizationServer.map(redactedAuthServer).getOrElse("<unchanged>")}"
+      )
       maybeAuthServerUrl <- ZIO
         .succeed(request.authorizationServer.flatMap(_.url))
         .flatMap {
@@ -304,7 +316,9 @@ case class CredentialIssuerControllerImpl(
       ctx: RequestContext,
       issuerId: UUID
   ): ZIO[WalletAccessContext, ErrorResponse, Unit] =
-    for _ <- issuerMetadataService.deleteCredentialIssuer(issuerId)
+    for
+      _ <- ZIO.logInfo(s"[oid4vci] delete issuer id=$issuerId")
+      _ <- issuerMetadataService.deleteCredentialIssuer(issuerId)
     yield ()
 
   override def createCredentialConfiguration(

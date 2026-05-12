@@ -28,12 +28,13 @@ class CredentialDefinitionRepositoryInMemory(
   override def create(record: CredentialDefinition): URIO[WalletAccessContext, CredentialDefinition] = {
     for {
       storeRef <- walletStoreRef
-      _ <- for {
-        store <- storeRef.get
-        maybeRecord = store.values
-          .find(_.id == record.guid)
-          .foreach(_ => throw RuntimeException("Unique Constraint Violation on 'id'"))
-      } yield ()
+      _ <-
+        for {
+          store <- storeRef.get
+          maybeRecord = store.values
+            .find(_.id == record.guid)
+            .foreach(_ => throw RuntimeException("Unique Constraint Violation on 'id'"))
+        } yield ()
       _ <- storeRef.update(r => r + (record.guid -> record))
     } yield record
   }

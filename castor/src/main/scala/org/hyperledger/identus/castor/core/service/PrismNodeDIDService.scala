@@ -2,7 +2,7 @@ package org.hyperledger.identus.castor.core.service
 
 import io.iohk.atala.prism.protos.{node_api, node_models}
 import io.iohk.atala.prism.protos.node_api.NodeServiceGrpc.NodeService
-import io.iohk.atala.prism.protos.node_models.OperationOutput.OperationMaybe
+import io.iohk.atala.prism.protos.node_api.OperationOutput.OperationMaybe
 import org.hyperledger.identus.castor.core.model.did.{
   CanonicalPrismDID,
   DIDData,

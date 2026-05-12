@@ -1,0 +1,44 @@
+# markdownlint configuration
+# https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+default: true
+
+# Allow long lines (common in tables, URLs, and generated content)
+MD013: false
+
+# Allow multiple top-level headings (common in multi-section docs)
+MD025: false
+
+# Allow inline HTML (needed for badges, details/summary, etc.)
+MD033: false
+
+# Allow duplicate headings (common in CHANGELOG files with repeated version patterns)
+MD024: false
+
+# Allow first line to be HTML (centered logos in READMEs)
+MD041: false
+
+# Disable ordered list prefix check (lists broken by code blocks/paragraphs
+# restart numbering which triggers false positives)
+MD029: false
+
+# Allow heading level jumps (common in CHANGELOG.md files)
+MD001: false
+
+# Allow emphasis used as heading (common in generated changelogs)
+MD036: false
+
+# Allow empty links (common in generated API docs)
+MD042: false
+
+# Allow code blocks without language (legacy docs)
+MD040: false
+
+# Allow indented code blocks (mixed style in existing docs)
+MD046: false
+
+# Allow non-descriptive link text like "here" (legacy docs)
+MD059: false
+
+# Allow images without alt text (legacy docs)
+MD045: false

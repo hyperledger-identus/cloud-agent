@@ -13,7 +13,7 @@ object ValidClaimsSpec extends ZIOSpecDefault {
         claims <- """{"iss":"did:example:issuer","iat":1683000000,"exp":1883000000,"address":{"country":"DE"}}"""
           .fromJson[ast.Json.Obj]
         expected <- """{}""".fromJson[ast.Json.Obj]
-      } yield SDJWT.ValidClaims(claims).verifyDiscoseClaims(expected)
+      } yield SDJWT.ValidClaims(claims).verifyDiscloseClaims(expected)
       assert(ret)(isRight(equalTo(SDJWT.ValidAnyMatch)))
     },
     test("ValidClaims query (path exist)") {
@@ -27,7 +27,7 @@ object ValidClaimsSpec extends ZIOSpecDefault {
             |  }
             |}
         """.stripMargin.fromJson[ast.Json.Obj]
-      } yield SDJWT.ValidClaims(claims).verifyDiscoseClaims(expected)
+      } yield SDJWT.ValidClaims(claims).verifyDiscloseClaims(expected)
       assert(ret)(isRight(equalTo(SDJWT.ValidAnyMatch)))
     },
     test("ValidClaims query (path does not exist)") {
@@ -41,7 +41,7 @@ object ValidClaimsSpec extends ZIOSpecDefault {
             |  }
             |}
         """.stripMargin.fromJson[ast.Json.Obj]
-      } yield SDJWT.ValidClaims(claims).verifyDiscoseClaims(expected)
+      } yield SDJWT.ValidClaims(claims).verifyDiscloseClaims(expected)
       assert(ret)(isRight(equalTo(SDJWT.ClaimsDoNotMatch)))
     },
     test("ValidClaims query (check value)") {
@@ -55,7 +55,7 @@ object ValidClaimsSpec extends ZIOSpecDefault {
             |  }
             |}
         """.stripMargin.fromJson[ast.Json.Obj]
-      } yield SDJWT.ValidClaims(claims).verifyDiscoseClaims(expected)
+      } yield SDJWT.ValidClaims(claims).verifyDiscloseClaims(expected)
       assert(ret)(isRight(equalTo(SDJWT.ValidAnyMatch)))
     },
     test("ValidClaims query (check fail claim)") {
@@ -69,7 +69,7 @@ object ValidClaimsSpec extends ZIOSpecDefault {
             |  }
             |}
         """.stripMargin.fromJson[ast.Json.Obj]
-      } yield SDJWT.ValidClaims(claims).verifyDiscoseClaims(expected)
+      } yield SDJWT.ValidClaims(claims).verifyDiscloseClaims(expected)
       assert(ret)(isRight(equalTo(SDJWT.ClaimsDoNotMatch)))
     }
   )

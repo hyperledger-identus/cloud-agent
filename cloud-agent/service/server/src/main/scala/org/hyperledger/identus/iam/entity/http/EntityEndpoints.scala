@@ -20,7 +20,7 @@ object EntityEndpoints {
   private val tagName = "Identity and Access Management"
   private val tagDescription =
     s"""
-       |The __${tagName}__ endpoints allow [agent administrators](https://hyperledger-identus.github.io/docs/home/concepts/glossary#administrator)
+       |The __${tagName}__ endpoints allow [agent administrators](https://hyperledger-identus.github.io/docs/documentation/learn/glossary/#administrator)
        |to manage identity and access management for the agent's tenants.
        |It provides basic built-in IAM capabilities as an alternative to more feature rich external IAM solutions.
        |
@@ -30,7 +30,7 @@ object EntityEndpoints {
        |Additionally, the administrator can create API keys for entities and provide them to the tenants out-of-band.
        |These API keys can then be used for authorization to access specific wallets.
        |
-       |For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger-identus.github.io/docs/home/identus/cloud-agent/authentication).
+       |For more detailed information related to the agent IAM and its usage, please refer to this [documentation](https://hyperledger-identus.github.io/docs/cloud-agent/docs/docusaurus/multitenancy/tenant-onboarding).
        |""".stripMargin
 
   val tag = Tag(tagName, Some(tagDescription))
@@ -65,7 +65,7 @@ object EntityEndpoints {
       .name("createEntity")
       .summary("Create a new entity record")
       .description(
-        "Create the new entity record. The entity record is a representation of the account in the system."
+        "Create a new entity record. The entity record is a representation of the account in the system."
       )
       .tag(tagName)
 
@@ -178,14 +178,14 @@ object EntityEndpoints {
       .securityIn(adminApiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in(extractFromRequest[RequestContext](RequestContext.apply))
-      .in("iam" / "entities".description("Get all entities"))
+      .in("iam" / "entities")
       .in(paginationInput)
       .out(jsonBody[EntityResponsePage].description("Collection of Entity records"))
       .errorOut(basicFailuresAndForbidden)
       .name("getAllEntities")
       .summary("Get all entities")
       .description(
-        "Get all entities with the pagination by `offset` and `limit` parameters "
+        "Get all entities paginated by `offset` and `limit` parameters."
       )
       .tag(tagName)
 
@@ -230,7 +230,7 @@ object EntityEndpoints {
     .in(
       jsonBody[ApiKeyAuthenticationRequest]
         .description(
-          "JSON object required for the registering the entity and `apikey`"
+          "JSON object required for registering the entity and `apikey`"
         )
     )
     .out(
@@ -261,13 +261,13 @@ object EntityEndpoints {
     .in(
       jsonBody[ApiKeyAuthenticationRequest]
         .description(
-          "JSON object required for the unregistering the entity and `apikey`"
+          "JSON object required for unregistering the entity and `apikey`"
         )
     )
     .out(
       statusCode(StatusCode.Ok)
         .description(
-          "The new `apikey` is successfully unregistered for the entity"
+          "The `apikey` is successfully unregistered for the entity"
         )
     )
     .errorOut(basicFailureAndNotFoundAndForbidden)

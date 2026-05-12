@@ -60,14 +60,25 @@ class OperationFactory(apollo: Apollo) {
         InternalKeyPurpose.Master,
         hdKeysWithCounter._2
       )
+      derivedInternalKeysWithCounter <- ZIO.foldLeft(didTemplate.internalKeys)(
+        (Vector.empty[KeyDerivationOutcome[InternalPublicKey]], masterKeyOutcome.nextCounter)
+      ) { case ((keys, keyCounter), template) =>
+        deriveInternalPublicKey(seed)(KeyId(template.id), template.purpose, keyCounter)
+          .map(outcome => (keys :+ outcome, outcome.nextCounter))
+      }
+      (derivedInternalKeys, _) = derivedInternalKeysWithCounter
       operation = PrismDIDOperation.Create(
-        publicKeys = hdKeysWithCounter._1.map(_._1) ++ randKeys.map(_.publicKey) ++ Seq(masterKeyOutcome.publicKey),
+        publicKeys = hdKeysWithCounter._1.map(_._1) ++
+          randKeys.map(_.publicKey) ++
+          Seq(masterKeyOutcome.publicKey) ++
+          derivedInternalKeys.map(_.publicKey),
         services = didTemplate.services,
         context = didTemplate.contexts
       )
       keys = CreateDIDKey(
         hdKeys = hdKeysWithCounter._1.map(i => i.publicKey.id.value -> i.path).toMap ++
-          Map(masterKeyOutcome.publicKey.id.value -> masterKeyOutcome.path),
+          Map(masterKeyOutcome.publicKey.id.value -> masterKeyOutcome.path) ++
+          derivedInternalKeys.map(i => i.publicKey.id.value -> i.path).toMap,
         randKeys = randKeys.map(i => i.publicKey.id.value -> i.key).toMap,
       )
     } yield operation -> keys
@@ -79,24 +90,30 @@ class OperationFactory(apollo: Apollo) {
       actions: Seq[UpdateManagedDIDAction],
       fromKeyCounter: HdKeyIndexCounter
   ): IO[UpdateManagedDIDError, (PrismDIDOperation.Update, UpdateDIDKey)] = {
+    // Derived key produced for an update action: public key for external use or internal key
+    type DerivedKey = PublicKey | InternalPublicKey
+    // Material associated with a derived key: HD path (for derived keys) or random keypair
+    type KeyMaterial = ManagedDIDHdKeyPath | ManagedDIDRandKeyPair
     val initKeysWithCounter =
       (
-        Vector.empty[(UpdateManagedDIDAction, Option[(PublicKey, ManagedDIDHdKeyPath | ManagedDIDRandKeyPair)])],
+        Vector.empty[(UpdateManagedDIDAction, Option[(DerivedKey, KeyMaterial)])],
         fromKeyCounter
       )
+
     val actionsWithKeyMaterial = ZIO.foldLeft(actions)(initKeysWithCounter) { case ((acc, keyCounter), action) =>
-      val outcome: UIO[Option[KeyGenerationOutcome | KeyDerivationOutcome[PublicKey]]] = action match {
+      val outcome: UIO[Option[(DerivedKey, KeyMaterial, HdKeyIndexCounter)]] = action match {
         case UpdateManagedDIDAction.AddKey(template) =>
           if template.curve == EllipticCurve.SECP256K1
-          then derivePublicKey(seed)(template, keyCounter).asSome
-          else generatePublicKey(template).asSome
-        case _ => ZIO.none
+          then derivePublicKey(seed)(template, keyCounter).map(o => Some((o.publicKey, o.path, o.nextCounter)))
+          else generatePublicKey(template).map(o => Some((o.publicKey, o.key, keyCounter)))
+        case UpdateManagedDIDAction.AddInternalKey(template) =>
+          deriveInternalPublicKey(seed)(KeyId(template.id), template.purpose, keyCounter)
+            .map(o => Some((o.publicKey, o.path, o.nextCounter)))
+        case _ => ZIO.succeed(None)
       }
       outcome.map {
-        case Some(outcome: KeyDerivationOutcome[PublicKey]) =>
-          (acc :+ (action -> Some((outcome.publicKey, outcome.path))), outcome.nextCounter)
-        case Some(outcome: KeyGenerationOutcome) =>
-          (acc :+ (action -> Some((outcome.publicKey, outcome.key))), keyCounter)
+        case Some((pub, mat, nextCounter)) =>
+          (acc :+ (action -> Some((pub, mat))), nextCounter)
         case None =>
           (acc :+ (action -> None), keyCounter)
       }
@@ -108,11 +125,30 @@ class OperationFactory(apollo: Apollo) {
       transformedActions <- ZIO.foreach(actionWithKey) { case (action, keyMaterial) =>
         transformUpdateAction(action, keyMaterial.map(_._1))
       }
-      keys = actionWithKey.collect { case (UpdateManagedDIDAction.AddKey(_), Some(secret)) => secret }
-      (randKeys, hdKeys) = keys.partitionMap {
-        case (pk, hdPath: ManagedDIDHdKeyPath)    => Right(pk.id.value -> hdPath)
-        case (pk, keyPair: ManagedDIDRandKeyPair) => Left(pk.id.value -> keyPair)
+      keys = actionWithKey.collect {
+        case (_: UpdateManagedDIDAction.AddKey, Some((pub, mat)))         => (pub, mat)
+        case (_: UpdateManagedDIDAction.AddInternalKey, Some((pub, mat))) => (pub, mat)
       }
+      (randKeys, hdOrInternalKeys) = keys.foldLeft(
+        (
+          Vector.empty[(String, ManagedDIDRandKeyPair)],
+          Vector.empty[(Either[PublicKey, InternalPublicKey], ManagedDIDHdKeyPath)]
+        )
+      ) { case ((randAcc, hdAcc), (pub, mat)) =>
+        mat match {
+          case path: ManagedDIDHdKeyPath =>
+            val tagged = pub match {
+              case pk: PublicKey         => Left(pk)
+              case pk: InternalPublicKey => Right(pk)
+            }
+            (randAcc, hdAcc :+ (tagged -> path))
+          case pair: ManagedDIDRandKeyPair =>
+            val pk = pub.asInstanceOf[PublicKey] // random keys are only for public keys
+            (randAcc :+ (pk.id.value -> pair), hdAcc)
+        }
+      }
+      hdKeys = hdOrInternalKeys.collect { case (Left(pk), path) => pk.id.value -> path }
+      internalKeys = hdOrInternalKeys.collect { case (Right(pk), path) => pk.id.value -> path }
       operation = PrismDIDOperation.Update(
         did = did,
         previousOperationHash = ArraySeq.from(previousOperationHash),
@@ -124,6 +160,7 @@ class OperationFactory(apollo: Apollo) {
         // If the specification supports updating existing key, the key that will be stored in the wallet
         // MUST be aligned with the spec (e.g. keep first / keep last in the action list)
         hdKeys = hdKeys.toMap,
+        internalKeys = internalKeys.toMap,
         randKeys = randKeys.toMap,
         counter = keyCounter
       )
@@ -132,20 +169,29 @@ class OperationFactory(apollo: Apollo) {
 
   private def transformUpdateAction(
       updateAction: UpdateManagedDIDAction,
-      publicKey: Option[PublicKey]
+      publicKey: Option[PublicKey | InternalPublicKey]
   ): UIO[UpdateDIDAction] = {
     updateAction match {
       case UpdateManagedDIDAction.AddKey(_) =>
         publicKey match {
-          case Some(publicKey) => ZIO.succeed(UpdateDIDAction.AddKey(publicKey))
-          case None            =>
+          case Some(publicKey: PublicKey) => ZIO.succeed(UpdateDIDAction.AddKey(publicKey))
+          case None                       =>
             // should be impossible otherwise it's a defect
             ZIO.dieMessage("addKey update DID action must have a generated a key-pair")
+          case _ =>
+            ZIO.dieMessage("addKey update DID action must carry a public key")
         }
-      case UpdateManagedDIDAction.RemoveKey(id)        => ZIO.succeed(UpdateDIDAction.RemoveKey(id))
-      case UpdateManagedDIDAction.AddService(service)  => ZIO.succeed(UpdateDIDAction.AddService(service))
-      case UpdateManagedDIDAction.RemoveService(id)    => ZIO.succeed(UpdateDIDAction.RemoveService(id))
-      case UpdateManagedDIDAction.UpdateService(patch) =>
+      case UpdateManagedDIDAction.AddInternalKey(_) =>
+        publicKey match {
+          case Some(pk: InternalPublicKey) => ZIO.succeed(UpdateDIDAction.AddInternalKey(pk))
+          case _                           =>
+            ZIO.dieMessage("addInternalKey update DID action must have a derived internal key")
+        }
+      case UpdateManagedDIDAction.RemoveKey(id)         => ZIO.succeed(UpdateDIDAction.RemoveKey(id))
+      case UpdateManagedDIDAction.RemoveInternalKey(id) => ZIO.succeed(UpdateDIDAction.RemoveKey(id))
+      case UpdateManagedDIDAction.AddService(service)   => ZIO.succeed(UpdateDIDAction.AddService(service))
+      case UpdateManagedDIDAction.RemoveService(id)     => ZIO.succeed(UpdateDIDAction.RemoveService(id))
+      case UpdateManagedDIDAction.UpdateService(patch)  =>
         ZIO.succeed(UpdateDIDAction.UpdateService(patch.id, patch.serviceType, patch.serviceEndpoints))
       case UpdateManagedDIDAction.PatchContext(context) => ZIO.succeed(UpdateDIDAction.PatchContext(context))
     }

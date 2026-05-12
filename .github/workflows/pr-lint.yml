@@ -1,7 +1,9 @@
 name: "Validate PR Title"
 
 on:
-  pull_request_target:
+  # https://github.com/amannn/action-semantic-pull-request
+  # This action will not longer have access to the secrets.GITHUB_TOKEN from forked repos
+  pull_request: # Do not use pull_request_target to prevent supply chain attacks
     types:
       - opened
       - edited
@@ -16,10 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@df199fb7be9f65074067a9eb93f12bb4c5547cf2 # v2.13.3
+        uses: step-security/harden-runner@8d3c67de8e2fe68ef647c8db1e6a09f647780f40 # v2.19.0
         with:
           egress-policy: audit
 
-      - uses: amannn/action-semantic-pull-request@e32d7e603df1aa1ba07e981f2a23455dee596825 # v5
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

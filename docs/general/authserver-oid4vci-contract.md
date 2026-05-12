@@ -37,7 +37,6 @@ sequenceDiagram
   CloudAgent ->>- Holder: CredentialResponse
 ```
 
-
 ### Authorization Endpoint
 
 1. Authorization `scope` MUST be configured in the Authorization Server to the same value as in Credential Issuer Metadata
@@ -57,6 +56,7 @@ Authorization: Bearer <JWT_TOKEN>
   "issuerState": "<ISSUER_STATE>"
 }
 ```
+
 Where `JWT_TOKEN` is a valid token issued by the __AuthorizationServer__.
 
 __NonceResponse__
@@ -69,4 +69,3 @@ __NonceResponse__
 ```
 
 2. The [__TokenResponse__](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html#name-successful-token-response) must include `c_nonce` and `c_nonce_expires_in` parameter in the __TokenResponse__
-

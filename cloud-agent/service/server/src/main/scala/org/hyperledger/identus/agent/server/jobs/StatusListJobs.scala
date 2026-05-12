@@ -29,14 +29,15 @@ object StatusListJobs extends BackgroundJobsHelper {
     (for {
       config <- ZIO.service[AppConfig]
       producer <- ZIO.service[Producer[UUID, WalletIdAndRecordId]]
-      trigger = for {
-        credentialStatusListService <- ZIO.service[CredentialStatusListService]
-        walletAndStatusListIds <- credentialStatusListService.getCredentialStatusListIds
-        _ <- ZIO.logDebug(s"Triggering status list revocation sync for '${walletAndStatusListIds.size}' status lists")
-        _ <- ZIO.foreach(walletAndStatusListIds) { (walletId, statusListId) =>
-          producer.produce(TOPIC_NAME, walletId.toUUID, WalletIdAndRecordId(walletId.toUUID, statusListId))
-        }
-      } yield ()
+      trigger =
+        for {
+          credentialStatusListService <- ZIO.service[CredentialStatusListService]
+          walletAndStatusListIds <- credentialStatusListService.getCredentialStatusListIds
+          _ <- ZIO.logDebug(s"Triggering status list revocation sync for '${walletAndStatusListIds.size}' status lists")
+          _ <- ZIO.foreach(walletAndStatusListIds) { (walletId, statusListId) =>
+            producer.produce(TOPIC_NAME, walletId.toUUID, WalletIdAndRecordId(walletId.toUUID, statusListId))
+          }
+        } yield ()
       _ <- trigger.repeat(Schedule.spaced(config.pollux.statusListSyncTriggerRecurrenceDelay))
     } yield ()).debug.fork
   }
@@ -73,37 +74,37 @@ object StatusListJobs extends BackgroundJobsHelper {
       credentialStatusListService <- ZIO.service[CredentialStatusListService]
       vcStatusListCredString = statusListWithCreds.statusListCredential
       walletAccessContext = WalletAccessContext(statusListWithCreds.walletId)
-      effect = for {
-        vcStatusListCredJson <- ZIO.fromEither(vcStatusListCredString.fromJson[Json])
-        issuer <- createJwtVcIssuer(statusListWithCreds.issuer, VerificationRelationship.AssertionMethod, None)
-        vcStatusListCred <- VCStatusList2021
-          .decodeFromJson(vcStatusListCredJson, issuer)
-          .mapError(x => new Throwable(x.msg))
-        bitString <- vcStatusListCred.getBitString.mapError(x => new Throwable(x.msg))
-        _ <- ZIO.collectAll(
-          statusListWithCreds.credentials.map(c =>
-            updateBitStringForCredentialAndNotify(bitString, c, walletAccessContext)
+      effect =
+        for {
+          vcStatusListCredJson <- ZIO.fromEither(vcStatusListCredString.fromJson[Json])
+          issuer <- createJwtVcIssuer(statusListWithCreds.issuer, VerificationRelationship.AssertionMethod, None)
+          vcStatusListCred <- VCStatusList2021
+            .decodeFromJson(vcStatusListCredJson, issuer)
+            .mapError(x => new Throwable(x.msg))
+          bitString <- vcStatusListCred.getBitString.mapError(x => new Throwable(x.msg))
+          _ <- ZIO.collectAll(
+            statusListWithCreds.credentials
+              .map(c => updateBitStringForCredentialAndNotify(bitString, c, walletAccessContext))
           )
-        )
-        unprocessedEntityIds = statusListWithCreds.credentials.collect {
-          case x if !x.isProcessed && x.isCanceled => x.id
-        }
-        _ <- credentialStatusListService
-          .markAsProcessedMany(unprocessedEntityIds)
-          @@ Metric
-            .gauge("revocation_status_list_sync_mark_as_processed_many_ms_gauge")
-            .trackDurationWith(_.toMetricsSeconds)
+          unprocessedEntityIds = statusListWithCreds.credentials.collect {
+            case x if !x.isProcessed && x.isCanceled => x.id
+          }
+          _ <- credentialStatusListService
+            .markAsProcessedMany(unprocessedEntityIds)
+            @@ Metric
+              .gauge("revocation_status_list_sync_mark_as_processed_many_ms_gauge")
+              .trackDurationWith(_.toMetricsSeconds)
 
-        updatedVcStatusListCred <- vcStatusListCred.updateBitString(bitString).mapError {
-          case VCStatusList2021Error.EncodingError(msg: String) => new Throwable(msg)
-          case VCStatusList2021Error.DecodingError(msg: String) => new Throwable(msg)
-        }
-        vcStatusListCredJsonString <- updatedVcStatusListCred.toJsonWithEmbeddedProof.map(_.toJson)
-        _ <- credentialStatusListService.updateStatusListCredential(
-          statusListWithCreds.id,
-          vcStatusListCredJsonString
-        )
-      } yield ()
+          updatedVcStatusListCred <- vcStatusListCred.updateBitString(bitString).mapError {
+            case VCStatusList2021Error.EncodingError(msg: String) => new Throwable(msg)
+            case VCStatusList2021Error.DecodingError(msg: String) => new Throwable(msg)
+          }
+          vcStatusListCredJsonString <- updatedVcStatusListCred.toJsonWithEmbeddedProof.map(_.toJson)
+          _ <- credentialStatusListService.updateStatusListCredential(
+            statusListWithCreds.id,
+            vcStatusListCredJsonString
+          )
+        } yield ()
       _ <- effect
         .catchAll(e =>
           ZIO.logErrorCause(s"Error processing status list record: ${statusListWithCreds.id} ", Cause.fail(e))
