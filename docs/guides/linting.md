@@ -13,7 +13,7 @@ The GitHub Action workflow file only impacts the configuration when it runs with
 Megalinter's behavior will differ when run locally as part of the pre-commit hook [or enacted manually] compared to when run in an automated way in Github Actions as part of CI.
 
 > **Note:** Linting is currently in an early adoption phase and due to the adoption of Scala 3, it only runs in a mode that does not fail PR checks.
-
+>
 > **Note:** At the end of this markdown document is a section for the changelog. Please leave feedback in this section so that we can enable and refine the linting configuration over time
 
 ### Base
@@ -82,6 +82,7 @@ Insert suggestion / description of what it did well, what it didn't do well and 
 ## Changelog
 
 #### YAMLLINT checker configuration file is added explicitly and rule line-length is set to 600
+
 Date Added: 2023-02-15
 
 Author: Yurii Shynbuiev
@@ -117,6 +118,7 @@ Linter - Suggested Change: Customise
 *Change detail*
 
 `BASH_SHELLCHECK_DISABLE_ERRORS: true` turns the error into the warning for the following cases:
+
 ```bash
   In /github/workspace/infrastructure/dev/get-versions.sh line 6:
   cd ${SCRIPT_DIR}
@@ -285,6 +287,7 @@ Linter - Suggested Change:  Customise
 *Change detail*
 
 Add `.protolintrc.yml` used by `protolint` linter and configure it to disable the following rules
+
 - `REPEATED_FIELD_NAMES_PLURALIZED`
 - `ENUM_FIELD_NAMES_PREFIX`
 - `ENUM_FIELD_NAMES_ZERO_VALUE_END_WITH`

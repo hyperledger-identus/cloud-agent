@@ -5,6 +5,7 @@ Please, read this guide before contributing to integration tests.
 ## Adding new scenario
 
 To add new scenario, follow these steps:
+
 1. Create a new feature file in the `src/test/resources/features/new_feature` folder.
 2. Implement steps definitions in the `src/test/kotlin/features/new_feature` folder.
 3. Test the scenario properly, make sure it works for different configurations.
@@ -20,6 +21,7 @@ Do not use hardcoded values in the tests. Always use constants instead.
 Instead of adding `Name` and `Surname` to the test, add `NAME` and `SURNAME` constants to the `common.TestConstants` class.
 
 This approach has the following advantages:
+
 * It is easier to find and change the test data.
 * It is easier to understand the test logic.
 * It is easier to reuse the test data in other tests.
@@ -40,6 +42,7 @@ Do not use `Thread.sleep` to wait for the result of an asynchronous operation.
 Use [Awaitility](http://www.awaitility.org/) instead. The `wait` method is implemented in the `common.Utils` object.
 
 Wrong usage example:
+
 ```kotlin
 for(i in 1..10) {
     val didEvent =
@@ -54,6 +57,7 @@ for(i in 1..10) {
 ```
 
 Correct usage example:
+
 ```kotlin
 wait(
     {
@@ -75,6 +79,7 @@ The `remember` method stores the value in the actor's memory,
 and the `recall` method retrieves the value from the actor's memory.
 
 Usage example:
+
 ```kotlin
 // Remember connection in some step
 val connection = SerenityRest.lastResponse().get<Connection>()

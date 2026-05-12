@@ -45,7 +45,7 @@ object RequestPresentationAction {
     object proofId
         extends Annotation[Option[Seq[String]]](
           description =
-            "The unique identifier of the issue credential record - and hence VC - to use as the prover accepts the presentation request. Only applicable on the prover side when the action is `request-accept`.",
+            "The unique identifier of the issued credential record - and hence VC - to use as the prover accepts the presentation request. Only applicable on the prover side when the action is `request-accept`.",
           example = None
         )
 
@@ -58,14 +58,14 @@ object RequestPresentationAction {
     object credential
         extends Annotation[String](
           description =
-            "The unique identifier of the issue credential record - and hence VC - to use as the prover accepts the presentation request. Only applicable on the prover side when the action is `request-accept`.",
+            "The unique identifier of the issued credential record - and hence VC - to use as the prover accepts the presentation request. Only applicable on the prover side when the action is `request-accept`.",
           example = "id"
         )
 
     object claims
         extends Annotation[Option[zio.json.ast.Json]](
           description = """
-            |The set of claims to be disclosed from the  issued credential.
+            |The set of claims to be disclosed from the issued credential.
             |The JSON object should comply with the schema applicable for this offer (i.e. 'schemaId' or 'credentialDefinitionId').
             |""".stripMargin,
           example = Some(

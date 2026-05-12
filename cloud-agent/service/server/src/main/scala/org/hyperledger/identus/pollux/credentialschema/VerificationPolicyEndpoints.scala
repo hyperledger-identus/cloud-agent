@@ -20,7 +20,7 @@ object VerificationPolicyEndpoints {
 
   private val tagName = "Verification"
   private val tagDescription = s"""
-    |The __${tagName}__ endpoints enable the management and lookup of verification policies,which are applied to W3C Verifiable Credentials in JWT format.
+    |The __${tagName}__ endpoints enable the management and lookup of verification policies, which are applied to W3C Verifiable Credentials in JWT format.
     |
     |Users can retrieve and paginate existing policies or create new ones.
     |These policies determine the verification criteria, allowing users to specify constraints such as `schemaId` and `trustedIssuers` in the current implementation.
@@ -133,7 +133,7 @@ object VerificationPolicyEndpoints {
       .in(extractFromRequest[RequestContext](RequestContext.apply))
       .in(
         "verification" / "policies" / path[UUID]("id")
-          .description("Delete the verification policy by id")
+          .description("The unique identifier of the verification policy to delete")
       )
       .out(
         statusCode(StatusCode.Ok).description(
@@ -142,10 +142,7 @@ object VerificationPolicyEndpoints {
       )
       .errorOut(basicFailureAndNotFoundAndForbidden)
       .name("deleteVerificationPolicyById")
-      .summary("Deleted the verification policy by id")
-      .description(
-        "Delete the verification policy by id"
-      )
+      .summary("Delete the verification policy by id")
       .tag(tagName)
 
   val lookupVerificationPoliciesByQueryEndpoint: Endpoint[

@@ -52,7 +52,7 @@ object SchemaRegistryEndpoints {
       |""".stripMargin
 
   private val tagExternalDocumentation = ExternalDocumentation(
-    url = "https://hyperledger-identus.github.io/docs/tutorials/schemas/credential-schema",
+    url = "https://hyperledger-identus.github.io/docs/cloud-agent/docs/docusaurus/schemas/credential-schema",
     description = Some("Credential Schema documentation")
   )
 
@@ -88,7 +88,7 @@ object SchemaRegistryEndpoints {
       .description("Credential schema record")
       .errorOut(basicFailureAndNotFoundAndForbidden)
       .name("createSchema")
-      .summary("Publish new schema to the schema registry, http url resolvable")
+      .summary("Publish new schema to the schema registry, HTTP URL resolvable")
       .description(
         "Create the new credential schema record with metadata and internal JSON Schema on behalf of Cloud Agent. " +
           "The credential schema will be signed by the keys of Cloud Agent and issued by the DID that corresponds to it."
@@ -123,7 +123,7 @@ object SchemaRegistryEndpoints {
       .description("Credential schema record")
       .errorOut(basicFailureAndNotFoundAndForbidden)
       .name("createSchemaDidUrl")
-      .summary("Publish new schema to the schema registry, did url resolvable")
+      .summary("Publish new schema to the schema registry, DID URL resolvable")
       .description(
         "Create the new credential schema record with metadata and internal JSON Schema on behalf of Cloud Agent. " +
           "The credential schema will be signed by the keys of Cloud Agent and issued by the DID that corresponds to it."
@@ -265,9 +265,9 @@ object SchemaRegistryEndpoints {
     endpoint.get
       .in(extractFromRequest[RequestContext](RequestContext.apply))
       .in(
-        httpUrlPathPrefix / path[UUID]("guid") / "schema".description(
+        httpUrlPathPrefix / path[UUID]("guid").description(
           "Globally unique identifier of the credential schema record"
-        )
+        ) / "schema"
       )
       .out(jsonBody[Json].description("Raw JSON response of the CredentialSchema")) // changed to Json
       .errorOut(basicFailuresAndNotFound)
@@ -285,12 +285,12 @@ object SchemaRegistryEndpoints {
     endpoint.get
       .in(extractFromRequest[RequestContext](RequestContext.apply))
       .in(
-        didUrlPathPrefix / path[UUID]("guid") / "schema".description(
+        didUrlPathPrefix / path[UUID]("guid").description(
           "Globally unique identifier of the credential schema record"
-        )
+        ) / "schema"
       )
       .out(
-        jsonBody[PrismEnvelopeResponse].description("Raw JSON response of the CredentialSchema")
+        jsonBody[PrismEnvelopeResponse].description("Raw inner schema wrapped in a PrismEnvelopeResponse")
       )
       .errorOut(basicFailuresAndNotFound)
       .name("getRawSchemaByIdDidUrl")
@@ -317,7 +317,7 @@ object SchemaRegistryEndpoints {
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in(extractFromRequest[RequestContext](RequestContext.apply))
-      .in("schema-registry" / "schemas".description("Lookup schemas by query"))
+      .in("schema-registry" / "schemas")
       .in(credentialSchemaFilterInput)
       .in(paginationInput)
       .in(query[Option[Order]]("order"))
@@ -326,7 +326,7 @@ object SchemaRegistryEndpoints {
       .name("lookupSchemasByQuery")
       .summary("Lookup schemas by indexed fields")
       .description(
-        "Lookup schemas by `author`, `name`, `tags` parameters and control the pagination by `offset` and `limit` parameters "
+        "Lookup schemas by `author`, `name`, `tags` parameters and control the pagination by `offset` and `limit` parameters."
       )
       .tag(tagName)
 
@@ -346,7 +346,7 @@ object SchemaRegistryEndpoints {
       .securityIn(apiKeyHeader)
       .securityIn(jwtAuthHeader)
       .in(extractFromRequest[RequestContext](RequestContext.apply))
-      .in("schema-registry" / "schemas" / "did-url".description("Lookup schemas by query"))
+      .in("schema-registry" / "schemas" / "did-url")
       .in(credentialSchemaFilterInput)
       .in(paginationInput)
       .in(query[Option[Order]]("order"))
@@ -359,7 +359,7 @@ object SchemaRegistryEndpoints {
       .name("lookupSchemasByQueryDidUrl")
       .summary("Lookup schemas by indexed fields")
       .description(
-        "Lookup schemas by `author`, `name`, `tags` parameters and control the pagination by `offset` and `limit` parameters "
+        "Lookup schemas by `author`, `name`, `tags` parameters and control the pagination by `offset` and `limit` parameters."
       )
       .tag(tagName)
 }

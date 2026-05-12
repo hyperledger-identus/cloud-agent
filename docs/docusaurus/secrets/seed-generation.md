@@ -28,6 +28,7 @@ DEFAULT_WALLET_SEED=000000000000000000000000000000000000000000000000000000000000
 DEFAULT_WALLET_SEED=11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
 DEFAULT_WALLET_SEED=0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a
 ```
+
 __Note: Do not use method this in production.__
 
 ### 2. Simple dynamic seed
@@ -38,10 +39,10 @@ like Bash or Python. An example of a Bash script is shown below.
 ```bash
 DEFAULT_WALLET_SEED=$(tr -dc a-f0-9 </dev/urandom | head -c 128 ; echo '')
 ```
+
 This approach is suitable for basic testing scenarios requiring dynamically generated seeds.
 However, for production use, it is advisable to employ a reputable implementation of BIP39
 with a high level of entropy. (Refer to the details below for further information.)
-
 
 ### 3. Use BIP39 implementation to generate a seed (recommended)
 
@@ -52,5 +53,6 @@ users can write down their mnemonic phrase, making it more convenient to keep tr
 
 By using BIP39, users have options to choose a mnemonic phrase length as well as a passphrase.
 There are many tools for generating a BIP39 seed including but not limited to:
+
 - [BIP39](https://iancoleman.io/bip39/) (use the BIP39 seed field which provides a 128-chars hex string)
 - [BIP39 - implementations section](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki#other-implementations) also provides a list of implementations

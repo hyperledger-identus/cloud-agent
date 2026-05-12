@@ -1,0 +1,9 @@
+ignores:
+  - ".claude/**"
+  - "node_modules/**"
+  - "**/node_modules/**"
+  - "target/**"
+  - "tmp/**"
+  - "atala-prism/**"
+  - "cloud-agent/client/**"
+  - "tests/integration-tests/tmp/**"

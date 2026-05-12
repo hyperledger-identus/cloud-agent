@@ -49,11 +49,13 @@ object CredentialStatusEndpoints {
       .securityIn(jwtAuthHeader)
       .in(extractFromRequest[RequestContext](RequestContext.apply))
       .in(
-        "credential-status" / "revoke-credential" / path[DidCommID]("id").description("Revoke a credential by its ID")
+        "credential-status" / "revoke-credential" / path[DidCommID]("id").description(
+          "The unique identifier of the issue credential record to revoke"
+        )
       )
       .out(statusCode(sttp.model.StatusCode.Ok))
       .errorOut(basicFailuresWith(FailureVariant.unprocessableEntity, FailureVariant.notFound))
       .summary("Revoke a credential by its ID")
-      .description("Marks credential to be ready for revocation, it will be revoked automatically")
+      .description("Marks a credential as ready for revocation. The credential will be revoked automatically.")
       .tag("Credential status list")
 }

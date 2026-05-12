@@ -10,7 +10,6 @@ As a contributor, here are the guidelines we would like you to follow:
 - [Coding Rules](#rules)
 - [Commit Message Guidelines](#commit)
 
-
 ## <a name="dco"></a> Developer Certificate of Origin (DCO)
 
 Cloud Agent enforces the Developer Certificate of Origin (DCO). It requires all commit messages to contain the `Signed-off-by` line with an email address that matches the commit author and the name on your GitHub account.
@@ -28,13 +27,12 @@ Even better, you can [submit a Pull Request](#submit-pr) with a fix.
 You can *request* a new feature by [submitting an issue](#submit-issue) to our GitHub Repository.
 If you would like to *implement* a new feature, please consider the size of the change in order to determine the right steps to proceed:
 
-* For a **Major Feature**, first open an issue and outline your proposal so that it can be discussed.
+- For a **Major Feature**, first open an issue and outline your proposal so that it can be discussed.
   This process allows us to better coordinate our efforts, prevent duplication of work, and help you to craft the change so that it is successfully accepted into the project.
 
   **Note**: Adding a new topic to the documentation, or significantly re-writing a topic, counts as a major feature.
 
-* **Small Features** can be crafted and directly [submitted as a Pull Request](#submit-pr).
-
+- **Small Features** can be crafted and directly [submitted as a Pull Request](#submit-pr).
 
 ## <a name="submit"></a> Submission Guidelines
 
@@ -76,6 +74,7 @@ Before you submit your Pull Request (PR) consider the following guidelines:
      ```shell
      git commit --all
      ```
+
     Note: the optional commit `-a` command line option will automatically "add" and "rm" edited files.
 
 10. Push your branch to GitHub:
@@ -92,25 +91,25 @@ That's it! Thank you for your contribution!
 
 After your pull request is merged, you can safely delete your branch and pull the changes from the main (upstream) repository:
 
-* Delete the remote branch on GitHub either through the GitHub web UI or your local shell as follows:
+- Delete the remote branch on GitHub either through the GitHub web UI or your local shell as follows:
 
     ```shell
     git push origin --delete my-fix-branch
     ```
 
-* Check out the main branch:
+- Check out the main branch:
 
     ```shell
     git checkout main -f
     ```
 
-* Delete the local branch:
+- Delete the local branch:
 
     ```shell
     git branch -D my-fix-branch
     ```
 
-* Update your local `main` with the latest upstream version:
+- Update your local `main` with the latest upstream version:
 
     ```shell
     git pull --ff upstream main
@@ -124,6 +123,6 @@ Please, follow our [Commit Message guidelines](https://github.com/hyperledger-id
 
 To ensure consistency throughout the source code, keep these rules in mind as you are working:
 
-* All features or bug fixes **must be tested** by one or more specs (unit-tests).
-* All  **must be documented**.
-* Follow [Scala Style Guide](https://docs.scala-lang.org/style/)
+- All features or bug fixes **must be tested** by one or more specs (unit-tests).
+- All  **must be documented**.
+- Follow [Scala Style Guide](https://docs.scala-lang.org/style/)

@@ -131,7 +131,7 @@ object VdrEndpoints {
       .out(statusCode(StatusCode.Ok).description("Proof of a VDR entry"))
       .errorOut(EndpointOutputs.basicFailuresAndNotFound)
       .name("vdrEntryProof")
-      .summary("Get a proof of VDR entry")
+      .summary("Get the proof of a VDR entry")
       .tag(tagName)
 
   val operationStatus: PublicEndpoint[
