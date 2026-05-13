@@ -30,8 +30,8 @@ This protocol supports the presentation of verifiable claims between two Agents,
 
 The protocol consists of the following main parts:
 
-1. The Verifier creates a new proof presentation request invite using the [`/present-proof/presentations/invitation`](/agent-api/#tag/Present-Proof/operation/createOOBRequestPresentationInvitation) endpoint. This returns a unique out-of-band (OOB) invite code which can be used to intiated a presentation request.
-2. The Holder/Prover receives the OOB invite code (via some communication channel), and accepts the invitation, triggering a presentation request.
+1. The Verifier creates a new proof presentation request invite using the [`/present-proof/presentations/invitation`](/agent-api/#tag/Present-Proof/operation/createOOBRequestPresentationInvitation) endpoint. This returns a unique out-of-band (OOB) invite code which can be used to initiate a presentation request.
+2. The Holder/Prover receives the OOB invite code (via some communication channel), and accepts the invitation by calling [`/present-proof/presentations/accept-invitation`](/agent-api/#tag/Present-Proof/operation/acceptRequestPresentationInvitation), which creates a presentation record in `RequestReceived` state.
 3. The Holder/Prover receives the presentation request from the Verifier and can retrieve the list of existing requests using the [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) endpoint.
 4. The Holder/Prover can then review and accept a specific request using the [`/present-proof/presentations/{presentationId}`](/agent-api/#tag/Present-Proof/operation/updatePresentation) endpoint, providing the identifier of the `credential` record to use in the proof presentation.
 5. The Verifier receives the proof presentation from the Holder/Prover and can accept it using the [`/present-proof/presentations/{presentationId}`](/agent-api/#tag/Present-Proof/operation/updatePresentation) endpoint, specifying `presentation-accept` as the action type.
@@ -41,6 +41,7 @@ The protocol consists of the following main parts:
 | Endpoint | Method | Description | Role |
 | --- | --- | --- | --- |
 | [`/present-proof/presentations/invitation`](/agent-api/#tag/Present-Proof/operation/createOOBRequestPresentationInvitation) | POST | Creates a new proof presentation request invitation. | Verifier |
+| [`/present-proof/presentations/accept-invitation`](/agent-api/#tag/Present-Proof/operation/acceptRequestPresentationInvitation) | POST | Accepts an OOB proof presentation invitation and creates a presentation record in `RequestReceived` state. | Holder/Prover |
 | [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) | GET | Retrieves the collection of all the existing presentation proof records - sent or received. | Verifier, Holder/Prover |
 | [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/getPresentation) | GET | Retrieves a specific presentation proof record by `id`. | Verifier, Holder/Prover |
 | [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/updatePresentation) | PATCH | Updates an existing presentation proof record to, e.g., accept the request on the Holder/Prover side or accept the presentation on the Verifier side. | Verifier, Holder/Prover |
@@ -135,14 +136,14 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations/in
   -H 'Content-Type: application/json' \
  -H "apikey: $API_KEY" \
   -d '{
-        "proofs":[],
+        "proofs": [],
         "credentialFormat": "SDJWT",
-         "claims": {
-            "emailAddress": {},
-            "givenName": {},
-    `       "region": {},
-            "country": {}`
-         }
+        "claims": {
+          "emailAddress": {},
+          "givenName": {},
+          "region": {},
+          "country": {}
+        }
       }'
 ```
 
@@ -177,7 +178,7 @@ SDJWT Specific attributes
 </TabItem>
 </Tabs>
 
-Upon execution, a new presentation request invite gets created. This invite is an out-of-band code which must be delivered to the Holder/Prover through some alternative messaging layer. Once a the invte is accepted, the Verifier Cloud Agent will send the presentation request message to the Holder/Prover via DIDComm. The record state then is updated to `RequestSent`.
+Upon execution, a new presentation request invite gets created. This invite is an out-of-band code which must be delivered to the Holder/Prover through some alternative messaging layer. Once the invite is accepted, the Verifier Cloud Agent will send the presentation request message to the Holder/Prover via DIDComm. The record state then is updated to `RequestSent`.
 
 The Verifier can retrieve the list of presentation records by making a `GET` request to the [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) endpoint:
 
@@ -217,6 +218,21 @@ stateDiagram-v2
 ## Holder/Prover
 
 This section describes the interactions available to the Holder/Prover with his Cloud Agent.
+
+### Accepting the invitation
+
+The Holder/Prover first accepts the out-of-band invitation using the [`/present-proof/presentations/accept-invitation`](/agent-api/#tag/Present-Proof/operation/acceptRequestPresentationInvitation) endpoint:
+
+```bash
+curl -X 'POST' 'http://localhost:8090/cloud-agent/present-proof/presentations/accept-invitation' \
+  -H 'Content-Type: application/json' \
+  -H "apikey: $API_KEY" \
+  -d '{
+        "invitation": "{BASE64_URL_OOB_INVITATION}"
+      }'
+```
+
+This creates the presentation record in `RequestReceived` state for the Holder/Prover, after which the record is available via `GET /present-proof/presentations`.
 
 ### Reviewing and accepting a received presentation request
 
@@ -281,9 +297,9 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
 curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{PRESENTATION_ID}' \
   -H 'Content-Type: application/json' \
   -H "apikey: $API_KEY" \
-  -d '{
+      -d '{
         "action": "request-accept",
-        "proofId": ["{CRED_RECORD_ID}"]
+        "proofId": ["{CRED_RECORD_ID}"],
         "claims": {
           "emailAddress": {},
           "givenName": {},
