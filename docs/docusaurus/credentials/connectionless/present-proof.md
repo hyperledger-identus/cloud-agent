@@ -4,6 +4,7 @@ import TabItem from '@theme/TabItem';
 # Present proof (Connectionless)
 
 The [Present Proof Protocol](/docs/concepts/glossary#present-proof-protocol) allows:
+
 - a [Verifier](/docs/concepts/glossary#verifier) to request a verifiable credential presentation from a Holder/Prover
 - a [Holder/Prover](/docs/concepts/glossary#holder) responds by presenting a cryptographic proof to the Verifier
 
@@ -37,12 +38,12 @@ The protocol consists of the following main parts:
 
 ## Endpoints
 
-| Endpoint                                                                                          | Method | Description                                                                                                                                           | Role                    |
-|---------------------------------------------------------------------------------------------------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------|
-| [`/present-proof/presentations/invitation`](/agent-api/#tag/Present-Proof/operation/createOOBRequestPresentationInvitation) | POST   | Creates a new proof presentation request invitation.                                                                                                   | Verifier                |
-| [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation)      | GET    | Retrieves the collection of all the existing presentation proof records - sent or received.                                                           | Verifier, Holder/Prover |
-| [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/getPresentation)    | GET    | Retrieves a specific presentation proof record by `id`.                                                                                               | Verifier, Holder/Prover |
-| [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/updatePresentation) | PATCH  | Updates an existing presentation proof record to, e.g., accept the request on the Holder/Prover side or accept the presentation on the Verifier side. | Verifier, Holder/Prover |
+| Endpoint | Method | Description | Role |
+| --- | --- | --- | --- |
+| [`/present-proof/presentations/invitation`](/agent-api/#tag/Present-Proof/operation/createOOBRequestPresentationInvitation) | POST | Creates a new proof presentation request invitation. | Verifier |
+| [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) | GET | Retrieves the collection of all the existing presentation proof records - sent or received. | Verifier, Holder/Prover |
+| [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/getPresentation) | GET | Retrieves a specific presentation proof record by `id`. | Verifier, Holder/Prover |
+| [`/present-proof/presentations/{id}`](/agent-api/#tag/Present-Proof/operation/updatePresentation) | PATCH | Updates an existing presentation proof record to, e.g., accept the request on the Holder/Prover side or accept the presentation on the Verifier side. | Verifier, Holder/Prover |
 
 :::info
 For more detailed information, please, check the full [Cloud Agent API](/agent-api).
@@ -122,6 +123,7 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations/in
         "credentialFormat": "AnonCreds" 
       }'
 ```
+
 </TabItem>
 <TabItem value="sdjwt" label="SDJWT">
 
@@ -145,6 +147,7 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations/in
 ```
 
 b. `SD-JWT` The presence of the `cnf` key as a disclosable claim in the SD-JWT Verifiable Credential (VC) allows the Holder/Prover to create a presentation and sign the `challenge` and `domain` given by the verifier.
+
 ```bash
 curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations/invitation' \
   -H 'accept: application/json' \
@@ -165,7 +168,9 @@ curl -X 'POST' 'http://localhost:8070/cloud-agent/present-proof/presentations/in
          }
       }'
 ```
+
 SDJWT Specific attributes
+
 1. `credentialFormat`: SDJWT.
 2. `claims`: The claims to be disclosed  by Holder/Prover.
 
@@ -175,6 +180,7 @@ SDJWT Specific attributes
 Upon execution, a new presentation request invite gets created. This invite is an out-of-band code which must be delivered to the Holder/Prover through some alternative messaging layer. Once a the invte is accepted, the Verifier Cloud Agent will send the presentation request message to the Holder/Prover via DIDComm. The record state then is updated to `RequestSent`.
 
 The Verifier can retrieve the list of presentation records by making a `GET` request to the [`/present-proof/presentations`](/agent-api/#tag/Present-Proof/operation/getAllPresentation) endpoint:
+
 ```bash
 curl -X 'GET' 'http://localhost:8070/cloud-agent/present-proof/presentations' \
   -H 'accept: application/json' \
@@ -238,6 +244,7 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
 ```
 
 The Holder/Prover will have to provide the following information:
+
 1. `presentationId`: The unique identifier of the presentation record to accept.
 2. `proofId`: The unique identifier of the verifiable credential record to use as proof.
 
@@ -265,6 +272,7 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
         }
       }'
 ```
+
 </TabItem>
 
 <TabItem value="sdjwt" label="SDJWT">
@@ -289,10 +297,12 @@ curl -X 'PATCH' 'http://localhost:8090/cloud-agent/present-proof/presentations/{
 ```
 
 The Holder/Prover will have to provide the following information:
+
 1. `presentationId`: The unique identifier of the presentation record to accept.
 2. `proofId`: The unique identifier of the verifiable credential record to use as proof.
 3. `credentialFormat`: SDJWT.
 4. `claims`: The Verifier requests specific claims to disclose. The path of these claims must match exactly with those in the SD-JWT Verifiable Credential (VC).
+
 - 📌 **Note:**  When a SD-JWT Verifiable Credential (VC) has nested claims such as region and country within an address object, as shown in the example above, it falls under the Holder's responsibility to supply the correct nested JSON structure for the claims attribute(s) that is being disclosed.
 - 📌 **Note:** The holder or prover of the claims is only required to disclose the attribute names and the correct JSON path. The actual values are not necessary. A special JSON placeholder `{}`, can be used instead.
 
@@ -301,6 +311,7 @@ The Holder/Prover will have to provide the following information:
 </Tabs>
 
 The Holder/Prover will have to provide the following information:
+
 1. `presentationId`: The unique identifier of the presentation record to accept.
 2. `anoncredPresentationRequest`: A list of credential unique identifier with the attribute and predicate the credential is answering for.
 
