@@ -1,46 +1,40 @@
 #!/bin/bash
 set -e
 
-# Parse the version from the revision, beta or tag (everything that comes after 'v' in the VERSION_TAG)
-AGENT_VERSION=$(echo "$VERSION_TAG" | sed -E 's/.*v([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9\.]+)?).*/\1/')
-echo version=${AGENT_VERSION}
+echo "Publishing ${VERSION_TAG}"
 
-# install dependencies
+PUBLISH_KOTLIN="${PUBLISH_KOTLIN:-true}"
+PUBLISH_TS="${PUBLISH_TS:-true}"
+
+# install generator dependencies
 yarn -s
 
 # Determine if the version is a snapshot or a release
-if [[ "$AGENT_VERSION" == *-* ]]; then
-	echo "Publishing snapshot version"
+if [[ "$VERSION_TAG" == *-* ]]; then
+  echo "Publishing snapshot version"
+  if [[ "$PUBLISH_KOTLIN" == "true" ]]; then
+    echo "Publishing Kotlin client snapshot"
+    gradle -p ../kotlin -Pversion=${VERSION_TAG}-SNAPSHOT publishToMavenCentral
+  fi
 
-	# kotlin
-	gradle -p ../kotlin -Pversion=${AGENT_VERSION}-SNAPSHOT publish --info
-
-	# typescript
-	cd ../typescript
-	echo "Publishing TypeScript client snapshot"
-	# Ensure dependencies are installed for the package before publishing
-	npm install
-	npm version "${AGENT_VERSION}" --no-git-tag-version
-	npm publish --provenance --tag snapshot
+  if [[ "$PUBLISH_TS" == "true" ]]; then
+    echo "Publishing TypeScript client snapshot"
+    npm --prefix ../typescript install
+    npm --prefix ../typescript version "${VERSION_TAG}" --no-git-tag-version
+    npm --prefix ../typescript publish --provenance --access public --tag snapshot
+  fi
 else
-	echo "Publishing release version"
+  echo "Publishing release version"
 
-	# kotlin
-	PACKAGE_URL="https://repo1.maven.org/maven2/org/hyperledger/identus/cloud-agent-client/${AGENT_VERSION}/cloud-agent-client-${AGENT_VERSION}.pom"
-	HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$PACKAGE_URL")
+  if [[ "$PUBLISH_KOTLIN" == "true" ]]; then
+    echo "Publishing Kotlin client release"
+    gradle -p ../kotlin -Pversion=${VERSION_TAG} publishToMavenCentral
+  fi
 
-	if [ "$HTTP_CODE" -eq 200 ]; then
-		echo "Package version ${AGENT_VERSION} already exists. Skipping publication."
-	else
-		echo "Package version ${AGENT_VERSION} does not exist. Proceeding with publication."
-		gradle -p ../kotlin -Pversion=${AGENT_VERSION} publish closeAndReleaseSonatypeStagingRepository --info
-	fi
-
-	# typescript
-		cd ../typescript
-  	echo "Publishing TypeScript client release"
-  	# Ensure dependencies are installed for the package before publishing
-  	npm install
-  	npm version "${AGENT_VERSION}" --no-git-tag-version
-  	npm publish --provenance --tag latest
+  if [[ "$PUBLISH_TS" == "true" ]]; then
+    echo "Publishing TypeScript client release"
+    npm --prefix ../typescript install
+    npm --prefix ../typescript version "${VERSION_TAG}" --no-git-tag-version
+    npm --prefix ../typescript publish --provenance --access public --tag latest
+  fi
 fi

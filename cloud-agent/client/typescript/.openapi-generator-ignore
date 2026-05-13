@@ -1,5 +1,6 @@
 package.json
 docs
+tsconfig.json
 
 # ignore broken files
 models/CredentialRequest.ts
