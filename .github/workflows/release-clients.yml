@@ -129,23 +129,21 @@ jobs:
           RELEASE_TAG: ${{ github.event.inputs.releaseTag }}
         run: |
           set -euo pipefail
-          case "$REVISION" in
-            # allow alphanumerics, dot, dash, underscore
-            ''|*[!A-Za-z0-9._-]*)
-              echo "Invalid revision value"; exit 1 ;;
-          esac
-          case "${RELEASE_TAG:-}" in
-            # allow empty or safe tag characters
-            ''|*[!A-Za-z0-9._-]*)
-              if [ -n "${RELEASE_TAG:-}" ]; then
-                echo "Invalid releaseTag value"; exit 1
-              fi
-              ;;
-          esac
-
           if [ -z "${RELEASE_TAG:-}" ]; then
+              # Revision-based release: validate and use REVISION.
+              case "$REVISION" in
+                # allow alphanumerics, dot, dash, underscore
+                ''|*[!A-Za-z0-9._-]*)
+                  echo "Invalid revision value"; exit 1 ;;
+              esac
               echo "VERSION_TAG=cloud-agent-v${REVISION}" >> "$GITHUB_ENV"
           else
+              # Tag-based release: validate and use RELEASE_TAG.
+              case "$RELEASE_TAG" in
+                # allow alphanumerics, dot, dash, underscore
+                *[!A-Za-z0-9._-]*)
+                  echo "Invalid releaseTag value"; exit 1 ;;
+              esac
               echo "VERSION_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
           fi
 
