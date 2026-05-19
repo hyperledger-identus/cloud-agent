@@ -11,7 +11,7 @@ Architecture: a controller sends HTTP requests to the agent and receives webhook
 The project is a multi-module SBT build. All project definitions are in `build.sbt`.
 
 | Module | Directory | Description |
-|--------|-----------|-------------|
+| ------- | ----------- | ------------- |
 | `predef` | `shared/predef/` | Common implicit imports used project-wide via `-Yimports` |
 | `shared` | `shared/core/` | Shared ZIO, Doobie, config dependencies |
 | `shared-json` | `shared/json/` | JSON processing, JSON-LD, VC schema validation |
@@ -110,6 +110,7 @@ Compile / scalacOptions += "-Yimports:java.lang,scala,scala.Predef,org.hyperledg
 - **Formatter**: Scalafmt 3.11.1
 - **Config**: `.scalafmt.conf` (maxColumn=120, trailingCommas=preserve, scala3 dialect)
 - **Commands**:
+
   ```bash
   sbt scalafmtAll          # Format all Scala sources
   sbt scalafmtCheckAll     # Check formatting without modifying
@@ -135,12 +136,14 @@ Compile / scalacOptions += "-Yimports:java.lang,scala,scala.Predef,org.hyperledg
 Integration tests require Docker and external services. They use **Testcontainers for Scala** and run via CI (`.github/workflows/integration-tests.yml`).
 
 **Prerequisites**:
+
 - Docker with docker-compose
 - PostgreSQL, Hashicorp Vault, Keycloak, APISIX containers
 - PRISM Node or NeoPRISM node (configurable via `infrastructure/local/.env`)
 - DOCKER_API_VERSION=1.44
 
 **Required env vars for tests**:
+
 ```bash
 export DOCKER_API_VERSION="1.44"
 export DOCKER_HOST="unix:///var/run/docker.sock"
@@ -148,6 +151,7 @@ export TESTCONTAINERS_RYUK_DISABLED=true
 ```
 
 Infrastructure scripts for local integration testing:
+
 - `infrastructure/dev/` — development environment scripts (build.sh, run.sh, clean.sh)
 - `infrastructure/local/` — local run scripts with env configuration
 
@@ -167,6 +171,7 @@ Run via `.github/workflows/performance-tests.yml` (push to main, PR, or manual d
 ### Release Process
 
 Defined in `build.sbt`:
+
 ```
 checkSnapshotDependencies → inquireVersions → runClean → runTest →
 setReleaseVersion → Docker/stage → setNextVersion
@@ -232,6 +237,7 @@ All modules use `crossPaths := false` for shared modules (shared, shared-json, s
 ```scala
 scalacOptions += "-Wconf:any:error,cat=deprecation:warning"
 ```
+
 Deprecation warnings are elevated to errors, except for deprecation category which remains a warning.
 
 ## Codegen, Generated Code, and Build Artifacts
@@ -271,7 +277,7 @@ Deprecation warnings are elevated to errors, except for deprecation category whi
 ### CI Workflow Structure
 
 | Workflow | Trigger | What it does |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | `unit-tests.yml` | push to main + PR | Build + unit tests via SBT |
 | `integration-tests.yml` | push to main + PR | Full integration suite with Docker Compose |
 | `build.yml` | weekly Sat + dispatch | Build Docker image, publish revision |
@@ -286,14 +292,14 @@ Deprecation warnings are elevated to errors, except for deprecation category whi
 Cloud Agent → PRISM Node compatibility matrix (from README):
 
 | Cloud Agent | PRISM Node |
-|-------------|-----------|
+| ------------- | ----------- |
 | >=1.9.2 | 2.2.1 |
 | <1.9.2 | 2.1.1 |
 
 ## Key Files Reference
 
 | Purpose | Path |
-|---------|------|
+| ---------- | ------ |
 | Build definition | `build.sbt` |
 | Version | `version.sbt` |
 | SBT plugins | `project/plugins.sbt` |
