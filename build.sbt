@@ -139,7 +139,7 @@ lazy val D = new {
   val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.7.0"
   val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
-  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.4"
+  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.5"
   val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.10.0"
 
   // https://mvnrepository.com/artifact/org.didcommx/didcomm/0.3.2
