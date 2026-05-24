@@ -969,9 +969,9 @@ lazy val vdrProxy = project
   .settings(
     name := "vdr-proxy",
     libraryDependencies ++= D_CloudAgent.vdrDependencies ++ Seq(
-      "com.h2database" % "h2" % "2.2.224"
+      "com.h2database" % "h2" % "2.4.240"
     ),
-    Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
+    Test / libraryDependencies += "com.h2database" % "h2" % "2.4.240" % Test
   )
   .dependsOn(vdrCore, vdrPrismNode, vdrNeoprism, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
