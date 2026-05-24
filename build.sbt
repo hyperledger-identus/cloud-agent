@@ -91,7 +91,7 @@ lazy val V = new {
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.AnoncredSchemaTypeSpec
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
 
-  val commonsLogging = "1.3.5"
+  val commonsLogging = "1.3.6"
   val vaultDriver = "6.2.0"
   val micrometer = "1.15.2"
 
