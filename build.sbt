@@ -65,7 +65,7 @@ lazy val V = new {
   val tapir = "1.11.7" // scala-steward:off // TODO "1.10.5"
   val http4sBlaze = "0.23.15" // scala-steward:off  // TODO "0.23.16"
 
-  val typesafeConfig = "1.4.4"
+  val typesafeConfig = "1.4.8"
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
