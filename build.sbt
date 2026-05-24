@@ -92,7 +92,7 @@ lazy val V = new {
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
 
   val commonsLogging = "1.3.6"
-  val vaultDriver = "6.2.0"
+  val vaultDriver = "6.2.1"
   val micrometer = "1.15.2"
 
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
