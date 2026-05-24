@@ -77,7 +77,7 @@ lazy val V = new {
   val quill = "4.8.6"
   val flyway = "9.22.3" // scala-steward:off
   val postgresDriver = "42.7.9"
-  val logback = "1.5.18"
+  val logback = "1.5.32"
   val slf4j = "2.0.17"
 
   val scalaUri = "4.2.0"
