@@ -21,20 +21,14 @@ repositories {
     mavenCentral()
 
     maven {
-        url = uri("https://maven.pkg.github.com/hyperledger/identus-cloud-agent/")
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
+    }
+    maven {
+        url = uri("https://maven.pkg.github.com/hyperledger-identus/cloud-agent-client/")
         credentials {
             username = System.getenv("GITHUB_ACTOR")
             password = System.getenv("GITHUB_TOKEN")
         }
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-    }
-    maven {
-        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
     }
 }
 
