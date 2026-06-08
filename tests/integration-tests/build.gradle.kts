@@ -21,19 +21,6 @@ repositories {
     mavenCentral()
 
     maven {
-        url = uri("https://maven.pkg.github.com/hyperledger/identus-cloud-agent/")
-        credentials {
-            username = System.getenv("GITHUB_ACTOR")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-    }
-    maven {
         url = uri("https://central.sonatype.com/repository/maven-snapshots/")
     }
 }
@@ -45,7 +32,7 @@ dependencies {
     // RestAPI client
     // locally published from cloud-agent/client/kotlin
     //testImplementation("org.hyperledger.identus:cloud-agent-client:0.0.1-SNAPSHOT")
-    testImplementation("org.hyperledger.identus:cloud-agent-client:2.1.1-0dfbcd7-SNAPSHOT")
+    testImplementation("org.hyperledger.identus:cloud-agent-client:2.1.1-e1e8be1-SNAPSHOT")
     // Test helpers library
     testImplementation("io.iohk.atala:atala-automation:0.4.0")
     // Hoplite for configuration
