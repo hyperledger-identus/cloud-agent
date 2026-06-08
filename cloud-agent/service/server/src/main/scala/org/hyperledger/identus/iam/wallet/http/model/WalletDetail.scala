@@ -59,7 +59,7 @@ object WalletDetail {
 
     object updatedAt
         extends Annotation[Instant](
-          description = "The `updateddAt` timestamp of the wallet.",
+          description = "The `updatedAt` timestamp of the wallet.",
           example = Instant.parse("2023-01-01T00:00:00Z")
         )
   }

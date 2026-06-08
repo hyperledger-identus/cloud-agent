@@ -1,4 +1,4 @@
-FROM python:3.14@sha256:17bc9f1d032a760546802cc4e406401eb5fe99dbcb4602c91628e73672fa749c
+FROM python:3.14@sha256:250e5c97be05e1eb2272fbdbd810dfd638f9012e1e6f65c99390ad3239943a08
 WORKDIR /workspace
 COPY requirements.txt /workspace/requirements.txt
 RUN pip install -r requirements.txt

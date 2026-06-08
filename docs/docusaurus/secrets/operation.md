@@ -83,7 +83,6 @@ This feature can be toggled by setting the environment variable `VAULT_USE_SEMAN
 When it is disabled, the unbounded portion of the path will be replaced by a SHA-256 digest of the original relative path.
 Additionally, the original path will be stored in the secret metadata.
 
-
 ### Postgres
 
 Postgres is an alternative backend option for secret storage.

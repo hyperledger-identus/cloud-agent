@@ -1,16 +1,15 @@
 # Connection Protocol
 
-This Protocol is for DID base connection 
-
+This Protocol is for DID base connection
 
 The protocol is used when you wish to create a connection with another agent.
-
 
 ## PIURI
 
 Version 1.0:
- - `https://atalaprism.io/mercury/connections/1.0/request`
- - `https://atalaprism.io/mercury/connections/1.0/response`
+
+- `https://atalaprism.io/mercury/connections/1.0/request`
+- `https://atalaprism.io/mercury/connections/1.0/response`
 
 ### Roles
 
@@ -21,8 +20,6 @@ Version 1.0:
   - Will accept the invitation by sending a Connection Request `https://atalaprism.io/mercury/connections/1.0/request`
 
 ### Notes
-
-
 
 ### Inviter create invitation message for connection  (Flow Diagram)
 

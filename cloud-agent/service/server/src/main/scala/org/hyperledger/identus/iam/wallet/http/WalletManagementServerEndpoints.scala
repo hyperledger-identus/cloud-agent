@@ -53,7 +53,7 @@ class WalletManagementServerEndpoints(
       }
 
   val createWalletUmaPermissionServerEndpoint: ZServerEndpoint[Any, Any] =
-    WalletManagementEndpoints.createWalletUmaPermmission
+    WalletManagementEndpoints.createWalletUmaPermission
       .zServerSecurityLogic(SecurityLogic.authorizeWalletAdminWith(_)(authenticator, authorizer))
       .serverLogic {
         case (_, wac) => { case (rc, walletId, request) =>
@@ -65,7 +65,7 @@ class WalletManagementServerEndpoints(
       }
 
   val deleteWalletUmaPermissionServerEndpoint: ZServerEndpoint[Any, Any] =
-    WalletManagementEndpoints.deleteWalletUmaPermmission
+    WalletManagementEndpoints.deleteWalletUmaPermission
       .zServerSecurityLogic(SecurityLogic.authorizeWalletAdminWith(_)(authenticator, authorizer))
       .serverLogic {
         case (_, wac) => { case (rc, walletId, subject) =>

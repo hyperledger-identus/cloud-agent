@@ -13,7 +13,6 @@ Even if the data is not on the blockchain, the resolver can still work out the D
 
 The resolution of short-form DID is achievable by DID publication, which is a process of putting the create-operation on the blockchain.
 
-
 ## Roles
 
 1. DID Controller is the organization or individual who has control of the DID.
@@ -63,6 +62,7 @@ Example response
     "status": "CREATED"
 }
 ```
+
 ### 2. Request a publication of a DID
 
 To publish a DID, use DID Controller `POST` a request to `/did-registrar/dids/{didRef}/publications` endpoint.
