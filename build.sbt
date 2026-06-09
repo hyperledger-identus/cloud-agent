@@ -6,7 +6,7 @@ import sbtbuildinfo.BuildInfoPlugin.autoImport.*
 inThisBuild(
   Seq(
     organization := "org.hyperledger",
-    scalaVersion := "3.3.5",
+    scalaVersion := "3.3.7",
     licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
     fork := true,
     run / connectInput := true,
@@ -65,7 +65,7 @@ lazy val V = new {
   val tapir = "1.11.7" // scala-steward:off // TODO "1.10.5"
   val http4sBlaze = "0.23.15" // scala-steward:off  // TODO "0.23.16"
 
-  val typesafeConfig = "1.4.4"
+  val typesafeConfig = "1.4.8"
   val protobuf = "3.1.9"
   val grpcOkHttp = "1.63.0"
 
@@ -77,12 +77,12 @@ lazy val V = new {
   val quill = "4.8.6"
   val flyway = "9.22.3" // scala-steward:off
   val postgresDriver = "42.7.9"
-  val logback = "1.5.18"
-  val slf4j = "2.0.17"
+  val logback = "1.5.32"
+  val slf4j = "2.0.18"
 
   val scalaUri = "4.2.0"
 
-  val jwtZioVersion = "11.0.2"
+  val jwtZioVersion = "11.0.4"
   val zioPreludeVersion = "1.0.0-RC44"
 
   val apollo = "1.3.5"
@@ -91,9 +91,9 @@ lazy val V = new {
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.AnoncredSchemaTypeSpec
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.CredentialSchemaSpec
 
-  val commonsLogging = "1.3.5"
-  val vaultDriver = "6.2.0"
-  val micrometer = "1.15.2"
+  val commonsLogging = "1.3.6"
+  val vaultDriver = "6.2.1"
+  val micrometer = "1.15.11"
 
   val nimbusJwt = "9.37.3" // scala-steward:off //TODO: >=9.38 breaking change
   val keycloak = "23.0.7" // scala-steward:off //TODO 24.0.3 // update all quay.io/keycloak/keycloak
@@ -136,18 +136,18 @@ lazy val D = new {
   val networkntJsonSchemaValidator = "com.networknt" % "json-schema-validator" % V.jsonSchemaValidator
   val jwtZio = "com.github.jwt-scala" %% "jwt-zio-json" % V.jwtZioVersion
   val jsonCanonicalization: ModuleID = "io.github.erdtman" % "java-json-canonicalization" % "1.1"
-  val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.6.0"
+  val titaniumJsonLd: ModuleID = "com.apicatalog" % "titanium-json-ld" % "1.7.0"
   val jakartaJson: ModuleID = "org.glassfish" % "jakarta.json" % "2.0.1" // used by titanium-json-ld
   val ironVC: ModuleID = "com.apicatalog" % "iron-verifiable-credentials" % "0.14.0"
-  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.4"
-  val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.9.0"
+  val scodecBits: ModuleID = "org.scodec" %% "scodec-bits" % "1.2.5"
+  val jaywayJsonPath: ModuleID = "com.jayway.jsonpath" % "json-path" % "2.10.0"
 
   // https://mvnrepository.com/artifact/org.didcommx/didcomm/0.3.2
   val didcommx: ModuleID = "org.didcommx" % "didcomm" % "0.3.2"
   val peerDidcommx: ModuleID = "org.didcommx" % "peerdid" % "0.5.0"
   // peerdid depends on java-multibase (transitive, JitPack only). v1.1.0 has stale .sha1 metadata,
   // so we force v1.1.1 which currently has consistent JitPack checksums. Remove once peerdid upgrades.
-  val javaMultibase: ModuleID = "com.github.multiformats" % "java-multibase" % "v1.1.1"
+  val javaMultibase: ModuleID = "com.github.multiformats" % "java-multibase" % "v1.2.1"
   val didScala: ModuleID = "app.fmgp" %% "did" % "0.0.0+113-61efa271-SNAPSHOT"
 
   val nimbusJwt: ModuleID = "com.nimbusds" % "nimbus-jose-jwt" % V.nimbusJwt
@@ -181,7 +181,7 @@ lazy val D = new {
   val mockito: ModuleID = "org.scalatestplus" %% "mockito-4-11" % V.mockito % Test
   val monocle: ModuleID = "dev.optics" %% "monocle-core" % V.monocle % Test
   val monocleMacro: ModuleID = "dev.optics" %% "monocle-macro" % V.monocle % Test
-  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
+  val scalaTest = "org.scalatest" %% "scalatest" % "3.2.20" % Test
 
   val apollo = Seq( // TODO remove exclude after fix https://github.com/hyperledger/identus-apollo/issues/192
     "io.iohk.atala.prism.apollo" % "apollo-jvm" % V.apollo exclude (
@@ -969,9 +969,9 @@ lazy val vdrProxy = project
   .settings(
     name := "vdr-proxy",
     libraryDependencies ++= D_CloudAgent.vdrDependencies ++ Seq(
-      "com.h2database" % "h2" % "2.2.224"
+      "com.h2database" % "h2" % "2.4.240"
     ),
-    Test / libraryDependencies += "com.h2database" % "h2" % "2.2.224" % Test
+    Test / libraryDependencies += "com.h2database" % "h2" % "2.4.240" % Test
   )
   .dependsOn(vdrCore, vdrPrismNode, vdrNeoprism, vdrMemory, vdrDatabase, vdrBlockfrost, shared % "compile->compile;test->test")
 
