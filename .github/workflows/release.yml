@@ -35,10 +35,15 @@ jobs:
           ref: ${{ github.event.inputs.release-branch }}
           fetch-depth: 0
 
-      - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@32ffa16635ff8f19cc21ea253a987f0fdf29844c # v14
+      - name: Set up JDK 21 (Temurin) with sbt cache
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0 pinned
         with:
-          java-version: openjdk@
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+
+      - name: Set up sbt
+        uses: sbt/setup-sbt@af116cce31c00823d3903ce687f9cda3a4f19f1b # v1.1.18 pinned
 
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v4.4.0
