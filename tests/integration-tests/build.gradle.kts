@@ -64,6 +64,9 @@ tasks.test {
     finalizedBy("aggregate", "reports")
     jvmArgs("-Dlog4j2.disable.jmx=true")
     testLogging.showStandardStreams = true
+    systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")
+    systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "")
+    systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
     systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
     // Since the test runs on host and system-unter-test runs in containers,
     // We need to make the test on host resolves host.docker.internal same as the containerized services,
