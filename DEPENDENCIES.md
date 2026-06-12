@@ -561,4 +561,3 @@ none specified | []() | org.hyperledger # vdr-neoprism_3 # 2.2.0 | <notextile></
 none specified | []() | org.hyperledger # vdr-prism-node_3 # 2.2.0 | <notextile></notextile>
 none specified | []() | org.hyperledger # vdr-proxy_3 # 2.2.0 | <notextile></notextile>
 none specified | []() | [org.webjars # swagger-ui # 5.17.14](https://www.webjars.org) | <notextile></notextile>
-
