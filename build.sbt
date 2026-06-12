@@ -85,7 +85,7 @@ lazy val V = new {
   val jwtZioVersion = "11.0.2"
   val zioPreludeVersion = "1.0.0-RC44"
 
-  val apollo = "1.3.5"
+  val apollo = "1.8.7"
 
   val jsonSchemaValidator = "1.3.2" // scala-steward:off //TODO 1.3.2 need to fix:
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.AnoncredSchemaTypeSpec
@@ -184,7 +184,7 @@ lazy val D = new {
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
   val apollo = Seq( // TODO remove exclude after fix https://github.com/hyperledger/identus-apollo/issues/192
-    "io.iohk.atala.prism.apollo" % "apollo-jvm" % V.apollo exclude (
+    "org.hyperledger.identus" % "apollo-jvm" % V.apollo exclude (
       "net.jcip",
       "jcip-annotations"
     ), // Exclude because of license
