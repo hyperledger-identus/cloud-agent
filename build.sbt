@@ -183,12 +183,18 @@ lazy val D = new {
   val monocleMacro: ModuleID = "dev.optics" %% "monocle-macro" % V.monocle % Test
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
-  val apollo = Seq( // TODO remove exclude after fix https://github.com/hyperledger/identus-apollo/issues/192
+  private val apolloJvm: ModuleID =
     "org.hyperledger.identus" % "apollo-jvm" % V.apollo exclude (
       "net.jcip",
       "jcip-annotations"
-    ), // Exclude because of license
-    "com.github.stephenc.jcip" % "jcip-annotations" % "1.0-1" % Runtime, // Replace for net.jcip % jcip-annotations"
+    ) // bitcoinj-core still pulls net.jcip:jcip-annotations transitively
+
+  private val jcipAnnotationsRuntime: ModuleID =
+    "com.github.stephenc.jcip" % "jcip-annotations" % "1.0-1" % Runtime
+
+  val apollo = Seq(
+    apolloJvm,
+    jcipAnnotationsRuntime // License-compatible replacement for net.jcip:jcip-annotations
   )
 
   // LIST of Dependencies
