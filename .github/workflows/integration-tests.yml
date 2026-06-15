@@ -46,7 +46,7 @@ jobs:
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@af116cce31c00823d3903ce687f9cda3a4f19f1b # v1.1.18 pinned
+        uses: sbt/setup-sbt@3afe9cf056c5d139bfc46579af1192d77a2f0821 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -83,7 +83,7 @@ jobs:
           cache: "sbt"
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@af116cce31c00823d3903ce687f9cda3a4f19f1b # v1.1.18 pinned
+        uses: sbt/setup-sbt@3afe9cf056c5d139bfc46579af1192d77a2f0821 # v1.1.18 pinned
 
       - name: Run integration tests (neoprism)
         working-directory: "tests/integration-tests"
@@ -153,7 +153,7 @@ jobs:
 
       - name: Publish e2e test Results (neoprism)
         id: publish-unit-tests
-        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
+        uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2.24.0
         with:
           junit_files: "${{ env.REPORTS_DIR }}/SERENITY-JUNIT-*.xml"
           comment_title: "Integration Test Results"
@@ -236,7 +236,7 @@ jobs:
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@af116cce31c00823d3903ce687f9cda3a4f19f1b # v1.1.18 pinned
+        uses: sbt/setup-sbt@3afe9cf056c5d139bfc46579af1192d77a2f0821 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -272,7 +272,7 @@ jobs:
           cache: "sbt"
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@af116cce31c00823d3903ce687f9cda3a4f19f1b # v1.1.18 pinned
+        uses: sbt/setup-sbt@3afe9cf056c5d139bfc46579af1192d77a2f0821 # v1.1.18 pinned
 
       - name: Run integration tests (prism-node)
         working-directory: "tests/integration-tests"
@@ -311,7 +311,7 @@ jobs:
 
       - name: Publish e2e test Results (prism-node)
         id: publish-unit-tests-prism
-        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
+        uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2.24.0
         with:
           junit_files: "${{ env.REPORTS_DIR }}/SERENITY-JUNIT-*.xml"
           comment_title: "Integration Test Results (prism-node)"
