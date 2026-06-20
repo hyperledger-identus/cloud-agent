@@ -20,7 +20,7 @@
     "webpack": "5.104.1",
     "webpack-cli": "5.1.4",
     "webpack-glob-entries": "^1.0.1",
-    "ts-deepmerge": "6.2.0"
+    "ts-deepmerge": "8.0.0"
   },
   "scripts": {
     "webpack": "webpack"
