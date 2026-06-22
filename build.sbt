@@ -46,7 +46,7 @@ inThisBuild(
 )
 
 lazy val V = new {
-  val munit = "1.3.0" // "0.7.29"
+  val munit = "1.3.1" // "0.7.29"
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
@@ -85,7 +85,7 @@ lazy val V = new {
   val jwtZioVersion = "11.0.2"
   val zioPreludeVersion = "1.0.0-RC44"
 
-  val apollo = "1.3.5"
+  val apollo = "1.8.8"
 
   val jsonSchemaValidator = "1.3.2" // scala-steward:off //TODO 1.3.2 need to fix:
   // [error] 	org.hyperledger.identus.pollux.core.model.schema.AnoncredSchemaTypeSpec
@@ -183,12 +183,18 @@ lazy val D = new {
   val monocleMacro: ModuleID = "dev.optics" %% "monocle-macro" % V.monocle % Test
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19" % Test
 
-  val apollo = Seq( // TODO remove exclude after fix https://github.com/hyperledger/identus-apollo/issues/192
-    "io.iohk.atala.prism.apollo" % "apollo-jvm" % V.apollo exclude (
+  private val apolloJvm: ModuleID =
+    "org.hyperledger.identus" % "apollo-jvm" % V.apollo exclude (
       "net.jcip",
       "jcip-annotations"
-    ), // Exclude because of license
-    "com.github.stephenc.jcip" % "jcip-annotations" % "1.0-1" % Runtime, // Replace for net.jcip % jcip-annotations"
+    ) // bitcoinj-core still pulls net.jcip:jcip-annotations transitively
+
+  private val jcipAnnotationsRuntime: ModuleID =
+    "com.github.stephenc.jcip" % "jcip-annotations" % "1.0-1" % Runtime
+
+  val apollo = Seq(
+    apolloJvm,
+    jcipAnnotationsRuntime // License-compatible replacement for net.jcip:jcip-annotations
   )
 
   // LIST of Dependencies

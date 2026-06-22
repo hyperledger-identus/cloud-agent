@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.9.21"
+    kotlin("jvm") version "2.1.20"
     idea
     java
     id("net.serenity-bdd.serenity-gradle-plugin") version "4.0.46"
@@ -42,9 +42,9 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:2.0.3")
     // Crypto
     testImplementation("com.nimbusds:nimbus-jose-jwt:9.40")
-    testImplementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.80")
     testImplementation("com.google.crypto.tink:tink:1.13.0")
-    testImplementation("io.iohk.atala.prism.apollo:apollo-jvm:1.3.4")
+    testImplementation("org.hyperledger.identus:apollo-jvm:1.8.8")
     // OID4VCI
     testImplementation("org.htmlunit:htmlunit:4.3.0")
     testImplementation("eu.europa.ec.eudi:eudi-lib-jvm-openid4vci-kt:0.4.1")
@@ -64,6 +64,9 @@ tasks.test {
     finalizedBy("aggregate", "reports")
     jvmArgs("-Dlog4j2.disable.jmx=true")
     testLogging.showStandardStreams = true
+    systemProperty("AGENT_VERSION", System.getenv("AGENT_VERSION") ?: "")
+    systemProperty("PRISM_NODE_VERSION", System.getenv("PRISM_NODE_VERSION") ?: "")
+    systemProperty("NEOPRISM_VERSION", System.getenv("NEOPRISM_VERSION") ?: "")
     systemProperty("cucumber.filter.tags", System.getProperty("cucumber.filter.tags"))
     // Since the test runs on host and system-unter-test runs in containers,
     // We need to make the test on host resolves host.docker.internal same as the containerized services,
