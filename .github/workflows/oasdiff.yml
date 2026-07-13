@@ -36,7 +36,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
 
@@ -81,7 +81,7 @@ jobs:
           echo "Revision url: ${{ env.REV_URL }}"
 
       - name: Running OpenAPI Spec diff action
-        uses: oasdiff/oasdiff-action/breaking@291b6594ce617f22f49af5898ee038ed0b46e8fe
+        uses: oasdiff/oasdiff-action/breaking@024f6c399f9a21ada1addb0f9a36ce1bfac995f1
         with:
           fail-on: "ERR"
           base: ${{ env.BASE_URL }}
