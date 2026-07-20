@@ -28,7 +28,7 @@ jobs:
       TESTCONTAINERS_RYUK_DISABLED: true
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
         with:
           egress-policy: audit
 
@@ -47,14 +47,14 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up JDK 21 (Temurin) with sbt cache
-        uses: actions/setup-java@1bcf9fb12cf4aa7d266a90ae39939e61372fe520 # v5.2.0 pinned
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.2.0 pinned
         with:
           distribution: temurin
           java-version: 21
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@66fb4376e81982c7d92a4074170846fff88e2e30 # v1.1.18 pinned
+        uses: sbt/setup-sbt@6444f4c8111de4b9059c3975def104b03cfaa5f0 # v1.1.18 pinned
 
       - name: Download dependencies
         run: sbt +update
