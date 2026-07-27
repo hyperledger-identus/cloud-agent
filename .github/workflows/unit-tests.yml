@@ -71,7 +71,13 @@ jobs:
       - name: Upload coverage to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: sbt coveralls
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          format: cobertura
+          path-to-lcov: target/coverage/coverage-report/cobertura.xml
+          flag-name: unit
+          allow-empty: true
 
       - name: Aggregate test reports
         if: always()
