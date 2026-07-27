@@ -212,7 +212,11 @@ object D_SharedTest {
       D.zioTest,
       D.zioTestSbt,
       D.zioTestMagnolia,
-      D.zioMock
+      D.zioMock,
+      // The Keycloak admin client (used by KeycloakTestContainerSupport) depends on Apache
+      // HttpClient, which needs commons-logging. Under sbt 1.x this arrived transitively, but sbt
+      // 2.x's dependency resolution no longer pulls it in, so add it explicitly.
+      D.commonsLogging,
     )
 }
 
