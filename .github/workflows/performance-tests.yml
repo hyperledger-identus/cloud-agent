@@ -68,7 +68,7 @@ jobs:
         env:
           ENV_FILE: "infrastructure/local/.env"
         run: |
-          sbt docker:publishLocal
+          sbt "cloudAgentServer / Docker / publishLocal"
           AGENT_VERSION=$(cut version.sbt -d '=' -f2 | tr -d '" ')
           sed -i.bak "s/AGENT_VERSION=.*/AGENT_VERSION=${AGENT_VERSION}/" "${ENV_FILE}" && rm -f "${ENV_FILE}.bak"
           cat "${ENV_FILE}"

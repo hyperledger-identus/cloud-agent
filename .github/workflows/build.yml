@@ -79,7 +79,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          sbt "set version := \"${{ steps.revision.outputs.BUILD_VERSION }}\"" "docker:stage"
+          sbt "set version := \"${{ steps.revision.outputs.BUILD_VERSION }}\"; cloudAgentServer / Docker / stage"
           docker buildx build --platform=linux/arm64,linux/amd64 --push -t ${{ vars.DOCKERHUB_ORG }}/identus-cloud-agent:${{ steps.revision.outputs.BUILD_VERSION }} ./cloud-agent/service/server/target/docker/stage
 
       - name: Docker Metadata Action
@@ -111,7 +111,7 @@ jobs:
       - name: Build Cloud-Agent Open API Specification
         id: build-oas
         run: |
-          sbt "cloudAgentServer/test:runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml revision"
+          sbt "cloudAgentServer / Test / runMain org.hyperledger.identus.api.util.Tapir2StaticOAS ../../../cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION}}.yaml revision"
           checksum=$(sha256sum ./cloud-agent-openapi-spec-${{ steps.revision.outputs.REVISION_VERSION }}.yaml | awk '{ print $1 }')
           OAS_CHECKSUM=${checksum:0:8}
           echo "OAS_CHECKSUM=OAS_CHECKSUM" >> "$GITHUB_OUTPUT"
