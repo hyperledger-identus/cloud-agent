@@ -65,8 +65,11 @@ jobs:
       - name: Run unit tests
         env:
           HOME: /root
+        # NOTE: under sbt 2.x the scoverage `coverage` command must be separated from the following
+        # commands with `;` (not spaces), otherwise sbt joins them and the `coverage` command's
+        # internal `set` consumes the next command ("value test is not a member of Boolean").
         run: |
-          sbt -v coverage test coverageAggregate
+          sbt -v "coverage; test; coverageAggregate"
 
       - name: Upload coverage to Coveralls
         env:
@@ -75,7 +78,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           format: cobertura
-          path-to-lcov: target/coverage/coverage-report/cobertura.xml
+          path-to-lcov: target/out/jvm/scala-3.3.5/root/coverage/coverage-report/cobertura.xml
           flag-name: unit
           allow-empty: true
 
