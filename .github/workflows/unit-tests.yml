@@ -72,6 +72,7 @@ jobs:
           sbt -v "coverage; test; coverageAggregate"
 
       - name: Upload coverage to Coveralls
+        continue-on-error: true # coverage upload is a metric, not a gate; don't fail the build on a flaky aggregation
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.6
