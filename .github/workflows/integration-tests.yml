@@ -51,13 +51,12 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-        with:
-          registry: ghcr.io
-          username: hyperledger-bot
-          password: ${{ secrets.GITHUB_TOKEN }}
-
+      # NOTE: do NOT `docker login` to ghcr.io here. The job has no `packages: read`
+      # permission, no sbt GitHub-Packages resolver, and the only ghcr.io image used
+      # (ghcr.io/hyperledger/identus-keycloak-plugins) is public. Authenticating with
+      # the repo-scoped GITHUB_TOKEN makes GHCR return "manifest unknown" for that
+      # cross-repo public image (docker/login-action >= v4 persists creds in a way
+      # docker-compose picks up). Anonymous pull works.
       - name: Install Compose
         uses: ndeloof/install-compose-action@4a33bc31f327b8231c4f343f6fba704fedc0fa23 # v0.0.1
         with:
@@ -240,13 +239,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
-        with:
-          registry: ghcr.io
-          username: hyperledger-bot
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Compose
         uses: ndeloof/install-compose-action@4a33bc31f327b8231c4f343f6fba704fedc0fa23 # v0.0.1
