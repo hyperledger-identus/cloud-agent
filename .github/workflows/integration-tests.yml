@@ -100,6 +100,7 @@ jobs:
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
+          docker logout ghcr.io  # GITHUB_TOKEN is scoped to hyperledger-identus; keycloak-plugins image is under hyperledger org, so pull anonymously
           ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="not @vdr_memory_and_db and not @vdr_ledger"
 
       - name: Make report of integration tests (neoprism)
@@ -289,6 +290,7 @@ jobs:
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
+          docker logout ghcr.io  # GITHUB_TOKEN is scoped to hyperledger-identus; keycloak-plugins image is under hyperledger org, so pull anonymously
           ./gradlew test --tests "IntegrationTestsRunner" -Dcucumber.filter.tags="@vdr_ledger"
 
       - name: Make report of integration tests (prism-node)
