@@ -1,4 +1,4 @@
-import { Options } from 'k6/options'
+import type { Options } from 'k6/options'
 import { Issuer } from '../../actors'
 import merge from 'ts-deepmerge'
 import { defaultOptions } from '../../scenarios/default'

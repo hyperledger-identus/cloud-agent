@@ -1,4 +1,4 @@
-import { Options } from 'k6/options'
+import type { Options } from 'k6/options'
 import { connectionFlow } from '../common'
 import { defaultOptions } from '../../scenarios/default'
 import merge from 'ts-deepmerge'
