@@ -6,6 +6,6 @@ idna==3.18
 pycparser==3.0
 PyJWT==2.13.0
 requests==2.34.2
-setuptools==82.0.1
+setuptools==83.0.0
 urllib3==2.7.0
 wheel==0.47.0
