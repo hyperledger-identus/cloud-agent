@@ -106,7 +106,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ${{ env.BENCHMARKING_DIR }}
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --ignore-scripts
 
       - name: Compile tests to JS
         working-directory: ${{ env.BENCHMARKING_DIR }}
