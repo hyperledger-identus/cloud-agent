@@ -1,7 +1,7 @@
 import sbt.*
 
 object V {
-  val munit = "1.3.3" // "0.7.29"
+  val munit = "1.3.4" // "0.7.29"
   val munitZio = "0.4.0"
 
   // https://mvnrepository.com/artifact/dev.zio/zio
