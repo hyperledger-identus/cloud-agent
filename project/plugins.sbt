@@ -1,11 +1,11 @@
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.13.1")
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.2")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.7")
 addSbtPlugin("com.github.sbt" % "sbt-release" % "1.5.0")
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.11.7")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.4.4")
 addSbtPlugin("com.thesamet" % "sbt-protoc" % "1.1.0-RC2")
-addSbtPlugin("com.github.sbt" % "sbt-license-report" % "1.9.0")
+addSbtPlugin("com.github.sbt" % "sbt-license-report" % "1.10.0")
 
 // scalapb 1.0.0-alpha.x is required for sbt 2.x: the 0.11.x _3 POM hardcodes _2.13 transitive deps
 // (protoc-gen, protoc-cache-coursier) which pull protoc-bridge_2.13 and conflict with sbt-protoc's
