@@ -36,14 +36,14 @@ jobs:
           fetch-depth: 0
 
       - name: Set up JDK 21 (Temurin) with sbt cache
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.2.0 pinned
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.2.0 pinned
         with:
           distribution: temurin
           java-version: 21
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@d059c39de700f4cc5cb64f9f56577315e44a984e # v1.1.18 pinned
+        uses: sbt/setup-sbt@bfea3c5f48abd221b04a6df4798aa5eb8b6a2baf # v1.1.18 pinned
 
       - name: Setup Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v4.4.0
@@ -61,7 +61,7 @@ jobs:
           git_tag_gpgsign: false
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@371161bbe7024a29a25c5e19bfcbc0804fe9ad2c # v4.5.2
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
