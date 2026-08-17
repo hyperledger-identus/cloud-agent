@@ -46,7 +46,7 @@ jobs:
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@bfea3c5f48abd221b04a6df4798aa5eb8b6a2baf # v1.1.18 pinned
+        uses: sbt/setup-sbt@8feba82adc7f01ddcf8165b86f778bdb5b82cebc # v1.1.18 pinned
 
       - name: Setup Node.js
         uses: actions/setup-node@v7.0.0
