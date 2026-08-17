@@ -32,7 +32,7 @@ jobs:
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
         with:
           egress-policy: audit
 
@@ -88,7 +88,7 @@ jobs:
           NODE_REFRESH_AND_SUBMIT_PERIOD: 1s
           NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD: 1s
           NODE_WALLET_MAX_TPS: 1000
-        uses: hoverkraft-tech/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: hoverkraft-tech/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./infrastructure/shared/docker-compose-combined.yml"
           compose-flags: "--env-file ./infrastructure/local/.env"
