@@ -948,7 +948,10 @@ object PresentationServiceSpec extends ZIOSpecDefault with PresentationServiceSp
     while (root != null && root.getFileName.toString != "test-classes") root = root.getParent
     if root == null then throw new IllegalStateException("could not locate test-classes directory")
 
-    val filePath = root.resolve(fileName + ".json")
+    // A unique name per call avoids races between tests writing to the same
+    // file when tests run concurrently (parallel test execution).
+    val uniqueFileName = s"$fileName-${UUID.randomUUID}"
+    val filePath = root.resolve(uniqueFileName + ".json")
 
     Files.write(filePath, jsonContent.getBytes(StandardCharsets.UTF_8))
 
