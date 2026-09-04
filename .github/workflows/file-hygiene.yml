@@ -7,4 +7,4 @@ on:
 
 jobs:
   lint:
-    uses: hyperledger-identus/.github/.github/workflows/lint-files.yml@5bdb1e5a46ae66e6bcaa550de3e1e6cc26c0b47d # main
+    uses: hyperledger-identus/.github/.github/workflows/lint-files.yml@b5e934e6d44ea4ff18db76f9eae0405ee4378bd6 # main
