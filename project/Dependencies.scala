@@ -8,7 +8,7 @@ object V {
   val zio = "2.1.26"
   val zioConfig = "4.0.8"
   val zioLogging = "2.5.2"
-  val zioJson = "0.7.45"
+  val zioJson = "0.10.0"
   val zioHttp = "3.11.4"
   val zioCatsInterop = "3.3.0" // TODO "23.1.0.2" // https://mvnrepository.com/artifact/dev.zio/zio-interop-cats
   val zioMetricsConnector = "2.5.5"
