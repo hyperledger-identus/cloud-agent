@@ -85,6 +85,25 @@ jobs:
       - name: Set up sbt
         uses: sbt/setup-sbt@c7d2d6258b4bd0d3ec5129e6b3453199d3c79729 # v1.1.18 pinned
 
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Generate cloud-agent-client and publish it to mavenLocal
+        working-directory: cloud-agent/client/generator
+        env:
+          AGENT_CLIENT_VERSION: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
+        run: |
+          yarn install --ignore-scripts
+          yarn openapi-generator-cli generate \
+            -g kotlin \
+            -i ../../service/api/http/cloud-agent-openapi-spec.yaml \
+            -o ../kotlin \
+            --ignore-file-override ../kotlin/.openapi-generator-ignore \
+            --additional-properties=packageName=org.hyperledger.identus.client,serializationLibrary=gson,enumPropertyNaming=UPPERCASE
+          cd ../kotlin
+          ./gradlew -Pversion="$AGENT_CLIENT_VERSION" publishToMavenLocal
+
       - name: Run integration tests (neoprism)
         working-directory: "tests/integration-tests"
         env:
@@ -96,6 +115,7 @@ jobs:
           TESTS_CONFIG: /configs/basic_neoprism.conf
           VDR_MEMORY_DRIVER_ENABLED: "true"
           VDR_DATABASE_DRIVER_ENABLED: "true"
+          ORG_GRADLE_PROJECT_agentClientVersion: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
         #        continue-on-error: true
         run: |
           export DOCKER_API_VERSION=1.44
@@ -114,6 +134,7 @@ jobs:
           TESTS_CONFIG: /configs/basic_neoprism.conf
           VDR_MEMORY_DRIVER_ENABLED: "true"
           VDR_DATABASE_DRIVER_ENABLED: "true"
+          ORG_GRADLE_PROJECT_agentClientVersion: ${{ steps.build_local_cloud_agent.outputs.agent_version }}
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
@@ -274,6 +295,25 @@ jobs:
       - name: Set up sbt
         uses: sbt/setup-sbt@c7d2d6258b4bd0d3ec5129e6b3453199d3c79729 # v1.1.18 pinned
 
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: Generate cloud-agent-client and publish it to mavenLocal
+        working-directory: cloud-agent/client/generator
+        env:
+          AGENT_CLIENT_VERSION: ${{ steps.build_local_cloud_agent_prism.outputs.agent_version }}
+        run: |
+          yarn install --ignore-scripts
+          yarn openapi-generator-cli generate \
+            -g kotlin \
+            -i ../../service/api/http/cloud-agent-openapi-spec.yaml \
+            -o ../kotlin \
+            --ignore-file-override ../kotlin/.openapi-generator-ignore \
+            --additional-properties=packageName=org.hyperledger.identus.client,serializationLibrary=gson,enumPropertyNaming=UPPERCASE
+          cd ../kotlin
+          ./gradlew -Pversion="$AGENT_CLIENT_VERSION" publishToMavenLocal
+
       - name: Run integration tests (prism-node)
         working-directory: "tests/integration-tests"
         env:
@@ -286,6 +326,7 @@ jobs:
           VDR_PRISM_NODE_DRIVER_ENABLED: "true"
           VDR_MEMORY_DRIVER_ENABLED: "true"
           VDR_DATABASE_DRIVER_ENABLED: "true"
+          ORG_GRADLE_PROJECT_agentClientVersion: ${{ steps.build_local_cloud_agent_prism.outputs.agent_version }}
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
@@ -304,6 +345,7 @@ jobs:
           VDR_PRISM_NODE_DRIVER_ENABLED: "true"
           VDR_MEMORY_DRIVER_ENABLED: "true"
           VDR_DATABASE_DRIVER_ENABLED: "true"
+          ORG_GRADLE_PROJECT_agentClientVersion: ${{ steps.build_local_cloud_agent_prism.outputs.agent_version }}
         run: |
           export DOCKER_API_VERSION=1.44
           export DOCKER_HOST=unix:///var/run/docker.sock
