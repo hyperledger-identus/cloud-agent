@@ -87,7 +87,7 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v4.4.0
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Generate cloud-agent-client and publish it to mavenLocal
         working-directory: cloud-agent/client/generator
@@ -297,7 +297,7 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v4.4.0
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Generate cloud-agent-client and publish it to mavenLocal
         working-directory: cloud-agent/client/generator
