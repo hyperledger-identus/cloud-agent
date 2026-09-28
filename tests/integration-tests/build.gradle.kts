@@ -25,14 +25,21 @@ repositories {
     }
 }
 
+// Cloud-agent REST API client version.
+// CI: the integration-tests workflow generates the client from the current OpenAPI
+// specification, publishes it to mavenLocal, and passes it via -PagentClientVersion
+// (ORG_GRADLE_PROJECT_agentClientVersion).
+// Local dev: publish it yourself from cloud-agent/client/kotlin
+// (`./gradlew publishToMavenLocal` publishes the default 0.0.1-SNAPSHOT).
+val agentClientVersion =
+    project.findProperty("agentClientVersion") as String? ?: "0.0.1-SNAPSHOT"
+
 dependencies {
     // HTTP listener
     testImplementation("io.ktor:ktor-server-netty:2.3.0")
     testImplementation("io.ktor:ktor-client-apache:2.3.0")
     // RestAPI client
-    // locally published from cloud-agent/client/kotlin
-    //testImplementation("org.hyperledger.identus:cloud-agent-client:0.0.1-SNAPSHOT")
-    testImplementation("org.hyperledger.identus:cloud-agent-client:2.1.1-e1e8be1-SNAPSHOT")
+    testImplementation("org.hyperledger.identus:cloud-agent-client:$agentClientVersion")
     // Test helpers library
     testImplementation("io.iohk.atala:atala-automation:0.4.0")
     // Hoplite for configuration
