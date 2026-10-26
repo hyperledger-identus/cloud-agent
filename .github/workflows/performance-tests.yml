@@ -32,7 +32,7 @@ jobs:
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
 
@@ -53,13 +53,13 @@ jobs:
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
           username: ${{ env.GITHUB_ACTOR }}
           password: ${{ env.GITHUB_TOKEN }}
 
-      - uses: KengoTODA/actions-setup-docker-compose@3365b3ff2fc7b4e5ffa2d9ddbb3c2bd73727d443 # v1.2.10
+      - uses: KengoTODA/actions-setup-docker-compose@b09fb2b902df45b91982bc46858188f2a714ee5f # v1.2.11
         name: Install `docker-compose`
         with:
           version: "2.27.1"
