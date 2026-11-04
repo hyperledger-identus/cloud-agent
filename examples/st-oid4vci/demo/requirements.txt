@@ -1,11 +1,11 @@
-certifi==2026.10.18
+certifi==2026.10.23
 cffi==2.1.1
-charset-normalizer==3.5.1
-cryptography==50.0.1
+charset-normalizer==3.5.2
+cryptography==50.0.2
 idna==3.20
-pycparser==3.0
-PyJWT==2.15.0
+pycparser==3.12
+PyJWT==2.15.1
 requests==2.34.2
-setuptools==84.1.0
+setuptools==84.2.1
 urllib3==2.8.0
 wheel==0.48.0
