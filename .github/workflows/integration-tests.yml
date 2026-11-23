@@ -31,7 +31,7 @@ jobs:
       DOCKER_API_VERSION: "1.44"
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
           egress-policy: audit
 
@@ -39,14 +39,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up JDK 21 (Temurin) with sbt cache
-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v5.2.0 pinned
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v5.2.0 pinned
         with:
           distribution: temurin
           java-version: 21
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@67d461eba2c4753196c230e02da850757ba4775e # v1.1.18 pinned
+        uses: sbt/setup-sbt@7e114eae4f32ec3f93c851c2793376a77f384409 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -76,14 +76,14 @@ jobs:
           echo "prism_node_version=$(grep PRISM_NODE_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
           echo "neoprism_version=$(grep NEOPRISM_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
 
-      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v5.2.0 pinned
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v5.2.0 pinned
         with:
           distribution: "zulu"
           java-version: "21"
           cache: "sbt"
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@67d461eba2c4753196c230e02da850757ba4775e # v1.1.18 pinned
+        uses: sbt/setup-sbt@7e114eae4f32ec3f93c851c2793376a77f384409 # v1.1.18 pinned
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v4.4.0
         with:
@@ -242,7 +242,7 @@ jobs:
       DOCKER_API_VERSION: "1.44"
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
           egress-policy: audit
 
@@ -250,14 +250,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up JDK 21 (Temurin) with sbt cache
-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v5.2.0 pinned
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v5.2.0 pinned
         with:
           distribution: temurin
           java-version: 21
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@67d461eba2c4753196c230e02da850757ba4775e # v1.1.18 pinned
+        uses: sbt/setup-sbt@7e114eae4f32ec3f93c851c2793376a77f384409 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -286,14 +286,14 @@ jobs:
           echo "agent_version=$(cut -d'=' -f2 version.sbt | tr -d '\" ')" >> "${GITHUB_OUTPUT}"
           echo "prism_node_version=$(grep PRISM_NODE_VERSION infrastructure/local/.env | cut -d'=' -f2 | tr -d ' ')" >> "${GITHUB_OUTPUT}"
 
-      - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v5.2.0 pinned
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v5.2.0 pinned
         with:
           distribution: "zulu"
           java-version: "21"
           cache: "sbt"
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@67d461eba2c4753196c230e02da850757ba4775e # v1.1.18 pinned
+        uses: sbt/setup-sbt@7e114eae4f32ec3f93c851c2793376a77f384409 # v1.1.18 pinned
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v4.4.0
         with:

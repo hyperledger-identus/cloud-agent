@@ -32,7 +32,7 @@ jobs:
     if: ${{ !contains(github.event.pull_request.title, '[skip ci]') }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
           egress-policy: audit
 
@@ -40,14 +40,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up JDK 21 (Temurin) with sbt cache
-        uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78 # v5.2.0 pinned
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v5.2.0 pinned
         with:
           distribution: temurin
           java-version: 21
           cache: sbt
 
       - name: Set up sbt
-        uses: sbt/setup-sbt@67d461eba2c4753196c230e02da850757ba4775e # v1.1.18 pinned
+        uses: sbt/setup-sbt@7e114eae4f32ec3f93c851c2793376a77f384409 # v1.1.18 pinned
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
@@ -88,7 +88,7 @@ jobs:
           NODE_REFRESH_AND_SUBMIT_PERIOD: 1s
           NODE_MOVE_SCHEDULED_TO_PENDING_PERIOD: 1s
           NODE_WALLET_MAX_TPS: 1000
-        uses: hoverkraft-tech/compose-action@b659c744ee9bed25aea2307c017ad849bd104433 # v3.2.0
+        uses: hoverkraft-tech/compose-action@cdaf49f2d715a87c3387e86cb35c772b14f0efe0 # v3.2.1
         with:
           compose-file: "./infrastructure/shared/docker-compose-combined.yml"
           compose-flags: "--env-file ./infrastructure/local/.env"
