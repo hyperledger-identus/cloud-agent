@@ -15,6 +15,6 @@
     "husky": "^9.1.7",
     "pinst": "^3.0.0",
     "prettier": "^3.10.1",
-    "semantic-release": "^25.0.9"
+    "semantic-release": "^26.0.1"
   }
 }
