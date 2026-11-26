@@ -83,7 +83,7 @@ jobs:
           DOCKERHUB_ORG: ${{ vars.DOCKERHUB_ORG }}
         run: |
           npm ci
-          npx semantic-release
+          npx --no-install semantic-release
 
       - name: Get release version
         id: version
